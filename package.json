@@ -1,0 +1,54 @@
+{
+  "name": "stimulsoft-reports-js",
+  "version": "2016.1.2e",
+  "description": "Stimulsoft Reports.JS is a reporting tool for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stimulsoft/Reports.JS.git"
+  },
+  "keywords": [
+    "Stimulsoft",
+    "Reports",
+    "Stimulsoft.Reports.JS",
+    "Reporting tool"
+  ],
+  "dependencies": {
+    "mssql": "^3.1.2",
+    "mysql": "^2.10.2",
+    "node-firebird": "^0.7.2",
+    "opentype.js": "^0.6.1",
+    "pg": "^4.5.1",
+    "strip-bom": "^2.0.0"
+  },
+  "files": [
+    "license.txt",
+    "package.json",
+    "README.md",
+    "stimulsoft.reports.js"
+  ],
+  "author": "Stimulsoft (http://www.stimulsoft.com)",
+  "maintainers": [
+    {
+      "name": "Stimulsoft",
+      "email": "info@stimulsoft.com",
+      "url": "http://www.stimulsoft.com"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Stimulsoft",
+      "email": "info@stimulsoft.com",
+      "url": "http://www.stimulsoft.com"
+    }
+  ],
+  "license": "Closed Source",
+  "bugs": {
+    "url": "https://github.com/stimulsoft/Reports.JS/issues"
+  },
+  "homepage": "https://github.com/stimulsoft/Reports.JS#readme",
+  "devDependencies": {}
+}
