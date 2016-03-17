@@ -1,6 +1,6 @@
 {
   "name": "stimulsoft-reports-js",
-  "version": "2016.1.2e",
+  "version": "2016.1.2",
   "description": "Stimulsoft Reports.JS is a reporting tool for Node.js",
   "main": "index.js",
 	"homepage": "https://github.com/stimulsoft/Reports.JS#readme",
