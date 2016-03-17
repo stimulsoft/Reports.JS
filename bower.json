@@ -1,13 +1,16 @@
 {
   "name": "stimulsoft.reports.js",
-  "version": "2016.1.4",
+  "version": "2016.1.5",
   "description": "Stimulsoft Reports.JS is a reporting tool for Node.js",
-  "main": "index.js",
-	"homepage": "https://github.com/stimulsoft/Reports.JS#readme",
-	"authors": [
+  "main": [
+    "stimulsoft.reports.js",
+    "license.txt"
+  ],  
+  "homepage": "https://github.com/stimulsoft/Reports.JS#readme",
+  "authors": [
 		"Stimulsoft (http://www.stimulsoft.com)"
 	],
-	"moduleType": [
+  "moduleType": [
 		"globals"
 	],
   "keywords": [
@@ -16,21 +19,14 @@
     "Stimulsoft.Reports.JS",
     "Reporting tool"
   ],
-  "dependencies": {
-    "mssql": "^3.1.2",
-    "mysql": "^2.10.2",
-    "node-firebird": "^0.7.2",
-    "opentype.js": "^0.6.1",
-    "pg": "^4.5.1",
-    "strip-bom": "^2.0.0"
-  },  
-	"license": "License.txt",
-	"private": false,
-	"ignore": [
-	  "**/.*",
-		"package.json",
-		"README.md"
-	],
+  "license": "License.txt",
+  "private": false,
+  "ignore": [
+	"**/.*",
+	"package.json",
+	"README.md",
+	"index.js"
+],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stimulsoft/Reports.JS.git"
