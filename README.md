@@ -1,4 +1,4 @@
-# stimulsoft-reports-js
+# Stimulsoft Reports.JS
 Stimulsoft Reports.JS is a reporting tool for Node.js and JavaScript applications.
 
 
