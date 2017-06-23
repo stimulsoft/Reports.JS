@@ -1,6 +1,6 @@
 {
 	"name" : "stimulsoft-reports-js",
-	"version" : "2017.1.6",
+	"version" : "2017.1.7",
 	"description" : "Stimulsoft Reports.JS is a reporting tool for Node.js",
 	"main" : "index.js",
 	"scripts" : {
@@ -19,7 +19,6 @@
 	"dependencies" : {
 		"mssql" : "^3.1.2",
 		"mysql" : "^2.10.2",
-		"node-firebird" : "^0.7.2",
 		"opentype.js" : "^0.6.1",
 		"pg" : "^4.5.1",
 		"rgbcolor" : "^0.0.4",
