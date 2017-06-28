@@ -24,7 +24,8 @@
 		"rgbcolor" : "^0.0.4",
 		"stackblur" : "^1.0.0",
 		"sync-request": "^3.0.1",
-		"jszip": "^2.6.1"
+		"jszip": "^2.6.1",
+		"xmldoc": "^1.1.0"
 	},
 	"files" : [
 		"license.txt",
