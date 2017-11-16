@@ -1,6 +1,6 @@
 {
 	"name" : "stimulsoft-reports-js",
-	"version" : "2017.2.3",
+	"version" : "2017.2.4",
 	"description" : "Stimulsoft Reports.JS is a reporting tool for Node.js",
 	"main" : "index.js",
 	"scripts" : {
@@ -26,7 +26,8 @@
 		"sync-request": "^3.0.1",
 		"jszip": "^2.6.1",
 		"xmldoc": "^1.1.0",
-		"xlsx": "^0.10.6"
+		"xlsx": "^0.10.6",
+		"jimp": "^0.2.28"
 	},
 	"files" : [
 		"license.txt",
