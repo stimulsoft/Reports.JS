@@ -1,4 +1,5 @@
 Element = 'undefined';
+moment = require('moment');
 var Stimulsoft = require('./stimulsoft.reports');
 JSZip = require('jszip');
 xmldoc = require('xmldoc');
