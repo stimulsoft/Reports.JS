@@ -4,8 +4,7 @@ var Stimulsoft = require('./stimulsoft.reports');
 JSZip = require('jszip');
 xmldoc = require('xmldoc');
 XLSX = require('xlsx');
-xxhash = require('xxhash');
-XXH = {h32: function(str, seed) {return xxhash.hash(Buffer.from(str, 'utf8'), seed)}};
+XXH = global["XXH"];
 Stimulsoft.System.Drawing.Graphics.opentypeClass = require('opentype.js');
 
 module.exports = Stimulsoft;
