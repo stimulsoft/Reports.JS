@@ -1,5 +1,5 @@
 var Stimulsoft = require('./stimulsoft.reports');
-xmldoc = require('xmldoc');
+Stimulsoft.ExternalLibrary.xmldoc = require('xmldoc');
 
 module.exports = Stimulsoft;
 Stimulsoft.System.NodeJs.useWebKit = false;
