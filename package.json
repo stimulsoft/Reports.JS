@@ -1,58 +1,58 @@
 {
-	"name": "stimulsoft-reports-js",
-	"version": "2019.3.2",
-	"description": "Stimulsoft Reports.JS is a reporting tool for Node.js",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/stimulsoft/Reports.JS.git"
-	},
-	"keywords": [
-		"Stimulsoft",
-		"Reports",
-		"Stimulsoft.Reports.JS",
-		"Reporting tool"
-	],
-	"dependencies": {
-		"jimp": "^0.2.28",
-		"mssql": "^4.1.0",
-		"mysql": "^2.15.0",
-		"pg": "^4.5.1",
-		"sync-request": "^3.0.1",
-		"node-firebird": "^0.8.4",
-		"xmldoc": "^1.1.0"
-	},
-	"files": [
-		"license.txt",
-		"package.json",
-		"README.md",
-		"stimulsoft.reports.js"
-	],
-	"author": {
-		"name": "Stimulsoft",
-		"url": "http://www.stimulsoft.com"
-	},
-	"maintainers": [
-		{
-			"name": "Stimulsoft",
-			"email": "info@stimulsoft.com",
-			"url": "http://www.stimulsoft.com"
-		}
-	],
-	"contributors": [
-		{
-			"name": "Stimulsoft",
-			"email": "info@stimulsoft.com",
-			"url": "http://www.stimulsoft.com"
-		}
-	],
-	"license": "Closed Source",
-	"bugs": {
-		"url": "https://github.com/stimulsoft/Reports.JS/issues"
-	},
-	"homepage": "https://github.com/stimulsoft/Reports.JS#readme",
-	"devDependencies": {}
+    "name": "stimulsoft-reports-js",
+    "version": "2019.3.3",
+    "description": "Stimulsoft Reports.JS is a reporting tool for Node.js",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/stimulsoft/Reports.JS.git"
+    },
+    "keywords": [
+        "Stimulsoft",
+        "Reports",
+        "Stimulsoft.Reports.JS",
+        "Reporting tool"
+    ],
+    "dependencies": {
+        "jimp": "^0.2.28",
+        "mssql": "^4.1.0",
+        "mysql": "^2.15.0",
+        "pg": "^4.5.1",
+        "sync-request": "^3.0.1",
+        "node-firebird": "^0.8.4",
+        "xmldoc": "^1.1.0"
+    },
+    "files": [
+        "license.txt",
+        "package.json",
+        "README.md",
+        "stimulsoft.reports.js"
+    ],
+    "author": {
+        "name": "Stimulsoft",
+        "url": "http://www.stimulsoft.com"
+    },
+    "maintainers": [
+        {
+            "name": "Stimulsoft",
+            "email": "info@stimulsoft.com",
+            "url": "http://www.stimulsoft.com"
+        }
+    ],
+    "contributors": [
+        {
+            "name": "Stimulsoft",
+            "email": "info@stimulsoft.com",
+            "url": "http://www.stimulsoft.com"
+        }
+    ],
+    "license": "Closed Source",
+    "bugs": {
+        "url": "https://github.com/stimulsoft/Reports.JS/issues"
+    },
+    "homepage": "https://github.com/stimulsoft/Reports.JS#readme",
+    "devDependencies": {}
 }
