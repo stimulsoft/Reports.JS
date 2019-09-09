@@ -1,6 +1,6 @@
 {
     "name": "stimulsoft-reports-js",
-    "version": "2019.3.5",
+    "version": "2019.3.5b",
     "description": "Stimulsoft Reports.JS is a reporting tool for Node.js",
     "main": "index.js",
     "scripts": {
@@ -26,10 +26,13 @@
         "xmldoc": "^1.1.0"
     },
     "files": [
-        "license.txt",
+        "THIRD-PARTY.md",
+        "LICENSE.md",
         "package.json",
         "README.md",
-        "stimulsoft.reports.js"
+        "index.js",
+        "Scripts/*",
+        "Css/*"
     ],
     "author": {
         "name": "Stimulsoft",
