@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2019.4.2
-Build date: 2019.11.13
+Version: 2020.1.1
+Build date: 2019.12.18
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System.Collections {
@@ -9,10 +9,8 @@ declare namespace Stimulsoft.System.Collections {
         list: T[];
         toList(): List<T>;
         toCast<C>(): C[];
-        /** Gets the number of elements contained in the CollectionBase instance. */
         get count(): number;
         get length(): number;
-        /** Removes all objects from the CollectionBase instance. */
         clear(): void;
         add(value: T): void;
         addRange(data: T[] | CollectionBase<T>): void;
@@ -71,6 +69,8 @@ declare namespace Stimulsoft.System {
         static equals(objA: any, objB: any): boolean;
         static isNullOrUndefined: (obj: any) => boolean;
         static disableAllEnumerable(prototype: any, obj: any): void;
+        static keys(obj: any): any[];
+        static getOwnPropertyNames(obj: any): any[];
         constructor(value: any);
     }
     class StiNumber extends StiObject {
@@ -157,7 +157,227 @@ interface Number {
 interface Boolean {
     stimulsoft: Stimulsoft.System.StiBoolean;
 }
+declare namespace Stimulsoft.System {
+    class NodeJs {
+        private static isInitialize;
+        static initialize(onResult?: Function): void;
+        private static convert;
+        static platform(): any;
+        static callRemoteApi(command: any, timeout: number): StiPromise<string>;
+        private static processFirebird;
+        private static processMsSql;
+        private static processMySql;
+        private static processPostgreSQL;
+        static stripBom(data: any): any;
+        static getFile(filePath: string, binary?: boolean, contentType?: string, headers?: {
+            key: string;
+            value: string;
+        }[]): any;
+        static getFileHttp(filePath: string, binary?: boolean, contentType?: string, headers?: {
+            key: string;
+            value: string;
+        }[]): any;
+        static saveAs(data: any, fileName: string, type?: string): any;
+        static saveFile(filePath: string, fileData: string): void;
+        static getFilesNames(filesPath: string): string[];
+        static getSep(): string;
+        private static fromBase64String;
+        private static fromBase64StringText;
+        private static toBase64String;
+        private static fromUnicodeString;
+        private static _isNodeJs;
+        static isNodeJs(): boolean;
+        static isStandaloneVersion: boolean;
+        static useWebKit: boolean;
+        static consoleLog: boolean;
+        private static fillInfo;
+        static localizationPath: string;
+        private static getLocalizationInfo;
+        private static getSetting;
+        private static setSetting;
+    }
+}
+declare namespace Stimulsoft.System.Globalization {
+    class TextInfo {
+        toTitleCase(str: string): string;
+    }
+}
+declare namespace Stimulsoft.System.Globalization {
+    import IFormatProvider = System.IFormatProvider;
+    import Type = Stimulsoft.System.Type;
+    class NumberFormatInfo implements IFormatProvider {
+        numberDecimalSeparator: string;
+        numberDecimalDigits: number;
+        numberGroupSeparator: string;
+        numberGroupSizes: number[];
+        numberNegativePattern: number;
+        currencyDecimalDigits: number;
+        currencyDecimalSeparator: string;
+        currencyGroupSeparator: string;
+        currencyGroupSizes: number[];
+        currencyNegativePattern: number;
+        currencyPositivePattern: number;
+        currencySymbol: string;
+        percentDecimalDigits: number;
+        percentDecimalSeparator: string;
+        percentGroupSeparator: string;
+        percentGroupSizes: number[];
+        percentNegativePattern: number;
+        percentPositivePattern: number;
+        percentSymbol: string;
+        perMilleSymbol: string;
+        positiveInfinitySymbol: string;
+        positiveSign: string;
+        NaNSymbol: string;
+        negativeInfinitySymbol: string;
+        negativeSign: string;
+        getFormat(formatType: Type): any;
+        constructor(numberDecimalSeparator?: string, numberDecimalDigits?: number, numberGroupSeparator?: string, numberGroupSizes?: number[], numberNegativePattern?: number, currencyDecimalDigits?: number, currencyDecimalSeparator?: string, currencyGroupSeparator?: string, currencyGroupSizes?: number[], currencyNegativePattern?: number, currencyPositivePattern?: number, currencySymbol?: string, percentDecimalDigits?: number, percentDecimalSeparator?: string, percentGroupSeparator?: string, percentGroupSizes?: number[], percentNegativePattern?: number, percentPositivePattern?: number, percentSymbol?: string, perMilleSymbol?: string, positiveInfinitySymbol?: string, positiveSign?: string, NaNSymbol?: string, negativeInfinitySymbol?: string, negativeSign?: string);
+    }
+}
+declare namespace Stimulsoft.System.Globalization {
+    class DateTimeFormatInfo {
+        shortDatePattern: string;
+        dateSeparator: string;
+        longDatePattern: string;
+        dayNames: string[];
+        monthNames: string[];
+        shortestDayNames: string[];
+        abbreviatedMonthNames: string[];
+        monthGenitiveNames: string[];
+        timeSeparator: string;
+        AMDesignator: string;
+        PMDesignator: string;
+        fullDateTimePattern: string;
+        shortTimePattern: string;
+        longTimePattern: string;
+        yearMonthPattern: string;
+        constructor(shortDatePattern: string, dateSeparator: string, longDatePattern: string, dayNames: string[], monthNames: string[], shortestDayNames: string[], abbreviatedMonthNames: string[], monthGenitiveNames: string[], timeSeparator: string, AMDesignator: string, PMDesignator: string, fullDateTimePattern: string, shortTimePattern: string, longTimePattern: string, yearMonthPattern: string);
+    }
+}
+declare namespace Stimulsoft.System.Globalization {
+    class CultureInfo {
+        numberFormat: NumberFormatInfo;
+        dateTimeFormat: DateTimeFormatInfo;
+        name: string;
+        textInfo: TextInfo;
+        private static _cultures;
+        private static _currentCulture;
+        static get currentCulture(): CultureInfo;
+        static set currentCulture(val: CultureInfo);
+        static get cultures(): any;
+        static get InvariantCulture(): CultureInfo;
+        static getCultureInfo(name: string): CultureInfo;
+        constructor(name: string, numberFormat?: NumberFormatInfo, dateTimeFormat?: DateTimeFormatInfo);
+    }
+}
+declare namespace Stimulsoft.System {
+    class DateTime {
+        private static ticksPerMillisecond;
+        private static ticksPerSecond;
+        private static ticksPerMinute;
+        private static ticksPerHour;
+        private static ticksPerDay;
+        private static millisPerSecond;
+        private static millisPerMinute;
+        private static millisPerHour;
+        private static millisPerDay;
+        private static daysPerYear;
+        private static daysPer4Years;
+        private static daysPer100Years;
+        private static daysPer400Years;
+        private static daysTo1601;
+        private static daysTo1899;
+        private static daysTo10000;
+        private static minTicks;
+        private static maxTicks;
+        private static maxMillis;
+        private static fileTimeOffset;
+        private static doubleDateOffset;
+        private static oADateMinAsTicks;
+        private static oADateMinAsDouble;
+        private static oADateMaxAsDouble;
+        private static datePartYear;
+        private static datePartDayOfYear;
+        private static datePartMonth;
+        private static DatePartDay;
+        private static daysToMonth365;
+        private static daysToMonth366;
+        static minValue: DateTime;
+        static maxValue: DateTime;
+        static getNetTypeName(): string;
+        private innerDate;
+        get year(): number;
+        get month(): number;
+        get monthName(): string;
+        get monthGenitiveName(): string;
+        get monthShortName(): string;
+        get day(): number;
+        get dayOfWeek(): DayOfWeek;
+        get dayName(): string;
+        get dayShortName(): string;
+        get hour(): number;
+        get minute(): number;
+        get second(): number;
+        get millisecond(): number;
+        get ticks(): number;
+        get dayOfYear(): number;
+        firstDayOfWeek(): DateTime;
+        lastDayOfWeek(): DateTime;
+        firstDayOfMonth(): DateTime;
+        lastDayOfMonth(): DateTime;
+        firstDayOfQuarter(): DateTime;
+        lastDayOfQuarter(): DateTime;
+        firstDayOfFirthQuarter(): DateTime;
+        lastDayOfFirthQuarter(): DateTime;
+        firstDayOfSecondQuarter(): DateTime;
+        lastDayOfSecondQuarter(): DateTime;
+        firstDayOfThirdQuarter(): DateTime;
+        lastDayOfThirdQuarter(): DateTime;
+        firstDayOfFourthQuarter(): DateTime;
+        lastDayOfFourthQuarter(): DateTime;
+        firstDayOfYear(): DateTime;
+        lastDayOfYear(): DateTime;
+        toShortDateString(): string;
+        static get now(): DateTime;
+        static get today(): DateTime;
+        static isLeapYear(year: number): boolean;
+        static daysInMonth(year: number, month: number): number;
+        static compare(t1: DateTime, t2: DateTime): number;
+        private static doubleDateToTicks;
+        private static ticksToOADate;
+        static ticksNetToTicksJs(ticks: number): number;
+        negate(): DateTime;
+        addYears(value: number): DateTime;
+        addMonths(value: number): DateTime;
+        addDays(value: number): DateTime;
+        addHours(value: number): DateTime;
+        addMinutes(value: number): DateTime;
+        addSeconds(value: number): DateTime;
+        addMilliseconds(value: number): DateTime;
+        addTicks(value: number): DateTime;
+        compareTo(value: DateTime): number;
+        subtract(value: DateTime): TimeSpan;
+        get date(): Date;
+        toString(format?: string): string;
+        toOADate(): number;
+        toOADate2(round: boolean): number;
+        toNetJsonString(): string;
+        static tryParseExact(d: string, format: string): {
+            result: DateTime;
+            successfully: boolean;
+        };
+        static fromNetJsonString(jsonDate: string): DateTime;
+        static fromOADate(oadate: number): DateTime;
+        static fromString(d?: string, logError?: boolean): DateTime;
+        static fromString2(format: string, value: string, logError?: boolean): DateTime;
+        static isISO8601String(d: string): boolean;
+        get timeOfDay(): TimeSpan;
+        constructor(param1: Date | number, month?: number, day?: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+    }
+}
 declare namespace Stimulsoft.System.Collections {
+    import DateTime = Stimulsoft.System.DateTime;
     class List<T> extends Array<T> {
         constructor(items?: T[] | number);
         static create<T>(t: Stimulsoft.System.Type, ...values: any[]): List<T>;
@@ -166,13 +386,8 @@ declare namespace Stimulsoft.System.Collections {
         getRange(index: number, count: number): List<T>;
         add(item: T): void;
         insert(index: number, item: T): void;
-        /** Removes all elements from the List. */
         clear(): void;
         peek(): T;
-        /** Removes the element at the specified index of the Lis.
-         * @param index The zero-based index of the element to remove.
-         * @throw index is less than 0. -or- index is equal to or greater than Count.
-         */
         removeAt(index: number): void;
         exists(predicate: (value: T) => boolean): boolean;
         fullOuterJoin<K>(inner: List<T>, outerKeySelector: (value: T) => K, innerKeySelector: (value: T) => K, resultSelector: (value1: T, value2: T) => T, __this?: any): List<T>;
@@ -180,123 +395,35 @@ declare namespace Stimulsoft.System.Collections {
         findIndex2(match: (value: T) => boolean): number;
         zip<S, R>(second: List<S>, resultSelector: (first: T, second: S) => R): List<R>;
         static repeat<T>(element: T, count: number): List<T>;
-        /** Filters a sequence of values based on a predicate.
-         * @param predicate A function to test each element for a condition.
-         * @returns An List that contains elements from the input sequence that satisfy the condition.
-         */
         
-        /** Correlates the elements of two sequences based on matching keys. The default
-         * equality comparer is used to compare keys.
-         * @param inner The sequence to join to the first sequence.
-         * @param outerKeySelector A function to extract the join key from each element of the first sequence.
-         * @param innerKeySelector A function to extract the join key from each element of the second sequence.
-         * @param resultSelector A function to create a result element from two matching elements.
-         * @returns An List that has elements of type V
-         * that are obtained by performing an inner join on two sequences.
-         */
         join2<U, K, V>(inner: List<U>, outerKeySelector: (value: T) => K, innerKeySelector: (value: U) => K, resultSelector: (value1: T, value2: U) => V, __this?: any): List<V>;
-        /** Correlates the elements of two sequences based on equality of keys and groups
-         * the results. The default equality comparer is used to compare keys.
-         * @param inner The sequence to join to the first sequence.
-         * @param outerKeySelector A function to extract the join key from each element of the first sequence.
-         * @param innerKeySelector A function to extract the join key from each element of the second sequence.
-         * @param resultSelector A function to create a result element from an element from the first sequence
-         * and a collection of matching elements from the second sequence.
-         * @returns An List that contains elements of type V
-         * that are obtained by performing a grouped join on two sequences.
-         */
         groupJoin<U, K, V>(inner: List<U>, outerKeySelector: (value: T) => K, innerKeySelector: (value: U) => K, resultSelector: (value1: T, value2: List<U>) => V, __this?: any): List<V>;
-        /**
-         * Projects each element of a sequence into a new form.
-         * @param selector A transform function to apply to each element.
-         * @returns An List whose elements are the result of invoking the transform function on each element of source.
-         */
         
         
         selectMany2<C>(collectionSelector: (value: T) => List<C>, resultSelector: (value1: T, value2: C) => C, __this?: any): List<C>;
-        /** Sorts the elements of a sequence in ascending order according to a key or by using a specified comparer.
-         * @param keySelector A function to extract a key from an element.
-         * @param comparer An System.Collections.Generic.IComparer`1 to compare keys.
-         * @returns An System.Linq.IOrderedEnumerable`1 whose elements are sorted according to a key.
-         */
         
         orderByDescending<K>(keySelector: (value: T) => K, comparer?: IComparer<K>): List<T>;
-        /** Groups the elements of a sequence according to a specified key selector function
-         * and compares the keys by using a specified comparer.
-         * @param keySelector A function to extract the key for each element.
-         * @param comparer An System.Collections.Generic.IEqualityComparer`1 to compare keys.
-         * @returns An IEnumerable<IGrouping<TKey, TSource>> in C# or IEnumerable(Of IGrouping(Of
-         * TKey, TSource)) in Visual Basic where each System.Linq.IGrouping`2 object contains
-         * a collection of objects and a key.
-         */
         groupBy<K>(keySelector: (value: T) => K, comparer?: IEqualityComparer<K>, __this?: any): List<Grouping<K, T>>;
-        /** Converts the elements of an List to the specified type.
-         * @returns An List that contains each element of the source sequence converted to the specified type.
-         */
         cast<S>(): List<S>;
         toDictionary<K, V>(keySelector: (item: T) => K, elementSelector: (item: T) => V): Dictionary<K, V>;
-        /** Creates a Lookup from an List
-         * according to a specified key selector function.
-         * @param keySelector A function to extract a key from each element.
-         * @returns A Lookup that contains keys and values.
-         */
         toLookup<K>(keySelector: (value: T) => K, __this?: any): Hashtable;
-        /** Concatenates two sequences.
-         * @param second The sequence to concatenate to the first sequence.
-         * @returns An List that contains the concatenated elements
-         * of the two input sequences.
-         */
         
-        /**
-         * Applies an accumulator function over a sequence.
-         * @param func An accumulator function to be invoked on each element.
-         * @returns The final accumulator value.
-         */
         aggregate(func: (av: T, e: T) => T): T;
         aggregate2(seed: T, func: (av: T, e: T) => T): T;
         count2(selector?: (value: T) => boolean, __this?: any): number;
-        /** Invokes a transform function on each element of a sequence and returns the maximum value.
-         * @param selector A transform function to apply to each element.
-         * @returns The maximum value in the sequence.
-         */
         max<S>(selector?: (value: T) => S): S;
-        /** Invokes a transform function on each element of a sequence and returns the minimum value.
-         * @parm selector A transform function to apply to each element.
-         * @returns The minimum value in the sequence.
-         */
         min<S>(selector?: (value: T) => S): S;
-        /** Computes the sum of the sequence of System.Decimal values that are obtained by
-         * invoking a transform function on each element of the input sequence.
-         * @param selector A transform function to apply to each element.
-         * @returns The sum of the projected values.
-         */
         sum(selector?: (value: T) => number): number;
         all(predicate?: (value: T) => boolean, __this?: any): boolean;
-        /** Determines whether any element of a sequence satisfies a condition.
-         * @param predicate A function to test each element for a condition.
-         * @returns true if any elements in the source sequence pass the test in the specified predicate; otherwise, false.
-         */
         any(predicate?: (value: T) => boolean, __this?: any): boolean;
-        /** Determines whether an element is in the List.
-         * @param item The object to locate in the List. The value can be null for reference types.
-         * @returns true if item is found in the List otherwise, false.
-         */
         contains(item: T): boolean;
         
         take(count: number): List<T>;
         defaultIfEmpty(): List<T>;
-        /** Returns distinct elements from a sequence by using the default equality comparer to compare values.
-         * @returns An List that contains distinct elements from the source sequence.
-         */
         distinct(): List<T>;
         except(second: List<T>): List<T>;
         union(second: List<T>): List<T>;
         first(selector?: (value: T) => boolean, __this?: any): T;
-        /** Returns the first element of the sequence that satisfies a condition or a default value if no such element is found.
-         * @param predicate A function to test each element for a condition.
-         * @returns if source is empty or if no element passes the test specified by predicate;
-         * otherwise, the first element in source that passes the test specified by predicate.
-         */
         firstOrDefault(predicate?: (value: T) => boolean): T;
         lastOrDefault(): T;
         whereEqualsTo(values1: any, values2: any): List<any[]>;
@@ -339,21 +466,13 @@ declare namespace Stimulsoft.System.Collections {
         private indexObject;
         get(key: any): any;
         set(key: any, value: any): void;
-        /** Adds an element with the specified key and value into the Hashtable. */
         add(key: any, value: any): void;
-        /** Determines whether the Hashtable contains a specific key. */
         contains(key: any): boolean;
-        /** Determines whether the Hashtable contains a specific key. */
         containsKey(key: any): boolean;
-        /** Determines whether the Hashtable contains a specific value. */
         containsValue(value: any): boolean;
-        /** Removes the element with the specified key from the Hashtable. */
         remove(key: any): void;
-        /** Removes all elements from the Hashtable. */
         clear(): void;
-        /** Copies the Hashtable elements to a one-dimensional Array instance at the specified index. */
         copyTo(array: any[], arrayIndex: number): void;
-        /** Gets the number of key/value pairs contained in the Hashtable. */
         get count(): number;
         clone(): Hashtable;
     }
@@ -578,128 +697,27 @@ declare namespace Stimulsoft.System.Crypt {
 }
 declare namespace Stimulsoft.System.Crypt {
     class SHA2 {
-        /**
-         * Hash values for SHA-224 (first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19).
-         */
         private static HASH_224;
-        /**
-         * Hash values for SHA-256 (first 32 bits of the fractional parts of the square roots of the first 8 primes 2..19).
-         */
         private static HASH_256;
-        /**
-         * Hash values for SHA-384 (64 bit fractional part of the square roots of the first 8 primes 2..19).
-         */
         private static HASH_384;
-        /**
-         * Hash values for SHA-512 (64 bit fractional part of the square roots of the first 8 primes 2..19).
-         */
         private static HASH_512;
-        /**
-         * Hash values for SHA-512/224 (64 bit fractional part of the square roots of the first 8 primes 2..19).
-         */
         private static HASH_512_224;
-        /**
-         * Hash values for SHA-512/256 (64 bit fractional part of the square roots of the first 8 primes 2..19).
-         */
         private static HASH_512_256;
-        /**
-         * SHA-256 round constants (first 32 bits of the fractional parts of the cube roots of the first 64 primes 2..311).
-         */
         private static ROUNDS_256;
-        /**
-         * SHA-512 round constants (first 64 bits of the fractional parts of the cube roots of the first 80 primes 2..409).
-         */
         private static ROUNDS_512;
-        /**
-         * Contains the hex digits.
-         */
         private static HEX_DIGITS;
-        /**
-         * Right-rotate a byte with the specified number of shifts.
-         * @param nValue Specifies the byte value.
-         * @param nShifts Specifies the number of shifts.
-         * @returns Returns the rotated value.
-         */
         private rotate;
-        /**
-         * Calculates the sigma.
-         * @param nValue Specifies the value.
-         * @param nA Specifies the number of shifts for the first rotation.
-         * @param nB Specifies the number of shifts for the second rotation.
-         * @param nC Specifies the right shift.
-         * @returns Returns the sigma.
-         */
         private sigma;
-        /**
-         * Calculates the sum.
-         * @param pWords Reference to the words.
-         * @param nIndex Specifies the index.
-         * @returns Returns the sum.
-         */
         private sum;
-        /**
-         * Aggregates two inputs.
-         * @param nA Input A.
-         * @param nB Input B.
-         * @returns Returns the aggregated value.
-         */
         private aggregate;
-        /**
-         * Conglomerates inputs to the buffer.
-         * @param pBuffer Reference to the buffer.
-         * @param nOffset Specifies the buffer offset.
-         * @param pInputs Specifies the inputs.
-         */
         private conglomerate;
-        /**
-         * Compress the specified buffer to the hash.
-         * @param pHash Reference to the hash data.
-         * @param pBuffer Reference to the buffer data.
-         */
         private compress;
-        /**
-         * Hashes the supplied string data using SHA-256 or SHA-512.
-         * @param sData Specifies the data to hash.
-         * @param bHash512 Specifies if SHA-512 instead of SHA-256 should be used.
-         * @param nBits Specifies the number of bits of the digests.
-         * @returns Returns the hash string.
-         */
         private hash;
-        /**
-         * Hashes the supplied string data using SHA2-224.
-         * @param sData Specifies the data to hash.
-         * @returns Returns the hash string.
-         */
         SHA2_224(sData: string): string;
-        /**
-         * Hashes the supplied string data using SHA2-256.
-         * @param sData Specifies the data to hash.
-         * @returns Returns the hash string.
-         */
         SHA2_256(sData: string | number[]): string | number[];
-        /**
-         * Hashes the supplied string data using SHA2-384.
-         * @param sData Specifies the data to hash.
-         * @returns Returns the hash string.
-         */
         SHA2_384(sData: string | number[]): string | number[];
-        /**
-         * Hashes the supplied string data using SHA2-512.
-         * @param sData Specifies the data to hash.
-         * @returns Returns the hash string.
-         */
         SHA2_512(sData: string | number[]): string | number[];
-        /**
-         * Hashes the supplied string data using SHA2-512/224.
-         * @param sData Specifies the data to hash.
-         * @returns Returns the hash string.
-         */
         SHA2_512_224(sData: string): string;
-        /**
-         * Hashes the supplied string data using SHA2-512/256.
-         * @param sData Specifies the data to hash.
-         * @returns Returns the hash string.
-         */
         SHA2_512_256(sData: string): string;
         static SHA256(sData: number[]): number[];
     }
@@ -717,34 +735,19 @@ declare namespace Stimulsoft.System.Crypt {
         constructor();
     }
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary.aesjs.ModeOfOperation {
-    /**
-     * @hidden
-     */
     class cbc {
         encrypt(data: number[]): Uint8Array | number[];
         decrypt(data: number[]): Uint8Array | number[];
         constructor(key: number[], iv: number[]);
     }
-    /**
-     * @hidden
-     */
     class ecb {
         encrypt(data: number[]): Uint8Array | number[];
         decrypt(data: number[]): Uint8Array | number[];
         constructor(key: number[]);
     }
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary.aesjs.padding.pkcs7 {
-    /**
-     * @hidden
-     */
     class pad extends Array {
         constructor(forEncrypt: number[]);
     }
@@ -862,13 +865,9 @@ declare namespace Stimulsoft.System.Data {
         gett(column: any): any;
         sett(column: any, value: any): void;
         get itemArray(): any[];
-        /** Get DataRow value by column identificator */
         getValue(column: any): any;
-        /** Set DataRow value by column identificator */
         setValue(column: any, value: any): void;
-        /** Get DataRow value by column index */
         getValueByIndex(columnIndex: number): any;
-        /** Set DataRow value by column index */
         setValueByIndex(columnIndex: number, value: any): void;
         getDataColumn(columnName: string): DataColumn;
         getChildRows(relationName: string): any[];
@@ -958,6 +957,10 @@ declare namespace Stimulsoft.System.Data {
         tables: DataTableCollection;
         relations: DataRelationCollection;
         enforceConstraints: boolean;
+        private _tryParseDateTime;
+        get tryParseDateTime(): boolean;
+        set tryParseDateTime(value: boolean);
+        static tryParseDateTime: boolean;
         dispose(): void;
         private correctJsonString;
         private correctJson;
@@ -972,27 +975,17 @@ declare namespace Stimulsoft.System.Data {
         private processTable;
         private processArray;
         private fillDataSet;
-        /** Заполняем структуру всех таблиц из xml-файла */
         private fillDataTables;
         private fillDataTable;
-        /** Создаём структуру колонок таблицы из xml-файла */
         private getDataColumnsFromTable;
-        /** Создаём и заполняем таблицу и все вложенные таблицы данными */
         private fillTable;
-        /** Создаём и заполняем текущую строку данных таблицы */
         private fillRow;
         private parseSchema;
-        /** Читаем все таблицы и связи из xsd-схемы */
         private getDataTables;
-        /** Вычисление типа данных для хранилища DataColumn */
         private getStorageType;
-        /** Читаем все колонки для текущей таблицы из xsd-схемы */
         private getDataColumns;
-        /** Читаем все связи таблиц */
         private getRelations;
-        /** Ищем нужную таблицу по её имени */
         private findTable;
-        /** Ищем колонки в таблице по заданным именам */
         private findColumn;
         constructor(dataSetName?: string);
     }
@@ -1010,7 +1003,6 @@ declare namespace Stimulsoft.System.Data {
     class DataTable {
         private needCleanCache;
         private _index;
-        /** Cache for DataKey.GetRows method */
         get index(): any[];
         columns: DataColumnCollection;
         rows: DataRowCollection;
@@ -1029,13 +1021,6 @@ declare namespace Stimulsoft.System.Data {
         clone(): DataTable;
         copy(): DataTable;
         toList(): List<DataColumn>;
-        /** Finds and updates a specific row. If no matching row is found, a new row is created
-         * using the given values.
-         * @param values An array of values used to create the new row.
-         * @returns The new DataRow.
-         * @throws The array is larger than the number of columns in the table.
-         * @throws A value doesn't match its respective column type.
-         */
         loadDataRow(values: any[], acceptChanges?: boolean): DataRow;
         constructor(tableName?: string);
     }
@@ -1129,170 +1114,35 @@ declare namespace Stimulsoft.System.Data {
 }
 declare namespace Stimulsoft.System.Globalization {
     enum UnicodeCategory {
-        /**
-         * Uppercase letter. Signified by the Unicode designation "Lu" (letter, uppercase).
-         * The value is 0.
-         */
         UppercaseLetter = 0,
-        /**
-         * Lowercase letter. Signified by the Unicode designation "Ll" (letter, lowercase).
-         * The value is 1.
-         */
         LowercaseLetter = 1,
-        /**
-         * Titlecase letter. Signified by the Unicode designation "Lt" (letter, titlecase).
-         * The value is 2.
-         */
         TitlecaseLetter = 2,
-        /**
-         * Modifier letter character, which is free-standing spacing character that
-         * indicates modifications of a preceding letter. Signified by the Unicode designation
-         * "Lm" (letter, modifier). The value is 3.
-         */
         ModifierLetter = 3,
-        /**
-         * Letter that is not an uppercase letter, a lowercase letter, a titlecase letter,
-         * or a modifier letter. Signified by the Unicode designation "Lo" (letter,
-         * other). The value is 4.
-         */
         OtherLetter = 4,
-        /**
-         * Nonspacing character that indicates modifications of a base character. Signified
-         * by the Unicode designation "Mn" (mark, nonspacing). The value is 5.
-         */
         NonSpacingMark = 5,
-        /**
-         * Spacing character that indicates modifications of a base character and affects
-         * the width of the glyph for that base character. Signified by the Unicode
-         * designation "Mc" (mark, spacing combining). The value is 6.
-         */
         SpacingCombiningMark = 6,
-        /**
-         * Enclosing mark character, which is a nonspacing combining character that
-         * surrounds all previous characters up to and including a base character. Signified
-         * by the Unicode designation "Me" (mark, enclosing). The value is 7.
-         */
         EnclosingMark = 7,
-        /**
-         * Decimal digit character, that is, a character in the range 0 through 9. Signified
-         * by the Unicode designation "Nd" (number, decimal digit). The value is 8.
-         */
         DecimalDigitNumber = 8,
-        /**
-         * Number represented by a letter, instead of a decimal digit, for example,
-         * the Roman numeral for five, which is "V". The indicator is signified by the
-         * Unicode designation "Nl" (number, letter). The value is 9.
-         */
         LetterNumber = 9,
-        /**
-         * Number that is neither a decimal digit nor a letter number, for example,
-         * the fraction 1/2. The indicator is signified by the Unicode designation "No"
-         * (number, other). The value is 10.
-         */
         OtherNumber = 10,
-        /**
-         * Space character, which has no glyph but is not a control or format character.
-         * Signified by the Unicode designation "Zs" (separator, space). The value is 11.
-         */
         SpaceSeparator = 11,
-        /**
-         * Character that is used to separate lines of text. Signified by the Unicode
-         * designation "Zl" (separator, line). The value is 12.
-         */
         LineSeparator = 12,
-        /**
-         * Character used to separate paragraphs. Signified by the Unicode designation
-         * "Zp" (separator, paragraph). The value is 13.
-         */
         ParagraphSeparator = 13,
-        /**
-         * Control code character, with a Unicode value of U+007F or in the range U+0000
-         * through U+001F or U+0080 through U+009F. Signified by the Unicode designation
-         * "Cc" (other, control). The value is 14.
-         */
         Control = 14,
-        /**
-         * Format character that affects the layout of text or the operation of text
-         * processes, but is not normally rendered. Signified by the Unicode designation
-         * "Cf" (other, format). The value is 15.
-         */
         Format = 15,
-        /**
-         * High surrogate or a low surrogate character. Surrogate code values are in
-         * the range U+D800 through U+DFFF. Signified by the Unicode designation "Cs"
-         * (other, surrogate). The value is 16.
-         */
         Surrogate = 16,
-        /**
-         * Private-use character, with a Unicode value in the range U+E000 through U+F8FF.
-         * Signified by the Unicode designation "Co" (other, private use). The value is 17.
-         */
         PrivateUse = 17,
-        /**
-         * Connector punctuation character that connects two characters. Signified by
-         * the Unicode designation "Pc" (punctuation, connector). The value is 18.
-         */
         ConnectorPunctuation = 18,
-        /**
-         * Dash or hyphen character. Signified by the Unicode designation "Pd" (punctuation,
-         * dash). The value is 19.
-         */
         DashPunctuation = 19,
-        /**
-         * Opening character of one of the paired punctuation marks, such as parentheses,
-         * square brackets, and braces. Signified by the Unicode designation "Ps" (punctuation,
-         * open). The value is 20.
-         */
         OpenPunctuation = 20,
-        /**
-         * Closing character of one of the paired punctuation marks, such as parentheses,
-         * square brackets, and braces. Signified by the Unicode designation "Pe" (punctuation,
-         * close). The value is 21.
-         */
         ClosePunctuation = 21,
-        /**
-         * Opening or initial quotation mark character. Signified by the Unicode designation
-         * "Pi" (punctuation, initial quote). The value is 22.
-         */
         InitialQuotePunctuation = 22,
-        /**
-         * Closing or final quotation mark character. Signified by the Unicode designation
-         * "Pf" (punctuation, final quote). The value is 23.
-         */
         FinalQuotePunctuation = 23,
-        /**
-         * Punctuation character that is not a connector, a dash, open punctuation,
-         * close punctuation, an initial quote, or a final quote. Signified by the Unicode
-         * designation "Po" (punctuation, other). The value is 24.
-         */
         OtherPunctuation = 24,
-        /**
-         * Mathematical symbol character, such as "+" or "= ". Signified by the Unicode
-         * designation "Sm" (symbol, math). The value is 25.
-         */
         MathSymbol = 25,
-        /**
-         * Currency symbol character. Signified by the Unicode designation "Sc" (symbol,
-         * currency). The value is 26.
-         */
         CurrencySymbol = 26,
-        /**
-         * Modifier symbol character, which indicates modifications of surrounding characters.
-         * For example, the fraction slash indicates that the number to the left is
-         * the numerator and the number to the right is the denominator. The indicator
-         * is signified by the Unicode designation "Sk" (symbol, modifier). The value is 27.
-         */
         ModifierSymbol = 27,
-        /**
-         * Symbol character that is not a mathematical symbol, a currency symbol or
-         * a modifier symbol. Signified by the Unicode designation "So" (symbol, other).
-         * The value is 28.
-         */
         OtherSymbol = 28,
-        /**
-         * Character that is not assigned to any Unicode category. Signified by the
-         * Unicode designation "Cn" (other, not assigned). The value is 29.
-         */
         OtherNotAssigned = 29
     }
 }
@@ -1380,163 +1230,61 @@ declare namespace Stimulsoft.System.Drawing.Drawing2D {
 }
 declare namespace Stimulsoft.System.Drawing.Drawing2D {
     enum HatchStyle {
-        /** Specifies hatch style Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Horizontal. */
         Min = 0,
-        /** A pattern of horizontal lines. */
         Horizontal = 0,
-        /** A pattern of vertical lines. */
         Vertical = 1,
-        /** A pattern of lines on a diagonal from upper left to lower right. */
         ForwardDiagonal = 2,
-        /** A pattern of lines on a diagonal from upper right to lower left. */
         BackwardDiagonal = 3,
-        /** Specifies hatch style Stimulsoft.System.Drawing.Drawing2D.HatchStyle.SolidDiamond. */
         Max = 4,
-        /** Specifies horizontal and vertical lines that cross. */
         Cross = 4,
-        /** Specifies the hatch style Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Cross. */
         LargeGrid = 4,
-        /** A pattern of crisscross diagonal lines. */
         DiagonalCross = 5,
-        /** Specifies a 5-percent hatch. The ratio of foreground color to background color is 5:95. */
         Percent05 = 6,
-        /** Specifies a 10-percent hatch. The ratio of foreground color to background color is 10:90. */
         Percent10 = 7,
-        /** Specifies a 20-percent hatch. The ratio of foreground color to background color is 20:80. */
         Percent20 = 8,
-        /** Specifies a 25-percent hatch. The ratio of foreground color to background color is 25:75. */
         Percent25 = 9,
-        /** Specifies a 30-percent hatch. The ratio of foreground color to background color is 30:70. */
         Percent30 = 10,
-        /** Specifies a 40-percent hatch. The ratio of foreground color to background color is 40:60. */
         Percent40 = 11,
-        /** Specifies a 50-percent hatch. The ratio of foreground color to background color is 50:50. */
         Percent50 = 12,
-        /** Specifies a 60-percent hatch. The ratio of foreground color to background color is 60:40. */
         Percent60 = 13,
-        /** Specifies a 70-percent hatch. The ratio of foreground color to background color is 70:30. */
         Percent70 = 14,
-        /** Specifies a 75-percent hatch. The ratio of foreground color to background color is 75:25. */
         Percent75 = 15,
-        /** Specifies a 80-percent hatch. The ratio of foreground color to background color is 80:100. */
         Percent80 = 16,
-        /** Specifies a 90-percent hatch. The ratio of foreground color to background color is 90:10. */
         Percent90 = 17,
-        /**
-         * Specifies diagonal lines that slant to the right from top points to bottom
-         * points and are spaced 50 percent closer together than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.ForwardDiagonal,
-         * but are not antialiased.
-         */
         LightDownwardDiagonal = 18,
-        /**
-         * Specifies diagonal lines that slant to the left from top points to bottom
-         * points and are spaced 50 percent closer together than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.BackwardDiagonal,
-         * but they are not antialiased.
-         */
         LightUpwardDiagonal = 19,
-        /**
-         * Specifies diagonal lines that slant to the right from top points to bottom
-         * points, are spaced 50 percent closer together than, and are twice the width
-         * of Stimulsoft.System.Drawing.Drawing2D.HatchStyle.ForwardDiagonal. This hatch pattern
-         * is not antialiased.
-         */
         DarkDownwardDiagonal = 20,
-        /**
-         * Specifies diagonal lines that slant to the left from top points to bottom
-         * points, are spaced 50 percent closer together than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.BackwardDiagonal,
-         * and are twice its width, but the lines are not antialiased.
-         */
         DarkUpwardDiagonal = 21,
-        /**
-         * Specifies diagonal lines that slant to the right from top points to bottom
-         * points, have the same spacing as hatch style Stimulsoft.System.Drawing.Drawing2D.HatchStyle.ForwardDiagonal,
-         * and are triple its width, but are not antialiased.
-         */
         WideDownwardDiagonal = 22,
-        /**
-         * Specifies diagonal lines that slant to the left from top points to bottom
-         * points, have the same spacing as hatch style Stimulsoft.System.Drawing.Drawing2D.HatchStyle.BackwardDiagonal,
-         * and are triple its width, but are not antialiased.
-         */
         WideUpwardDiagonal = 23,
-        /** Specifies vertical lines that are spaced 50 percent closer together than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Vertical. */
         LightVertical = 24,
-        /** Specifies horizontal lines that are spaced 50 percent closer together than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Horizontal. */
         LightHorizontal = 25,
-        /**
-         * Specifies vertical lines that are spaced 75 percent closer together than
-         * hatch style Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Vertical (or 25 percent closer
-         * together than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.LightVertical).
-         */
         NarrowVertical = 26,
-        /**
-         * Specifies horizontal lines that are spaced 75 percent closer together than
-         * hatch style Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Horizontal (or 25 percent
-         * closer together than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.LightHorizontal).
-         */
         NarrowHorizontal = 27,
-        /** Specifies vertical lines that are spaced 50 percent closer together than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Vertical and are twice its width. */
         DarkVertical = 28,
-        /**
-         * Specifies horizontal lines that are spaced 50 percent closer together than
-         * Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Horizontal and are twice the width of
-         * Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Horizontal.
-         */
         DarkHorizontal = 29,
-        /** Specifies dashed diagonal lines, that slant to the right from top points to bottom points. */
         DashedDownwardDiagonal = 30,
-        /** Specifies dashed diagonal lines, that slant to the left from top points to bottom points. */
         DashedUpwardDiagonal = 31,
-        /** Specifies dashed horizontal lines. */
         DashedHorizontal = 32,
-        /** Specifies dashed vertical lines. */
         DashedVertical = 33,
-        /** Specifies a hatch that has the appearance of confetti. */
         SmallConfetti = 34,
-        /**
-         * Specifies a hatch that has the appearance of confetti, and is composed of
-         * larger pieces than Stimulsoft.System.Drawing.Drawing2D.HatchStyle.SmallConfetti.
-         */
         LargeConfetti = 35,
-        /** Specifies horizontal lines that are composed of zigzags. */
         ZigZag = 36,
-        /** Specifies horizontal lines that are composed of tildes. */
         Wave = 37,
-        /** Specifies a hatch that has the appearance of layered bricks that slant to the left from top points to bottom points. */
         DiagonalBrick = 38,
-        /** Specifies a hatch that has the appearance of horizontally layered bricks. */
         HorizontalBrick = 39,
-        /** Specifies a hatch that has the appearance of a woven material. */
         Weave = 40,
-        /** Specifies a hatch that has the appearance of a plaid material. */
         Plaid = 41,
-        /** Specifies a hatch that has the appearance of divots. */
         Divot = 42,
-        /** Specifies horizontal and vertical lines, each of which is composed of dots, that cross. */
         DottedGrid = 43,
-        /** Specifies forward diagonal and backward diagonal lines, each of which is composed of dots, that cross. */
         DottedDiamond = 44,
-        /** Specifies a hatch that has the appearance of diagonally layered shingles that slant to the right from top points to bottom points. */
         Shingle = 45,
-        /** Specifies a hatch that has the appearance of a trellis. */
         Trellis = 46,
-        /** Specifies a hatch that has the appearance of spheres laid adjacent to one another. */
         Sphere = 47,
-        /**
-         * Specifies horizontal and vertical lines that cross and are spaced 50 percent
-         * closer together than hatch style Stimulsoft.System.Drawing.Drawing2D.HatchStyle.Cross.
-         */
         SmallGrid = 48,
-        /** Specifies a hatch that has the appearance of a checkerboard. */
         SmallCheckerBoard = 49,
-        /**
-         * Specifies a hatch that has the appearance of a checkerboard with squares
-         * that are twice the size of Stimulsoft.System.Drawing.Drawing2D.HatchStyle.SmallCheckerBoard.
-         */
         LargeCheckerBoard = 50,
-        /** Specifies forward diagonal and backward diagonal lines that cross but are not antialiased. */
         OutlinedDiamond = 51,
-        /** Specifies a hatch that has the appearance of a checkerboard placed diagonally. */
         SolidDiamond = 52
     }
 }
@@ -2152,7 +1900,6 @@ declare namespace Stimulsoft.System.Drawing {
 }
 declare namespace Stimulsoft.System.Drawing {
     class Font implements ICloneable {
-        /** Creates a new object that is a copy of the current instance. */
         clone(cloneProperties?: boolean, cloneComponents?: boolean): any;
         private _fontFamily;
         get fontFamily(): FontFamily;
@@ -2414,129 +2161,9 @@ declare namespace Stimulsoft.System.Globalization {
 }
 declare namespace Stimulsoft.System.Globalization {
     enum CalendarWeekRule {
-        /**
-         *  Indicates that the first week of the year starts on the first day of the year and ends before the following designated first day of the week. The value is 0.
-         */
         FirstDay = 0,
-        /**
-         * Indicates that the first week of the year begins on the first occurrence of the designated first day of the week on or after the first day of the year. The value is 1.
-         */
         FirstFullWeek = 1,
-        /**
-         * Indicates that the first week of the year is the first week with four or more days before the designated first day of the week. The value is 2.
-         */
         FirstFourDayWeek = 2
-    }
-}
-declare namespace Stimulsoft.System {
-    /**
-     * @hidden
-     */
-    class NodeJs {
-        private static isInitialize;
-        static initialize(onResult?: Function): void;
-        private static convert;
-        static platform(): any;
-        static callRemoteApi(command: any, timeout: number): StiPromise<string>;
-        private static processFirebird;
-        private static processMsSql;
-        private static processMySql;
-        private static processPostgreSQL;
-        static stripBom(data: any): any;
-        static getFile(filePath: string, binary?: boolean, contentType?: string): any;
-        static getFileHttp(filePath: string, binary?: boolean, contentType?: string): any;
-        static saveAs(data: any, fileName: string, type?: string): any;
-        static saveFile(filePath: string, fileData: string): void;
-        static getFilesNames(filesPath: string): string[];
-        static getSep(): string;
-        private static fromBase64String;
-        private static fromBase64StringText;
-        private static toBase64String;
-        private static fromUnicodeString;
-        private static _isNodeJs;
-        static isNodeJs(): boolean;
-        static isStandaloneVersion: boolean;
-        static useWebKit: boolean;
-        static consoleLog: boolean;
-        private static fillInfo;
-        static localizationPath: string;
-        private static getLocalizationInfo;
-        private static getSetting;
-        private static setSetting;
-    }
-}
-declare namespace Stimulsoft.System.Globalization {
-    class TextInfo {
-        toTitleCase(str: string): string;
-    }
-}
-declare namespace Stimulsoft.System.Globalization {
-    import IFormatProvider = System.IFormatProvider;
-    import Type = Stimulsoft.System.Type;
-    class NumberFormatInfo implements IFormatProvider {
-        numberDecimalSeparator: string;
-        numberDecimalDigits: number;
-        numberGroupSeparator: string;
-        numberGroupSizes: number[];
-        numberNegativePattern: number;
-        currencyDecimalDigits: number;
-        currencyDecimalSeparator: string;
-        currencyGroupSeparator: string;
-        currencyGroupSizes: number[];
-        currencyNegativePattern: number;
-        currencyPositivePattern: number;
-        currencySymbol: string;
-        percentDecimalDigits: number;
-        percentDecimalSeparator: string;
-        percentGroupSeparator: string;
-        percentGroupSizes: number[];
-        percentNegativePattern: number;
-        percentPositivePattern: number;
-        percentSymbol: string;
-        perMilleSymbol: string;
-        positiveInfinitySymbol: string;
-        positiveSign: string;
-        NaNSymbol: string;
-        negativeInfinitySymbol: string;
-        negativeSign: string;
-        getFormat(formatType: Type): any;
-        constructor(numberDecimalSeparator?: string, numberDecimalDigits?: number, numberGroupSeparator?: string, numberGroupSizes?: number[], numberNegativePattern?: number, currencyDecimalDigits?: number, currencyDecimalSeparator?: string, currencyGroupSeparator?: string, currencyGroupSizes?: number[], currencyNegativePattern?: number, currencyPositivePattern?: number, currencySymbol?: string, percentDecimalDigits?: number, percentDecimalSeparator?: string, percentGroupSeparator?: string, percentGroupSizes?: number[], percentNegativePattern?: number, percentPositivePattern?: number, percentSymbol?: string, perMilleSymbol?: string, positiveInfinitySymbol?: string, positiveSign?: string, NaNSymbol?: string, negativeInfinitySymbol?: string, negativeSign?: string);
-    }
-}
-declare namespace Stimulsoft.System.Globalization {
-    class DateTimeFormatInfo {
-        shortDatePattern: string;
-        dateSeparator: string;
-        longDatePattern: string;
-        dayNames: string[];
-        monthNames: string[];
-        shortestDayNames: string[];
-        abbreviatedMonthNames: string[];
-        monthGenitiveNames: string[];
-        timeSeparator: string;
-        AMDesignator: string;
-        PMDesignator: string;
-        fullDateTimePattern: string;
-        shortTimePattern: string;
-        longTimePattern: string;
-        yearMonthPattern: string;
-        constructor(shortDatePattern: string, dateSeparator: string, longDatePattern: string, dayNames: string[], monthNames: string[], shortestDayNames: string[], abbreviatedMonthNames: string[], monthGenitiveNames: string[], timeSeparator: string, AMDesignator: string, PMDesignator: string, fullDateTimePattern: string, shortTimePattern: string, longTimePattern: string, yearMonthPattern: string);
-    }
-}
-declare namespace Stimulsoft.System.Globalization {
-    class CultureInfo {
-        numberFormat: NumberFormatInfo;
-        dateTimeFormat: DateTimeFormatInfo;
-        name: string;
-        textInfo: TextInfo;
-        private static _cultures;
-        private static _currentCulture;
-        static get currentCulture(): CultureInfo;
-        static set currentCulture(val: CultureInfo);
-        static get cultures(): any;
-        static get InvariantCulture(): CultureInfo;
-        static getCultureInfo(name: string): CultureInfo;
-        constructor(name: string, numberFormat?: NumberFormatInfo, dateTimeFormat?: DateTimeFormatInfo);
     }
 }
 declare namespace Stimulsoft.System.Globalization {
@@ -2550,19 +2177,18 @@ declare namespace Stimulsoft.System.Globalization {
     }
 }
 declare namespace Stimulsoft.System.IO {
-    /** Provides the fields that represent reference points in streams for seeking. */
     enum SeekOrigin {
-        /** Specifies the beginning of a stream. */
         Begin = 0,
-        /** Specifies the current position within a stream. */
         Current = 1,
-        /** Specifies the end of a stream. */
         End = 2
     }
 }
 declare namespace Stimulsoft.System.IO {
     class File {
-        static getFile(filePath: string, binary?: boolean, contentType?: string): any;
+        static getFile(filePath: string, binary?: boolean, contentType?: string, headers?: {
+            key: string;
+            value: string;
+        }[]): any;
         static getFileAsync(callback: Function, filePath: string, binary?: boolean, contentType?: string): void;
         static saveFile(filePath: string, fileData: string): void;
         static getFilesNames(filePath: string): string[];
@@ -2570,7 +2196,10 @@ declare namespace Stimulsoft.System.IO {
 }
 declare namespace Stimulsoft.System.IO {
     class Http {
-        static getFile(filePath: string, binary?: boolean, contentType?: string): any;
+        static getFile(filePath: string, binary?: boolean, contentType?: string, headers?: {
+            key: string;
+            value: string;
+        }[]): any;
         static getFileAsync(callback: Function, filePath: string, binary?: boolean, contentType?: string): void;
     }
 }
@@ -2950,21 +2579,9 @@ declare namespace Stimulsoft.System {
         static createInstance(type: Type): any;
     }
 }
-/**
- * @hidden
- */
 declare function __default<T>(type: Stimulsoft.System.Type): T;
-/**
- * @hidden
- */
 declare var _default: typeof __default;
-/**
- * @hidden
- */
 declare var window: Window & typeof globalThis;
-/**
- * @hidden
- */
 
 interface Array<T> {
     stimulsoft: Stimulsoft.System.StiArray;
@@ -3046,98 +2663,6 @@ declare namespace Stimulsoft.System {
         static fromBase64StringText(input: string): string;
         static fromUTF16LE(input: string | number[]): number[];
         static isUTF16LE(input: string | number[] | Uint8Array): boolean;
-    }
-}
-declare namespace Stimulsoft.System {
-    class DateTime {
-        private static ticksPerMillisecond;
-        private static ticksPerSecond;
-        private static ticksPerMinute;
-        private static ticksPerHour;
-        private static ticksPerDay;
-        private static millisPerSecond;
-        private static millisPerMinute;
-        private static millisPerHour;
-        private static millisPerDay;
-        private static daysPerYear;
-        private static daysPer4Years;
-        private static daysPer100Years;
-        private static daysPer400Years;
-        private static daysTo1601;
-        private static daysTo1899;
-        private static daysTo10000;
-        private static minTicks;
-        private static maxTicks;
-        private static maxMillis;
-        private static fileTimeOffset;
-        private static doubleDateOffset;
-        private static oADateMinAsTicks;
-        private static oADateMinAsDouble;
-        private static oADateMaxAsDouble;
-        private static datePartYear;
-        private static datePartDayOfYear;
-        private static datePartMonth;
-        private static DatePartDay;
-        private static daysToMonth365;
-        private static daysToMonth366;
-        static minValue: DateTime;
-        static maxValue: DateTime;
-        static getNetTypeName(): string;
-        private innerDate;
-        get year(): number;
-        get month(): number;
-        get monthName(): string;
-        get monthGenitiveName(): string;
-        get monthShortName(): string;
-        get day(): number;
-        /** 0 – Sunday, 1 – Monday etc */
-        get dayOfWeek(): DayOfWeek;
-        get dayName(): string;
-        get dayShortName(): string;
-        get hour(): number;
-        get minute(): number;
-        get second(): number;
-        get millisecond(): number;
-        get ticks(): number;
-        get dayOfYear(): number;
-        toShortDateString(): string;
-        static get now(): DateTime;
-        static get today(): DateTime;
-        static isLeapYear(year: number): boolean;
-        /** The month number ranging from 1 to 12. JS calculate month from 0. This will even work for December. */
-        static daysInMonth(year: number, month: number): number;
-        static compare(t1: DateTime, t2: DateTime): number;
-        private static doubleDateToTicks;
-        private static ticksToOADate;
-        static ticksNetToTicksJs(ticks: number): number;
-        negate(): DateTime;
-        addYears(value: number): DateTime;
-        addMonths(value: number): DateTime;
-        addDays(value: number): DateTime;
-        addHours(value: number): DateTime;
-        addMinutes(value: number): DateTime;
-        addSeconds(value: number): DateTime;
-        addMilliseconds(value: number): DateTime;
-        addTicks(value: number): DateTime;
-        compareTo(value: DateTime): number;
-        subtract(value: DateTime): TimeSpan;
-        get date(): Date;
-        /** By default date and time is converted into American format. */
-        toString(format?: string): string;
-        toOADate(): number;
-        toOADate2(round: boolean): number;
-        toNetJsonString(): string;
-        static tryParseExact(d: string, format: string): {
-            result: DateTime;
-            successfully: boolean;
-        };
-        static fromNetJsonString(jsonDate: string): DateTime;
-        static fromOADate(oadate: number): DateTime;
-        static fromString(d?: string, logError?: boolean): DateTime;
-        static fromString2(format: string, value: string, logError?: boolean): DateTime;
-        static isISO8601String(d: string): boolean;
-        get timeOfDay(): TimeSpan;
-        constructor(param1: Date | number, month?: number, day?: number, hour?: number, minute?: number, second?: number, millisecond?: number);
     }
 }
 declare namespace Stimulsoft.System {
@@ -3242,22 +2767,10 @@ declare namespace Stimulsoft.System {
         AwayFromZero = 1
     }
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary {
-    /**
-     * @hidden
-     */
     function Moment(inp?: Stimulsoft.ExternalLibrary.Moment.MomentInput, format?: Stimulsoft.ExternalLibrary.Moment.MomentFormatSpecification, strict?: boolean): Stimulsoft.ExternalLibrary.Moment.Moment;
-    /**
-     * @hidden
-     */
     function Moment(inp?: Stimulsoft.ExternalLibrary.Moment.MomentInput, format?: Stimulsoft.ExternalLibrary.Moment.MomentFormatSpecification, language?: string, strict?: boolean): Stimulsoft.ExternalLibrary.Moment.Moment;
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary.Moment {
     type RelativeTimeKey = "s" | "ss" | "m" | "mm" | "h" | "hh" | "d" | "dd" | "M" | "MM" | "y" | "yy";
     type CalendarKey = "sameDay" | "nextDay" | "lastDay" | "nextWeek" | "lastWeek" | "sameElse" | string;
@@ -3404,17 +2917,8 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
         localeData(): Locale;
         toISOString(): string;
         toJSON(): string;
-        /**
-         * @deprecated since version 2.8.0
-         */
         lang(locale: LocaleSpecifier): Moment;
-        /**
-         * @deprecated since version 2.8.0
-         */
         lang(): Locale;
-        /**
-         * @deprecated
-         */
         toIsoString(): string;
     }
     interface MomentRelativeTime {
@@ -3571,28 +3075,16 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
         startOf(unitOfTime: unitOfTime.StartOf): Moment;
         endOf(unitOfTime: unitOfTime.StartOf): Moment;
         add(amount?: DurationInputArg1, unit?: DurationInputArg2): Moment;
-        /**
-         * @deprecated reverse syntax
-         */
         add(unit: unitOfTime.DurationConstructor, amount: number | string): Moment;
         subtract(amount?: DurationInputArg1, unit?: DurationInputArg2): Moment;
-        /**
-         * @deprecated reverse syntax
-         */
         subtract(unit: unitOfTime.DurationConstructor, amount: number | string): Moment;
         calendar(time?: MomentInput, formats?: CalendarSpec): string;
         clone(): Moment;
-        /**
-         * @return Unix timestamp in milliseconds
-         */
         valueOf(): number;
         local(keepLocalTime?: boolean): Moment;
         isLocal(): boolean;
         utc(keepLocalTime?: boolean): Moment;
         isUTC(): boolean;
-        /**
-         * @deprecated use isUTC
-         */
         isUtc(): boolean;
         parseZone(): Moment;
         isValid(): boolean;
@@ -3602,13 +3094,7 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
         parsingFlags(): MomentParsingFlags;
         year(y: number): Moment;
         year(): number;
-        /**
-         * @deprecated use year(y)
-         */
         years(y: number): Moment;
-        /**
-         * @deprecated use year()
-         */
         years(): number;
         quarter(): number;
         quarter(q: number): Moment;
@@ -3616,13 +3102,7 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
         quarters(q: number): Moment;
         month(M: number | string): Moment;
         month(): number;
-        /**
-         * @deprecated use month(M)
-         */
         months(M: number | string): Moment;
-        /**
-         * @deprecated use month()
-         */
         months(): number;
         day(d: number | string): Moment;
         day(): number;
@@ -3630,13 +3110,7 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
         days(): number;
         date(d: number): Moment;
         date(): number;
-        /**
-         * @deprecated use date(d)
-         */
         dates(d: number): Moment;
-        /**
-         * @deprecated use date()
-         */
         dates(): number;
         hour(h: number): Moment;
         hour(): number;
@@ -3686,9 +3160,6 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
         toJSON(): string;
         unix(): number;
         isLeapYear(): boolean;
-        /**
-         * @deprecated in favor of utcOffset
-         */
         zone(): number;
         zone(b: number | string): Moment;
         utcOffset(): number;
@@ -3704,36 +3175,15 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
         isSameOrAfter(inp?: MomentInput, granularity?: unitOfTime.StartOf): boolean;
         isSameOrBefore(inp?: MomentInput, granularity?: unitOfTime.StartOf): boolean;
         isBetween(a: MomentInput, b: MomentInput, granularity?: unitOfTime.StartOf, inclusivity?: "()" | "[)" | "(]" | "[]"): boolean;
-        /**
-         * @deprecated as of 2.8.0, use locale
-         */
         lang(language: LocaleSpecifier): Moment;
-        /**
-         * @deprecated as of 2.8.0, use locale
-         */
         lang(): Locale;
         locale(): string;
         locale(locale: LocaleSpecifier): Moment;
         localeData(): Locale;
-        /**
-         * @deprecated no reliable implementation
-         */
         isDSTShifted(): boolean;
-        /**
-         * @deprecated as of 2.7.0, use moment.min/max
-         */
         max(inp?: MomentInput, format?: MomentFormatSpecification, strict?: boolean): Moment;
-        /**
-         * @deprecated as of 2.7.0, use moment.min/max
-         */
         max(inp?: MomentInput, format?: MomentFormatSpecification, language?: string, strict?: boolean): Moment;
-        /**
-         * @deprecated as of 2.7.0, use moment.min/max
-         */
         min(inp?: MomentInput, format?: MomentFormatSpecification, strict?: boolean): Moment;
-        /**
-         * @deprecated as of 2.7.0, use moment.min/max
-         */
         min(inp?: MomentInput, format?: MomentFormatSpecification, language?: string, strict?: boolean): Moment;
         get(unit: unitOfTime.All): number;
         set(unit: unitOfTime.All, value: number): Moment;
@@ -3749,9 +3199,6 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
     function isMoment(m: any): m is Moment;
     function isDate(m: any): m is Date;
     function isDuration(d: any): d is Duration;
-    /**
-     * @deprecated in 2.8.0
-     */
     function lang(language?: string, definition?: Locale): string;
     function locale(language?: string | string[], definition?: LocaleSpecification | void): string;
     function localeData(key?: string | string[]): Locale;
@@ -3780,9 +3227,6 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
     function min(...moments: Moment[]): Moment;
     function max(moments: Moment[]): Moment;
     function max(...moments: Moment[]): Moment;
-    /**
-     * Returns unix time in milliseconds. Overwrite for profit.
-     */
     function now(): number;
     function defineLocale(language: string, localeSpec: LocaleSpecification | void | any): Locale;
     function updateLocale(language: string, localeSpec: LocaleSpecification | void): Locale;
@@ -3794,9 +3238,6 @@ declare namespace Stimulsoft.ExternalLibrary.Moment {
     function relativeTimeRounding(): (num: number) => number;
     function calendarFormat(m: Moment, now: Moment): string;
     function parseTwoDigitYear(input: string): number;
-    /**
-     * Constant used to enable explicit ISO_8601 format parsing.
-     */
     let ISO_8601: MomentBuiltinFormat;
     var RFC_2822: MomentBuiltinFormat;
     var defaultFormat: string;
@@ -3820,13 +3261,7 @@ interface ObjectConstructor {
     saveAs(data: any, fileName: string, type?: string): any;
     disableAllEnumerable(): void;
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary.Opentype {
-    /**
-     * @hidden
-     */
     function parse(data: any): any;
 }
 declare namespace Stimulsoft.System {
@@ -4354,22 +3789,10 @@ declare namespace Stimulsoft.System {
         static getNetTypeName(): string;
     }
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary.XXH {
-    /**
-     * @hidden
-     */
     function h32(value: string, seed: number): number;
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary.xmldoc {
-    /**
-     * @hidden
-     */
     class XmlDocument {
         constructor(xmlString: string);
     }
@@ -4520,8 +3943,14 @@ declare namespace Stimulsoft.Base {
         constructor(name: string, array: any);
     }
     class StiDataLoaderHelper {
-        static loadMultiple(path: string, fileExt: string, binary: boolean): StiDataLoaderHelperData[];
-        static loadSingle(path: string, binary: boolean): StiDataLoaderHelperData;
+        static loadMultiple(path: string, fileExt: string, binary: boolean, headers: {
+            key: string;
+            value: string;
+        }[]): StiDataLoaderHelperData[];
+        static loadSingle(path: string, binary: boolean, headers: {
+            key: string;
+            value: string;
+        }[]): StiDataLoaderHelperData;
     }
 }
 declare namespace Stimulsoft.Base {
@@ -4710,13 +4139,7 @@ declare namespace Stimulsoft.Base {
         static cache: IStiBIDataCache;
     }
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary.XLSX {
-    /**
-     * @hidden
-     */
     interface IProperties {
         LastAuthor?: string;
         Author?: string;
@@ -4734,9 +4157,6 @@ declare namespace Stimulsoft.ExternalLibrary.XLSX {
         Worksheets?: number;
         SheetNames?: string[];
     }
-    /**
-     * @hidden
-     */
     interface IParsingOptions {
         cellFormula?: boolean;
         cellHTML?: boolean;
@@ -4751,104 +4171,37 @@ declare namespace Stimulsoft.ExternalLibrary.XLSX {
         bookSheets?: boolean;
         bookVBA?: boolean;
         password?: string;
-        /**
-         * Possible options: 'binary', 'base64', 'buffer', 'file'
-         */
         type?: string;
     }
-    /**
-     * @hidden
-     */
     interface IWorkBook {
-        /**
-         * A dictionary of the worksheets in the workbook.
-         * Use SheetNames to reference these.
-         */
         Sheets: {
             [sheet: string]: IWorkSheet;
         };
-        /**
-         * ordered list of the sheet names in the workbook
-         */
         SheetNames: string[];
-        /**
-         * an object storing the standard properties. wb.Custprops stores custom properties.
-         * Since the XLS standard properties deviate from the XLSX standard, XLS parsing stores core properties in both places.
-         */
         Props: IProperties;
     }
-    /**
-     * object representing the worksheet
-     * @hidden
-     */
     interface IWorkSheet {
         [cell: string]: IWorkSheetCell;
     }
-    /**
-     * @hidden
-     */
     interface IWorkSheetCell {
-        /**
-         * The Excel Data Type of the cell.
-         * b Boolean, n Number, e error, s String, d Date
-         */
         t: string;
-        /**
-         * The raw value of the cell.
-         */
         v: string;
-        /**
-         * rich text encoding (if applicable)
-         */
         r?: string;
-        /**
-         * HTML rendering of the rich text (if applicable)
-         */
         h?: string;
-        /**
-         * formatted text (if applicable)
-         */
         w?: string;
-        /**
-         * cell formula (if applicable)
-         */
         f?: string;
-        /**
-         * comments associated with the cell **
-         */
         c?: string;
-        /**
-         * number format string associated with the cell (if requested)
-         */
         z?: string;
-        /**
-         * cell hyperlink object (.Target holds link, .tooltip is tooltip)
-         */
         l?: string;
-        /**
-         * the style/theme of the cell (if applicable)
-         */
         s?: string;
     }
-    /**
-     * @hidden
-     */
     interface IUtils {
         sheet_to_json<T>(worksheet: IWorkSheet): T[];
         sheet_to_csv(worksheet: IWorkSheet): any;
         sheet_to_formulae(worksheet: IWorkSheet): any;
     }
-    /**
-     * @hidden
-     */
     var utils: IUtils;
-    /**
-     * @hidden
-     */
     function readFile(filename: string, opts?: IParsingOptions): IWorkBook;
-    /**
-     * @hidden
-     */
     function read(data: any, opts?: IParsingOptions): IWorkBook;
 }
 declare namespace Stimulsoft.Base.Design {
@@ -4863,128 +4216,38 @@ declare namespace Stimulsoft.Base.Drawing {
         Checked = 2,
         Indeterminate = 3
     }
-    /**
-     *  Actions, which indicate actions in the rectangle.
-     */
     enum StiAction {
-        /**
-         *  No action.
-         */
         None = 0,
-        /**
-         *  Move.
-         */
         Move = 1,
-        /**
-         *  Select.
-         */
         Select = 2,
-        /**
-         *  Left side.
-         */
         SizeLeft = 3,
-        /**
-         *  Right side.
-         */
         SizeRight = 4,
-        /**
-         *  Top side.
-         */
         SizeTop = 5,
-        /**
-         *  Bottom side.
-         */
         SizeBottom = 6,
-        /**
-         *  Left top side.
-         */
         SizeLeftTop = 7,
-        /**
-         *  Left bottom side.
-         */
         SizeLeftBottom = 8,
-        /**
-         *  Right top side.
-         */
         SizeRightTop = 9,
-        /**
-         *  Right bottom side.
-         */
         SizeRightBottom = 10,
-        /**
-         *  Resize columns.
-         */
         ResizeColumns = 11,
-        /**
-         *  Resize rows.
-         */
         ResizeRows = 12,
-        /**
-         *  SelectColumn
-         */
         SelectColumn = 13,
-        /**
-         *  SelectRow
-         */
         SelectRow = 14
     }
-    /**
-     *  Sides of the border.
-     */
     enum StiBorderSides {
-        /**
-         *  No border.
-         */
         None = 0,
-        /**
-         *  Border from all sides.
-         */
         All = 15,
-        /**
-         *  Border on the top.
-         */
         Top = 1,
-        /**
-         *  Border on the left.
-         */
         Left = 2,
-        /**
-         *  Border on the right.
-         */
         Right = 4,
-        /**
-         *  Border on the bottom.
-         */
         Bottom = 8
     }
     enum StiPenStyle {
-        /**
-         *  Solid line.
-         */
         Solid = 0,
-        /**
-         *  Dotted line.
-         */
         Dash = 1,
-        /**
-         *  Dash-dotted line.
-         */
         DashDot = 2,
-        /**
-         *  Dotted-dash-dash line.
-         */
         DashDotDot = 3,
-        /**
-         *  Dotted line.
-         */
         Dot = 4,
-        /**
-         *  Double line.
-         */
         Double = 5,
-        /**
-         *  No.
-         */
         None = 6
     }
     enum StiRotationMode {
@@ -5006,59 +4269,20 @@ declare namespace Stimulsoft.Base.Drawing {
         Left = 16,
         All = 31
     }
-    /**
-     *  Vertical alignment of an object.
-     */
     enum StiVertAlignment {
-        /**
-         *  Align top.
-         */
         Top = 0,
-        /**
-         *  Align center.
-         */
         Center = 1,
-        /**
-         *  Align bottom.
-         */
         Bottom = 2
     }
-    /**
-     *  Horizontal alignment of a text.
-     */
     enum StiTextHorAlignment {
-        /**
-         *  Align left.
-         */
         Left = 0,
-        /**
-         *  Align center.
-         */
         Center = 1,
-        /**
-         *  Align right.
-         */
         Right = 2,
-        /**
-         *  Align width.
-         */
         Width = 3
     }
-    /**
-     *  Horizontal alignment of an object.
-     */
     enum StiHorAlignment {
-        /**
-         *  Align left.
-         */
         Left = 1,
-        /**
-         *  Align center.
-         */
         Center = 2,
-        /**
-         *  Align right.
-         */
         Right = 3
     }
     enum StiTextDockMode {
@@ -5140,7 +4364,6 @@ declare namespace Stimulsoft.Base.Drawing {
     class StiBorder implements ICloneable {
         implements(): string[];
         private bits;
-        /** Creates a new object that is a copy of the current instance. */
         clone(): StiBorder;
         equals(obj: StiBorder | any): boolean;
         getSizeOffset(): number;
@@ -5149,43 +4372,29 @@ declare namespace Stimulsoft.Base.Drawing {
         getSizeIncludingSide(): number;
         draw(g: Graphics, rect: Rectangle, zoom: number, emptyColor?: Color, drawBorderFormatting?: boolean, drawBorderSides?: boolean): void;
         drawBorderShadow(g: Graphics, rect: Rectangle, zoom: number): void;
-        /** Gets value which indicates that top side of border is present. */
         get isTopBorderSidePresent(): boolean;
-        /** Gets value which indicates that bottom side of border is present. */
         get isBottomBorderSidePresent(): boolean;
-        /** Gets value which indicates that left side of border is present. */
         get isLeftBorderSidePresent(): boolean;
-        /** Gets value which indicates that right side of border is present. */
         get isRightBorderSidePresent(): boolean;
-        /** Gets value which indicates that all sides of border is present. */
         get isAllBorderSidesPresent(): boolean;
         private get isDefaultShadowBrush();
-        /** Gets or sets frame borders. */
         get side(): StiBorderSides;
         set side(value: StiBorderSides);
-        /** Gets or sets a border color. */
         get color(): Color;
         set color(value: Color);
-        /** Gets or sets a border size. */
         get size(): number;
         set size(value: number);
-        /** Gets or sets a border style. */
         get style(): StiPenStyle;
         set style(value: StiPenStyle);
         private _shadowBrush;
-        /** Gets or sets the border shadow brush. */
         get shadowBrush(): StiBrush;
         set shadowBrush(value: StiBrush);
-        /** Gets or sets Shadow Size. */
         get shadowSize(): StiPenStyle;
         set shadowSize(value: StiPenStyle);
-        /** Gets or sets value which indicates drop shadow or not. */
         get dropShadow(): boolean;
         set dropShadow(value: boolean);
-        /** Gets or sets value which indicates that border sides will be drawn on top of all components. */
         get topmost(): boolean;
         set topmost(value: boolean);
-        /** Gets value indicates, that this object-frame is by default. */
         get isDefault(): boolean;
         static loadFromXml(text: string): StiBorder;
         constructor(side?: StiBorderSides, color?: Color, size?: number, style?: StiPenStyle, dropShadow?: boolean, shadowSize?: number, shadowBrush?: StiBrush, topmost?: boolean);
@@ -5194,45 +4403,30 @@ declare namespace Stimulsoft.Base.Drawing {
 declare namespace Stimulsoft.Base.Drawing {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiAdvancedBorder extends StiBorder {
-        /** Creates a new object that is a copy of the current instance. */
         clone(): StiAdvancedBorder;
         equals(obj: StiAdvancedBorder | any): boolean;
         getHashCode(): number;
         private _leftSide;
-        /** Gets or sets frame of left side. */
         get leftSide(): StiBorderSide;
         private _rightSide;
-        /** Gets or sets frame of right side. */
         get rightSide(): StiBorderSide;
         private _topSide;
-        /** Gets or sets frame of top side. */
         get topSide(): StiBorderSide;
         private _bottomSide;
-        /** Gets or sets frame of bottom side. */
         get bottomSide(): StiBorderSide;
-        /** Gets value which indicates that top side of border is present. */
         get isTopBorderSidePresent(): boolean;
-        /** Gets value which indicates that bottom side of border is present. */
         get isBottomBorderSidePresent(): boolean;
-        /** Gets value which indicates that left side of border is present. */
         get isLeftBorderSidePresent(): boolean;
-        /** Gets value which indicates that right side of border is present. */
         get isRightBorderSidePresent(): boolean;
-        /** Gets value which indicates that all sides of border is present. */
         get isAllBorderSidesPresent(): boolean;
-        /** Gets or sets frame borders. Not used in StiAdvancedBorder. */
         get side(): StiBorderSides;
         set side(value: StiBorderSides);
-        /** Gets or sets a border color. Not used in StiAdvancedBorder. */
         get color(): Color;
         set color(value: Color);
-        /** Gets or sets a border size. Not used in StiAdvancedBorder. */
         get size(): number;
         set size(value: number);
-        /** Gets or sets a border style. Not used in StiAdvancedBorder. */
         get style(): StiPenStyle;
         set style(value: StiPenStyle);
-        /** Gets value indicates, that this object-frame is by default. */
         get isDefault(): boolean;
         constructor(topSide?: StiBorderSide, bottomSide?: StiBorderSide, leftSide?: StiBorderSide, rightSide?: StiBorderSide, dropShadow?: boolean, shadowSize?: number, shadowBrush?: StiBrush, topmost?: boolean);
     }
@@ -5242,27 +4436,21 @@ declare namespace Stimulsoft.Base.Drawing {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiBorderSide implements ICloneable {
         implements(): string[];
-        /** Creates a new object that is a copy of the current instance. */
         clone(): StiBorderSide;
         equals(obj: StiBorderSide | any): boolean;
         getHashCode(): number;
         getSizeOffset(): number;
         side: StiBorderSides;
         private _color;
-        /** Gets or sets a border color. */
         get color(): Color;
         set color(value: Color);
         private _size;
-        /** Gets or sets a border size. */
         get size(): number;
         set size(value: number);
         private _style;
-        /** Gets or sets a border style. */
         get style(): StiPenStyle;
         set style(value: StiPenStyle);
-        /** Gets value indicates, that this object-frame is by default. */
         get isDefault(): boolean;
-        /** Creates a new instance of the StiBorderSide class. */
         constructor(color?: Color, size?: number, style?: StiPenStyle);
     }
 }
@@ -5335,23 +4523,18 @@ declare namespace Stimulsoft.Base.Drawing {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiGlareBrush extends StiBrush {
         private _startColor;
-        /** Gets or sets the starting color for the gradient. */
         get startColor(): Color;
         set startColor(value: Color);
         private _endColor;
-        /** Gets or sets the ending color for the gradient. */
         get endColor(): Color;
         set endColor(value: Color);
         private _angle;
-        /** Gets or sets the angle, measured in degrees clockwise from the x-axis, of the gradient's orientation line. */
         get angle(): number;
         set angle(value: number);
         private _focus;
-        /** Gets or sets value from 0 through 1 that specifies the center of the gradient (the point where the gradient is composed of only the ending color). */
         get focus(): number;
         set focus(value: number);
         private _scale;
-        /** Gets or sets value from 0 through 1 that specifies how fast the colors falloff from the focus. */
         get scale(): number;
         set scale(value: number);
         equals(obj: any): boolean;
@@ -5365,15 +4548,12 @@ declare namespace Stimulsoft.Base.Drawing {
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     class StiGlassBrush extends StiBrush {
         private _color;
-        /** Gets or sets the color of this StiGlassBrush object. */
         get color(): Color;
         set color(value: Color);
         private _drawHatch;
-        /** Gets or sets value which indicates draw hatch at background or not. */
         get drawHatch(): boolean;
         set drawHatch(value: boolean);
         private _blend;
-        /** Gets or sets blend factor. */
         get blend(): number;
         set blend(value: number);
         equals(obj: any): boolean;
@@ -5392,15 +4572,12 @@ declare namespace Stimulsoft.Base.Drawing {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiGradientBrush extends StiBrush {
         private _startColor;
-        /** Gets or sets the starting color for the gradient. */
         get startColor(): Color;
         set startColor(value: Color);
         private _endColor;
-        /** Gets or sets the ending color for the gradient. */
         get endColor(): Color;
         set endColor(value: Color);
         private _angle;
-        /** Gets or sets the angle, measured in degrees clockwise from the x-axis, of the gradient's orientation line. */
         get angle(): number;
         set angle(value: number);
         equals(obj: any): boolean;
@@ -5414,15 +4591,12 @@ declare namespace Stimulsoft.Base.Drawing {
     import HatchStyle = Stimulsoft.System.Drawing.Drawing2D.HatchStyle;
     class StiHatchBrush extends StiBrush {
         private _backColor;
-        /** Gets the color of spaces between the hatch lines drawn by this StiHatchBrush object. */
         get backColor(): Color;
         set backColor(value: Color);
         private _foreColor;
-        /** Gets the color of hatch lines drawn by this StiHatchBrush object. */
         get foreColor(): Color;
         set foreColor(value: Color);
         private _style;
-        /** Gets the hatch style of this StiHatchBrush object. */
         get style(): HatchStyle;
         set style(value: HatchStyle);
         equals(obj: any): boolean;
@@ -5463,70 +4637,26 @@ declare namespace Stimulsoft.Base.Drawing {
     import ICloneable = Stimulsoft.System.ICloneable;
     import Color = Stimulsoft.System.Drawing.Color;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
-    /**
-     *  Class describes a border.
-     */
     class StiSimpleBorder implements ICloneable, IStiJsonReportObject {
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         getBorder(): StiBorder;
         getSizeOffset(): number;
         getSize(): number;
         getSizeIncludingSide(): number;
-        /**
-         *  Gets value which indicates that top side of border is present.
-         */
         get isTopBorderSidePresent(): boolean;
-        /**
-         *  Gets value which indicates that bottom side of border is present.
-         */
         get isBottomBorderSidePresent(): boolean;
-        /**
-         *  Gets value which indicates that left side of border is present.
-         */
         get isLeftBorderSidePresent(): boolean;
-        /**
-         *  Gets value which indicates that right side of border is present.
-         */
         get isRightBorderSidePresent(): boolean;
-        /**
-         *  Gets value which indicates that all sides of border is present.
-         */
         get isAllBorderSidesPresent(): boolean;
-        /**
-         *  Gets or sets frame borders.
-         */
         side: StiBorderSides;
-        /**
-         *  Gets or sets a border color.
-         */
         color: Color;
         private shouldSerializeColor;
-        /**
-         *  Gets or sets a border size.
-         */
         size: number;
-        /**
-         *  Gets or sets a border style.
-         */
         style: StiPenStyle;
-        /**
-         *  Gets value indicates, that this object-frame is by default.
-         */
         get isDefault(): boolean;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         *  Creates a new instance of the StiBorder class.
-         *  @param side Border sides.
-         *  @param color Border color.
-         *  @param size Border size.
-         *  @param style Border style.
-         */
         constructor(side?: StiBorderSides, color?: Color, size?: number, style?: StiPenStyle);
     }
 }
@@ -5540,6 +4670,7 @@ declare namespace Stimulsoft.Base.Drawing {
     import StringAlignment = Stimulsoft.System.Drawing.StringAlignment;
     class StiTextDrawing {
         static measureString(g: Graphics, text: string, font: Font, width?: number, textOptions?: StiTextOptions, ha?: StiTextHorAlignment, va?: StiVertAlignment, antialiasing?: boolean, allowHtmlTags?: boolean): Size;
+        private static correctFontSize;
         static splitTextWordwrap(text: string, g: Graphics, font: Font, rect: Rectangle, textOptions: StiTextOptions, ha: StiTextHorAlignment, typographic: boolean): List<LineInfo>;
         static splitTextWordwrap2(text: string, g: Graphics, font: Font, rect: Rectangle, sf: StringFormat, horAlignWidth?: boolean): List<LineInfo>;
         private static makeLineInfo;
@@ -5548,9 +4679,6 @@ declare namespace Stimulsoft.Base.Drawing {
         static getAlignment(alignment: StiTextHorAlignment): StringAlignment;
         static getAlignment2(alignment: StiVertAlignment): StringAlignment;
         static getStringFormat2(textOptions: StiTextOptions, ha: StiTextHorAlignment, va: StiVertAlignment, antialiasing: boolean, zoom: number): StringFormat;
-        /**
-         *  Gets or sets value which indicates that text drawing engine will be measure text string including trailing spaces.
-         */
         static measureTrailingSpaces: boolean;
     }
 }
@@ -5629,7 +4757,6 @@ declare namespace Stimulsoft.Base.Drawing {
         get trimming(): StringTrimming;
         set trimming(value: StringTrimming);
         get isDefault(): boolean;
-        /** Serves as a hash function for a particular type. */
         getHashCode(): number;
         constructor(rightToLeft?: boolean, lineLimit?: boolean, wordWrap?: boolean, angle?: number, hotkeyPrefix?: HotkeyPrefix, trimming?: StringTrimming, firstTabOffset?: number, distanceBetweenTabs?: number);
     }
@@ -6050,9 +5177,6 @@ declare namespace Stimulsoft.Base.Licenses {
         Developer = 2
     }
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.Base.Licenses {
     class StiCryptHelper {
         static decrypt(str: string, password: string): string;
@@ -6110,9 +5234,6 @@ declare namespace Stimulsoft.Base {
         static set key(value: string);
         static get Key(): string;
         static set Key(value: string);
-        /**
-         * @hidden
-         */
         static setNewLicenseKey(value: string, throwException?: boolean): void;
         private static isValidLicenseKey;
         static loadFromFile(file: string): void;
@@ -6314,6 +5435,9 @@ declare namespace Stimulsoft.Base.Localization {
                 "Upload": string;
                 "Waiting": string;
                 "Yes": string;
+            };
+            "CharterMapEditor": {
+                "Characters": string;
             };
             "Chart": {
                 "AddCondition": string;
@@ -6795,6 +5919,8 @@ declare namespace Stimulsoft.Base.Localization {
             };
             "Dashboard": {
                 "AddRange": string;
+                "ViewModeDesktop": string;
+                "ViewModeMobile": string;
                 "AfterGroupingData": string;
                 "AllowUserDrillDown": string;
                 "AllowUserFiltering": string;
@@ -6863,6 +5989,8 @@ declare namespace Stimulsoft.Base.Localization {
                 "SortAZ": string;
                 "SortLargestToSmallest": string;
                 "SortSmallestToLargest": string;
+                "SortOldestToNewest": string;
+                "SortNewestToOldest": string;
                 "SortZA": string;
                 "Sparklines": string;
                 "StringFilters": string;
@@ -6994,6 +6122,7 @@ declare namespace Stimulsoft.Base.Localization {
                 "FindNext": string;
                 "FindWhat": string;
                 "FromCursor": string;
+                "InsertSymbol": string;
                 "GotoLine": string;
                 "Line": string;
                 "LineNumber": string;
@@ -7319,6 +6448,7 @@ declare namespace Stimulsoft.Base.Localization {
                 "title": string;
             };
             "FormDatabaseEdit": {
+                "Token": string;
                 "ClientId": string;
                 "ClientSecret": string;
                 "ConnectionString": string;
@@ -8819,6 +7949,8 @@ declare namespace Stimulsoft.Base.Localization {
                 "YellowGreen": string;
             };
             "PropertyEnum": {
+                "StiTargetModePercentage": string;
+                "StiTargetModeVariation": string;
                 "boolFalse": string;
                 "boolTrue": string;
                 "BorderStyleFixed3D": string;
@@ -9451,6 +8583,7 @@ declare namespace Stimulsoft.Base.Localization {
                 "ZigZag": string;
             };
             "PropertyMain": {
+                "TargetMode": string;
                 "Variation": string;
                 "TargetIcon": string;
                 "AcceptsReturn": string;
@@ -10378,6 +9511,7 @@ declare namespace Stimulsoft.Base.Localization {
                 "YAxis": string;
                 "YRightAxis": string;
                 "Zoom": string;
+                "DeviceWidth": string;
             };
             "PropertySystemColors": {
                 "ActiveBorder": string;
@@ -10800,6 +9934,9 @@ declare namespace Stimulsoft.Base.Localization {
                 "Title": string;
             };
             "Wizards": {
+                "UseDemoData": string;
+                "GetData": string;
+                "RunWizard": string;
                 "BlankDashboard": string;
                 "BlankReport": string;
                 "ButtonBack": string;
@@ -11160,9 +10297,7 @@ declare namespace Stimulsoft.Base {
 declare namespace Stimulsoft.Base.Services {
     import StiRepositoryItems = Stimulsoft.Base.StiRepositoryItems;
     import ICloneable = Stimulsoft.System.ICloneable;
-    /** Describes an asbtract class that serves for services realization. */
     class StiService implements ICloneable {
-        /** Creates a new object that is a copy of the current instance. */
         clone(cloneProperties?: boolean, cloneComponents?: boolean): any;
         memberwiseClone(): StiService;
         implements(): string[];
@@ -11170,99 +10305,27 @@ declare namespace Stimulsoft.Base.Services {
         private _properties;
         get properties(): StiRepositoryItems;
         set properties(value: StiRepositoryItems);
-        /** Internal use only, for LoadDocument optimization. */
         protected isPropertiesInitializedProtected(): boolean;
-        /** Gets a service category. */
         get serviceCategory(): string;
-        /** Gets a service name. */
         get serviceName(): string;
-        /** Gets a service description. */
         get serviceInfo(): string;
-        /** Gets a service type. */
         get serviceType(): Stimulsoft.System.Type;
-        /** Gets or sets the value whether a service is enabled or not. */
         get serviceEnabled(): boolean;
         set serviceEnabled(value: boolean);
     }
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary.JSZip {
-    /**
-     * @hidden
-     */
     interface JSZip {
-        /**
-         * Get a file from the archive
-         *
-         * @param Path relative path to file
-         * @return File matching path, null if no file found
-         */
         file(path: string): JSZipObject;
-        /**
-         * Get files matching a RegExp from archive
-         *
-         * @param path RegExp to match
-         * @return Return all matching files or an empty array
-         */
         file(path: RegExp): JSZipObject[];
-        /**
-         * Add a file to the archive
-         *
-         * @param path Relative path to file
-         * @param content Content of the file
-         * @param options Optional information about the file
-         * @return JSZip object
-         */
         file(path: string, data: any, options?: JSZipFileOptions): JSZip;
-        /**
-         * Return an new JSZip instance with the given folder as root
-         *
-         * @param name Name of the folder
-         * @return New  JSZip object with the given folder as root or null
-         */
         folder(name: string): JSZip;
-        /**
-         * Returns new JSZip instances with the matching folders as root
-         *
-         * @param name RegExp to match
-         * @return New array of JSZipFile objects which match the RegExp
-         */
         folder(name: RegExp): JSZipObject[];
-        /**
-         * Get all files wchich match the given filter function
-         *
-         * @param predicate Filter function
-         * @return Array of matched elements
-         */
         filter(predicate: (relativePath: string, file: JSZipObject) => boolean): JSZipObject[];
-        /**
-         * Removes the file or folder from the archive
-         *
-         * @param path Relative path of file or folder
-         * @return Returns the JSZip instance
-         */
         remove(path: string): JSZip;
-        /**
-         * Generates a new archive
-         *
-         * @param options Optional options for the generator
-         * @return The serialized archive
-         */
         generate(options?: JSZipGeneratorOptions): any;
-        /**
-         * Deserialize zip file
-         *
-         * @param data Serialized zip file
-         * @param options Options for deserializing
-         * @return Returns the JSZip instance
-         */
         load(data: any, options: JSZipLoadOptions): JSZip;
     }
-    /**
-     * @hidden
-     */
     interface JSZipObject {
         name: string;
         dir: boolean;
@@ -11274,9 +10337,6 @@ declare namespace Stimulsoft.ExternalLibrary.JSZip {
         asArrayBuffer(): ArrayBuffer;
         asUint8Array(): Uint8Array;
     }
-    /**
-     * @hidden
-     */
     interface JSZipFileOptions {
         base64?: boolean;
         binary?: boolean;
@@ -11286,88 +10346,44 @@ declare namespace Stimulsoft.ExternalLibrary.JSZip {
         optimizedBinaryString?: boolean;
         createFolders?: boolean;
     }
-    /**
-     * @hidden
-     */
     interface JSZipObjectOptions {
-        /** deprecated */
         base64: boolean;
-        /** deprecated */
         binary: boolean;
-        /** deprecated */
         dir: boolean;
-        /** deprecated */
         date: Date;
         compression: string;
     }
-    /**
-     * @hidden
-     */
     interface JSZipGeneratorOptions {
-        /** deprecated */
         base64?: boolean;
-        /** DEFLATE or STORE */
         compression?: string;
-        /** base64 (default), string, uint8array, blob */
         type?: string;
         comment?: string;
     }
-    /**
-     * @hidden
-     */
     interface JSZipLoadOptions {
         base64?: boolean;
         checkCRC32?: boolean;
         optimizedBinaryString?: boolean;
         createFolders?: boolean;
     }
-    /**
-     * @hidden
-     */
     interface JSZipSupport {
         arraybuffer: boolean;
         uint8array: boolean;
         blob: boolean;
         nodebuffer: boolean;
     }
-    /**
-     * @hidden
-     */
     interface DEFLATE {
-        /** pako.deflateRaw, level:0-9 */
         compress(input: string | number[] | Uint8Array, compressionOptions: {
             level: number;
         }): Uint8Array;
-        /** pako.inflateRaw */
         uncompress(input: string | number[] | Uint8Array): Uint8Array;
     }
-    /**
-     * @hidden
-     */
     let prototype: JSZip;
-    /**
-     * @hidden
-     */
     let support: JSZipSupport;
-    /**
-     * @hidden
-     */
     let compressions: {
         DEFLATE: DEFLATE;
     };
 }
-/**
- * @hidden
- */
 declare namespace Stimulsoft.ExternalLibrary {
-    /**
-     * Create JSZip instance
-     * If no parameters given an empty zip archive will be created
-     *
-     * @param data Serialized zip archive
-     * @param options Description of the serialized zip archive
-     * @hidden
-     */
     function JSZip(data?: any, options?: Stimulsoft.ExternalLibrary.JSZip.JSZipLoadOptions): Stimulsoft.ExternalLibrary.JSZip.JSZip;
 }
 declare namespace Stimulsoft.Base {
@@ -11416,181 +10432,49 @@ declare namespace Stimulsoft.Base {
         Points = 5,
         PieSegment = 6
     }
-    /**
-     *  Types of token.
-     */
     enum StiTokenType {
-        /**
-         *  None token.
-         */
         None = 0,
-        /**
-         *  .
-         */
         Dot = 1,
-        /**
-         *  ,
-         */
         Comma = 2,
-        /**
-         *  :
-         */
         Colon = 3,
-        /**
-         *  ;
-         */
         SemiColon = 4,
-        /**
-         *  Shift to the left Token.
-         */
         Shl = 5,
-        /**
-         *  Shift to the right Token.
-         */
         Shr = 6,
-        /**
-         *  Assign Token.
-         */
         Assign = 7,
-        /**
-         *  Equal Token.
-         */
         Equal = 8,
-        /**
-         *  NotEqual Token.
-         */
         NotEqual = 9,
-        /**
-         *  LeftEqual Token.
-         */
         LeftEqual = 10,
-        /**
-         *  Left Token.
-         */
         Left = 11,
-        /**
-         *  RightEqual Token.
-         */
         RightEqual = 12,
-        /**
-         *  Right Token.
-         */
         Right = 13,
-        /**
-         *  Logical OR Token.
-         */
         Or = 14,
-        /**
-         *  Logical AND Token.
-         */
         And = 15,
-        /**
-         *  Logical NOT Token.
-         */
         Not = 16,
-        /**
-         *  Double logical OR Token.
-         */
         DoubleOr = 17,
-        /**
-         *  Double logical AND Token.
-         */
         DoubleAnd = 18,
-        /**
-         *  Copyright
-         */
         Copyright = 19,
-        /**
-         *  ?
-         */
         Question = 20,
-        /**
-         *  +
-         */
         Plus = 21,
-        /**
-         *  -
-         */
         Minus = 22,
-        /**
-         *  *
-         */
         Mult = 23,
-        /**
-         *  /
-         */
         Div = 24,
-        /**
-         *  \
-         */
         Splash = 25,
-        /**
-         *  %
-         */
         Percent = 26,
-        /**
-         *  @
-         */
         Ampersand = 27,
-        /**
-         *  #
-         */
         Sharp = 28,
-        /**
-         *  $
-         */
         Dollar = 29,
-        /**
-         *  ˆ
-         */
         Euro = 30,
-        /**
-         *  ++
-         */
         DoublePlus = 31,
-        /**
-         *  --
-         */
         DoubleMinus = 32,
-        /**
-         *  (
-         */
         LPar = 33,
-        /**
-         *  )
-         */
         RPar = 34,
-        /**
-         *  {
-         */
         LBrace = 35,
-        /**
-         *  }
-         */
         RBrace = 36,
-        /**
-         *  [
-         */
         LBracket = 37,
-        /**
-         *  ]
-         */
         RBracket = 38,
-        /**
-         *  Token contains value.
-         */
         Value = 39,
-        /**
-         *  Token contains identifier.
-         */
         Ident = 40,
-        /**
-         *
-         */
         Unknown = 41,
-        /**
-         *  EOF Token.
-         */
         EOF = 42
     }
     enum StiLevel {
@@ -11608,133 +10492,54 @@ declare namespace Stimulsoft.Base {
 }
 declare namespace Stimulsoft.Base {
     let IStiApp: string;
-    /**
-     * Describes the base interface for the Stimulsoft Application.
-     */
     interface IStiApp extends IStiAppCell {
-        /**
-         * Returns reference to the data dictionary.
-         * @returns The data dictionary.
-         */
         getDictionary(): IStiAppDictionary;
     }
 }
 declare namespace Stimulsoft.Base {
     let IStiAppCalcDataColumn: string;
-    /**
-     *  Provides access to the calculateed datacolumn.
-     */
     interface IStiAppCalcDataColumn extends IStiAppDataColumn {
     }
 }
 declare namespace Stimulsoft.Base {
     let IStiAppCell: string;
-    /**
-     * Describes the base interface for all components.
-     */
     interface IStiAppCell {
-        /**
-         * Returns unique key to this cell object.
-         */
         getKey(): string;
-        /**
-         * Sets unique key to this cell object.
-         */
         setKey(key: string): void;
     }
 }
 declare namespace Stimulsoft.Base {
     let IStiIStiAppComponentAppCell: string;
-    /**
-     * Describes the base interface for all components of the app.
-     */
     interface IStiAppComponent extends IStiAppCell {
-        /**
-         * Returns a name of the component.
-         * @returns The name of component.
-         */
         getName(): string;
-        /**
-         * Returns reference to the app which contains this component.
-         * @returns Reference to the app.
-         */
         getApp(): IStiApp;
     }
 }
 declare namespace Stimulsoft.Base {
     let IStiAppConnection: string;
-    /**
-     * Provides access to the data connection.
-     */
     interface IStiAppConnection extends IStiAppCell {
-        /**
-         * Returns a name of the component.
-         * @returns The name of component.
-         */
         getName(): string;
     }
 }
 declare namespace Stimulsoft.Base {
     import Type = Stimulsoft.System.Type;
     let IStiAppDataColumn: string;
-    /**
-     * Provides access to the datacolumn.
-     */
     interface IStiAppDataColumn extends IStiAppCell {
         getNameInSource(): string;
-        /**
-         * Returns a name of the data column.
-         * @returns The name of the data column.
-         */
         getName(): string;
-        /**
-         * Returns a type of the data column.
-         * @returns The name of the data column.
-         */
         getDataType(): Type;
     }
 }
 declare namespace Stimulsoft.Base {
     import List = Stimulsoft.System.Collections.List;
     let IStiAppDataRelation: string;
-    /**
-     * Provides access to the datarelation.
-     */
     interface IStiAppDataRelation extends IStiAppCell {
-        /**
-         * Returns a name of the component.
-         * @returns The name of component.
-         */
         getName(): string;
-        /**
-         * Returns a reference to the dictionary which contains this datasource.
-         * @returns A reference to the app.
-         */
         getDictionary(): IStiAppDictionary;
-        /**
-         * Returns parent data source of this relation.
-         * @returns A reference to the data source.
-         */
         getParentDataSource(): IStiAppDataSource;
-        /**
-         * Returns child data source of this relation.
-         * @returns A reference to the data source.
-         */
         getChildDataSource(): IStiAppDataSource;
-        /**
-         * Returns an enumeration of the parent column keys of the data relation.
-         * @returns An reference to the enumeration.
-         */
         fetchParentColumns(): List<string>;
-        /**
-         * Returns an enumeration of the child column keys of the data relation.
-         * @returns An reference to the enumeration.
-         */
         fetchChildColumns(): List<string>;
-        /**
-         * Returns the status of the relation.
-         * @returns The status of the relation.
-         */
         getActiveState(): boolean;
     }
 }
@@ -11742,196 +10547,66 @@ declare namespace Stimulsoft.Base {
     import DataTable = Stimulsoft.System.Data.DataTable;
     import List = Stimulsoft.System.Collections.List;
     let IStiAppDataSource: string;
-    /**
-     * Provides access to the datasource.
-     */
     interface IStiAppDataSource extends IStiAppCell {
-        /**
-         *  Returns a name of the component in the data source.
-         * @return The name of component
-         */
         getNameInSource(): string;
-        /**
-         * Returns a name of the component.
-         * @returns The name of component.
-         */
         getName(): string;
-        /**
-         * Returns a DataTable with data from this datasource.
-         * @param allowConnectToData Allow to call Connect() method. By default is true.
-         * @returns The DataTable with data.
-         */
         getDataTable2(allowConnectToData: boolean): Promise<DataTable>;
-        /**
-         * Returns a reference to the dictionary which contains this datasource.
-         * @returns Reference to the app.
-         */
         getDictionary(): IStiAppDictionary;
-        /**
-         * Returns an enumeration of the data columns from this dictionary.
-         * @returns The enumeration of the data columns.
-         */
         fetchColumns(): List<IStiAppDataColumn>;
-        /**
-         * Returns a connection to data for this data source.
-         * @returns Reference to the connection.
-         */
         getConnection(): IStiAppConnection;
-        /**
-         * Returns an enumeration of the parent data relations for this data source.
-         * @returns The enumeration of the data relations.
-         */
         fetchParentRelations(activePreferred: boolean): List<IStiAppDataRelation>;
-        /**
-         * Returns an enumeration of the child data relations for this data source.
-         * @returns The enumeration of the data relations.
-         */
         fetchChildRelations(activePreferred: boolean): List<IStiAppDataRelation>;
-        /**
-         * Returns an array of values for the specified column in the specified position.
-         * @param names An array of names of the data column.
-         * @returns The enumeration of the data column values.
-         */
         fetchColumnValues(names: List<string>): List<any[]>;
     }
 }
 declare namespace Stimulsoft.Base {
     import List = Stimulsoft.System.Collections.List;
     let IStiAppDictionary: string;
-    /**
-     * Describes the interface to access base data dictionary functionality.
-     */
     interface IStiAppDictionary {
-        /**
-         * Returns an enumeration of the data source from this dictionary.
-         * @returns The enumeration of the data source.
-         */
         fetchDataSources(): List<IStiAppDataSource>;
-        /**
-         * Returns an enumeration of the data relations from this dictionary.
-         * @returns The enumeration of the data relations.
-         */
         fetchDataRelations(): List<IStiAppDataRelation>;
-        /**
-         * Returns an enumeration of the variables from this dictionary.
-         * @returns The enumeration of the variables
-         */
         fetchVariables(): List<IStiAppVariable>;
-        /**
-         * Returns datasource from the data dictionary by its name.
-         * @param name A name of the datasource.
-         * @returns The datasource from the data dictionary. Returns null, if datasource with specified name is not exists.
-         */
         getDataSourceByName(name: string): IStiAppDataSource;
-        /**
-         * Returns data column from the data dictionary by its name.
-         * @param name A name of the data column.
-         * @returns The data column from the data dictionary. Returns null, if data column with specified name is not exists.
-         */
         getColumnByName(name: string): IStiAppDataColumn;
-        /**
-         * Returns variable from the data dictionary by its name.
-         * @param name A name of the variable.
-         * @returns The variable from the data dictionary. Returns null, if variable with specified name is not exists.
-         */
         getVariableByName(name: string): IStiAppVariable;
-        /**
-         * Returns true if a specified name is a name of a system variable.
-         * @param name The name of the system variable.
-         * @returns True, if the specified name is the name of system variable.
-         */
+        getVariableValueByName(name: string): any;
         isSystemVariable(name: string): boolean;
-        /**
-         * Returns value of a specified system variable.
-         * @param name A name of the system variable.
-         * @returns The value of the specified system variable.
-         */
         getSystemVariableValue(name: string): any;
-        /**
-         * Returns reference to the app which contains this dictionary.
-         * @returns A reference to the app.
-         */
         getApp(): IStiApp;
-        /**
-         * Opens specified connections to the data. Opens all connections if none of them is specified.
-         */
         openConnections(connections: List<IStiAppConnection>): List<IStiAppConnection>;
-        /**
-         * Closes all specified connections. Closes all connections if none of them is specified.
-         */
         closeConnections(connections: List<IStiAppConnection>): void;
     }
 }
 declare namespace Stimulsoft.Base {
     import List = Stimulsoft.System.Collections.List;
     let IStiAppFunction: string;
-    /**
-     * Provides access to the application function.
-     */
     interface IStiAppFunction extends IStiAppCell {
-        /**
-         * Returns a name of the function.
-         * @returns The name of the function.
-         */
         getName(): string;
-        /**
-         * Invokes this function with specified arguments.
-         * @param arguments The list of arguments.
-         * @returns The result of the function calling.
-         */
         invoke(arguments: List<any>): any;
     }
 }
 declare namespace Stimulsoft.Base {
     let IStiAppVariable: string;
-    /**
-     * Provides access to the application variable.
-     */
     interface IStiAppVariable extends IStiAppCell {
-        /**
-         * Returns a name of the component.
-         * @returns The name of component.
-         */
         getName(): string;
-        /**
-         * Returns value of this variable.
-         * @returns The variable value.
-         */
         getValue(): any;
     }
 }
 declare namespace Stimulsoft.Base {
     import List = Stimulsoft.System.Collections.List;
     let IStiReport: string;
-    /**
-     * Describes the interface to access main report posibilities.
-     */
     interface IStiReport extends IStiApp {
-        /**
-         * Returns an enumeration of the pages from this report.
-         * @returns The enumeration of the pages.
-         */
         fetchPages(): List<IStiReportPage>;
     }
 }
 declare namespace Stimulsoft.Base {
     let IStiReportComponent: string;
-    /**
-     * Describes the base interface for all report components.
-     */
     interface IStiReportComponent extends IStiAppComponent {
-        /**
-         * Returns reference to the report which contains this component.
-         * @returns Reference to the report.
-         */
         getReport(): IStiReport;
     }
 }
 declare namespace Stimulsoft.Base {
     let IStiReportPage: string;
-    /**
-     * Describes the interface to access report page posibilities.
-     */
     interface IStiReportPage extends IStiReportComponent {
         parseExpression(text: string): string;
     }
@@ -11957,9 +10632,6 @@ declare namespace Stimulsoft.Base {
         static functions: Hashtable;
         static functionsLower: Hashtable;
         static getFunctions(isCompile: boolean, isCaseSensitive: boolean): IStiAppFunction[];
-        /**
-         *  Returns array of functions with spefified name.
-         */
         static getFunctions2(functionName: string, isCompile: boolean, isCaseSensitive: boolean): IStiAppFunction[];
     }
 }
@@ -12014,17 +10686,8 @@ declare namespace Stimulsoft.Base {
 }
 declare namespace Stimulsoft.Base.Drawing {
     import Color = Stimulsoft.System.Drawing.Color;
-    /**
-     *  This class helps in converting a string to a color.
-     */
     class StiColor {
-        /**
-         *  Translates a HTML color representation to a GDI+ System.Drawing.Color structure.
-         */
         static get(color: string): Color;
-        /**
-         *  Translates an array with HTML colors representation to a GDI+ System.Drawing.Color structure.
-         */
         static get2(...colors: string[]): Color[];
     }
 }
@@ -12075,139 +10738,35 @@ declare namespace Stimulsoft.Base {
 }
 declare namespace Stimulsoft.Base {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     * Performs the lexical analysis.
-     */
     class StiLexer {
         private _text;
-        /**
-         *  Gets or sets text for analys.
-         */
         get text(): string;
         set text(value: string);
-        /**
-         *  Gets or sets text for analys.
-         */
         baseText: string;
-        /**
-         *  Start positions of token.
-         */
         private positions;
-        /**
-         *  Gets or sets current position in text.
-         */
         positionInText: number;
-        /**
-         *  Saves position of token in text.
-         */
         savePosToken(): void;
-        /**
-         *  Gets position of token in text.
-         *  @param this.positionInText Position in text.
-         *  @returns Position of token in text.
-         */
         getPosition(positionInText: number): StiPosition;
-        /**
-         *  Skips all not control symbols.
-         */
         skip(): void;
-        /**
-         *  Wait the left paren.
-         */
         waitLparen2(): boolean;
-        /**
-         *  Wait the right bracket.
-         */
         waitComma2(): boolean;
-        /**
-         *  Wait the assign.
-         */
         waitAssign2(): boolean;
-        /**
-         *  Wait the right paren.
-         */
         waitRparen2(): boolean;
-        /**
-         *  Wait the left brace.
-         */
         waitLbrace2(): boolean;
-        /**
-         *  Wait the semicolon.
-         */
         waitSemicolon2(): boolean;
-        /**
-         *  Wait the right brace.
-         */
         waitRbrace2(): boolean;
-        /**
-         *  Scans the number.
-         *  @returns Token containing number.
-         */
         scanNumber(): StiToken;
-        /**
-         *  Scans the identifier.
-         *  @returns Token containing identifier.
-         */
         scanIdent(): StiToken;
-        /**
-         *  Scans the string.
-         *  @returns Token containing string.
-         */
         scanString(): StiToken;
-        /**
-         *  Scans the symbol.
-         *  @returns Token containing symbol.
-         */
         scanChar(): StiToken;
-        /**
-         *  Returns to previous token.
-         */
         ungetToken(): void;
-        /**
-         *  Gets next token.
-         *  @returns Next token.
-         */
         getToken(): StiToken;
-        /**
-         *  Reset state.
-         */
         reset(): void;
-        /**
-         *  Replaces all occurrences of a specified String, with another specified String.
-         *  Before oldValue must follow specified prefix - token.
-         *  Replacing is produced with provision for tokens.
-         *  @param textValue Text for replace.
-         *  @param prefix Prefix - token.
-         *  @param oldValue A String to be replaced.
-         *  @param newValue A String to replace all occurrences of oldValue.
-         *  @returns Replaced string.
-         */
         static replaceWithPrefix(textValue: string, prefix: string, oldValue: string, newValue: string): string;
-        /**
-         *  Replaces all occurrences of a specified String, with another specified string.
-         *  Before oldValue must follow specified prefix - string.
-         *  Replacing is produced with provision for tokens.
-         *  @param prefix Prefix - string.
-         *  @param oldValue A String to be replaced.
-         *  @param newValue A String to replace all occurrences of oldValue.
-         *  @returns Replaced string.
-         */
         replaceWithPrefix(prefix: string, oldValue: string, newValue: string): void;
-        /**
-         *  Replaces all occurrences of a specified String, with another specified string.
-         *  Before oldValue must not follow specified prefix - string.
-         *  @param prefix Prefix - string.
-         *  @param oldValue A String to be replaced.
-         *  @param newValue A String to replace all occurrences of oldValue.
-         *  @returns Replaced string.
-         */
         replaceWithNotEqualPrefix(prefix: StiTokenType, oldValue: string, newValue: string): void;
         static identExists(str: string, name: string, caseSensitive: boolean): boolean;
         static getAllTokens(str: string): List<StiToken>;
-        /**
-         *  Creates a new instance of the StiLexer class.
-         *  @param textValue The Text for lexical analysis.
-         */
         constructor(textValue: string);
     }
 }
@@ -12222,23 +10781,9 @@ declare namespace Stimulsoft.Base {
     }
 }
 declare namespace Stimulsoft.Base {
-    /**
-     * Saving of the positions in text.
-     */
     class StiPosition {
-        /**
-         *  Gets or sets line in text.
-         */
         line: number;
-        /**
-         *  Gets or sets column in text.
-         */
         column: number;
-        /**
-         *  Creates position in text.
-         *  @param line Line in text.
-         *  @param column Column in text.
-         */
         constructor(line: number, column: number);
     }
 }
@@ -12256,34 +10801,12 @@ declare namespace Stimulsoft.Base {
     }
 }
 declare namespace Stimulsoft.Base {
-    /**
-     *  Class describes Token.
-     */
     class StiToken {
-        /**
-         *  Gets or sets value indicates the beginning of token in text.
-         */
         index: number;
-        /**
-         *  Gets or sets value indicates the length of token.
-         */
         length: number;
-        /**
-         *  Gets or sets value indicates the type of token.
-         */
         type: StiTokenType;
-        /**
-         *  Gets or sets Value of the identifier.
-         */
         data: any;
         toString(): string;
-        /**
-         *  Creates an object of the type StiToken that contains an object.
-         *  @param type Type Token
-         *  @param index The Beginning Token in text.
-         *  @param length The Length Token.
-         *  @param obj Object for initializing.
-         */
         constructor(type: StiTokenType, index?: number, length?: number, obj?: any);
     }
 }
@@ -12317,9 +10840,6 @@ declare namespace Stimulsoft.Base {
     }
 }
 declare namespace Stimulsoft {
-    /**
-     * @hidden
-     */
     class StiVersion {
         static version: string;
         static creationDate: string;
@@ -12444,6 +10964,10 @@ declare namespace Stimulsoft.Data.Engine {
         None = 0,
         Top = 1,
         Bottom = 2
+    }
+    enum StiDataJoinEngine {
+        V1 = 0,
+        V2 = 1
     }
 }
 declare namespace Stimulsoft.Data.Engine {
@@ -12614,10 +11138,6 @@ declare namespace Stimulsoft.Data.Engine {
 declare namespace Stimulsoft.Data.Engine {
     import ICloneable = Stimulsoft.System.ICloneable;
     abstract class StiDataRule implements ICloneable {
-        /**
-         * Creates a new object that is a copy of the current instance.
-         * @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         abstract getUniqueCode(): any;
     }
@@ -12657,9 +11177,6 @@ declare namespace Stimulsoft.Data.Engine {
     import List = Stimulsoft.System.Collections.List;
     import DataTable = Stimulsoft.System.Data.DataTable;
     class StiDataActionRuleHelper {
-        /**
-         * Used in the CodeDom report compiler.
-         */
         static toList(...rules: StiDataActionRule[]): List<StiDataActionRule>;
         static validate(rules: List<StiDataActionRule>, columnKeys: List<string>): List<StiDataActionRule>;
         private static getColumnIndex;
@@ -12754,17 +11271,8 @@ declare namespace Stimulsoft.Data.Types {
 }
 declare namespace Stimulsoft.Data.Options {
     import MidpointRounding = Stimulsoft.System.MidpointRounding;
-    /**
-     * This class contains data options.
-     */
     class StiDataOptions {
-        /**
-         * If true then data engine will calculate null values, otherwise null values will be skip
-         */
         static allowNulls: boolean;
-        /**
-         * Specification for how to round d if it is midway between two other numbers.
-         */
         static roundType: MidpointRounding;
     }
 }
@@ -12987,7 +11495,6 @@ declare namespace Stimulsoft.Data.Functions {
 }
 declare namespace Stimulsoft.Data.Parsers {
     import FunctionArgs = Stimulsoft.Data.Expressions.NCalc.FunctionArgs;
-    import IStiAppVariable = Stimulsoft.Base.IStiAppVariable;
     import IStiDimensionMeter = Stimulsoft.Base.Meters.IStiDimensionMeter;
     import IStiAppDictionary = Stimulsoft.Base.IStiAppDictionary;
     import DataTable = Stimulsoft.System.Data.DataTable;
@@ -12995,9 +11502,8 @@ declare namespace Stimulsoft.Data.Parsers {
     import IStiMeter = Stimulsoft.Base.Meters.IStiMeter;
     abstract class StiDataParser {
         protected runFunction(funcName: string, args: FunctionArgs): any;
-        protected getVariable(name: string): IStiAppVariable;
-        protected isVariable(name: string): boolean;
         protected getVariableValue(name: string): any;
+        protected isVariable(name: string): boolean;
         protected isSystemVariable(name: string): any;
         protected getSystemVariableValue(name: string): any;
         private static getObjectFromArg;
@@ -13014,6 +11520,7 @@ declare namespace Stimulsoft.Data.Parsers {
         meters: List<IStiMeter>;
         isGrandTotal: boolean;
         private nameToIndex;
+        private nameToValue;
         private nameToVariable;
         constructor(dictionary: IStiAppDictionary, table: DataTable, meters: List<IStiMeter>);
     }
@@ -13089,9 +11596,6 @@ declare namespace Stimulsoft.Data.Engine {
     }
 }
 declare namespace Stimulsoft.Data.Engine {
-    /**
-     * Class contains methods to work with filters.
-     */
     class StiDataFilterHelper {
         static convertStringToCondition(condition: string): StiDataFilterCondition;
         static convertConditionToString(condition: StiDataFilterCondition): string;
@@ -13126,9 +11630,6 @@ declare namespace Stimulsoft.Data.Engine {
     }
 }
 declare namespace Stimulsoft.Data.Exceptions {
-    /**
-     * An exception occurs if the specified name of type is not recognized.
-     */
     class StiTypeNotRecognizedException extends StiDataException {
         constructor(type: any);
     }
@@ -13141,18 +11642,12 @@ declare namespace Stimulsoft.Data.Engine {
     import Type = Stimulsoft.System.Type;
     import StiDataFilerRule = Stimulsoft.Data.Engine.StiDataFilterRule;
     class StiDataFilterRuleHelper {
-        /**
-         * Used in the CodeDom report compiler.
-         */
         static toList(...rules: StiDataFilterRule[]): List<StiDataFilterRule>;
         static validate(rules: List<StiDataFilerRule>, columnKeys: List<string>): List<StiDataFilterRule>;
         static getDataTableFilterQuery(rules: List<StiDataFilterRule>, columns: List<IStiAppDataColumn>, report: IStiReport): string;
         static getDataTableFilterQuery2(rules: List<StiDataFilterRule>, columnNames: List<string>, columnTypes: List<Type>, report: IStiReport): string;
         private static getFullPath;
         private static getFilterGroupQuery;
-        /**
-         *  Tries to resave numbers in en-US culture.
-         */
         private static getValue;
         private static getColumnIndex;
         private static getCondition;
@@ -13196,8 +11691,8 @@ declare namespace Stimulsoft.Data.Engine {
     import DataTable = Stimulsoft.System.Data.DataTable;
     import IStiApp = Stimulsoft.Base.IStiApp;
     class StiDataJoiner {
-        private static lockObject;
         private static cache;
+        static joinEngine: StiDataJoinEngine;
         static join(tables: List<DataTable>, links: List<StiDataLink>, app: IStiApp): DataTable;
         private static copyColumns;
         private static mergeInSequence;
@@ -13223,9 +11718,6 @@ declare namespace Stimulsoft.Data.Engine {
         childColumn: string;
         get parentKey(): string;
         get childKey(): string;
-        /**
-         * Gets or sets the key to the data relation in the report dictionary.
-         */
         key: string;
         active: boolean;
         static loadFromJson(json: StiJson): StiDataLink;
@@ -13250,10 +11742,8 @@ declare namespace Stimulsoft.Data.Engine {
     class StiDataPicker {
         private static lockObject;
         private static cache;
-        /**
-         * Returns all data tables which is used in all elements of the dashboard
-         */
-        static fetch(query: IStiQueryObject, group: string, option?: StiDataRequestOption, filterNames?: List<string>): Promise<List<DataTable>>;
+        static fetch(query: IStiQueryObject, group: string, option?: StiDataRequestOption, filterNames?: List<string>, links?: List<StiDataLink>): Promise<List<DataTable>>;
+        private static getRelationLevel;
         static retrieveUsedDataSources(query: IStiQueryObject, group: string, filterNames: List<string>): List<IStiAppDataSource>;
         static fetch2(app: IStiApp, dataSourceName: string, option?: StiDataRequestOption): Promise<DataTable>;
         static fetch3(app: IStiApp, dataSource: IStiAppDataSource, option?: StiDataRequestOption): Promise<DataTable>;
@@ -13279,6 +11769,8 @@ declare namespace Stimulsoft.Data.Engine {
         join(type: StiDataJoinType, link: StiDataLink): List<DataRow>;
         private innerJoinRows;
         private leftJoinRows;
+        private leftJoinRowsV2;
+        private isNumericType;
         private crossJoinRows;
         private fullJoinRows;
         private getHashCode;
@@ -13315,9 +11807,6 @@ declare namespace Stimulsoft.Data.Engine {
     import List = Stimulsoft.System.Collections.List;
     import IStiAppDataColumn = Stimulsoft.Base.IStiAppDataColumn;
     class StiDataSortRuleHelper {
-        /**
-         * Used in the CodeDom report compiler.
-         */
         static toList(...rules: StiDataSortRule[]): List<StiDataSortRule>;
         static validate(rules: List<StiDataSortRule>, columnKeys: List<string>): List<StiDataSortRule>;
         static getDataTableSortQuery(rules: List<StiDataSortRule>, columns: List<IStiAppDataColumn>): string;
@@ -13333,9 +11822,6 @@ declare namespace Stimulsoft.Data.Engine {
         private static lockObject;
         private static hashCache;
         static sort(inTable: StiDataTable, sorts: List<StiDataSortRule>, app: IStiApp, hash: number, option?: StiDataRequestOption): StiDataTable;
-        /**
-         * Replaces column name which used as key by real column key.
-         */
         private static getFixedDataSortRules;
         static cleanCache(appKey: string): void;
         private static getCacheKey;
@@ -13385,30 +11871,11 @@ declare namespace Stimulsoft.Data.Engine {
         loadFromXml(xmlNode: XmlNode): void;
         static createFromJsonObject(jObject: StiJson): StiDataTopN;
         static createFromXml(xmlNode: XmlNode): StiDataTopN;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiDataTopN;
-        /**
-         *  Gets or sets output values mode.
-         */
         mode: StiDataTopNMode;
-        /**
-         *  Gets or sets the number of output values.
-         */
         count: number;
-        /**
-         *  Gets or sets value which indicates whether to display other values.
-         */
         showOthers: boolean;
-        /**
-         *  Gets or sets signature for other values.
-         */
         othersText: string;
-        /**
-         *  Gets or sets meausure field name.
-         */
         measureField: string;
         get isDefault(): boolean;
         toString(): string;
@@ -13438,56 +11905,22 @@ declare namespace Stimulsoft.Data.Exceptions {
     }
 }
 declare namespace Stimulsoft.Data.Exceptions {
-    /**
-     * An exception occurs if the specified name of a system variable not recognized.
-     */
     class StiSystemVariableNotRecognizedException extends StiDataException {
         constructor(name: string);
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Misc {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  A queue that can dequeue and get(i) in O(1) and grow arbitrarily large.
-     *  A linked list is fast at dequeue but slow at get(i).  An array is
-     *  the reverse.  This is O(1) for both operations.
-     *
-     *  List grows until you dequeue last element at end of buffer. Then
-     *  it resets to start filling at 0 again.  If adds/removes are balanced, the
-     *  buffer will not grow too large.
-     *
-     *  No iterator stuff as that's not how we'll use it.
-     */
     class FastQueue<T> {
-        /**
-         * dynamically-sized buffer of elements
-         */
         _data: List<T>;
-        /**
-         * index of next element to fill
-         */
         _p: number;
         get count(): number;
-        /**
-         *  How deep have we gone?
-         */
         range: number;
-        /**
-         * Return element {@code i} elements ahead of current element. {@code i==0}
-         * gets current element. This is not an absolute index into {@link #data}
-         * since {@code p} defines the start of the real list.
-         */
         get(i: number): T;
-        /**
-         * Get and remove first element in queue
-         */
         dequeue(): T;
         enqueue(o: T): void;
         peek(): T;
         clear(): void;
-        /**
-         * Return string of current buffer contents; non-destructive
-         */
         toString(): string;
     }
 }
@@ -13514,62 +11947,22 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Misc {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Misc {
-    /**
-     * A lookahead queue that knows how to mark/release locations in the buffer for
-     * backtracking purposes. Any markers force the {@link FastQueue} superclass to
-     * keep all elements until no more markers; then can reset to avoid growing a
-     * huge buffer.
-     */
     class LookaheadStream<T> extends FastQueue<T> {
-        /**
-         * Absolute token index. It's the index of the symbol about to be
-         *  read via {@code LT(1)}. Goes from 0 to numtokens.
-         */
         private _currentElementIndex;
-        /**
-         * This is the {@code LT(-1)} element for the first element in {@link #data}.
-         */
         private _previousElement;
-        /** Track object returned by nextElement upon end of stream;
-         *  Return it later when they ask for LT passed end of input.
-         */
         _eof: T;
-        /** <summary>Track the last mark() call result value for use in rewind().</summary> */
         _lastMarker: number;
-        /** <summary>tracks how deep mark() calls are nested</summary> */
         _markDepth: number;
         get endOfFile(): T;
         set endOfFile(value: T);
         get previousElement(): T;
         reset(): void;
-        /**
-         *  Implement nextElement to supply a stream of elements to this
-         *  lookahead buffer.  Return EOF upon end of the stream we're pulling from.
-         */
         nextElement(): T;
         isEndOfFile(o: T): boolean;
-        /**
-         * Get and remove first element in queue; override
-         * {@link FastQueue#remove()}; it's the same, just checks for backtracking.
-         */
         dequeue(): T;
-        /**
-         * Make sure we have at least one element to remove, even if EOF
-         */
         consume(): void;
-        /**
-         *  Make sure we have 'need' elements from current position p. Last valid
-         *  p index is data.size()-1.  p+need-1 is the data index 'need' elements
-         *  ahead.  If we need 1 element, (p+1-1)==p must be &lt; data.size().
-         */
         syncAhead(need: number): void;
-        /**
-         * add n elements to buffer
-         */
         fill(n: number): void;
-        /**
-         * Size of entire stream is unknown; we only know buffer size from FastQueue
-         */
         get count(): number;
         lt(k: number): T;
         get index(): number;
@@ -13577,14 +11970,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Misc {
         release(marker: number): void;
         rewind2(marker: number): void;
         rewind(): void;
-        /**
-         * Seek to a 0-indexed absolute token index. Normally used to seek backwards
-         * in the buffer. Does not force loading of nodes.
-         * To preserve backward compatibility, this method allows seeking past the
-         * end of the currently buffered data. In this case, the input pointer will
-         * be moved but the data will only actually be loaded upon the next call to
-         * {@link #consume} or {@link #LT} for {@code k>0}.
-         */
         seek(index: number): void;
         lb(k: number): T;
     }
@@ -13602,18 +11987,10 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     *  This is identical to the ParserRuleReturnScope except that
-     *  the start property is a tree nodes not Token object
-     *  when you are parsing trees.
-     */
     class TreeRuleReturnScope<TTree> implements IRuleReturnScope<TTree> {
         private static ImplementsTreeRuleReturnScope;
         implements(): string[];
         private _start;
-        /**
-         * Gets the first node or root node of tree matched for this rule.
-         */
         start: TTree;
         stop: TTree;
     }
@@ -13627,35 +12004,13 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  A generic tree implementation with no payload.  You must subclass to
-     *  actually have any user data.  ANTLR v3 uses a list of children approach
-     *  instead of the child-sibling approach in v2.  A flat tree (a list) is
-     *  an empty node whose children represent the list.  An empty, but
-     *  non-null node is called "nil".
-     */
     class BaseTree implements ITree {
         private static ImplementsBaseTree;
         implements(): string[];
-        /**
-         *  Create a new node from an existing node does nothing for BaseTree
-         *  as there are no fields other than the children list, which cannot
-         *  be copied as the children are not considered part of this node.
-         */
         constructor(node?: ITree);
-        /**
-         *  Get the children internal List; note that if you directly mess with
-         *  the list, do so at your own risk.
-         */
         children: List<ITree>;
         get childCount(): number;
-        /**
-         * BaseTree doesn't track parent pointers.
-         */
         parent: ITree;
-        /**
-         * BaseTree doesn't track child indexes.
-         */
         childIndex: number;
         isNil: boolean;
         tokenStartIndex: number;
@@ -13666,138 +12021,38 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         charPositionInLine: number;
         getChild(i: number): ITree;
         getFirstChildWithType(type: number): ITree;
-        /**>
-         * Add t as child of this node.
-         *
-         *  Warning: if t has no children, but child does
-         *  and child isNil then this routine moves children to t via
-         *  t.children = child.children; i.e., without copying the array.
-         */
         addChild(t: ITree): void;
-        /**
-         * Add all elements of kids list as children of this node
-         */
         addChildren(kids: List<ITree>): void;
         setChild(i: number, t: ITree): void;
-        /**
-         * Insert child t at child position i (0..n-1) by shifting children
-         *  i+1..n-1 to the right one position. Set parent / indexes properly
-         *  but does NOT collapse nil-rooted t's that come in here like addChild.
-         */
         insertChild(i: number, t: ITree): void;
         deleteChild(i: number): any;
-        /**
-         *  Delete children from start to stop and replace with t even if t is
-         *  a list (nil-root tree).  num of children can increase or decrease.
-         *  For huge child lists, inserting children can force walking rest of
-         *  children to set their childindex; could be slow.
-         */
         replaceChildren(startChildIndex: number, stopChildIndex: number, t: any): void;
-        /**
-         * Override in a subclass to change the impl of children list
-         */
         createChildrenList(): List<ITree>;
-        /**
-         * Set the parent and child index values for all child of t
-         */
         freshenParentAndChildIndexes(offset?: number): void;
         freshenParentAndChildIndexesDeeply(offset?: number): void;
         sanityCheckParentAndChildIndexes(parent?: ITree, i?: number): void;
-        /** Walk upwards looking for ancestor with this token type.</summary> */
         hasAncestor(ttype: number): boolean;
-        /** Walk upwards and get first ancestor with this token type.</summary> */
         getAncestor(ttype: number): ITree;
-        /**
-         *  Return a list of all ancestors of this node.  The first node of
-         *  list is the root and the last is the parent of this node.
-         */
         getAncestors(): List<ITree>;
-        /** Print out a whole tree not just a node</summary> */
         toStringTree(): string;
-        /**
-         * Override to say how a node (not a tree) should look as text
-         */
         toString(): string;
         dupNode(): ITree;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import Dictionary = Stimulsoft.System.Collections.Dictionary;
-    /**
-     * A TreeAdaptor that works with any Tree implementation.
-     */
     class BaseTreeAdaptor implements ITreeAdaptor {
         private static ImplementsBaseTreeAdaptor;
         implements(): string[];
-        /**
-         *  System.identityHashCode() is not always unique; we have to
-         *  track ourselves.  That's ok, it's only for debugging, though it's
-         *  expensive: we have to create a hashtable with all tree nodes in it.
-         */
         protected treeToUniqueIDMap: Dictionary<any, number>;
         protected uniqueNodeID: number;
         nil(): any;
-        /**
-         *  Create tree node that holds the start and stop tokens associated
-         *  with an error.
-         *
-         *  If you specify your own kind of tree nodes, you will likely have to
-         *  override this method. CommonTree returns Token.INVALID_TOKEN_TYPE
-         *  if no token payload but you might have to set token type for diff
-         *  node type.
-         *
-         *  You don't have to subclass CommonErrorNode; you will likely need to
-         *  subclass your own tree node class to avoid class cast exception.
-         */
         errorNode(input: ITokenStream, start: IToken, stop: IToken, e: RecognitionException): any;
         isNil(tree: any): boolean;
         dupNode(type?: number, treeNode?: any, text?: string): any;
-        /**
-         *  This is generic in the sense that it will work with any kind of
-         *  tree (not just ITree interface).  It invokes the adaptor routines
-         *  not the tree node routines to do the construction.
-         */
         dupTree(t: any, parent?: any): any;
-        /**
-         *  Add a child to the tree t.  If child is a flat tree (a list), make all
-         *  in list children of t.  Warning: if t has no children, but child does
-         *  and child isNil then you can decide it is ok to move children to t via
-         *  t.children = child.children; i.e., without copying the array.  Just
-         *  make sure that this is consistent with have the user will build
-         *  ASTs.
-         */
         addChild(t: any, child: any): void;
-        /**
-         *  If oldRoot is a nil root, just copy or move the children to newRoot.
-         *  If not a nil root, make oldRoot a child of newRoot.
-         *
-         *    old=^(nil a b c), new=r yields ^(r a b c)
-         *    old=^(a b c), new=r yields ^(r ^(a b c))
-         *
-         *  If newRoot is a nil-rooted single child tree, use the single
-         *  child as the new root node.
-         *
-         *    old=^(nil a b c), new=^(nil r) yields ^(r a b c)
-         *    old=^(a b c), new=^(nil r) yields ^(r ^(a b c))
-         *
-         *  If oldRoot was null, it's ok, just return newRoot (even if isNil).
-         *
-         *    old=null, new=r yields r
-         *    old=null, new=^(nil r) yields ^(nil r)
-         *
-         *  Return newRoot.  Throw an exception if newRoot is not a
-         *  simple node or nil root with a single child node--it must be a root
-         *  node.  If newRoot is ^(nil x) return x as newRoot.
-         *
-         *  Be advised that it's ok for newRoot to point at oldRoot's
-         *  children; i.e., you don't have to copy the list.  We are
-         *  constructing these nodes so we should have this control for
-         *  efficiency.
-         */
         becomeRoot(newRoot: any, oldRoot: any): any;
-        /**
-         * Transform ^(nil x) to x and nil to null
-         */
         rulePostProcessing(root: any): any;
         becomeRoot2(newRoot: IToken, oldRoot: any): any;
         create5(tokenType: number, fromToken: IToken): any;
@@ -13813,48 +12068,11 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         deleteChild(t: any, i: number): any;
         getChildCount(t: any): number;
         getUniqueID(node: any): number;
-        /**
-         *  Tell me how to create a token for use with imaginary token nodes.
-         *  For example, there is probably no input symbol associated with imaginary
-         *  token DECL, but you need to create it as a payload or whatever for
-         *  the DECL node as in ^(DECL type ID).
-         *
-         *  If you care what the token payload objects' type is, you should
-         *  override this method and any other createToken variant.
-         */
         createToken2(tokenType: number, text: string): IToken;
-        /**
-         *  Tell me how to create a token for use with imaginary token nodes.
-         *  For example, there is probably no input symbol associated with imaginary
-         *  token DECL, but you need to create it as a payload or whatever for
-         *  the DECL node as in ^(DECL type ID).
-         *
-         *  This is a variant of createToken where the new token is derived from
-         *  an actual real input token.  Typically this is for converting '{'
-         *  tokens to BLOCK etc...  You'll see
-         *
-         *    r : lc='{' ID+ '}' -> ^(BLOCK[$lc] ID+) ;
-         *
-         *  If you care what the token payload objects' type is, you should
-         *  override this method and any other createToken variant.
-         */
         createToken(fromToken: IToken): IToken;
         create(payload: IToken): any;
-        /**
-         *  Duplicate a node.  This is part of the factory;
-         *  override if you want another kind of node to be built.
-         *
-         *  I could use reflection to prevent having to override this
-         *  but reflection is slow.
-         */
         dupNode2(treeNode: any): any;
         getToken(t: any): IToken;
-        /**
-         *  Track start/stop token for subtree root created for a rule.
-         *  Only works with Tree nodes.  For rules that match nothing,
-         *  seems like this will yield start=i and stop=i-1 in a nil node.
-         *  Might be useful info so I'll not force to be i..i.
-         */
         setTokenBoundaries(t: any, startToken: IToken, stopToken: IToken): void;
         getTokenStartIndex(t: any): number;
         getTokenStopIndex(t: any): number;
@@ -13869,29 +12087,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
     import Stack = Stimulsoft.System.Collections.Stack;
-    /**
-     *  A buffered stream of tree nodes.  Nodes can be from a tree of ANY kind.
-     *
-     *  This node stream sucks all nodes out of the tree specified in
-     *  the constructor during construction and makes pointers into
-     *  the tree using an array of Object pointers. The stream necessarily
-     *  includes pointers to DOWN and UP and EOF nodes.
-     *
-     *  This stream knows how to mark/release for backtracking.
-     *
-     *  This stream is most suitable for tree interpreters that need to
-     *  jump around a lot or for tree parsers requiring speed (at cost of memory).
-     *  There is some duplicated functionality here with UnBufferedTreeNodeStream
-     *  but just in bookkeeping, not tree walking etc...
-     *
-     *  TARGET DEVELOPERS:
-     *
-     *  This is the old CommonTreeNodeStream that buffered up entire node stream.
-     *  No need to implement really as new CommonTreeNodeStream is much better
-     *  and covers what we need.
-     *
-     *  @see CommonTreeNodeStream
-     */
     class BufferedTreeNodeStream implements ITreeNodeStream, ITokenStreamInformation {
         private static ImplementsBufferedTreeNodeStream;
         implements(): string[];
@@ -13900,45 +12095,13 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         down: any;
         up: any;
         eof: any;
-        /**
-         *  The complete mapping from stream index to tree node.
-         *  This buffer includes pointers to DOWN, UP, and EOF nodes.
-         *  It is built upon ctor invocation.  The elements are type
-         *  Object as we don't what the trees look like.
-         *
-         *  Load upon first need of the buffer so we can set token types
-         *  of interest for reverseIndexing.  Slows us down a wee bit to
-         *  do all of the if p==-1 testing everywhere though.
-         */
         nodes: List<any>;
-        /**
-         * Pull nodes from which tree?
-         */
         protected root: any;
-        /**
-         * IF this tree (root) was created from a token stream, track it.
-         */
         protected tokens: ITokenStream;
-        /**
-         * What tree adaptor was used to build these trees
-         */
         adaptor: ITreeAdaptor;
-        /**
-         * Reuse same DOWN, UP navigation nodes unless this is true
-         */
         uniqueNavigationNodes: boolean;
-        /**
-         *  The index into the nodes list of the current node (next node
-         *  to consume).  If -1, nodes array not filled yet.
-         */
         protected p: number;
-        /**
-         * Track the last mark() call result value for use in rewind().
-         */
         protected lastMarker: number;
-        /**
-         * Stack of indexes used for push/pop calls
-         */
         protected calls: Stack<number>;
         constructor(adaptor?: ITreeAdaptor, tree?: any, initialBufferSize?: number);
         get count(): number;
@@ -13951,29 +12114,13 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         get lastToken(): IToken;
         get lastRealToken(): IToken;
         maxLookBehind: number;
-        /**
-         *  Walk tree with depth-first-search and fill nodes buffer.
-         *  Don't do DOWN, UP nodes if its a list (t is isNil).
-         */
         fillBuffer(): void;
         fillBuffer2(t: any): void;
-        /**
-         *  What is the stream index for node? 0..n-1
-         *  Return -1 if node not found.
-         */
         protected getNodeIndex(node: any): number;
-        /**
-         *  As we flatten the tree, we use UP, DOWN nodes to represent
-         *  the tree structure.  When debugging we need unique nodes
-         *  so instantiate new ones when uniqueNavigationNodes is true.
-         */
         protected addNavigationNode(ttype: number): void;
         get(i: number): any;
         lt(k: number): any;
         getCurrentSymbol(): any;
-        /**
-         * Look backwards k nodes
-         */
         protected lb(k: number): any;
         consume(): void;
         la(i: number): number;
@@ -13983,22 +12130,11 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         rewind2(marker: number): void;
         rewind(): void;
         seek(index: number): void;
-        /**
-         *  Make stream jump to a new location, saving old location.
-         *  Switch back with pop().
-         */
         push(index: number): void;
-        /**
-         *  Seek back to previous index saved during last push() call.
-         *  Return top of stack (return index).
-         */
         pop(): number;
         reset(): void;
         iterator(): List<any>;
         replaceChildren(parent: any, startChildIndex: number, stopChildIndex: number, t: any): void;
-        /**
-         * Used for testing, just return the token type stream
-         */
         toTokenTypeString(): string;
         toTokenString(start: number, stop: number): string;
         toString(start: any, stop: any): string;
@@ -14014,31 +12150,11 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     *  A tree node that is wrapper for a Token object.  After 3.0 release
-     *  while building tree rewrite stuff, it became clear that computing
-     *  parent and child index is very difficult and cumbersome.  Better to
-     *  spend the space in every tree node.  If you don't want these extra
-     *  fields, it's easy to cut them out in your own BaseTree subclass.
-     */
     class CommonTree extends BaseTree {
-        /**
-         * A single token is the payload
-         */
         private _token;
-        /**
-         *  What token indexes bracket all tokens associated with this node
-         *  and below?
-         */
         protected startIndex: number;
         protected stopIndex: number;
-        /**
-         * Who is the parent node of this node; if null, implies node is root
-         */
         parent: CommonTree;
-        /**
-         * What index is this node in the child list? Range: 0..n-1
-         */
         childIndex: number;
         constructor(node?: CommonTree | IToken);
         get isNil(): boolean;
@@ -14050,19 +12166,11 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         set tokenStopIndex(value: number);
         get type(): number;
         dupNode(): ITree;
-        /**
-         *  For every node in this subtree, make sure it's start/stop token's
-         *  are set.  Walk depth first, visit bottom up.  Only updates nodes
-         *  with at least one token index &lt; 0.
-         */
         setUnknownTokenBoundaries(): void;
         toString(): string;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     * A node representing erroneous token range in token stream
-     */
     class CommonErrorNode extends CommonTree {
         input: IIntStream;
         start: IToken;
@@ -14076,50 +12184,10 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     *  A TreeAdaptor that works with any Tree implementation.  It provides
-     *  really just factory methods; all the work is done by BaseTreeAdaptor.
-     *  If you would like to have different tokens created than ClassicToken
-     *  objects, you need to override this and then set the parser tree adaptor to
-     *  use your subclass.
-     *
-     *  To get your parser to build nodes of a different type, override
-     *  create(Token), errorNode(), and to be safe, YourTreeClass.dupNode().
-     *  dupNode is called to duplicate nodes during rewrite operations.
-     */
     class CommonTreeAdaptor extends BaseTreeAdaptor {
         create(payload: IToken): CommonTree;
-        /**
-         *  Tell me how to create a token for use with imaginary token nodes.
-         *  For example, there is probably no input symbol associated with imaginary
-         *  token DECL, but you need to create it as a payload or whatever for
-         *  the DECL node as in ^(DECL type ID).
-         *
-         *  If you care what the token payload objects' type is, you should
-         *  override this method and any other createToken variant.
-         */
         createToken2(tokenType: number, text: string): IToken;
-        /**
-         *  Tell me how to create a token for use with imaginary token nodes.
-         *  For example, there is probably no input symbol associated with imaginary
-         *  token DECL, but you need to create it as a payload or whatever for
-         *  the DECL node as in ^(DECL type ID).
-         *
-         *  This is a variant of createToken where the new token is derived from
-         *  an actual real input token.  Typically this is for converting '{'
-         *  tokens to BLOCK etc...  You'll see
-         *
-         *    r : lc='{' ID+ '}' -> ^(BLOCK[$lc] ID+) ;
-         *
-         *  If you care what the token payload objects' type is, you should
-         *  override this method and any other createToken variant.
-         */
         createToken(fromToken: IToken): IToken;
-        /**
-         *  What is the Token associated with this node?  If
-         *  you are not using CommonTree, then you must
-         *  override this in your own adaptor.
-         */
         getToken(t: any): IToken;
     }
 }
@@ -14129,43 +12197,13 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         implements(): string[];
         DEFAULT_INITIAL_BUFFER_SIZE: number;
         INITIAL_CALL_STACK_SIZE: number;
-        /**
-         * Pull nodes from which tree?
-         */
         private _root;
-        /**
-         * If this tree (root) was created from a token stream, track it.
-         */
         protected tokens: ITokenStream;
-        /**
-         * What tree adaptor was used to build these trees
-         */
         private _adaptor;
-        /**
-         * The tree iterator we are using
-         */
         private _it;
-        /**
-         * Stack of indexes used for push/pop calls
-         */
         private _calls;
-        /**
-         * Tree (nil A B C) trees like flat A B C streams
-         */
         private _hasNilRoot;
-        /**
-         * Tracks tree depth.  Level=0 means we're at root node level.
-         */
         private _level;
-        /**
-         * Tracks the last node before the start of {@link #data} which contains
-         * position information to provide information for error reporting. This is
-         * tracked in addition to {@link #prevElement} which may or may not contain
-         * position information.
-         *
-         * @see #hasPositionInformation
-         * @see RecognitionException#extractInformationFromTreeNodeStream
-         */
         private _previousLocationElement;
         constructor(adaptor: ITreeAdaptor, tree: any);
         get sourceName(): string;
@@ -14180,85 +12218,25 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         dequeue(): any;
         isEndOfFile(o: any): boolean;
         la(i: number): number;
-        /**
-         *  Make stream jump to a new location, saving old location.
-         *  Switch back with pop().
-         */
         push(index: number): void;
-        /**
-         *  Seek back to previous index saved during last push() call.
-         *  Return top of stack (return index).
-         */
         pop(): number;
-        /**
-         * Returns an element containing position information. If {@code allowApproximateLocation} is {@code false}, then
-         * this method will return the {@code LT(1)} element if it contains position information, and otherwise return {@code null}.
-         * If {@code allowApproximateLocation} is {@code true}, then this method will return the last known element containing position information.
-         *
-         * @see #hasPositionInformation
-         */
         getKnownPositionElement(allowApproximateLocation: boolean): any;
         hasPositionInformation(node: any): boolean;
         replaceChildren(parent: any, startChildIndex: number, stopChildIndex: number, t: any): void;
         toString1(start: any, stop: any): string;
-        /**
-         * For debugging; destructive: moves tree iterator to end.
-         */
         toTokenTypeString(): string;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import Dictionary = Stimulsoft.System.Collections.Dictionary;
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  A utility class to generate DOT diagrams (graphviz) from
-     *  arbitrary trees.  You can pass in your own templates and
-     *  can pass in any kind of tree or use Tree interface method.
-     *  I wanted this separator so that you don't have to include
-     *  ST just to use the org.antlr.runtime.tree.* package.
-     *  This is a set of non-static methods so you can subclass
-     *  to override.  For example, here is an invocation:
-     *
-     *      CharStream input = new ANTLRInputStream(System.in);
-     *      TLexer lex = new TLexer(input);
-     *      CommonTokenStream tokens = new CommonTokenStream(lex);
-     *      TParser parser = new TParser(tokens);
-     *      TParser.e_return r = parser.e();
-     *      Tree t = (Tree)r.tree;
-     *      System.out.println(t.toStringTree());
-     *      DOTTreeGenerator gen = new DOTTreeGenerator();
-     *      StringTemplate st = gen.toDOT(t);
-     *      System.out.println(st);
-     */
     class DotTreeGenerator {
         headerLines: string[];
         footer: string;
         nodeFormat: string;
         edgeFormat: string;
-        /**
-         * Track node to number mapping so we can get proper node name back
-         */
         nodeToNumberMap: Dictionary<any, number>;
-        /**
-         * Track node number so we can get unique node names
-         */
         nodeNumber: number;
-        /**
-         *  Generate DOT (graphviz) for a whole tree not just a node.
-         *  For example, 3+4*5 should generate:
-         *
-         * digraph {
-         *   node [shape=plaintext, fixedsize=true, fontsize=11, fontname="Courier",
-         *         width=.4, height=.2];
-         *   edge [arrowsize=.7]
-         *   "+"->3
-         *   "+"->"*"
-         *   "*"->4
-         *   "*"->5
-         * }
-         *
-         * Takes a Tree interface object.
-         */
         toDot2(tree: any, adaptor: ITreeAdaptor): string;
         toDot(tree: ITree): string;
         protected defineNodes(tree: any, adaptor: ITreeAdaptor): List<string>;
@@ -14269,111 +12247,34 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     * @author Sam Harwell
-     */
     let IPositionTrackingStream: string;
     interface IPositionTrackingStream {
-        /**
-         * Returns an element containing concrete information about the current
-         * position in the stream.
-         *
-         * @param allowApproximateLocation if {@code false}, this method returns
-         * {@code null} if an element containing exact information about the current
-         * position is not available
-         */
         getKnownPositionElement(allowApproximateLocation: boolean): any;
-        /**
-         * Determines if the specified {@code element} contains concrete position
-         * information.
-         *
-         * @param element the element to check
-         * @return {@code true} if {@code element} contains concrete position
-         * information, otherwise {@code false}
-         */
         hasPositionInformation(element: any): boolean;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  What does a tree look like?  ANTLR has a number of support classes
-     *  such as CommonTreeNodeStream that work on these kinds of trees.  You
-     *  don't have to make your trees implement this interface, but if you do,
-     *  you'll be able to use more support code.
-     *
-     *  NOTE: When constructing trees, ANTLR can build any kind of tree; it can
-     *  even use Token objects as trees if you add a child list to your tokens.
-     *
-     *  This is a tree node without any payload; just navigation and factory stuff.
-     */
     let ITree: string;
     interface ITree {
         getChild(i: number): ITree;
         childCount: number;
         parent: ITree;
-        /**
-         * Is there is a node above with token type ttype?
-         */
         hasAncestor(ttype: number): boolean;
-        /**
-         * Walk upwards and get first ancestor with this token type.
-         */
         getAncestor(ttype: number): ITree;
-        /**
-         *  Return a list of all ancestors of this node.  The first node of
-         *  list is the root and the last is the parent of this node.
-         */
         getAncestors(): List<ITree>;
-        /**
-         * This node is what child index? 0..n-1
-         */
         childIndex: number;
-        /**
-         * Set the parent and child index values for all children
-         */
         freshenParentAndChildIndexes(): any;
-        /**
-         *  Add t as a child to this node.  If t is null, do nothing.  If t
-         *  is nil, add all children of t to this' children.
-         */
         addChild(t: ITree): any;
-        /**
-         * Set ith child (0..n-1) to t; t must be non-null and non-nil node
-         */
         setChild(i: number, t: ITree): any;
         deleteChild(i: number): any;
-        /**
-         *  Delete children from start to stop and replace with t even if t is
-         *  a list (nil-root tree).  num of children can increase or decrease.
-         *  For huge child lists, inserting children can force walking rest of
-         *  children to set their childindex; could be slow.
-         */
         replaceChildren(startChildIndex: number, stopChildIndex: number, t: any): any;
-        /**
-         *  Indicates the node is a nil node but may still have children, meaning
-         *  the tree is a flat list.
-         */
         isNil: boolean;
-        /**
-         *  What is the smallest token index (indexing from 0) for this node
-         *  and its children?
-         */
         tokenStartIndex: number;
-        /**
-         *  What is the largest token index (indexing from 0) for this node
-         *  and its children?
-         */
         tokenStopIndex: number;
         dupNode(): ITree;
-        /**
-         * Return a token type; needed for tree parsing
-         */
         type: number;
         text: string;
-        /**
-         * In case we don't have a token payload, what is the line for errors?
-         */
         line: number;
         charPositionInLine: number;
         toStringTree(): string;
@@ -14381,332 +12282,58 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     *  How to create and navigate trees.  Rather than have a separate factory
-     *  and adaptor, I've merged them.  Makes sense to encapsulate.
-     *
-     *  This takes the place of the tree construction code generated in the
-     *  generated code in 2.x and the ASTFactory.
-     *
-     *  I do not need to know the type of a tree at all so they are all
-     *  generic Objects.  This may increase the amount of typecasting needed. :(
-     */
     let ITreeAdaptor: string;
     interface ITreeAdaptor {
-        /**
-         *  Create a tree node from Token object; for CommonTree type trees,
-         *  then the token just becomes the payload.  This is the most
-         *  common create call.
-         *
-         *  Override if you want another kind of node to be built.
-         */
         create(payload: IToken): any;
-        /**
-         *  Create a new node derived from a token, with a new token type.
-         *  This is invoked from an imaginary node ref on right side of a
-         *  rewrite rule as IMAG[$tokenLabel].
-         *
-         *  This should invoke createToken(Token).
-         */
-        /**
-         *  Same as create(tokenType,fromToken) except set the text too.
-         *  This is invoked from an imaginary node ref on right side of a
-         *  rewrite rule as IMAG[$tokenLabel, "IMAG"].
-         *
-         *  This should invoke createToken(Token).
-         */
         create2(tokenType: number, fromToken: IToken, text: string): any;
-        /**
-         *  Same as create(fromToken) except set the text too.
-         *  This is invoked when the <c>text</c> terminal option is set, as in
-         *  IMAG&lt;text='IMAG'&gt;.
-         *
-         *  This should invoke createToken(Token).
-         */
         create3(fromToken: IToken, text: string): any;
-        /**
-         *  Create a new node derived from a token, with a new token type.
-         *  This is invoked from an imaginary node ref on right side of a
-         *  rewrite rule as IMAG["IMAG"].
-         *
-         *  This should invoke createToken(int,String).
-         */
         create4(tokenType: number, text: string): any;
-        /**
-         * Duplicate a single tree node.
-         * Override if you want another kind of node to be built.
-         */
         dupNode2(treeNode: any): any;
         dupNode(type?: number, treeNode?: any, text?: string): any;
-        /**
-         * Duplicate tree recursively, using dupNode() for each node
-         */
         dupTree(tree: any): any;
-        /**
-         *  Return a nil node (an empty but non-null node) that can hold
-         *  a list of element as the children.  If you want a flat tree (a list)
-         *  use "t=adaptor.nil(); t.addChild(x); t.addChild(y);"
-         */
         nil(): any;
-        /**
-         *  Return a tree node representing an error.  This node records the
-         *  tokens consumed during error recovery.  The start token indicates the
-         *  input symbol at which the error was detected.  The stop token indicates
-         *  the last symbol consumed during recovery.
-         *
-         *  You must specify the input stream so that the erroneous text can
-         *  be packaged up in the error node.  The exception could be useful
-         *  to some applications; default implementation stores ptr to it in
-         *  the CommonErrorNode.
-         *
-         *  This only makes sense during token parsing, not tree parsing.
-         *  Tree parsing should happen only when parsing and tree construction
-         *  succeed.
-         */
         errorNode(input: ITokenStream, start: IToken, stop: IToken, e: RecognitionException): any;
-        /**
-         * Is tree considered a nil node used to make lists of child nodes?
-         */
         isNil(tree: any): boolean;
-        /**
-         *  Add a child to the tree t.  If child is a flat tree (a list), make all
-         *  in list children of t.  Warning: if t has no children, but child does
-         *  and child isNil then you can decide it is ok to move children to t via
-         *  t.children = child.children; i.e., without copying the array.  Just
-         *  make sure that this is consistent with have the user will build
-         *  ASTs.  Do nothing if t or child is null.
-         */
         addChild(t: any, child: any): any;
-        /**
-         *  If oldRoot is a nil root, just copy or move the children to newRoot.
-         *  If not a nil root, make oldRoot a child of newRoot.
-         *
-         *    old=^(nil a b c), new=r yields ^(r a b c)
-         *    old=^(a b c), new=r yields ^(r ^(a b c))
-         *
-         *  If newRoot is a nil-rooted single child tree, use the single
-         *  child as the new root node.
-         *
-         *    old=^(nil a b c), new=^(nil r) yields ^(r a b c)
-         *    old=^(a b c), new=^(nil r) yields ^(r ^(a b c))
-         *
-         *  If oldRoot was null, it's ok, just return newRoot (even if isNil).
-         *
-         *    old=null, new=r yields r
-         *    old=null, new=^(nil r) yields ^(nil r)
-         *
-         *  Return newRoot.  Throw an exception if newRoot is not a
-         *  simple node or nil root with a single child node--it must be a root
-         *  node.  If newRoot is ^(nil x) return x as newRoot.
-         *
-         *  Be advised that it's ok for newRoot to point at oldRoot's
-         *  children; i.e., you don't have to copy the list.  We are
-         *  constructing these nodes so we should have this control for
-         *  efficiency.
-         */
-        /**
-         *  Create a node for newRoot make it the root of oldRoot.
-         *  If oldRoot is a nil root, just copy or move the children to newRoot.
-         *  If not a nil root, make oldRoot a child of newRoot.
-         *
-         *  @returns Return node created for newRoot.
-         *
-         *  Be advised: when debugging ASTs, the DebugTreeAdaptor manually
-         *  calls create(Token child) and then plain becomeRoot(node, node)
-         *  because it needs to trap calls to create, but it can't since it delegates
-         *  to not inherits from the TreeAdaptor.
-         */
         becomeRoot(newRoot: IToken | any, oldRoot: any): any;
-        /**
-         *  Given the root of the subtree created for this rule, post process
-         *  it to do any simplifications or whatever you want.  A required
-         *  behavior is to convert ^(nil singleSubtree) to singleSubtree
-         *  as the setting of start/stop indexes relies on a single non-nil root
-         *  for non-flat trees.
-         *
-         *  Flat trees such as for lists like "idlist : ID+ ;" are left alone
-         *  unless there is only one ID.  For a list, the start/stop indexes
-         *  are set in the nil node.
-         *
-         *  This method is executed after all rule tree construction and right
-         *  before setTokenBoundaries().
-         */
         rulePostProcessing(root: any): any;
-        /**
-         * For identifying trees.
-         *
-         *  How to identify nodes so we can say "add node to a prior node"?
-         *  Even becomeRoot is an issue.  Use System.identityHashCode(node)
-         *  usually.
-         */
         getUniqueID(node: any): number;
-        /**
-         * For tree parsing, I need to know the token type of a node
-         */
         getType(t: any): number;
-        /**
-         * Node constructors can set the type of a node
-         */
         setType(t: any, type: number): any;
         getText(t: any): string;
-        /**
-         * Node constructors can set the text of a node
-         */
         setText(t: any, text: string): any;
-        /**
-         *  Return the token object from which this node was created.
-         *  Currently used only for printing an error message.
-         *  The error display routine in BaseRecognizer needs to
-         *  display where the input the error occurred. If your
-         *  tree of limitation does not store information that can
-         *  lead you to the token, you can create a token filled with
-         *  the appropriate information and pass that back.  See
-         *  BaseRecognizer.getErrorMessage().
-         */
         getToken(t: any): IToken;
-        /**
-         *  Where are the bounds in the input token stream for this node and
-         *  all children?  Each rule that creates AST nodes will call this
-         *  method right before returning.  Flat trees (i.e., lists) will
-         *  still usually have a nil root node just to hold the children list.
-         *  That node would contain the start/stop indexes then.
-         */
         setTokenBoundaries(t: any, startToken: IToken, stopToken: IToken): any;
-        /** Get the token start index for this subtree; return -1 if no such index */
         getTokenStartIndex(t: any): number;
-        /** Get the token stop index for this subtree; return -1 if no such index */
         getTokenStopIndex(t: any): number;
-        /**
-         * Get a child 0..n-1 node
-         */
         getChild(t: any, i: number): any;
-        /**
-         * Set ith child (0..n-1) to t; t must be non-null and non-nil node
-         */
         setChild(t: any, i: number, child: any): any;
-        /**
-         * Remove ith child and shift children down from right.
-         */
         deleteChild(t: any, i: number): any;
-        /** How many children?  If 0, then this is a leaf node */
         getChildCount(t: any): number;
-        /**
-         *  Who is the parent node of this node; if null, implies node is root.
-         *  If your node type doesn't handle this, it's ok but the tree rewrites
-         *  in tree parsers need this functionality.
-         */
         getParent(t: any): any;
         setParent(t: any, parent: any): any;
-        /**
-         *  What index is this node in the child list? Range: 0..n-1
-         *  If your node type doesn't handle this, it's ok but the tree rewrites
-         *  in tree parsers need this functionality.
-         */
         getChildIndex(t: any): number;
         setChildIndex(t: any, index: number): any;
-        /**
-         *  Replace from start to stop child index of parent with t, which might
-         *  be a list.  Number of children may be different after this call.
-         *
-         *  If parent is null, don't do anything; must be at root of overall tree.
-         *  Can't replace whatever points to the parent externally.  Do nothing.
-         */
         replaceChildren(parent: any, startChildIndex: number, stopChildIndex: number, t: any): any;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     * A stream of tree nodes, accessing nodes from a tree of some kind
-     */
     let ITreeNodeStream: string;
     interface ITreeNodeStream extends IIntStream {
-        /**
-         *  Get a tree node at an absolute index i; 0..n-1.
-         *  If you don't want to buffer up nodes, then this method makes no
-         *  sense for you.
-         */
         get(i: number): ITreeNodeStream;
-        /**
-         * Get tree node at current input pointer + <paramref name="k"/> ahead where
-         * <paramref name="k"/>==1 is next node. <paramref name="k"/>&lt;0 indicates nodes in the past. So
-         * {@code LT(-1)} is previous node, but implementations are not required to
-         * provide results for <paramref name="k"/> &lt; -1. {@code LT(0)} is undefined. For
-         * <paramref name="k"/>&lt;=n, return <see langword="null"/>. Return <see langword="null"/> for {@code LT(0)}
-         * and any index that results in an absolute address that is negative.
-         *
-         * This is analogous to <see cref="ITokenStream.LT(int)"/>, but this returns a tree node
-         * instead of a <see cref="IToken"/>. Makes code generation identical for both
-         * parser and tree grammars.
-         */
         lt(k: number): any;
-        /**
-         *  Where is this stream pulling nodes from?  This is not the name, but
-         *  the object that provides node objects.
-         */
         treeSource: any;
-        /**
-         * If the tree associated with this stream was created from a
-         * {@link TokenStream}, you can specify it here. Used to do rule
-         * {@code $text} attribute in tree parser. Optional unless you use tree
-         * parser rule {@code $text} attribute or {@code output=template} and
-         * {@code rewrite=true} options.
-         */
         tokenStream: ITokenStream;
-        /**
-         *  What adaptor can tell me how to interpret/navigate nodes and
-         *  trees.  E.g., get text of a node.
-         */
         treeAdaptor: ITreeAdaptor;
-        /**
-         * As we flatten the tree, we use {@link Token#UP}, {@link Token#DOWN} nodes
-         * to represent the tree structure. When debugging we need unique nodes so
-         * we have to instantiate new ones. When doing normal tree parsing, it's
-         * slow and a waste of memory to create unique navigation nodes. Default
-         * should be {@code false}.
-         */
         uniqueNavigationNodes: boolean;
-        /**
-         * Return the text of all nodes from {@code start} to {@code stop},
-         * inclusive. If the stream does not buffer all the nodes then it can still
-         * walk recursively from start until stop. You can always return
-         * {@code null} or {@code ""} too, but users should not access
-         * {@code $ruleLabel.text} in an action of course in that case.
-         */
         toString(start: any, stop: any): string;
-        /**
-         * Replace children of {@code parent} from index {@code startChildIndex} to
-         * {@code stopChildIndex} with {@code t}, which might be a list. Number of
-         * children may be different after this call. The stream is notified because
-         * it is walking the tree and might need to know you are monkeying with the
-         * underlying tree. Also, it might be able to modify the node stream to
-         * avoid restreaming for future phases.
-         *
-         * If {@code parent} is {@code null}, don't do anything; must be at root of
-         * overall tree. Can't replace whatever points to the parent externally. Do
-         * nothing.
-         */
         replaceChildren(parent: any, startChildIndex: number, stopChildIndex: number, t: any): any;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     *  How to execute code for node t when a visitor visits node t.  Execute
-     *  pre() before visiting children and execute post() after visiting children.
-     */
     let ITreeVisitorAction: string;
     interface ITreeVisitorAction {
-        /**
-         *  Execute an action before visiting children of t.  Return t or
-         *  a rewritten t.  It is up to the visitor to decide what to do
-         *  with the return value.  Children of returned value will be
-         *  visited if using TreeVisitor.visit().
-         */
         pre(t: any): any;
-        /**
-         *  Execute an action after visiting children of t.  Return t or
-         *  a rewritten t.  It is up to the visitor to decide what to do
-         *  with the return value.
-         */
         post(t: any): any;
     }
     class TreeVisitorAction implements ITreeVisitorAction {
@@ -14718,12 +12345,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  A record of the rules used to match a token sequence.  The tokens
-     *  end up as the leaves of this tree and rule nodes are the interior nodes.
-     *  This really adds no functionality, it is just an alias for CommonTree
-     *  that is more meaningful (specific) and holds a String to display for a node.
-     */
     class ParseTree extends BaseTree {
         payload: any;
         hiddenTokens: List<IToken>;
@@ -14734,26 +12355,13 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         type: number;
         dupNode(): ITree;
         toString(): string;
-        /**
-         *  Emit a token and all hidden nodes before.  EOF node holds all
-         *  hidden tokens after last real token.
-         */
         toStringWithHiddenTokens(): string;
-        /**
-         *  Print out the leaves of this tree, which means printing original
-         *  input back out.
-         */
         toInputString(): string;
         protected toStringLeaves(buf: string): void;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import Exception = Stimulsoft.System.Exception;
-    /**
-     *  Base class for all exceptions thrown during AST rewrite construction.
-     *  This signifies a case where the cardinality of two or more elements
-     *  in a subrule are different: (ID INT)+ where |ID|!=|INT|
-     */
     class RewriteCardinalityException extends Exception {
         private _elementDescription;
         constructor(message?: string, elementDescription?: string, innerException?: Exception);
@@ -14761,101 +12369,31 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import Exception = Stimulsoft.System.Exception;
-    /**
-     * No elements within a (...)+ in a rewrite rule
-     */
     class RewriteEarlyExitException extends RewriteCardinalityException {
         constructor(message?: string, elementDescription?: string, innerException?: Exception);
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import Exception = Stimulsoft.System.Exception;
-    /**
-     * Ref to ID or expr but no tokens in ID stream or subtrees in expr stream
-     */
     class RewriteEmptyStreamException extends RewriteCardinalityException {
         constructor(message?: string, elementDescription?: string, innerException?: Exception);
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  A generic list of elements tracked in an alternative to be used in
-     *  a -> rewrite rule.  We need to subclass to fill in the next() method,
-     *  which returns either an AST node wrapped around a token payload or
-     *  an existing subtree.
-     *
-     *  Once you start next()ing, do not try to add more elements.  It will
-     *  break the cursor tracking I believe.
-     *
-     *  TODO: add mechanism to detect/puke on modification after reading from stream
-     *
-     *  <see cref="RewriteRuleSubtreeStream"/>
-     *  <see cref="RewriteRuleTokenStream"/>
-     */
     class RewriteRuleElementStream {
-        /**
-         *  Cursor 0..n-1.  If singleElement!=null, cursor is 0 until you next(),
-         *  which bumps it to 1 meaning no more elements.
-         */
         protected cursor: number;
-        /**
-         * Track single elements w/o creating a list.  Upon 2nd add, alloc list
-         */
         protected singleElement: any;
-        /**
-         * The list of tokens or subtrees we are tracking
-         */
         protected elements: List<any>;
-        /**
-         *  Once a node / subtree has been used in a stream, it must be dup'd
-         *  from then on.  Streams are reset after subrules so that the streams
-         *  can be reused in future subrules.  So, reset must set a dirty bit.
-         *  If dirty, then next() always returns a dup.
-         */
         protected dirty: boolean;
-        /**
-         *  The element or stream description; usually has name of the token or
-         *  rule reference that this list tracks.  Can include rulename too, but
-         *  the exception would track that info.
-         */
         protected elementDescription: string;
         protected adaptor: ITreeAdaptor;
         constructor(adaptor: ITreeAdaptor, elementDescription: string, oneElement?: any, elements?: List<any>);
-        /**
-         *  Reset the condition of this stream so that it appears we have
-         *  not consumed any of its elements.  Elements themselves are untouched.
-         *  Once we reset the stream, any future use will need duplicates.  Set
-         *  the dirty bit.
-         */
         reset(): void;
         add(el: any): void;
-        /**
-         *  Return the next element in the stream.  If out of elements, throw
-         *  an exception unless size()==1.  If size is 1, then return elements[0].
-         *  Return a duplicate node/subtree if stream is out of elements and
-         *  size==1.  If we've already used the element, dup (dirty bit set).
-         */
         nextTree(): any;
-        /**
-         *  Do the work of getting the next element, making sure that it's
-         *  a tree node or subtree.  Deal with the optimization of single-
-         *  element list versus list of size > 1.  Throw an exception
-         *  if the stream is empty or we're out of elements and size>1.
-         *  protected so you can override in a subclass if necessary.
-         */
         nextCore(): any;
-        /**
-         *  When constructing trees, sometimes we need to dup a token or AST
-         * 	subtree.  Dup'ing a token means just creating another AST node
-         *  around it.  For trees, you must call the adaptor.dupTree() unless
-         *  the element is for a tree root; then it must be a node dup.
-         */
         protected dup(el: any): any;
-        /**
-         *  Ensure stream emits trees; tokens must be converted to AST nodes.
-         *  AST nodes can be passed through unmolested.
-         */
         protected toTree(el: any): any;
         get hasNext(): boolean;
         get count(): number;
@@ -14864,14 +12402,7 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  Queues up nodes matched on left side of -> in a tree parser. This is
-     *  the analog of RewriteRuleTokenStream for normal parsers.
-     */
     class RewriteRuleNodeStream extends RewriteRuleElementStream {
-        /**
-         * Create a stream, but feed off an existing list
-         */
         constructor(adaptor: ITreeAdaptor, elementDescription: string, oneElement?: any, elements?: List<any>);
         nextNode(): any;
         protected toTree(el: any): any;
@@ -14881,24 +12412,7 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
     class RewriteRuleSubtreeStream extends RewriteRuleElementStream {
-        /**
-         * Create a stream, but feed off an existing list
-         */
         constructor(adaptor: ITreeAdaptor, elementDescription: string, oneElement?: any, elements?: List<any>);
-        /**
-         *  Treat next element as a single node even if it's a subtree.
-         *  This is used instead of next() when the result has to be a
-         *  tree root node.  Also prevents us from duplicating recently-added
-         *  children; e.g., ^(type ID)+ adds ID to type and then 2nd iteration
-         *  must dup the type node, but ID has been added.
-         *
-         *  Referencing a rule result twice is ok; dup entire tree as
-         *  we can't be adding trees as root; e.g., expr expr.
-         *
-         *  Hideous code duplication here with super.next().  Can't think of
-         *  a proper way to refactor.  This needs to always call dup node
-         *  and super.next() doesn't know which to call: dup node or dup tree.
-         */
         nextNode(): any;
         protected dup(el: any): any;
     }
@@ -14906,19 +12420,9 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
     class RewriteRuleTokenStream extends RewriteRuleElementStream {
-        /**
-         * Create a stream, but feed off an existing list
-         */
         constructor(adaptor: ITreeAdaptor, elementDescription: string, oneElement?: any, elements?: List<any>);
-        /**
-         * Get next token from stream and make a node for it
-         */
         nextNode(): any;
         nextToken(): IToken;
-        /**
-         *  Don't convert to a tree unless they explicitly call nextTree.
-         *  This way we can do hetero tree nodes in rewrite.
-         */
         toTree(el: any): any;
         protected dup(el: any): any;
     }
@@ -14932,12 +12436,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  A generic recognizer that can handle recognizers generated from
-     *  lexer, parser, and tree grammars.  This is all the parsing
-     *  support code essentially; most of it is error recovery stuff and
-     *  backtracking.
-     */
     class BaseRecognizer {
         memoRuleFailed: number;
         memoRuleUnknown: number;
@@ -14945,416 +12443,50 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         defaultTokenChannel: number;
         hidden: number;
         nextTokenRuleName: string;
-        /**
-         *  State of a lexer, parser, or tree parser are collected into a this.state
-         *  object so the this.state can be shared.  This sharing is needed to
-         *  have one grammar import others and share same error variables
-         *  and other this.state variables.  It's a kind of explicit multiple
-         *  inheritance via delegation of methods and shared this.state.
-         */
         state: RecognizerSharedState;
         constructor(state?: RecognizerSharedState);
         setState(value: RecognizerSharedState): void;
         protected initDFAs(): void;
-        /**
-         * reset the parser's this.state; subclasses must rewinds the input stream
-         */
         reset(): void;
-        /**
-         *  Match current input symbol against ttype.  Attempt
-         *  single token insertion or deletion error recovery.  If
-         *  that fails, throw MismatchedTokenException.
-         *
-         *  To turn off single token insertion or deletion error
-         *  recovery, override recoverFromMismatchedToken() and have it
-         *  throw an exception. See TreeParser.recoverFromMismatchedToken().
-         *  This way any error in a rule will cause an exception and
-         *  immediate exit from rule.  Rule would recover by resynchronizing
-         *  to the set of symbols that can follow rule ref.
-         */
         match(input: IIntStream, ttype: number, follow: BitSet): any;
-        /** Match the wildcard: in a symbol */
         matchAny(input: IIntStream): void;
         mismatchIsUnwantedToken(input: IIntStream, ttype: number): boolean;
         mismatchIsMissingToken(input: IIntStream, follow: BitSet): boolean;
-        /**
-         * Report a recognition problem.
-         *
-         *  This method sets errorRecovery to indicate the parser is recovering
-         *  not parsing.  Once in recovery mode, no errors are generated.
-         *  To get out of recovery mode, the parser must successfully match
-         *  a token (after a resync).  So it will go:
-         *
-         * 		1. error occurs
-         * 		2. enter recovery mode, report error
-         * 		3. consume until token found in resynch set
-         * 		4. try to resume parsing
-         * 		5. next match() will reset errorRecovery mode
-         *
-         *  If you override, make sure to update syntaxErrors if you care about that.
-         */
         reportError(e: RecognitionException): void;
         displayRecognitionError(tokenNames: string[], e: RecognitionException): void;
-        /**
-         * What error message should be generated for the various exception types?
-         *
-         *  Not very object-oriented code, but I like having all error message
-         *  generation within one method rather than spread among all of the
-         *  exception classes. This also makes it much easier for the exception
-         *  handling because the exception classes do not have to have pointers back
-         *  to this object to access utility routines and so on. Also, changing
-         *  the message for an exception type would be difficult because you
-         *  would have to subclassing exception, but then somehow get ANTLR
-         *  to make those kinds of exception objects instead of the default.
-         *  This looks weird, but trust me--it makes the most sense in terms
-         *  of flexibility.
-         *
-         *  For grammar debugging, you will want to override this to add
-         *  more information such as the stack frame with
-         *  getRuleInvocationStack(e, this.getClass().getName()) and,
-         *  for no viable alts, the decision description and this.state etc...
-         *
-         *  Override this to change the message generated for one or more
-         *  exception types.
-         */
         getErrorMessage(e: RecognitionException, tokenNames: string[]): string;
-        /**
-         *  Get number of recognition errors (lexer, parser, tree parser).  Each
-         *  recognizer tracks its own number.  So parser and lexer each have
-         *  separate count.  Does not count the spurious errors found between
-         *  an error and next valid token match
-         *
-         *  <seealso cref="ReportError(RecognitionException)"/>
-         */
         get numberOfSyntaxErrors(): number;
-        /**
-         * What is the error header, normally line/character position information?
-         */
         getErrorHeader(e: RecognitionException): string;
-        /**
-         *  How should a token be displayed in an error message? The default
-         *  is to display just the text, but during development you might
-         *  want to have a lot of information spit out.  Override in that case
-         *  to use t.ToString() (which, for CommonToken, dumps everything about
-         *  the token). This is better than forcing you to override a method in
-         *  your token objects because you don't have to go modify your lexer
-         *  so that it creates a new Java type.
-         */
         getTokenErrorDisplay(t: IToken): string;
-        /**
-         * Override this method to change where error messages go
-         */
         emitErrorMessage(msg: string): void;
-        /**
-         *  Recover from an error found on the input stream.  This is
-         *  for NoViableAlt and mismatched symbol exceptions.  If you enable
-         *  single token insertion and deletion, this will usually not
-         *  handle mismatched symbol exceptions but there could be a mismatched
-         *  token that the match() routine could not recover from.
-         */
         recover(input: IIntStream, re: RecognitionException): void;
-        /**
-         *  A hook to listen in on the token consumption during error recovery.
-         *  The DebugParser subclasses this to fire events to the listenter.
-         */
         beginResync(): void;
         endResync(): void;
-        /**
-         *  Compute the error recovery set for the current rule.  During
-         *  rule invocation, the parser pushes the set of tokens that can
-         *  follow that rule reference on the stack; this amounts to
-         *  computing FIRST of what follows the rule reference in the
-         *  enclosing rule. This local follow set only includes tokens
-         *  from within the rule; i.e., the FIRST computation done by
-         *  ANTLR stops at the end of a rule.
-         *
-         *  EXAMPLE
-         *
-         *  When you find a "no viable alt exception", the input is not
-         *  consistent with any of the alternatives for rule r.  The best
-         *  thing to do is to consume tokens until you see something that
-         *  can legally follow a call to r *or* any rule that called r.
-         *  You don't want the exact set of viable next tokens because the
-         *  input might just be missing a token--you might consume the
-         *  rest of the input looking for one of the missing tokens.
-         *
-         *  Consider grammar:
-         *
-         *  a : '[' b ']'
-         *    | '(' b ')'
-         *    ;
-         *  b : c '^' INT ;
-         *  c : ID
-         *    | INT
-         *    ;
-         *
-         *  At each rule invocation, the set of tokens that could follow
-         *  that rule is pushed on a stack.  Here are the various "local"
-         *  follow sets:
-         *
-         *  FOLLOW(b1_in_a) = FIRST(']') = ']'
-         *  FOLLOW(b2_in_a) = FIRST(')') = ')'
-         *  FOLLOW(c_in_b) = FIRST('^') = '^'
-         *
-         *  Upon erroneous input "[]", the call chain is
-         *
-         *  a -> b -> c
-         *
-         *  and, hence, the follow context stack is:
-         *
-         *  depth  local follow set     after call to rule
-         *    0         <EOF>                    a (from main())
-         *    1          ']'                     b
-         *    3          '^'                     c
-         *
-         *  Notice that ')' is not included, because b would have to have
-         *  been called from a different context in rule a for ')' to be
-         *  included.
-         *
-         *  For error recovery, we cannot consider FOLLOW(c)
-         *  (context-sensitive or otherwise).  We need the combined set of
-         *  all context-sensitive FOLLOW sets--the set of all tokens that
-         *  could follow any reference in the call chain.  We need to
-         *  resync to one of those tokens.  Note that FOLLOW(c)='^' and if
-         *  we resync'd to that token, we'd consume until EOF.  We need to
-         *  sync to context-sensitive FOLLOWs for a, b, and c: {']','^'}.
-         *  In this case, for input "[]", LA(1) is in this set so we would
-         *  not consume anything and after printing an error rule c would
-         *  return normally.  It would not find the required '^' though.
-         *  At this point, it gets a mismatched token error and throws an
-         *  exception (since LA(1) is not in the viable following token
-         *  set).  The rule exception handler tries to recover, but finds
-         *  the same recovery set and doesn't consume anything.  Rule b
-         *  exits normally returning to rule a.  Now it finds the ']' (and
-         *  with the successful match exits errorRecovery mode).
-         *
-         *  So, you cna see that the parser walks up call chain looking
-         *  for the token that was a member of the recovery set.
-         *
-         *  Errors are not generated in errorRecovery mode.
-         *
-         *  ANTLR's error recovery mechanism is based upon original ideas:
-         *
-         *  "Algorithms + Data Structures = Programs" by Niklaus Wirth
-         *
-         *  and
-         *
-         *  "A note on error recovery in recursive descent parsers":
-         *  http://portal.acm.org/citation.cfm?id=947902.947905
-         *
-         *  Later, Josef Grosch had some good ideas:
-         *
-         *  "Efficient and Comfortable Error Recovery in Recursive Descent
-         *  Parsers":
-         *  ftp://www.cocolab.com/products/cocktail/doca4.ps/ell.ps.zip
-         *
-         *  Like Grosch I implemented local FOLLOW sets that are combined
-         *  at run-time upon error to avoid overhead during parsing.
-         */
         protected computeErrorRecoverySet(): BitSet;
-        /**
-         *  Compute the context-sensitive FOLLOW set for current rule.
-         *  This is set of token types that can follow a specific rule
-         *  reference given a specific call chain.  You get the set of
-         *  viable tokens that can possibly come next (lookahead depth 1)
-         *  given the current call chain.  Contrast this with the
-         *  definition of plain FOLLOW for rule r:
-         *
-         *
-         *   FOLLOW(r)={x | S=>*alpha r beta in G and x in FIRST(beta)}
-         *
-         *  where x in T* and alpha, beta in V*; T is set of terminals and
-         *  V is the set of terminals and nonterminals.  In other words,
-         *  FOLLOW(r) is the set of all tokens that can possibly follow
-         *  references to r in *any* sentential form (context).  At
-         *  runtime, however, we know precisely which context applies as
-         *  we have the call chain.  We may compute the exact (rather
-         *  than covering superset) set of following tokens.
-         *
-         *  For example, consider grammar:
-         *
-         *  stat : ID '=' expr ';'      // FOLLOW(stat)=={EOF}
-         *       | "return" expr '.'
-         *       ;
-         *  expr : atom ('+' atom)* ;   // FOLLOW(expr)=={';','.',')'}
-         *  atom : INT                  // FOLLOW(atom)=={'+',')',';','.'}
-         *       | '(' expr ')'
-         *       ;
-         *
-         *  The FOLLOW sets are all inclusive whereas context-sensitive
-         *  FOLLOW sets are precisely what could follow a rule reference.
-         *  For input input "i=(3);", here is the derivation:
-         *
-         *  stat => ID '=' expr ';'
-         *       => ID '=' atom ('+' atom)* ';'
-         *       => ID '=' '(' expr ')' ('+' atom)* ';'
-         *       => ID '=' '(' atom ')' ('+' atom)* ';'
-         *       => ID '=' '(' INT ')' ('+' atom)* ';'
-         *       => ID '=' '(' INT ')' ';'
-         *
-         *  At the "3" token, you'd have a call chain of
-         *
-         *    stat -> expr -> atom -> expr -> atom
-         *
-         *  What can follow that specific nested ref to atom?  Exactly ')'
-         *  as you can see by looking at the derivation of this specific
-         *  input.  Contrast this with the FOLLOW(atom)={'+',')',';','.'}.
-         *
-         *  You want the exact viable token set when recovering from a
-         *  token mismatch.  Upon token mismatch, if LA(1) is member of
-         *  the viable next token set, then you know there is most likely
-         *  a missing token in the input stream.  "Insert" one by just not
-         *  throwing an exception.
-         */
         protected computeContextSensitiveRuleFOLLOW(): BitSet;
-        /**
-         * what is exact? it seems to only add sets from above on stack
-         * if EOR is in set i.  When it sees a set w/o EOR, it stops adding.
-         * Why would we ever want them all?  Maybe no viable alt instead of
-         * mismatched token?
-         */
         protected combineFollows(exact: boolean): BitSet;
-        /**
-         *  Attempt to recover from a single missing or extra token.
-         *
-         *  EXTRA TOKEN
-         *
-         *  LA(1) is not what we are looking for.  If LA(2) has the right token,
-         *  however, then assume LA(1) is some extra spurious token.  Delete it
-         *  and LA(2) as if we were doing a normal match(), which advances the
-         *  input.
-         *
-         *  MISSING TOKEN
-         *
-         *  If current token is consistent with what could come after
-         *  ttype then it is ok to "insert" the missing token, else throw
-         *  exception For example, Input "i=(3;" is clearly missing the
-         *  ')'.  When the parser returns from the nested call to expr, it
-         *  will have call chain:
-         *
-         *    stat -> expr -> atom
-         *
-         *  and it will be trying to match the ')' at this point in the
-         *  derivation:
-         *
-         *       => ID '=' '(' INT ')' ('+' atom)* ';'
-         *                          ^
-         *  match() will see that ';' doesn't match ')' and report a
-         *  mismatched token error.  To recover, it sees that LA(1)==';'
-         *  is in the set of tokens that can follow the ')' token
-         *  reference in rule atom.  It can assume that you forgot the ')'.
-         */
         protected recoverFromMismatchedToken(input: IIntStream, ttype: number, follow: BitSet): any;
-        /**
-         * Not currently used
-         */
         recoverFromMismatchedSet(input: IIntStream, e: RecognitionException, follow: BitSet): any;
-        /**
-         *  Match needs to return the current input symbol, which gets put
-         *  into the label for the associated token ref; e.g., x=ID.  Token
-         *  and tree parsers need to return different objects. Rather than test
-         *  for input stream type or change the IntStream interface, I use
-         *  a simple method to ask the recognizer to tell me what the current
-         *  input symbol is.
-         *
-         *  This is ignored for lexers.
-         */
         protected getCurrentInputSymbol(input: IIntStream): any;
-        /**
-         * Conjure up a missing token during error recovery.
-         *
-         *  The recognizer attempts to recover from single missing
-         *  symbols. But, actions might refer to that missing symbol.
-         *  For example, x=ID {f($x);}. The action clearly assumes
-         *  that there has been an identifier matched previously and that
-         *  $x points at that token. If that token is missing, but
-         *  the next token in the stream is what we want we assume that
-         *  this token is missing and we keep going. Because we
-         *  have to return some token to replace the missing token,
-         *  we have to conjure one up. This method gives the user control
-         *  over the tokens returned for missing tokens. Mostly,
-         *  you will want to create something special for identifier
-         *  tokens. For literals such as '{' and ',', the default
-         *  action in the parser or tree parser works. It simply creates
-         *  a CommonToken of the appropriate type. The text will be the token.
-         *  If you change what tokens must be created by the lexer,
-         *  override this method to create the appropriate tokens.
-         */
         protected getMissingSymbol(input: IIntStream, e: RecognitionException, expectedTokenType: number, follow: BitSet): any;
         consumeUntil(input: IIntStream, tokenType: number): void;
-        /**
-         * Consume tokens until one matches the given token set
-         */
         consumeUntil2(input: IIntStream, set: BitSet): void;
-        /**
-         * Push a rule's follow set using our own hardcoded stack
-         */
         protected pushFollow(fset: BitSet): void;
         protected popFollow(): void;
         get backtrackingLevel(): number;
         set backtrackingLevel(value: number);
-        /**
-         * Return whether or not a backtracking attempt failed.
-         */
         get failed(): boolean;
-        /**
-         *  Used to print out token names like ID during debugging and
-         *  error reporting.  The generated parsers implement a method
-         *  that overrides this to point to their String[] tokenNames.
-         */
         tokenNames: string[];
-        /**
-         *  For debugging and other purposes, might want the grammar name.
-         *  Have ANTLR generate an implementation for this method.
-         */
         grammarFileName: string;
         sourceName: string;
-        /**
-         *  A convenience method for use most often with template rewrites.
-         *  Convert a list of <see cref="IToken"/> to a list of <see cref="string"/>.
-         */
         toStrings(tokens: List<IToken>): List<string>;
-        /**
-         *  Given a rule number and a start token index number, return
-         *  MEMO_RULE_UNKNOWN if the rule has not parsed input starting from
-         *  start index.  If this rule has parsed input starting from the
-         *  start index before, then return where the rule stopped parsing.
-         *  It returns the index of the last token matched by the rule.
-         *
-         *  For now we use a hashtable and just the slow Object-based one.
-         *  Later, we can make a special one for ints and also one that
-         *  tosses out data after we commit past input position i.
-         */
         getRuleMemoization(ruleIndex: number, ruleStartIndex: number): number;
-        /**
-         *  Has this rule already parsed input at the current index in the
-         *  input stream?  Return the stop token index or MEMO_RULE_UNKNOWN.
-         *  If we attempted but failed to parse properly before, return
-         *  MEMO_RULE_FAILED.
-         *
-         *  This method has a side-effect: if we have seen this input for
-         *  this rule and successfully parsed before, then seek ahead to
-         *  1 past the stop token matched for this rule last time.
-         */
         alreadyParsedRule(input: IIntStream, ruleIndex: number): boolean;
-        /**
-         *  Record whether or not this rule parsed the input at this position
-         *  successfully.  Use a standard java hashtable for now.
-         */
         memoize(input: IIntStream, ruleIndex: number, ruleStartIndex: number): void;
-        /**
-         *  return how many rule/input-index pairs there are in total.
-         *  TODO: this includes synpreds. :(
-         */
         getRuleMemoizationCacheSize(): number;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     *  A parser for a stream of tree nodes.  "tree grammars" result in a subclass
-     *  of this.  All the error reporting and recovery is shared with Parser via
-     *  the BaseRecognizer superclass.
-     */
     class TreeParser extends BaseRecognizer {
         DOWN: number;
         UP: number;
@@ -15363,36 +12495,14 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         protected input: ITreeNodeStream;
         constructor(input: ITreeNodeStream, state?: RecognizerSharedState);
         reset(): void;
-        /**
-         * Set the input stream
-         */
         setTreeNodeStream(input: ITreeNodeStream): void;
         getTreeNodeStream(): ITreeNodeStream;
         get sourceName(): string;
         protected getCurrentInputSymbol(input: IIntStream): any;
         protected getMissingSymbol(input: IIntStream, e: RecognitionException, expectedTokenType: number, follow: BitSet): any;
-        /**
-         *  Match '.' in tree parser has special meaning.  Skip node or
-         *  entire tree if node has children.  If children, scan until
-         *  corresponding UP node.
-         */
         matchAny(ignore: IIntStream): void;
-        /**
-         *  We have DOWN/UP nodes in the stream that have no line info; override.
-         *  plus we want to alter the exception type.  Don't try to recover
-         *  from tree parser errors inline...
-         */
         protected recoverFromMismatchedToken(input: IIntStream, ttype: number, follow: BitSet): any;
-        /**
-         *  Prefix error message with the grammar name because message is
-         *  always intended for the programmer because the parser built
-         *  the input tree not the user.
-         */
         getErrorHeader(e: RecognitionException): string;
-        /**
-         *  Tree parsers parse nodes they usually have a token object as
-         *  payload. Set the exception token and do the default behavior.
-         */
         getErrorMessage(e: RecognitionException, tokenNames: string[]): string;
     }
 }
@@ -15404,11 +12514,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         constructor(input: ITreeNodeStream, state?: RecognizerSharedState);
         applyOnce(t: any, whichRule: Action): void;
         downup(t: any): void;
-        /**
-         * methods the downup strategy uses to do the up and down rules.
-         * to override, just define tree grammar rule topdown and turn on
-         * filter=true.
-         */
         protected topdown(): void;
         protected bottomup(): void;
     }
@@ -15416,12 +12521,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import List = Stimulsoft.System.Collections.List;
     import Queue = Stimulsoft.System.Collections.Queue;
-    /**
-     *  Return a node stream from a doubly-linked tree whose nodes
-     *  know what child index they are.  No remove() is supported.
-     *
-     *  Emit navigation nodes (DOWN, UP, and EOF) to let show tree structure.
-     */
     class TreeIterator extends List<any> {
         protected adaptor: ITreeAdaptor;
         protected root: any;
@@ -15431,10 +12530,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         up: any;
         down: any;
         eof: any;
-        /**
-         *  If we emit UP/DOWN nodes, we need to spit out multiple nodes per
-         *  next() call.
-         */
         protected nodes: Queue<any>;
         constructor(adaptor: ITreeAdaptor, tree: any);
         current: any;
@@ -15452,25 +12547,10 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         static percent: number;
         static colon: number;
         static dot: number;
-        /**
-         * The tree pattern to lex like "(A B C)"
-         */
         protected pattern: string;
-        /**
-         * Index into input string
-         */
         protected p: number;
-        /**
-         * Current char
-         */
         protected c: number;
-        /**
-         * How long is the pattern in char?
-         */
         protected n: number;
-        /**
-         * Set when token type is ID or ARG (name mimics Java's StreamTokenizer)
-         */
         sval: string;
         error: boolean;
         constructor(pattern: string);
@@ -15501,35 +12581,15 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         applyOnce(t: any, whichRule: Misc.Func<IAstRuleReturnScope<any>>): any;
         applyRepeatedly(t: any, whichRule: Misc.Func<IAstRuleReturnScope<any>>): any;
         downup(t: any, showTransformations?: boolean): any;
-        /**
-         *  methods the downup strategy uses to do the up and down rules.
-         *  to override, just define tree grammar rule topdown and turn on
-         *  filter=true.
-         */
         protected topdown(): IAstRuleReturnScope<any>;
         protected bottomup(): IAstRuleReturnScope<any>;
-        /**
-         *  Override this if you need transformation tracing to go somewhere
-         *  other than stdout or if you're not using ITree-derived trees.
-         */
         protected reportTransformation(oldTree: any, newTree: any): void;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
-    /**
-     * Do a depth first walk of a tree, applying pre() and post() actions as we go.
-     */
     class TreeVisitor {
         protected adaptor: ITreeAdaptor;
         constructor(adaptor?: ITreeAdaptor);
-        /**
-         *  Visit every node in tree t and trigger an action for each node
-         *  before/after having visited all of its children.  Bottom up walk.
-         *  Execute both actions even if t has no children.  Ignore return
-         *  results from transforming children since they will have altered
-         *  the child list of this node (their parent).  Return result of
-         *  applying post action to this node.
-         */
         visit(t: any, action: ITreeVisitorAction): any;
     }
 }
@@ -15537,130 +12597,26 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     import Dictionary = Stimulsoft.System.Collections.Dictionary;
     import List = Stimulsoft.System.Collections.List;
     import Action = Stimulsoft.Data.Expressions.Antlr.Runtime.Misc.Action;
-    /**
-     *  Build and navigate trees with this object.  Must know about the names
-     *  of tokens so you have to pass in a map or array of token names (from which
-     *  this class can build the map).  I.e., Token DECL means nothing unless the
-     *  class can translate it to a token type.
-     *
-     *  In order to create nodes and navigate, this class needs a TreeAdaptor.
-     *
-     *  This class can build a token type -> node index for repeated use or for
-     *  iterating over the various nodes with a particular type.
-     *
-     *  This class works in conjunction with the TreeAdaptor rather than moving
-     *  all this functionality into the adaptor.  An adaptor helps build and
-     *  navigate trees using methods.  This class helps you do it with string
-     *  patterns like "(A B C)".  You can create a tree from that pattern or
-     *  match subtrees against it.
-     */
     class TreeWizard {
         protected adaptor: ITreeAdaptor;
         protected tokenNameToTypeMap: Dictionary<string, number>;
-        /**
-         *  Compute a Map&lt;String, Integer&gt; that is an inverted index of
-         *  tokenNames (which maps int token types to names).
-         */
         computeTokenTypes(tokenNames: string[]): Dictionary<string, number>;
-        /**
-         * Using the map of token names to token types, return the type.
-         */
         getTokenType(tokenName: string): number;
-        /**
-         *  Walk the entire tree and make a node name to nodes mapping.
-         *  For now, use recursion but later nonrecursive version may be
-         *  more efficient.  Returns Map&lt;Integer, List&gt; where the List is
-         *  of your AST node type.  The Integer is the token type of the node.
-         *
-         *  TODO: save this index so that find and visit are faster
-         */
         index(t: any): Dictionary<number, List<any>>;
-        /**
-         * Do the work for index
-         */
         protected indexCore(t: any, m: Dictionary<number, List<any>>): void;
-        /**
-         * Return a List of tree nodes with token type ttype
-         */
         find(t: any, ttype: number): List<any>;
-        /**
-         * Return a List of subtrees matching pattern.
-         */
         find2(t: any, pattern: string): List<any>;
         findFirst(t: any, ttype: number): any;
         findFirst2(t: any, pattern: string): any;
-        /**
-         *  Visit every ttype node in t, invoking the visitor.  This is a quicker
-         *  version of the general visit(t, pattern) method.  The labels arg
-         *  of the visitor action method is never set (it's null) since using
-         *  a token type rather than a pattern doesn't let us set a label.
-         */
         visit(t: any, ttype: number, visitor: IContextVisitor): void;
         visit2(t: any, ttype: number, action: Action): void;
-        /**
-         * Do the recursive work for visit
-         */
         protected visitCore(t: any, parent: any, childIndex: number, ttype: number, visitor: IContextVisitor): void;
-        /**
-         *  For all subtrees that match the pattern, execute the visit action.
-         *  The implementation uses the root node of the pattern in combination
-         *  with visit(t, ttype, visitor) so nil-rooted patterns are not allowed.
-         *  Patterns with wildcard roots are also not allowed.
-         */
         visit3(t: any, pattern: string, visitor: IContextVisitor): void;
-        /**
-         *  Given a pattern like (ASSIGN %lhs:ID %rhs:.) with optional labels
-         *  on the various nodes and '.' (dot) as the node/subtree wildcard,
-         *  return true if the pattern matches and fill the labels Map with
-         *  the labels pointing at the appropriate nodes.  Return false if
-         *  the pattern is malformed or the tree does not match.
-         *
-         *  If a node specifies a text arg in pattern, then that must match
-         *  for that node in t.
-         *
-         *  TODO: what's a better way to indicate bad pattern? Exceptions are a hassle
-         */
         parse(t: any, pattern: string, labels: Dictionary<string, any>): boolean;
         parse2(t: any, pattern: string): boolean;
-        /**
-         *  Do the work for parse. Check to see if the t2 pattern fits the
-         *  structure and token types in t1.  Check text if the pattern has
-         *  text arguments on nodes.  Fill labels map with pointers to nodes
-         *  in tree matched against nodes in pattern with labels.
-         */
         parseCore(t1: any, tpattern: TreePattern, labels: Dictionary<string, any>): boolean;
-        /**
-         *  Create a tree or node from the indicated tree pattern that closely
-         *  follows ANTLR tree grammar tree element syntax:
-         *
-         *      (root child1 ... child2).
-         *
-         *
-         *  You can also just pass in a node: ID
-         *
-         *  Any node can have a text argument: ID[foo]
-         *  (notice there are no quotes around foo--it's clear it's a string).
-         *
-         *  nil is a special name meaning "give me a nil node".  Useful for
-         *  making lists: (nil A B C) is a list of A B C.
-         */
         create(pattern: string): any;
-        /**
-         *  Compare t1 and t2; return true if token types/text, structure match exactly.
-         *  The trees are examined in their entirety so that (A B) does not match
-         *  (A B C) nor (A (B C)).
-         *
-         *  TODO: allow them to pass in a comparator
-         *  TODO: have a version that is nonstatic so it can use instance adaptor
-         *
-         *  I cannot rely on the tree node's equals() implementation as I make
-         *  no constraints at all on the node types nor interface etc...
-         */
         static equals(t1: any, t2: any, adaptor: ITreeAdaptor): boolean;
-        /**
-         *  Compare type, structure, and text of two trees, assuming adaptor in
-         *  this instance of a TreeWizard.
-         */
         protected static equalsCore(t1: any, t2: any, adaptor: ITreeAdaptor): boolean;
     }
     let IContextVisitor: string;
@@ -15678,10 +12634,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
         constructor(action: Action);
         visit(t: any): void;
     }
-    /**
-     *  When using %label:TOKENNAME in a tree for parse(), we must
-     *  track the label.
-     */
     class TreePattern extends CommonTree {
         label: string;
         hasTextArg: boolean;
@@ -15691,9 +12643,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
     class WildcardTreePattern extends TreePattern {
         constructor(payload: IToken);
     }
-    /**
-     * This adaptor creates TreePattern objects for use during scan()
-     */
     class TreePatternTreeAdaptor extends CommonTreeAdaptor {
         create(payload: IToken): any;
     }
@@ -15724,68 +12673,20 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime.Tree {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  A pretty quick CharStream that pulls all data from an array
-     *  directly.  Every method call counts in the lexer.  Java's
-     *  strings aren't very good so I'm avoiding.
-     */
     class ANTLRStringStream implements ICharStream {
         private static ImplementsANTLRStringStream;
         implements(): string[];
-        /**
-         * The data being scanned
-         */
         protected data: string[];
-        /**
-         * How many characters are actually in the buffer
-         */
         protected n: number;
-        /**
-         * 0..n-1 index into string of next char
-         */
         protected p: number;
-        /**
-         * tracks how deep mark() calls are nested
-         */
         protected markDepth: number;
-        /**
-         *  A list of CharStreamState objects that tracks the stream state
-         *  values this.line, this.charPositionInLine, and this.p that can change as you
-         *  move through the input stream.  Indexed from 1..markDepth.
-         *  A null is kept @ index 0.  Create upon first call to mark().
-         */
         protected markers: List<CharStreamState>;
-        /**
-         * Track the last mark() call result value for use in rewind().
-         */
         protected lastMarker: number;
-        /**
-         * What is name or source of this char stream?
-         */
         name: string;
-        /**
-         * Copy data in string to a local char array
-         */
         constructor(input?: string, data?: string[], numberOfActualCharsInArray?: number, sourceName?: string);
-        /**
-         *  Return the current input symbol index 0..n where n indicates the
-         *  last symbol has been read.  The index is the index of char to
-         *  be returned from LA(1).
-         */
         get index(): number;
-        /**
-         * this.line number 1..n within the input
-         */
         line: number;
-        /**
-         * The index of the character relative to the beginning of the this.line 0..n-1
-         */
         charPositionInLine: number;
-        /**
-         *  Reset the stream so that it's in the same state it was
-         *  when the object was created *except* the data array is not
-         *  touched.
-         */
         reset(): void;
         consume(): void;
         la(i: number): number;
@@ -15794,10 +12695,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         mark(): number;
         rewind(m?: number): void;
         release(marker: number): void;
-        /**
-         *  consume() ahead until this.p==index; can't just set this.p=index as we must
-         *  update this.line and this.charPositionInLine.
-         */
         seek(index: number): void;
         substring(start: number, length: number): string;
         get sourceName(): string;
@@ -15805,45 +12702,16 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  Vacuum all input from a Reader and then treat it like a StringStream.
-     *  Manage the buffer manually to avoid unnecessary data copying.
-     *
-     *  If you need encoding, use ANTLRInputStream.
-     */
     class ANTLRReaderStream extends ANTLRStringStream {
         readBufferSize: number;
         initialBufferSize: number;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  A kind of ReaderStream that pulls from an InputStream.
-     *  Useful for reading from stdin and specifying file encodings etc...
-     */
     class ANTLRInputStream extends ANTLRReaderStream {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  Rules that return more than a single value must return an object
-     *  containing all the values.  Besides the properties defined in
-     *  RuleLabelScope.predefinedRulePropertiesScope there may be user-defined
-     *  return values.  This class simply defines the minimum properties that
-     *  are always defined and methods to access the others that might be
-     *  available depending on output option such as template and tree.
-     *
-     *  Note text is not an actual property of the return value, it is computed
-     *  from start and stop using the input stream's toString() method.  I
-     *  could add a ctor to this so that we can pass in and store the input
-     *  stream, but I'm not sure we want to do that.  It would seem to be undefined
-     *  to get the .text property anyway if the rule matches tokens from multiple
-     *  input streams.
-     *
-     *  I do not use getters for fields of objects that are used simply to
-     *  group values such as this aggregate.  The getters/setters are there to
-     *  satisfy the superclass interface.
-     */
     class ParserRuleReturnScope<TToken> implements IRuleReturnScope<TToken> {
         private static ImplementsParserRuleReturnScope;
         implements(): string[];
@@ -15859,53 +12727,21 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  A stripped-down version of org.antlr.misc.BitSet that is just
-     *  good enough to handle runtime requirements such as FOLLOW sets
-     *  for automatic error recovery.
-     */
     class BitSet {
         private static BITS;
         private static LOG_BITS;
-        /**
-         *  We will often need to do a mod operator (i mod nbits).  Its
-         *  turns out that, for powers of two, this mod operation is
-         *  same as (i &amp; (nbits-1)).  Since mod is slow, we use a
-         *  precomputed mod mask to do the mod instead.
-         */
         private static MOD_MASK;
-        /**
-         * The actual data bits
-         */
         _bits: number[];
-        /** Construction from a static array of longs */
         static create(bits: number[]): BitSet;
-        /** Construct a bitset given the size
-         *  @param nbits The size of the bitset in bits
-         */
         constructor(nbits?: number);
         static of(el: number): BitSet;
         static of2(a: number, b: number): BitSet;
         static of3(a: number, b: number, c: number): BitSet;
         static of4(a: number, b?: number, c?: number, d?: number): BitSet;
-        /**
-         * return this | a in a new set
-         */
         or(a: BitSet): BitSet;
-        /**
-         * or this element into this set (grow as necessary to accommodate)
-         */
         add(el: number): void;
-        /**
-         * Grows the set to a larger number of bits.
-         * @param bit element that must fit in set
-         */
         growToInclude(bit: number): void;
         orInPlace(a: BitSet): void;
-        /**
-         * Sets the size of a set.
-         * @param nwords how many words the new set should be
-         */
         private setSize;
         private static bitMask;
         clone(): any;
@@ -15917,13 +12753,7 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         isNil(): boolean;
         private static numWordsToHold;
         numBits(): number;
-        /**
-         * return how much space is being used by the bits array not how many actually have member bits on.
-         */
         lengthInLongWords(): number;
-        /**
-         * Is this contained within a?
-         */
         toArray(): number[];
         private static wordNumber;
         toString(tokenNames?: string[]): string;
@@ -15931,50 +12761,17 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     * Buffer all input tokens but do on-demand fetching of new tokens from
-     *  lexer. Useful when the parser or lexer has to set context/mode info before
-     *  proper lexing of future tokens. The ST template parser needs this,
-     *  for example, because it has to constantly flip back and forth between
-     *  inside/output templates. E.g., <c>&lt;names:{hi, &lt;it&gt;}&gt;</c> has to parse names
-     *  as part of an expression but "hi, &lt;it&gt;" as a nested template.
-     *
-     *  You can't use this stream if you pass whitespace or other off-channel
-     *  tokens to the parser. The stream can't ignore off-channel tokens.
-     *  (UnbufferedTokenStream is the same way.)
-     *
-     *  This is not a subclass of UnbufferedTokenStream because I don't want
-     *  to confuse small moving window of tokens it uses for the full buffer.
-     */
     class BufferedTokenStream implements ITokenStream, ITokenStreamInformation {
         private static ImplementsBufferedTokenStream;
         implements(): string[];
         private _tokenSource;
-        /**
-         * Record every single token pulled from the source so we can reproduce
-         *  chunks of it later.  The buffer in LookaheadStream overlaps sometimes
-         *  as its moving window moves through the input.  This list captures
-         *  everything so we can access complete input text.
-         */
         _tokens: List<IToken>;
-        /**
-         * Track the last mark() call result value for use in rewind().
-         */
         private _lastMarker;
-        /**
-         * The index into the tokens list of the current token (next token
-         *  to consume).  tokens[p] should be LT(1).  p=-1 indicates need
-         *  to initialize with first token.  The ctor doesn't get a token.
-         *  First call to LT(1) or whatever gets the first token and sets p=0;
-         */
         protected _p: number;
         constructor(tokenSource?: ITokenSource);
         get tokenSource(): ITokenSource;
         set tokenSource(value: ITokenSource);
         get index(): number;
-        /**
-         *  How deep have we gone?
-         */
         range: number;
         get count(): number;
         get sourceName(): string;
@@ -15986,33 +12783,14 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         rewind(marker?: number): void;
         reset(): void;
         seek(index: number): void;
-        /**
-         *  Move the input pointer to the next incoming token.  The stream
-         *  must become active with LT(1) available.  consume() simply
-         *  moves the input pointer so that LT(1) points at the next
-         *  input symbol. Consume at least one token.
-         *
-         *  Walk past any token not on the channel the parser is listening to.
-         */
         consume(): void;
-        /**
-         * Make sure index i in tokens has a token.
-         */
         protected sync(i: number): void;
-        /**
-         * add n elements to buffer
-         */
         protected fetch(n: number): void;
         get(i: number): IToken;
         la(i: number): number;
         protected lb(k: number): IToken;
         lt(k: number): IToken;
         protected setup(): void;
-        /**
-         * Given a start and stop index, return a List of all tokens in
-         *  the token type BitSet.  Return null if no tokens were found.  This
-         *  method looks at both on and off channel tokens.
-         */
         getTokens(start: number, stop: number, types: BitSet): List<IToken>;
         toString(): string;
         toString2(start: number, stop: number): string;
@@ -16025,43 +12803,16 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  When walking ahead with cyclic DFA or for syntactic predicates,
-     *  we need to record the state of the input stream (char index,
-     *  line, etc...) so that we can rewind the state after scanning ahead.
-     *
-     *  This is the complete state of a stream.
-     */
     class CharStreamState {
-        /**
-         * Index into the char stream of next lookahead char
-         */
         p: number;
-        /**
-         * What line number is the scanner at before processing buffer[p]?
-         */
         line: number;
-        /**
-         * What char position 0..n-1 in line is scanner before processing buffer[p]?
-         */
         charPositionInLine: number;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  A Token object like we'd use in ANTLR 2.x; has an actual string created
-     *  and associated with this object.  These objects are needed for imaginary
-     *  tree nodes that have payload objects.  We need to create a Token object
-     *  that has a string; the tree node will point at this token.  CommonToken
-     *  has indexes into a char stream and hence cannot be used to introduce
-     *  new strings.
-     */
     class ClassicToken implements IToken {
         private static ImplementsClassicToken;
         implements(): string[];
-        /**
-         * What token number is this from 0..n-1 tokens
-         */
         index: number;
         constructor(type: number, text: string, channel: number);
         text: string;
@@ -16082,23 +12833,9 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         private static ImplementsCommonToken;
         implements(): string[];
         input: ICharStream;
-        /**
-         *  We need to be able to change the text once in a while.  If
-         *  this is non-null, then getText should return this.  Note that
-         *  start/stop are not affected by changing this.
-         */
         _text: string;
-        /**
-         * What token number is this from 0..n-1 tokens; &lt; 0 implies invalid index
-         */
         index: number;
-        /**
-         * The char position into the input buffer where this token starts
-         */
         start: number;
-        /**
-         * The char position into the input buffer where this token stops
-         */
         stop: number;
         constructor();
         static create1(type: number): CommonToken;
@@ -16123,30 +12860,12 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  The most common stream of tokens is one where every token is buffered up
-     *  and tokens are prefiltered for a certain channel (the parser will only
-     *  see these tokens and cannot change the filter channel number during the
-     *  parse).
-     *
-     *  TODO: how to access the full token stream?  How to track all tokens matched per rule?
-     */
     class CommonTokenStream extends BufferedTokenStream {
-        /**
-         * Skip tokens on any channel but this one; this is how we skip whitespace...
-         */
         channel: number;
         constructor(tokenSource?: ITokenSource, channel?: number);
-        /**
-         * Reset this token stream by setting its token source.
-         */
-        /** Always leave p on an on-channel token. */
         consume(): void;
         lb(k: number): IToken;
         lt(k: number): IToken;
-        /** Given a starting index, return the index of the first on-channel
-         *  token.
-         */
         skipOffTokenChannels(i: number): number;
         protected skipOffTokenChannelsReverse(i: number): number;
         reset(): void;
@@ -16154,18 +12873,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  A DFA implemented as a set of transition tables.
-     *
-     *  Any state that has a semantic predicate edge is special; those states
-     *  are generated with if-then-else structures in a specialStateTransition()
-     *  which is generated by cyclicDFA template.
-     *
-     *  There are at most 32767 states (16-bit signed short).
-     *  Could get away with byte sometimes but would have to generate different
-     *  types and the simulation code too.  For a point of reference, the Java
-     *  lexer's Tokens rule DFA has 326 states roughly.
-     */
     class DFA {
         protected eot: number[];
         protected eof: number[];
@@ -16175,36 +12882,17 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         protected special: number[];
         protected transition: number[][];
         protected decisionNumber: number;
-        /**
-         * Which recognizer encloses this DFA?  Needed to check backtracking
-         */
         protected recognizer: BaseRecognizer;
         debug: boolean;
         constructor();
         description: string;
-        /**
-         *  From the input stream, predict what alternative will succeed
-         *  using this DFA (representing the covering regular approximation
-         *  to the underlying CFL).  Return an alternative number 1..n.  Throw
-         *  an exception upon error.
-         */
         predict(input: IIntStream): number;
         private dfaDebugMessage;
         private dfaDebugInvalidSymbol;
         protected noViableAlt(s: number, input: IIntStream): void;
-        /** A hook for debugging interface */
         error(nvae: NoViableAltException): void;
         static specialStateTransitionDefault(dfa: DFA, s: number, input: IIntStream): number;
-        /**
-         *  Given a String that has a run-length-encoding of some unsigned shorts
-         *  like "\1\2\3\9", convert to short[] {2,9,9,9}.  We do this to avoid
-         *  static short[] which generates so much init code that the class won't
-         *  compile. :(
-         */
         static unpackEncodedString(encodedString: string): number[];
-        /**
-         * Hideous duplication of code, but I need different typed arrays out :(
-         */
         static unpackEncodedStringToUnsignedChars(encodedString: string): string[];
         protected debugRecognitionException(ex: RecognitionException): void;
     }
@@ -16212,92 +12900,20 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import Exception = Stimulsoft.System.Exception;
     import ITreeNodeStream = Stimulsoft.Data.Expressions.Antlr.Runtime.Tree.ITreeNodeStream;
-    /**
-     *  The root of the ANTLR exception hierarchy.
-     *
-     *  To avoid English-only error messages and to generally make things
-     *  as flexible as possible, these exceptions are not created with strings,
-     *  but rather the information necessary to generate an error.  Then
-     *  the various reporting methods in Parser and Lexer can be overridden
-     *  to generate a localized error message.  For example, MismatchedToken
-     *  exceptions are built with the expected token type.
-     *  So, don't expect getMessage() to return anything.
-     *
-     *  Note that as of Java 1.4, you can access the stack trace, which means
-     *  that you can compute the complete trace of rules from the start symbol.
-     *  This gives you considerable context information with which to generate
-     *  useful error messages.
-     *
-     *  ANTLR generates code that throws exceptions upon recognition error and
-     *  also generates code to catch these exceptions in each rule.  If you
-     *  want to quit upon first error, you can turn off the automatic error
-     *  handling mechanism using rulecatch action, but you still need to
-     *  override methods mismatch and recoverFromMismatchSet.
-     *
-     *  In general, the recognition exceptions can track where in a grammar a
-     *  problem occurred and/or what was the expected input.  While the parser
-     *  knows its state (such as current input symbol and line info) that
-     *  state can change before the exception is reported so current token index
-     *  is computed and stored at exception time.  From this info, you can
-     *  perhaps print an entire line of input not just a single token, for example.
-     *  Better to just say the recognizer had a problem and then let the parser
-     *  figure out a fancy report.
-     */
     class RecognitionException extends Exception {
-        /**
-         * What was the lookahead index when this exception was thrown?
-         */
         private _k;
-        /**
-         * The current char when an error occurred. For lexers.
-         */
         private _c;
-        /**
-         * Used for remote debugger deserialization
-         */
         constructor(message?: string, input?: IIntStream, k?: number, innerException?: Exception);
-        /**
-         *  Return the token type or char of the unexpected input element
-         */
         get unexpectedType(): number;
-        /**
-         *  If you are parsing a tree node stream, you will encounter som
-         *  imaginary nodes w/o line/col info.  We now search backwards looking
-         *  for most recent token with line/col info, but notify getErrorHeader()
-         *  that info is approximate.
-         */
         approximateLineInfo: boolean;
-        /**
-         * What input stream did the error occur in?
-         */
         input: IIntStream;
         get lookahead(): number;
-        /**
-         *  The current Token when an error occurred.  Since not all streams
-         *  can retrieve the ith Token, we have to track the Token object.
-         *  For parsers.  Even when it's a tree parser, token might be set.
-         */
         token: IToken;
-        /**
-         *  If this is a tree parser exception, node is set to the node with
-         *  the problem.
-         */
         node: any;
         get character(): string;
         set character(value: string);
-        /**
-         * What is index of token/char were we looking at when the error occurred?
-         */
         index: number;
-        /**
-         *  Track the line (1-based) at which the error occurred in case this is
-         *  generated from a lexer.  We need to track this since the
-         *  unexpected char doesn't carry the line info.
-         */
         line: number;
-        /**
-         * The 0-based index into the line where the error occurred.
-         */
         charPositionInLine: number;
         protected extractInformationFromTreeNodeStream(input: ITreeNodeStream): void;
         protected extractInformationFromTreeNodeStream2(input: ITreeNodeStream, k: number): void;
@@ -16305,9 +12921,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import Exception = Stimulsoft.System.Exception;
-    /**
-     * The recognizer did not match anything for a (..)+ loop.
-     */
     class EarlyExitException extends RecognitionException {
         constructor(message?: string, decisionNumber?: number, input?: IIntStream, innerException?: Exception);
         decisionNumber: number;
@@ -16315,12 +12928,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import Exception = Stimulsoft.System.Exception;
-    /**
-     *  A semantic predicate failed during validation.  Validation of predicates
-     *  occurs when normally parsing the alternative just like matching a token.
-     *  Disambiguating predicate evaluation occurs when we hoist a predicate into
-     *  a prediction decision.
-     */
     class FailedPredicateException extends RecognitionException {
         constructor(message?: string, input?: IIntStream, ruleName?: string, predicateText?: string, innerException?: Exception);
         ruleName: string;
@@ -16336,157 +12943,38 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     * AST rules have trees
-     */
     let IAstRuleReturnScope: string;
     interface IAstRuleReturnScope<TAstLabel> {
-        /**
-         * Has a value potentially if output=AST;
-         */
         tree: TAstLabel;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     * A source of characters for an ANTLR lexer
-     */
     let ICharStream: string;
     interface ICharStream extends IIntStream {
-        /**
-         *  For infinite streams, you don't need this; primarily I'm providing
-         *  a useful interface for action code.  Just make sure actions don't
-         *  use this on streams that don't support it.
-         */
         substring(start: number, length: number): string;
-        /**
-         *  Get the ith character of lookahead.  This is the same usually as
-         *  LA(i).  This will be used for labels in the generated
-         *  lexer code.  I'd prefer to return a char here type-wise, but it's
-         *  probably better to be 32-bit clean and be consistent with LA.
-         */
         lt(i: number): number;
-        /**
-         * ANTLR tracks the line information automatically
-         * Because this stream can rewind, we need to be able to reset the line
-         */
         line: number;
-        /**
-         * The index of the character relative to the beginning of the line 0..n-1
-         */
         charPositionInLine: number;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  A simple stream of integers used when all I care about is the char
-     *  or token type sequence (such as interpretation).
-     */
     let IIntStream: string;
     interface IIntStream {
         consume(): any;
-        /**
-         *  Get int at current input pointer + i ahead where i=1 is next int.
-         *  Negative indexes are allowed.  LA(-1) is previous token (token
-         *  just matched).  LA(-i) where i is before first token should
-         *  yield -1, invalid char / EOF.
-         */
         la(i: number): number;
-        /**
-         *  Tell the stream to start buffering if it hasn't already.  Return
-         *  current input position, Index, or some other marker so that
-         *  when passed to rewind() you get back to the same spot.
-         *  rewind(mark()) should not affect the input cursor.  The Lexer
-         *  track line/col info as well as input index so its markers are
-         *  not pure input indexes.  Same for tree node streams.
-         */
         mark(): number;
-        /**
-         *  Return the current input symbol index 0..n where n indicates the
-         *  last symbol has been read.  The index is the symbol about to be
-         *  read not the most recently read symbol.
-         */
         index: number;
-        /**
-         *  Rewind to the input position of the last marker.
-         *  Used currently only after a cyclic DFA and just
-         *  before starting a sem/syn predicate to get the
-         *  input position back to the start of the decision.
-         *  Do not "pop" the marker off the state.  mark(i)
-         *  and rewind(i) should balance still. It is
-         *  like invoking rewind(last marker) but it should not "pop"
-         *  the marker off.  It's like seek(last marker's input position).
-         */
-        /**
-         *  Reset the stream so that next call to index would return marker.
-         *  The marker will usually be Index but it doesn't have to be.  It's
-         *  just a marker to indicate what state the stream was in.  This is
-         *  essentially calling release() and seek().  If there are markers
-         *  created after this marker argument, this routine must unroll them
-         *  like a stack.  Assume the state the stream was in when this marker
-         *  was created.
-         */
         rewind(marker?: number): any;
-        /**
-         *  You may want to commit to a backtrack but don't want to force the
-         *  stream to keep bookkeeping objects around for a marker that is
-         *  no longer necessary.  This will have the same behavior as
-         *  rewind() except it releases resources without the backward seek.
-         *  This must throw away resources for all markers back to the marker
-         *  argument.  So if you're nested 5 levels of mark(), and then release(2)
-         *  you have to release resources for depths 2..5.
-         */
         release(marker: number): any;
-        /**
-         *  Set the input cursor to the position indicated by index.  This is
-         *  normally used to seek ahead in the input stream.  No buffering is
-         *  required to do this unless you know your stream will use seek to
-         *  move backwards such as when backtracking.
-         *
-         *  This is different from rewind in its multi-directional
-         *  requirement and in that its argument is strictly an input cursor (index).
-         *
-         *  For char streams, seeking forward must update the stream state such
-         *  as line number.  For seeking backwards, you will be presumably
-         *  backtracking using the mark/rewind mechanism that restores state and
-         *  so this method does not need to update state when seeking backwards.
-         *
-         *  Currently, this method is only used for efficient backtracking using
-         *  memoization, but in the future it may be used for incremental parsing.
-         *
-         *  The index is 0..n-1.  A seek to position i means that LA(1) will
-         *  return the ith symbol.  So, seeking to 0 means LA(1) will return the
-         *  first element in the stream.
-         */
         seek(index: number): any;
-        /**
-         *  Only makes sense for streams that buffer everything up probably, but
-         *  might be useful to display the entire stream or for testing.  This
-         *  value includes a single EOF.
-         */
         count: number;
-        /**
-         *  Where are you getting symbols from?  Normally, implementations will
-         *  pass the buck all the way to the lexer who can ask its input stream
-         *  for the file name or whatever.
-         */
         sourceName: string;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     * Rules can have start/stop info.
-     * <typeparam name="TLabel">The element type of the input stream.</typeparam>
-     */
     let IRuleReturnScope: string;
     interface IRuleReturnScope<TLabel> {
-        /**
-         * Gets the start element from the input stream
-         */
         start: TLabel;
-        /**
-         * Gets the stop element from the input stream
-         */
         stop: TLabel;
     }
 }
@@ -16499,113 +12987,33 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     let IToken: string;
     interface IToken {
-        /**
-         * Get the text of the token
-         */
         text: string;
         type: number;
-        /**
-         * The line number on which this token was matched; line=1..n
-         */
         line: number;
-        /**
-         * The index of the first character relative to the beginning of the line 0..n-1
-         */
         charPositionInLine: number;
         channel: number;
         startIndex: number;
         stopIndex: number;
-        /**
-         *  An index from 0..n-1 of the token object in the input stream.
-         *  This must be valid in order to use the ANTLRWorks debugger.
-         */
         tokenIndex: number;
-        /**
-         *  From what character stream was this token created?  You don't have to
-         *  implement but it's nice to know where a Token comes from if you have
-         *  include files etc... on the input.
-         */
         inputStream: ICharStream;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  A source of tokens must provide a sequence of tokens via nextToken()
-     *  and also must reveal it's source of characters; CommonToken's text is
-     *  computed from a CharStream; it only store indices into the char stream.
-     *
-     *  Errors from the lexer are never passed to the parser.  Either you want
-     *  to keep going or you do not upon token recognition error.  If you do not
-     *  want to continue lexing then you do not want to continue parsing.  Just
-     *  throw an exception not under RecognitionException and Java will naturally
-     *  toss you all the way out of the recognizers.  If you want to continue
-     *  lexing then you should not throw an exception to the parser--it has already
-     *  requested a token.  Keep lexing until you get a valid one.  Just report
-     *  errors and keep going, looking for a valid token.
-     */
     let ITokenSource: string;
     interface ITokenSource {
-        /**
-         *  Return a Token object from your input stream (usually a CharStream).
-         *  Do not fail/return upon lexing error; keep chewing on the characters
-         *  until you get a good one; errors are not passed through to the parser.
-         */
         nextToken(): IToken;
-        /**
-         *  Where are you getting tokens from? normally the implication will simply
-         *  ask lexers input stream.
-         */
         sourceName: string;
         tokenNames: string[];
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     * A stream of tokens accessing tokens from a TokenSource
-     */
     let ITokenStream: string;
     interface ITokenStream extends IIntStream {
-        /**
-         *  Get Token at current input pointer + i ahead where i=1 is next Token.
-         *  i&lt;0 indicates tokens in the past.  So -1 is previous token and -2 is
-         *  two tokens ago. LT(0) is undefined.  For i&gt;=n, return Token.EOFToken.
-         *  Return null for LT(0) and any index that results in an absolute address
-         *  that is negative.
-         */
         lt(k: number): IToken;
-        /**
-         * How far ahead has the stream been asked to look?  The return
-         * value is a valid index from 0..n-1.
-         */
         range: number;
-        /**
-         *  Get a token at an absolute index i; 0..n-1.  This is really only
-         *  needed for profiling and debugging and token stream rewriting.
-         *  If you don't want to buffer up tokens, then this method makes no
-         *  sense for you.  Naturally you can't use the rewrite stream feature.
-         *  I believe DebugTokenStream can easily be altered to not use
-         *  this method, removing the dependency.
-         */
         get(i: number): IToken;
-        /**
-         *  Where is this stream pulling tokens from?  This is not the name, but
-         *  the object that provides Token objects.
-         */
         tokenSource: ITokenSource;
-        /**
-         *  Return the text of all tokens from start to stop, inclusive.
-         *  If the stream does not buffer all the tokens then it can just
-         *  return "" or null;  Users should not access $ruleLabel.text in
-         *  an action of course in that case.
-         */
         toString(start: number, stop: number): string;
-        /**
-         *  Because the user is not required to use a token with an index stored
-         *  in it, we must provide a means for two token objects themselves to
-         *  indicate the start/end location.  Most often this will just delegate
-         *  to the other toString(int,int).  This is also parallel with
-         *  the TreeNodeStream.toString(Object,Object).
-         */
         toString(start: IToken, stop: IToken): string;
     }
 }
@@ -16620,108 +13028,32 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import List = Stimulsoft.System.Collections.List;
     import Dictionary = Stimulsoft.System.Collections.Dictionary;
-    /**
-     *  The most common stream of this.tokens is one where every token is buffered up
-     *  and this.tokens are prefiltered for a certain channel (the parser will only
-     *  see these this.tokens and cannot change the filter channel number during the
-     *  parse).
-     *
-     *  TODO: how to access the full token stream?  How to track all this.tokens matched per rule?
-     */
     class LegacyCommonTokenStream implements ITokenStream {
         private static ImplementsLegacyCommonTokenStream;
         implements(): string[];
         _tokenSource: ITokenSource;
-        /**
-         *  Record every single token pulled from the source so we can reproduce
-         *  chunks of it later.
-         */
         protected tokens: List<IToken>;
-        /**
-         * Map from token type to channel to override some Tokens' channel numbers
-         */
         protected channelOverrideMap: Dictionary<number, number>;
-        /**
-         * Set of token types; discard any this.tokens with this type
-         */
         protected discardSet: List<number>;
-        /**
-         * Skip tokens on any channel but this one; this is how we skip whitespace...
-         */
         protected channel: number;
-        /**
-         * By default, track all incoming this.tokens
-         */
         protected discardOffChannelTokens: boolean;
-        /**
-         * Track the last mark() call result value for use in rewind().
-         */
         protected lastMarker: number;
-        /**
-         *  The index into the this.tokens list of the current token (next token
-         *  to consume).  p==-1 indicates that the this.tokens list is empty
-         */
         protected p: number;
         constructor(tokenSource?: ITokenSource, channel?: number);
         get index(): number;
-        /**
-         * How deep have we gone?
-         */
         range: number;
-        /**
-         * Reset this token stream by setting its token source.
-         */
         setTokenSource(tokenSource: ITokenSource): void;
-        /**
-         *  Load all this.tokens from the token source and put in this.tokens.
-         *  This is done upon first LT request because you might want to
-         *  set some token type / channel overrides before filling buffer.
-         */
         fillBuffer(): void;
-        /**
-         *  Move the input pointer to the next incoming token.  The stream
-         *  must become active with LT(1) available.  consume() simply
-         *  moves the input pointer so that LT(1) points at the next
-         *  input symbol. Consume at least one token.
-         *
-         *  Walk past any token not on the channel the parser is listening to.
-         */
         consume(): void;
-        /**
-         * Given a starting index, return the index of the first on-channel token.
-         */
         protected skipOffTokenChannels(i: number): number;
         protected skipOffTokenChannelsReverse(i: number): number;
-        /**
-         *  A simple filter mechanism whereby you can tell this token stream
-         *  to force all this.tokens of type ttype to be on channel.  For example,
-         *  when interpreting, we cannot exec actions so we need to tell
-         *  the stream to force all WS and NEWLINE to be a different, ignored
-         *  channel.
-         */
         setTokenTypeChannel(ttype: number, channel: number): void;
         discardTokenType(ttype: number): void;
         setDiscardOffChannelTokens(discardOffChannelTokens: boolean): void;
         getTokens(): List<IToken>;
-        /**
-         *  Given a start and stop index, return a List of all this.tokens in
-         *  the token type BitSet.  Return null if no this.tokens were found.  This
-         *  method looks at both on and off channel this.tokens.
-         */
         getTokens2(start: number, stop: number, types?: BitSet): List<IToken>;
-        /**
-         *  Get the ith token from the current position 1..n where k=1 is the
-         *  first symbol of lookahead.
-         */
         lt(k: number): IToken;
-        /**
-         * Look backwards k this.tokens on-channel this.tokens
-         */
         protected lb(k: number): IToken;
-        /**
-         *  Return absolute token i; ignore which channel the this.tokens are on;
-         *  that is, count all this.tokens not just on-channel this.tokens.
-         */
         get(i: number): IToken;
         la(i: number): number;
         mark(): number;
@@ -16738,24 +13070,11 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  A lexer is recognizer that draws input symbols from a character stream.
-     *  lexer grammars result in a subclass of this object. A Lexer object
-     *  uses simplified match() and error recovery mechanisms in the interest
-     *  of speed.
-     */
     class Lexer extends BaseRecognizer implements ITokenSource {
         private static ImplementsLexer;
         implements(): string[];
-        /**
-         * Where is the lexer drawing characters from?
-         */
         protected input: ICharStream;
         constructor(input?: ICharStream, state?: RecognizerSharedState);
-        /**
-         *  Gets or sets the text matched so far for the current token or any text override.
-         *  <para>Setting this value replaces any previously set value, and overrides the original text.</para>
-         */
         get text(): string;
         set text(value: string);
         get line(): number;
@@ -16763,63 +13082,23 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         get charPositionInLine(): number;
         set charPositionInLine(value: number);
         reset(): void;
-        /** Return a token from this source; i.e., match a token on the char stream. */
         nextToken(): IToken;
-        /**
-         *  Returns the EOF token (default), if you need
-         *  to return a custom token instead override this method.
-         */
         getEndOfFileToken(): IToken;
-        /**
-         *  Instruct the lexer to skip creating a token for current lexer rule
-         *  and look for another token.  nextToken() knows to keep looking when
-         *  a lexer rule finishes with token set to SKIP_TOKEN.  Recall that
-         *  if token==null at end of any token rule, it creates one for you
-         *  and emits it.
-         */
         skip(): void;
-        /**
-         * This is the lexer entry point that sets instance let 'token'
-         */
         mTokens(): void;
         get charStream(): ICharStream;
         set charStream(value: ICharStream);
         get sourceName(): string;
-        /**
-         *  Currently does not support multiple emits per nextToken invocation
-         *  for efficiency reasons.  Subclass and override this method and
-         *  nextToken (to push tokens into a list and pull from that list rather
-         *  than a single variable as this implementation does).
-         */
         emit2(token: IToken): void;
-        /**
-         *  The standard method called to automatically emit a token at the
-         *  outermost lexical rule.  The token object should point into the
-         *  char buffer start..stop.  If there is a text override in 'text',
-         *  use that to set the token's text.  Override this method to emit
-         *  custom Token objects.
-         *
-         *  If you are building trees, then you should also override
-         *  Parser or TreeParser.getMissingSymbol().
-         */
         emit(): IToken;
         match3(s: string): void;
         matchAny(): void;
         match2(c: number): void;
         matchRange(a: number, b: number): void;
-        /**
-         * What is the index of the current character of lookahead?
-         */
         get charIndex(): number;
         reportError(e: RecognitionException): void;
         getErrorMessage(e: RecognitionException, tokenNames: string[]): string;
         getCharErrorDisplay(c: number): string;
-        /**
-         *  Lexers can normally match any char in it's vocabulary after matching
-         *  a token, so do the easy thing and just kill a character and hope
-         *  it all works out.  You can instead use the rule invocation stack
-         *  to do sophisticated error recovery if you are in a fragment rule.
-         */
         recover2(re: RecognitionException): void;
         protected parseNextToken(): void;
     }
@@ -16851,9 +13130,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import List = Stimulsoft.System.Collections.List;
     import Exception = Stimulsoft.System.Exception;
-    /**
-     * A mismatched char or Token or tree node
-     */
     class MismatchedTokenException extends RecognitionException {
         constructor(message?: string, expecting?: number, input?: IIntStream, tokenNames?: List<string>, innerException?: Exception);
         expecting: number;
@@ -16873,10 +13149,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import List = Stimulsoft.System.Collections.List;
     import Exception = Stimulsoft.System.Exception;
-    /**
-     *  We were expecting a token but it's not found.  The current token
-     *  is actually what we wanted next.  Used for tree node errors too.
-     */
     class MissingTokenException extends MismatchedTokenException {
         private _inserted;
         constructor(message?: string, expecting?: number, input?: IIntStream, inserted?: any, tokenNames?: List<string>, innerException?: Exception);
@@ -16895,19 +13167,12 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
-    /**
-     *  A parser for TokenStreams.  "parser grammars" result in a subclass
-     *  of this.
-     */
     class Parser extends BaseRecognizer {
         input: ITokenStream;
         constructor(input: ITokenStream, state?: RecognizerSharedState);
         reset(): void;
         protected getCurrentInputSymbol(input: IIntStream): any;
         protected getMissingSymbol(input: IIntStream, e: RecognitionException, expectedTokenType: number, follow: BitSet): any;
-        /**
-         * Gets or sets the token stream; resets the parser upon a set.
-         */
         get tokenStream(): ITokenStream;
         set tokenStream(value: ITokenStream);
         get sourceName(): string;
@@ -16915,95 +13180,21 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import Dictionary = Stimulsoft.System.Collections.Dictionary;
-    /**
-     *  The set of fields needed by an abstract recognizer to recognize input
-     *  and recover from errors etc...  As a separate state object, it can be
-     *  shared among multiple grammars; e.g., when one grammar imports another.
-     *
-     *  These fields are publically visible but the actual state pointer per
-     *  parser is protected.
-     */
     class RecognizerSharedState {
-        /**
-         *  Track the set of token types that can follow any rule invocation.
-         *  Stack grows upwards.  When it hits the max, it grows 2x in size
-         *  and keeps going.
-         */
         following: BitSet[];
         _fsp: number;
-        /**
-         *  This is true when we see an error and before having successfully
-         *  matched a token.  Prevents generation of more than one error message
-         *  per error.
-         */
         errorRecovery: boolean;
-        /**
-         *  The index into the input stream where the last error occurred.
-         * 	This is used to prevent infinite loops where an error is found
-         *  but no token is consumed during recovery...another error is found,
-         *  ad naseum.  This is a failsafe mechanism to guarantee that at least
-         *  one token/tree node is consumed for two errors.
-         */
         lastErrorIndex: number;
-        /**
-         *  In lieu of a return value, this indicates that a rule or token
-         *  has failed to match.  Reset to false upon valid token match.
-         */
         failed: boolean;
-        /**
-         * Did the recognizer encounter a syntax error?  Track how many.
-         */
         syntaxErrors: number;
-        /**
-         *  If 0, no backtracking is going on.  Safe to exec actions etc...
-         *  If >0 then it's the level of backtracking.
-         */
         backtracking: number;
-        /**
-         *  An array[size num rules] of dictionaries that tracks
-         *  the stop token index for each rule.  ruleMemo[ruleIndex] is
-         *  the memoization table for ruleIndex.  For key ruleStartIndex, you
-         *  get back the stop token for associated rule or MEMO_RULE_FAILED.
-         *
-         *  This is only used if rule memoization is on (which it is by default).
-         */
         ruleMemo: Array<Dictionary<number, number>>;
-        /**
-         *  The goal of all lexer rules/methods is to create a token object.
-         *  This is an instance variable as multiple rules may collaborate to
-         *  create a single token.  nextToken will return this object after
-         *  matching lexer rule(s).  If you subclass to allow multiple token
-         *  emissions, then set this to the last token to be matched or
-         *  something nonnull so that the auto token emit mechanism will not
-         *  emit another token.
-         */
         token: IToken;
-        /**
-         *  What character index in the stream did the current token start at?
-         *  Needed, for example, to get the text for current token.  Set at
-         *  the start of nextToken.
-         */
         tokenStartCharIndex: number;
-        /**
-         * The line on which the first character of the token resides
-         */
         tokenStartLine: number;
-        /**
-         * The character position of first character within the line
-         */
         tokenStartCharPositionInLine: number;
-        /**
-         * The channel number for the current token
-         */
         channel: number;
-        /**
-         * The token type for the current token
-         */
         type: number;
-        /**
-         *  You can set the text for the current token to override what is in
-         *  the input char buffer.  Use setText() or can set this instance var.
-         */
         text: string;
         constructor();
         static recognizerSharedState(state: RecognizerSharedState): RecognizerSharedState;
@@ -17018,16 +13209,7 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     class TokenChannels {
-        /**
-         *  All tokens go to the parser (unless skip() is called in that rule)
-         *  on a particular "channel".  The parser tunes to a particular channel
-         *  so that whitespace etc... can go to the parser on a "hidden" channel.
-         */
         static default: number;
-        /**
-         *  Anything on different channel than DEFAULT_CHANNEL is not parsed
-         *  by parser.
-         */
         static hidden: number;
     }
 }
@@ -17035,79 +13217,15 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import Type = Stimulsoft.System.Type;
     import Dictionary = Stimulsoft.System.Collections.Dictionary;
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  Useful for dumping out the input stream after doing some
-     *  augmentation or other manipulations.
-     *
-     *  You can insert stuff, replace, and delete chunks.  Note that the
-     *  operations are done lazily--only if you convert the buffer to a
-     *  String.  This is very efficient because you are not moving data around
-     *  all the time.  As the buffer of tokens is converted to strings, the
-     *  toString() method(s) check to see if there is an operation at the
-     *  current index.  If so, the operation is done and then normal String
-     *  rendering continues on the buffer.  This is like having multiple Turing
-     *  machine instruction streams (programs) operating on a single input tape. :)
-     *
-     *  Since the operations are done lazily at toString-time, operations do not
-     *  screw up the token index values.  That is, an insert operation at token
-     *  index i does not change the index values for tokens i+1..n-1.
-     *
-     *  Because operations never actually alter the buffer, you may always get
-     *  the original token stream back without undoing anything.  Since
-     *  the instructions are queued up, you can easily simulate transactions and
-     *  roll back any changes if there is an error just by removing instructions.
-     *  For example,
-     *
-     *   CharStream input = new ANTLRFileStream("input");
-     *   TLexer lex = new TLexer(input);
-     *   TokenRewriteStream tokens = new TokenRewriteStream(lex);
-     *   T parser = new T(tokens);
-     *   parser.startRule();
-     *
-     * 	 Then in the rules, you can execute
-     *      Token t,u;
-     *      ...
-     *      input.insertAfter(t, "text to put after t");}
-     * 		input.insertAfter(u, "text after u");}
-     * 		System.out.println(tokens.toString());
-     *
-     *  Actually, you have to cast the 'input' to a TokenRewriteStream. :(
-     *
-     *  You can also have multiple "instruction streams" and get multiple
-     *  rewrites from a single pass over the input.  Just name the instruction
-     *  streams and use that name again when printing the buffer.  This could be
-     *  useful for generating a C file and also its header file--all from the
-     *  same buffer:
-     *
-     *      tokens.insertAfter("pass1", t, "text to put after t");}
-     * 		tokens.insertAfter("pass2", u, "text after u");}
-     * 		System.out.println(tokens.toString("pass1"));
-     * 		System.out.println(tokens.toString("pass2"));
-     *
-     *  If you don't use named rewrite streams, a "default" stream is used as
-     *  the first example shows.
-     */
     class TokenRewriteStream extends CommonTokenStream {
         DEFAULT_PROGRAM_NAME: string;
         PROGRAM_INIT_SIZE: number;
         MIN_TOKEN_INDEX: number;
-        /**
-         *  You may have multiple, named streams of rewrite operations.
-         *  I'm calling these things "programs."
-         *  Maps String (name) -> rewrite (List)
-         */
         protected programs: Dictionary<string, List<RewriteOperation>>;
-        /** Map String (program name) -> Integer index */
         protected lastRewriteTokenIndexes: Dictionary<string, number>;
         protected init(): void;
         constructor(tokenSource?: ITokenSource, channel?: number);
-        /**
-         *  Rollback the instruction stream for a program so that
-         *  the indicated instruction (via instructionIndex) is no
-         *  longer in the stream.  UNTESTED!
-         */
         rollback(programName: string, instructionIndex: number): void;
-        /** Reset the program so that no instructions exist */
         deleteProgram(programName?: string): void;
         unsertAfter(programName: string, index: number, text: any): void;
         insertBefore(programName: string, index: number, text: any): void;
@@ -17122,80 +13240,17 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         toOriginalString2(start: number, end: number): string;
         toString(): string;
         toString3(programName: string, start: number, end: number): string;
-        /**
-         *  We need to combine operations and report invalid operations (like
-         *  overlapping replaces that are not completed nested).  Inserts to
-         *  same index need to be combined etc...   Here are the cases:
-         *
-         *  I.i.u I.j.v								leave alone, nonoverlapping
-         *  I.i.u I.i.v								combine: Iivu
-         *
-         *  R.i-j.u R.x-y.v	| i-j in x-y			delete first R
-         *  R.i-j.u R.i-j.v							delete first R
-         *  R.i-j.u R.x-y.v	| x-y in i-j			ERROR
-         *  R.i-j.u R.x-y.v	| boundaries overlap	ERROR
-         *
-         *  Delete special case of replace (text==null):
-         *  D.i-j.u D.x-y.v	| boundaries overlap	combine to max(min)..max(right)
-         *
-         *  I.i.u R.x-y.v | i in (x+1)-y			delete I (since insert before
-         *                                          we're not deleting i)
-         *  I.i.u R.x-y.v | i not in (x+1)-y		leave alone, nonoverlapping
-         *  R.x-y.v I.i.u | i in x-y				ERROR
-         *  R.x-y.v I.x.u 							R.x-y.uv (combine, delete I)
-         *  R.x-y.v I.i.u | i not in x-y			leave alone, nonoverlapping
-         *
-         *  I.i.u = insert u before op @ index i
-         *  R.x-y.u = replace x-y indexed tokens with u
-         *
-         *  First we need to examine replaces.  For any replace op:
-         *
-         * 		1. wipe out any insertions before op within that range.
-         *      2. Drop any replace op before that is contained completely within
-         *         that range.
-         *      3. Throw exception upon boundary overlap with any previous replace.
-         *
-         *  Then we can deal with inserts:
-         *
-         * 		1. for any inserts to same index, combine even if not adjacent.
-         * 		2. for any prior replace with same left boundary, combine this
-         *         insert with replace and delete this replace.
-         * 		3. throw exception if index in same range as previous replace
-         *
-         *  Don't actually delete; make op null in list. Easier to walk list.
-         *  Later we can throw as we add to index -> op map.
-         *
-         *  Note that I.2 R.2-2 will wipe out I.2 even though, technically, the
-         *  inserted stuff would be before the replace range.  But, if you
-         *  add tokens in front of a method body '{' and then delete the method
-         *  body, I think the stuff before the '{' you added should disappear too.
-         *
-         *  Return a map from token index to operation.
-         */
         protected reduceToSingleOperationPerIndex(rewrites: List<RewriteOperation>): Dictionary<number, RewriteOperation>;
         protected catOpText(a: any, b: any): string;
-        /**
-         * Get all operations before an index of a particular kind
-         */
         protected getKindOfOps(rewrites: List<RewriteOperation>, kind: Type, before?: number): List<RewriteOperation>;
         toDebugString(start?: number, end?: number): string;
     }
     class RewriteOperation {
-        /**
-         * What index into rewrites List are we?
-         */
         instructionIndex: number;
-        /**
-         * Token buffer index.
-         */
         index: number;
         text: any;
         protected stream: TokenRewriteStream;
         constructor(stream: TokenRewriteStream, index: number, text?: any);
-        /**
-         *  Execute the rewrite operation by possibly adding to the buffer.
-         *  Return the index of the next token to operate on.
-         */
         execute(buf: string): number;
         toString(): string;
     }
@@ -17203,10 +13258,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         constructor(stream: TokenRewriteStream, index: number, text: any);
         execute(buf: string): number;
     }
-    /**
-     *  I'm going to try replacing range from x..y with (y-x)+1 ReplaceOp
-     *  instructions.
-     */
     class ReplaceOp extends RewriteOperation {
         lastIndex: number;
         constructor(stream: TokenRewriteStream, from: number, to: number, text: any);
@@ -17219,50 +13270,23 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
         static endOfFile: number;
         static invalid: number;
         static endOfRule: number;
-        /**
-         * imaginary tree navigation type; traverse "get child" link
-         */
         static down: number;
-        /**
-         * imaginary tree navigation type; finish with a child list
-         */
         static up: number;
         static min: number;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     class Tokens {
-        /**
-         *  In an action, a lexer rule can set token to this SKIP_TOKEN and ANTLR
-         *  will avoid creating a token for this symbol and try to fetch another.
-         */
         static skip: IToken;
     }
 }
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import LookaheadStream = Stimulsoft.Data.Expressions.Antlr.Runtime.Misc.LookaheadStream;
-    /**
-     * A token stream that pulls tokens from the code source on-demand and
-     *  without tracking a complete buffer of the tokens. This stream buffers
-     *  the minimum number of tokens possible.  It's the same as
-     *  OnDemandTokenStream except that OnDemandTokenStream buffers all tokens.
-     *
-     *  You can't use this stream if you pass whitespace or other off-channel
-     *  tokens to the parser. The stream can't ignore off-channel tokens.
-     *
-     *  You can only look backwards 1 token: LT(-1).
-     *
-     *  Use this when you need to read from a socket or other infinite stream.
-     *
-     *  @see BufferedTokenStream
-     *  @see CommonTokenStream
-     */
     class UnbufferedTokenStream extends LookaheadStream<IToken> implements ITokenStream, ITokenStreamInformation {
         private static ImplementsUnbufferedTokenStream;
         implements(): string[];
         tokenSource: ITokenSource;
         protected tokenIndex: number;
-        /** Skip tokens on any channel but this one; this is how we skip whitespace... */
         protected channel: number;
         private _realTokens;
         constructor(tokenSource: ITokenSource);
@@ -17284,9 +13308,6 @@ declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
 declare namespace Stimulsoft.Data.Expressions.Antlr.Runtime {
     import List = Stimulsoft.System.Collections.List;
     import Exception = Stimulsoft.System.Exception;
-    /**
-     * An extra token while parsing a TokenStream
-     */
     class UnwantedTokenException extends MismatchedTokenException {
         constructor(message?: string, expecting?: number, input?: IIntStream, tokenNames?: List<string>, innerException?: Exception);
         get unexpectedToken(): IToken;
@@ -17360,11 +13381,6 @@ declare namespace Stimulsoft.Data.Expressions.NCalc.Domain {
         evaluate(expression: LogicalExpression): any;
         visit1(expression: LogicalExpression): void;
         private static commonTypes;
-        /**
-         *  Gets the the most precise type.
-         * @param a Type a.
-         * @param b Type b
-         */
         private static getMostPreciseType;
         compareUsingMostPreciseType(a: any, b: any): any;
         visit2(expression: TernaryExpression): void;
@@ -17456,29 +13472,11 @@ declare namespace Stimulsoft.Data.Expressions.NCalc {
     }
 }
 declare namespace Stimulsoft.Data.Expressions.NCalc {
-    /**
-     *  Provides enumerated values to use to set evaluation options.
-     */
     enum EvaluateOptions {
-        /**
-         *  Specifies that no options are set.
-         */
         None = 1,
-        /**
-         *  Specifies case-insensitive matching.
-         */
         IgnoreCase = 2,
-        /**
-         *  No-cache mode. Ingores any pre-compiled expression in the cache.
-         */
         NoCache = 4,
-        /**
-         *  Treats parameters as arrays and result a set of results.
-         */
         IterateParameters = 8,
-        /**
-         * When using Round(), if a number is halfway between two others, it is rounded toward the nearest number that is away from zero.
-         */
         RoundAwayFromZero = 16
     }
 }
@@ -17653,9 +13651,6 @@ declare namespace Stimulsoft.Data.Expressions.NCalc {
         };
         options: EvaluateOptions;
         protected originalExpression: string;
-        /**
-         * Textual representation of the expression to evaluate.
-         */
         constructor();
         static create1(expression: string, options?: EvaluateOptions): Expression;
         static create2(expression: LogicalExpression, options?: EvaluateOptions): Expression;
@@ -17664,16 +13659,8 @@ declare namespace Stimulsoft.Data.Expressions.NCalc {
         private static rwl;
         static get cacheEnabled(): boolean;
         static set cacheEnabled(value: boolean);
-        /**
-         * Removed unused entries from cached compiled expression
-         */
         private static cleanCache;
         static compile(expression: string, nocache: boolean): LogicalExpression;
-        /**
-         * Pre-compiles the expression in order to check syntax errors.
-         * If errors are detected, the Error property contains the message.
-         * @returns True if the expression syntax is correct, otherwiser False
-         */
         hasErrors(): boolean;
         error: string;
         parsedExpression: LogicalExpression;
@@ -18019,13 +14006,7 @@ declare namespace Stimulsoft.Data.Functions {
         private static days;
         private static defaultUpperCaseList;
         private static cultureIndexes;
-        /**
-         * Returns the day of the week.
-         */
         static dayOfWeek(date: DateTime): string;
-        /**
-         * Returns the day of the week.
-         */
         static dayOfWeek2(date: DateTime, localized: boolean): string;
         static dayOfWeek3(dateTime: DateTime, culture: string): string;
         static dayOfWeek4(dateTime: DateTime, culture: string, upperCase: boolean): string;
@@ -18035,9 +14016,6 @@ declare namespace Stimulsoft.Data.Functions {
 }
 declare namespace Stimulsoft.Data.Functions {
     import DateTime = Stimulsoft.System.DateTime;
-    /**
-     * MonthToStr helper.
-     */
     class StiMonthToStrHelper {
         private static months;
         private static defaultUpperCaseList;
@@ -18919,262 +14897,70 @@ declare namespace Stimulsoft.Report.Components {
         Controls = 4,
         Dashboards = 5
     }
-    /**
-     *  Enumeration which sets positions of the report components on the toolbox of the report designer.
-     */
     enum StiComponentToolboxPosition {
         Component = 0,
-        /**
-         *  Sets a position of the ReportTitle band on the toolbox of the designer.
-         */
         ReportTitleBand = 1,
-        /**
-         *  Sets a position of the ReportSummary band on the toolbox of the designer.
-         */
         ReportSummaryBand = 2,
-        /**
-         *  Sets a position of the PageHeader band on the toolbox of the designer.
-         */
         PageHeaderBand = 3,
-        /**
-         *  Sets a position of the PageFooter band on the toolbox of the designer.
-         */
         PageFooterBand = 4,
-        /**
-         *  Sets a position of the GroupHeader band on the toolbox of the designer.
-         */
         GroupHeaderBand = 5,
-        /**
-         *  Sets a position of the GroupFooter band on the toolbox of the designer.
-         */
         GroupFooterBand = 6,
-        /**
-         *  Sets a position of the Header band on the toolbox of the designer.
-         */
         HeaderBand = 7,
-        /**
-         *  Sets a position of the Footer band on the toolbox of the designer.
-         */
         FooterBand = 8,
-        /**
-         *  Sets a position of the ColumnHeader band on the toolbox of the designer.
-         */
         ColumnHeaderBand = 9,
-        /**
-         *  Sets a position of the ColumnFooter band on the toolbox of the designer.
-         */
         ColumnFooterBand = 10,
-        /**
-         *  Sets a position of the Data band on the toolbox of the designer.
-         */
         DataBand = 11,
-        /**
-         *  Sets a position of the Hierarchical band on the toolbox of the designer.
-         */
         HierarchicalBand = 13,
-        /**
-         *  Sets a position of the Child band on the toolbox of the designer.
-         */
         ChildBand = 14,
-        /**
-         *  Sets a position of the Empty band on the toolbox of the designer.
-         */
         EmptyBand = 15,
-        /**
-         *  Sets a position of the Overlay band on the toolbox of the designer.
-         */
         OverlayBand = 16,
-        /**
-         *  Sets a position of the CrossGroupHeader band on the toolbox of the designer.
-         */
         CrossGroupHeaderBand = 21,
-        /**
-         *  Sets a position of the CrossGroupFooter band on the toolbox of the designer.
-         */
         CrossGroupFooterBand = 22,
-        /**
-         *  Sets a position of the CrossHeader band on the toolbox of the designer.
-         */
         CrossHeaderBand = 23,
-        /**
-         *  Sets a position of the CrossFooter band on the toolbox of the designer.
-         */
         CrossFooterBand = 24,
-        /**
-         *  Sets a position of the CrossData band on the toolbox of the designer.
-         */
         CrossDataBand = 25,
-        /**
-         *  Sets a position of the Text component on the toolbox of the designer.
-         */
         Text = 101,
-        /**
-         *  Sets a position of the TextInCells component on the toolbox of the designer.
-         */
         TextInCells = 102,
-        /**
-         *  Sets a position of the SystemText component on the toolbox of the designer.
-         */
         SystemText = 103,
-        /**
-         *  Sets a position of the ContourText component on the toolbox of the designer.
-         */
         ContourText = 104,
-        /**
-         *  Sets a position of the RichText component on the toolbox of the designer.
-         */
         RichText = 105,
-        /**
-         *  Sets a position of the Image component on the toolbox of the designer.
-         */
         Image = 106,
-        /**
-         *  Sets a position of the BarCode component on the toolbox of the designer.
-         */
         BarCode = 107,
-        /**
-         *  Sets a position of the Shape component on the toolbox of the designer.
-         */
         Shape = 108,
-        /**
-         *  Sets a position of the Line component on the toolbox of the designer.
-         */
         Line = 109,
-        /**
-         *  Sets a position of the Container component on the toolbox of the designer.
-         */
         Container = 110,
-        /**
-         *  Sets a position of the Panel component on the toolbox of the designer.
-         */
         Panel = 110,
-        /**
-         *  Sets a position of the Clone component on the toolbox of the designer.
-         */
         Clone = 112,
-        /**
-         *  Sets a position of the CheckBox component on the toolbox of the designer.
-         */
         CheckBox = 113,
-        /**
-         *  Sets a position of the SubReport component on the toolbox of the designer.
-         */
         SubReport = 114,
-        /**
-         *  Sets a position of the WinControl component on the toolbox of the designer.
-         */
         WinControl = 115,
-        /**
-         *  Sets a position of the ZipCode component on the toolbox of the designer.
-         */
         ZipCode = 116,
-        /**
-         *  Sets a position of the HorizontalLinePrimitive component on the toolbox of the designer.
-         */
         HorizontalLinePrimitive = 150,
-        /**
-         *  Sets a position of the VerticalLinePrimitive component on the toolbox of the designer.
-         */
         VerticalLinePrimitive = 151,
-        /**
-         *  Sets a position of the RectanglePrimitive component on the toolbox of the designer.
-         */
         RectanglePrimitive = 152,
-        /**
-         *  Sets a position of the RoundedRectanglePrimitive component on the toolbox of the designer.
-         */
         RoundedRectanglePrimitive = 153,
-        /**
-         *  Sets a position of the Chart component on the toolbox of the designer.
-         */
         Chart = 200,
-        /**
-         *  Sets a position of the Table on the toolbox of the designer.
-         */
         Table = 201,
-        /**
-         *  Sets a position of the CrossTab band on the toolbox of the designer.
-         */
         CrossTab = 202,
-        /**
-         *  Sets a position of the Gauge component on the toolbox of the designer.
-         */
         Map = 210,
-        /**
-         *  Sets a position of the Gauge component on the toolbox of the designer.
-         */
         Gauge = 220,
-        /**
-         *  Sets a position of the Dashboard Table component on the toolbox of the designer.
-         */
         TableElement = 301,
-        /**
-         *  Sets a position of the Dashboard Chart component on the toolbox of the designer.
-         */
         ChartElement = 302,
-        /**
-         *  Sets a position of the Dashboard ComboBox component on the toolbox of the designer.
-         */
         ComboBoxElement = 400,
-        /**
-         *  Sets a position of the Dashboard Gauge component on the toolbox of the designer.
-         */
         GaugeElement = 303,
-        /**
-         *  Sets a position of the Dashboard Pivot component on the toolbox of the designer.
-         */
         PivotTableElement = 304,
-        /**
-         *  Sets a position of the Dashboard Indicator component on the toolbox of the designer.
-         */
         IndicatorElement = 305,
-        /**
-         *  Sets a position of the Dashboard Progress component on the toolbox of the designer.
-         */
         ProgressElement = 306,
-        /**
-         *  Sets a position of the Dashboard Map component on the toolbox of the designer.
-         */
         RegionMapElement = 307,
-        /**
-         *  Sets a position of the Dashboard ListBox component on the toolbox of the designer.
-         */
         ListBoxElement = 308,
-        /**
-         *  Sets a position of the Dashboard Online Map component on the toolbox of the designer.
-         */
         OnlineMapElement = 309,
-        /**
-         *  Sets a position of the Dashboard Image component on the toolbox of the designer.
-         */
         ImageElement = 310,
-        /**
-         *  Sets a position of the Dashboard Text component on the toolbox of the designer.
-         */
         TextElement = 311,
-        /**
-         *  Sets a position of the Dashboard Panel component on the toolbox of the designer.
-         */
         PanelElement = 312,
-        /**
-         *  Sets a position of the Dashboard Shape component on the toolbox of the designer.
-         */
         ShapeElement = 313,
-        /**
-         *  Sets a position of the Dashboard TreeView component on the toolbox of the designer.
-         */
         TreeViewElement = 314,
-        /**
-         *  Sets a position of the Dashboard TreeViewBox component on the toolbox of the designer.
-         */
         TreeViewBoxElement = 315,
-        /**
-         *  Sets a position of the Dashboard DatePicker component on the toolbox of the designer.
-         */
         DatePickerElement = 316,
-        /**
-         *  Sets a position of the UserCode component on the toolbox of the designer.
-         */
         UserCode = 1000
     }
     enum StiComponentPriority {
@@ -19211,13 +14997,9 @@ declare namespace Stimulsoft.Report.Components {
         CrossDataBand = 300
     }
     enum StiComponentType {
-        /** Simple components - only one copy in one print cycle is output. */
         Simple = 0,
-        /** Master components – more than one copy in one print cycle are output. */
         Master = 1,
-        /** Detailed components – these components are output with Master components. */
         Detail = 2,
-        /** Static components – these components are the same as simple components but are output on pages only. */
         Static = 3
     }
     enum StiRestrictions {
@@ -19561,7 +15343,6 @@ declare namespace Stimulsoft.Report {
     class StiBase extends StiService implements IStiName {
         memberwiseClone(): StiBase;
         private _name;
-        /** Gets or sets a component name. */
         get name(): string;
         set name(value: string);
         getName(): string;
@@ -19943,9 +15724,6 @@ declare namespace Stimulsoft.Report.Components {
         protected static propertyPlaceOnToolbox: string;
         get placeOnToolbox(): boolean;
         set placeOnToolbox(value: boolean);
-        /**
-         *  Gets a value to sort a position in the toolbox.
-         */
         toolboxPosition: number;
         get isPrinting(): boolean;
         get isExporting(): boolean;
@@ -22966,6 +18744,7 @@ declare namespace Stimulsoft.Report.Chart {
         seriesLighting: boolean;
         seriesLabelsFont: Font;
         seriesLabelsColor: Color;
+        seriesLabelsLineColor: Color;
         seriesLabelsBrush: StiBrush;
         seriesLabelsBorderColor: Color;
         axisLineColor: Color;
@@ -23648,7 +19427,6 @@ declare namespace Stimulsoft.Report.CodeDom {
     }
 }
 declare namespace Stimulsoft.Report {
-    /** Enum provide variants of nested factor. */
     enum StiNestedFactor {
         High = 0,
         Normal = 1,
@@ -23766,9 +19544,7 @@ declare namespace Stimulsoft.Report {
         Wmf = 10
     }
     enum StiArabicDigitsType {
-        /** A value for the standard arabic digits. */
         Standard = 0,
-        /** A value for the Eastern arabic digits. */
         Eastern = 1
     }
     enum StiBrushType {
@@ -26477,13 +22253,7 @@ declare namespace Stimulsoft.Report.Components {
 declare namespace Stimulsoft.Report.Components {
     import StiSimpleBorder = Stimulsoft.Base.Drawing.StiSimpleBorder;
     let IStiSimpleBorder: string;
-    /**
-     *  Interface describes a frame of an element.
-     */
     interface IStiSimpleBorder {
-        /**
-         *  Gets or sets frame of the element.
-         */
         border2: StiSimpleBorder;
     }
 }
@@ -26534,13 +22304,7 @@ declare namespace Stimulsoft.Report.Components {
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     let IStiTextFormat: string;
     let ImplementsIStiTextFormat: any[];
-    /**
-     * Desribes formatting of the text.
-     */
     interface IStiTextFormat {
-        /**
-         * Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
     }
 }
@@ -27630,51 +23394,41 @@ declare namespace Stimulsoft.Report.Components {
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
         clone(cloneProperties: boolean): StiView;
         private _horAlignment;
-        /** Gets or sets the horizontal alignment of an object. */
         get horAlignment(): StiHorAlignment;
         set horAlignment(value: StiHorAlignment);
         private _vertAlignment;
-        /** Gets or sets the vertical alignment of an object. */
         get vertAlignment(): StiVertAlignment;
         set vertAlignment(value: StiVertAlignment);
         getImage(REFzoom: any, format?: StiExportFormat): Image;
         isExportAsImage(format: StiExportFormat): boolean;
         private _border;
-        /** Gets or sets border of the component. */
         get border(): StiBorder;
         set border(value: StiBorder);
         private _brush;
-        /** Gets or sets a brush to fill a component. */
         get brush(): StiBrush;
         set brush(value: StiBrush);
         getActualSize(): SizeD;
         getRealSize(): SizeD;
         setPage(value: StiPage): void;
         private _smoothing;
-        /** Gets or sets smoothing mode for drawing image. */
         get smoothing(): boolean;
         set smoothing(value: boolean);
         private _isCachedImage;
         get isCachedImage(): boolean;
         set isCachedImage(value: boolean);
         private _objectToDraw;
-        /** Gets or sets the WPF visual object that appeared as a result of the component rendering. This property accepts objects of two types: DrawingVisual and ImageSource. */
         get objectToDraw(): any;
         set objectToDraw(value: any);
         private _imageToDraw;
-        /** Gets or sets the image that appeared as a result of the component rendering. */
         get imageToDraw(): Image;
         set imageToDraw(value: Image);
         private _stretch;
-        /** Gets or sets value, indicates that this component will stretch the image till the image will get size equal in its size on the page. */
         get stretch(): boolean;
         set stretch(value: boolean);
         private _multipleFactor;
-        /** Gets or sets value to multiply by it an image size. */
         get multipleFactor(): number;
         set multipleFactor(value: number);
         private _aspectRatio;
-        /** Gets or sets value, indicates that the image will save its aspect ratio. */
         get aspectRatio(): boolean;
         set aspectRatio(value: boolean);
         getImageFromSource(): Image;
@@ -28349,6 +24103,7 @@ declare namespace Stimulsoft.Report.Helpers {
     }
 }
 declare namespace Stimulsoft.Report.Components {
+    import Color = Stimulsoft.System.Drawing.Color;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import StiGetImageDataEventArgs = Stimulsoft.Report.Events.StiGetImageDataEventArgs;
     import StiValueEventArgs = Stimulsoft.Report.Events.StiValueEventArgs;
@@ -28370,17 +24125,12 @@ declare namespace Stimulsoft.Report.Components {
         getImage(REFzoom: any, format?: StiExportFormat): Image;
         protected getImageFromFile(): Image;
         protected getImageFromUrl(): Image;
-        /** Returns the image from specified data column. */
         protected getImageFromDataColumn(): Image;
-        /** Returns the image from icon. */
         protected getImageFromIcon(): Image;
-        /** Returns the image being get as a result of rendering. */
         getImageFromSource(): Image;
         private static propertyCanBreak;
-        /** Gets or sets value which indicates whether the component can or cannot break its contents on several pages. */
         get canBreak(): boolean;
         set canBreak(value: boolean);
-        /** Divides content of components in two parts.Returns result of dividing.If true, then component is successful divided. */
         break(dividedComponent: StiComponent, devideFactor: number, REFdivideLine: any): boolean;
         private _imageURLValue;
         get imageURLValue(): any;
@@ -28398,27 +24148,21 @@ declare namespace Stimulsoft.Report.Components {
         get getImageDataEvent(): StiGetImageDataEvent;
         set getImageDataEvent(value: StiGetImageDataEvent);
         private static propertyProcessingDuplicates;
-        /** Gets or sets value which indicates how report engine processes duplicated images. */
         get processingDuplicates(): StiImageProcessingDuplicatesType;
         set processingDuplicates(value: StiImageProcessingDuplicatesType);
         private _imageRotation;
-        /** Gets or sets value which indicates how to rotate an image before output. */
         get imageRotation(): StiImageRotation;
         set imageRotation(value: StiImageRotation);
         private _image;
-        /** Gets or sets the image. */
         get image(): Image;
         set image(value: Image);
         private static propertyMargins;
-        /** Gets or sets image margins. */
         get margins(): StiMargins;
         set margins(value: StiMargins);
         private _file;
-        /** Gets or sets the path to the file that contains the image. */
         get file(): string;
         set file(value: string);
         private _dataColumn;
-        /** Gets or sets a name of the column that contains the image. */
         get dataColumn(): string;
         set dataColumn(value: string);
         private _imageURL;
@@ -29622,7 +25366,7 @@ declare namespace Stimulsoft.Report.Components {
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import StiJson = Stimulsoft.Base.StiJson;
     import StiExpression = Stimulsoft.Report.Expressions.StiExpression;
-    class StiDrillDownParameter implements /*IStiDefault,*/ IStiJsonReportObject {
+    class StiDrillDownParameter implements IStiJsonReportObject {
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -30835,7 +26579,6 @@ declare namespace Stimulsoft.Report.Styles.Conditions {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
         clone(): StiStyleConditionsCollection;
-        /** Creates a new object of the type StiStyleCondition. */
         add(param: StiStyleCondition | StiStyleConditionElement[] | any): void;
         addRange(conditions: StiStyleCondition[] | StiStyleConditionsCollection | any): void;
     }
@@ -30858,28 +26601,20 @@ declare namespace Stimulsoft.Report.Styles {
         clone(): any;
         equals(obj: any, allowEqualName?: boolean, allowEqualDescription?: boolean): boolean;
         static getStyle(component: StiComponent, styleElements?: StiStyleElements | StiBaseStyle, componentStyle?: StiBaseStyle): StiBaseStyle;
-        /** Gets the style from the component. */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements): void;
-        /** Sets style to the component. */
         setStyleToComponent(component: StiComponent): void;
-        /** Gets a style from the components. */
         getStyleFromComponents(comps: StiComponentsCollection, styleElements: StiStyleElements): void;
-        /** Returns string representation of the style. */
         toString(): string;
         private _collectionName;
-        /** Gets or sets a name of the styles collection. */
         get collectionName(): string;
         set collectionName(value: string);
         private _conditions;
-        /** Gets or sets a collection of the style conditions. */
         get conditions(): StiStyleConditionsCollection;
         set conditions(value: StiStyleConditionsCollection);
         private _description;
-        /** Gets or sets a style description. */
         get description(): string;
         set description(value: string);
         private _name;
-        /** Gets or sets a style name. */
         get name(): string;
         set name(value: string);
         dashboardName: string;
@@ -30914,15 +26649,7 @@ declare namespace Stimulsoft.Report.Styles {
         hotRowHeaderBackColor: Color;
         cellForeColor: Color;
         lineColor: Color;
-        /**
-         *  Gets a style from the component.
-         *  @param component Component.
-         */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements): void;
-        /**
-         *  Sets style to a component.
-         *  @param component Component.
-         */
         setStyleToComponent(component: StiComponent): void;
     }
 }
@@ -31259,6 +26986,11 @@ declare namespace Stimulsoft.Report.Dashboard.Helpers {
     import RectangleD = Stimulsoft.System.Drawing.Rectangle;
     class StiPaddingHelper {
         static applyPadding(element: IStiElement, rect: RectangleD, scale: number): RectangleD;
+    }
+}
+declare namespace Stimulsoft.Report.Dashboard.Helpers {
+    class StiSortMenuHelper {
+        static isAllowUserSorting(element: IStiElement): boolean;
     }
 }
 declare namespace Stimulsoft.Report.Dashboard.Helpers {
@@ -32462,7 +28194,9 @@ declare namespace Stimulsoft.Report.Maps {
         Oman = 93,
         Qatar = 94,
         Benelux = 95,
-        Scandinavia = 96
+        Scandinavia = 96,
+        FranceDepartments = 97,
+        France18Regions = 98
     }
     enum StiMapStyleIdent {
         Style21 = 0,
@@ -32797,6 +28531,10 @@ declare namespace Stimulsoft.Report.Dashboard {
         TargetIcon = 1024,
         All = 2047
     }
+    enum StiTargetMode {
+        Percentage = 0,
+        Variation = 1
+    }
 }
 declare namespace Stimulsoft.Report.Maps {
     import StiElementStyleIdent = Stimulsoft.Report.Dashboard.StiElementStyleIdent;
@@ -33013,9 +28751,6 @@ declare namespace Stimulsoft.Report.Styles {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
         clone(): any;
-        /**
-         *  Gets or sets the font for drawing this style.
-         */
         font: Font;
         private sshouldSerializeFont;
         foreColor: Color;
@@ -33044,29 +28779,10 @@ declare namespace Stimulsoft.Report.Styles {
         private shouldSerializeHotSelectedForeColor;
         hotSelectedGlyphColor: Color;
         private shouldSerializeHotSelectedGlyphColor;
-        /**
-         *  Gets or sets a value which indicates whether a report engine can use Font for dialog controls.
-         */
         allowUseFont: boolean;
-        /**
-         *  Gets or sets a value which indicates whether a report engine can use BackColor for dialog controls.
-         */
         allowUseBackColor: boolean;
-        /**
-         *  Gets or sets a value which indicates whether a report engine can use ForeColor for dialog controls.
-         */
         allowUseForeColor: boolean;
-        /**
-         *  Gets a style from the component.
-         *  @param component Component
-         *  @param styleElements Elements of style
-         *  @param componentStyle Odd/Even/Component style of component, if present
-         */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements, componentStyle?: StiBaseStyle): void;
-        /**
-         *  Sets style to a component.
-         *  @param component Component.
-         */
         setStyleToComponent(component: StiComponent): void;
     }
 }
@@ -33077,9 +28793,6 @@ declare namespace Stimulsoft.Report {
     import StiBaseStyle = Stimulsoft.Report.Styles.StiBaseStyle;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import Color = Stimulsoft.System.Drawing.Color;
-    /**
-     *  Describes the class that contains a style for Map components.
-     */
     class StiTableStyle extends StiBaseStyle {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -33098,21 +28811,8 @@ declare namespace Stimulsoft.Report {
         footerForeground: Color;
         gridColor: Color;
         private getColor;
-        /**
-         *  Gets a style from the component.
-         *  @param component Component.
-         */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements): void;
-        /**
-         *  Sets style to a component.
-         *  @param component Component.
-         */
         setStyleToComponent(component: StiComponent): void;
-        /**
-         *  Creates a new object of the type StiTableStyle.
-         *  @param name Style name.
-         *  @param description Style description.
-         */
         constructor(name?: string, description?: string, report?: StiReport);
     }
 }
@@ -33162,7 +28862,6 @@ declare namespace Stimulsoft.Report.Styles {
         allowUseBorderFormatting: boolean;
         allowUseBorderSides: boolean;
         allowUseBrush: boolean;
-        /** Gets a style from the component. */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements, componentStyle?: StiBaseStyle): void;
     }
 }
@@ -33712,6 +29411,7 @@ declare namespace Stimulsoft.Report.Dashboard {
     import IStiTransformSorts = Stimulsoft.Data.Engine.IStiTransformSorts;
     import IStiDataFilters = Stimulsoft.Data.Engine.IStiDataFilters;
     import StiFontIconSet = Stimulsoft.Report.Helpers.StiFontIconSet;
+    import StiTargetMode = Stimulsoft.Report.Dashboard.StiTargetMode;
     let IStiIndicatorElement: string;
     let ImplementsIStiIndicatorElement: any[];
     interface IStiIndicatorElement extends IStiElement, IStiUserSorts, IStiDashboardElementStyle, IStiTransformActions, IStiTransformFilters, IStiTransformSorts, IStiDataTopN, IStiDataTransformationElement, IStiGroupElement, IStiDataFilters {
@@ -33741,6 +29441,7 @@ declare namespace Stimulsoft.Report.Dashboard {
         iconAlignment: StiIconAlignment;
         glyphColor: Color;
         customIcon: number[];
+        targetMode: StiTargetMode;
     }
 }
 import Font = Stimulsoft.System.Drawing.Font;
@@ -33802,13 +29503,7 @@ declare namespace Stimulsoft.Report.Dashboard {
 declare namespace Stimulsoft.Report.Dashboard {
     let IStiMargin: string;
     let ImplementsIStiMargin: any[];
-    /**
-     *  Describes margins around component.
-     */
     interface IStiMargin {
-        /**
-         *  Gets or sets a margin of the element.
-         */
         margin: StiMargin;
     }
 }
@@ -33875,13 +29570,7 @@ declare namespace Stimulsoft.Report.Dashboard {
 declare namespace Stimulsoft.Report.Dashboard {
     let IStiPadding: string;
     let ImplementsIStiPadding: any[];
-    /**
-     *  Describes padding around component.
-     */
     interface IStiPadding {
-        /**
-         *  Gets or sets a padding of the element.
-         */
         padding: StiPadding;
     }
 }
@@ -33996,6 +29685,7 @@ declare namespace Stimulsoft.Report.Dashboard {
         getSeries2(meter: IStiMeter): IStiMeter;
         createNewSeries(): any;
         mode: StiProgressElementMode;
+        font: Font;
     }
 }
 declare namespace Stimulsoft.Report.Dashboard {
@@ -34151,13 +29841,7 @@ declare namespace Stimulsoft.Report.Dashboard {
     let IStiTitle: string;
     let ImplementsIStiTitle: any[];
     interface IStiTitle extends IStiFont, IStiHorAlignment, IStiForeColor, IStiBackColor {
-        /**
-         *  Gets or sets title text.
-         */
         text: string;
-        /**
-         *  Gets or sets visibility of title.
-         */
         visible: boolean;
     }
 }
@@ -35049,7 +30733,6 @@ declare namespace Stimulsoft.Report.Engine {
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import StiContainer = Stimulsoft.Report.Components.StiContainer;
     class StiContainerBuilder extends StiComponentBuilder {
-        /** Returns a panel for the component rendering. */
         static getRenderContainer(comp: StiComponent, type?: Stimulsoft.System.Type): StiContainer;
         internalRenderAsync(masterComp: StiComponent): Promise<StiComponent>;
         internalRender(masterComp: StiComponent): StiComponent;
@@ -35106,41 +30789,12 @@ declare namespace Stimulsoft.Report.Dictionary {
         loadFromXml(xmlNode: XmlNode): void;
         getNameInSource(): string;
         getName(): string;
-        /**
-         *  Returns a DataTable with data from this datasource.
-         *  @returns The DataTable with data.
-         */
         getDataTable2(allowConnectToData: boolean): Promise<DataTable>;
-        /**
-         *  Returns reference to the dictionary which contains this datasource.
-         *  @returns Reference to the app.
-         */
         getDictionary(): IStiAppDictionary;
-        /**
-         *  Returns an enumeration of the data columns from this dictionary.
-         *  @returns The enumeration of the data columns.
-         */
         fetchColumns(): List<IStiAppDataColumn>;
-        /**
-         *  Returns a connection to data for this data source.
-         *  @returns Reference to the connection.
-         */
         getConnection(): IStiAppConnection;
-        /**
-         *  Returns an enumeration of the parent data relations for this data source.
-         *  @returns The enumeration of the data relations.
-         */
         fetchParentRelations(activePreferred: boolean): List<IStiAppDataRelation>;
-        /**
-         *  Returns an enumeration of the child data relations for this data source.
-         *  @returns The enumeration of the data relations.
-         */
         fetchChildRelations(activePreferred: boolean): List<IStiAppDataRelation>;
-        /**
-         *  Returns an array of values for the specified column in the specified position.
-         *  @param names An array of names of the data column.
-         *  @returns The enumeration of the data column values.
-         */
         fetchColumnValues(names: List<string>): List<any[]>;
         getKey(): string;
         setKey(key: string): void;
@@ -35160,14 +30814,11 @@ declare namespace Stimulsoft.Report.Dictionary {
         get realCount(): number;
         get count(): number;
         protected isBofValue: boolean;
-        /** Gets value indicates that this position specifies to the beginning of data. */
         get isBof(): boolean;
         set isBof(value: boolean);
         protected isEofValue: boolean;
-        /** Gets value indicates that this position specifies to the data end. */
         get isEof(): boolean;
         set isEof(value: boolean);
-        /** Gets value indicates that no data. */
         get isEmpty(): boolean;
         first(): void;
         prior(): void;
@@ -35196,15 +30847,10 @@ declare namespace Stimulsoft.Report.Dictionary {
         resetDetailsRows(): void;
         resetData(): void;
         getDataRow(index: number): DataRow;
-        /** Returns the parent row with data for the indicated relation. */
         getParentData(relation: string): StiDataRow;
-        /** Returns the colection of Parent relations. */
         getParentRelations(): Stimulsoft.Report.Dictionary.StiDataRelationsCollection;
-        /** Returns a collection of Child relations. */
         getChildRelations(): Stimulsoft.Report.Dictionary.StiDataRelationsCollection;
-        /** Returns the parent Data Source by the relation name. */
         getParentDataSource(relationName: string, allowRelationName?: boolean): StiDataSource;
-        /** Returns the child Data Source by the relation name. */
         getChildDataSource(relationName: string): StiDataSource;
         protected invokeConnecting(): void;
         protected invokeDisconnecting(): void;
@@ -35357,6 +31003,8 @@ declare namespace Stimulsoft.Report.Engine.StiParser {
         protected tokenPos: number;
         protected tokensList: StiToken[];
         protected component: StiComponent;
+        protected runtimeConstants: Hashtable;
+        protected runtimeConstantsHash: Hashtable;
         private getNextLexem;
         private static isWhiteSpace;
         private buildAliases;
@@ -35366,6 +31014,7 @@ declare namespace Stimulsoft.Report.Engine.StiParser {
         private static replaceBackslash;
         private scanNumber;
         private postProcessTokensList;
+        protected createRuntimeConstantsHash(): void;
         private getDataSourceByName;
         private getDataRelationByName;
         private getDataColumnByName;
@@ -35469,7 +31118,24 @@ declare namespace Stimulsoft.Report.Engine.StiParser {
         private get_token;
     }
 }
+declare namespace Stimulsoft.Report.Engine {
+    import Hashtable = Stimulsoft.System.Collections.Hashtable;
+    import StiParser = Stimulsoft.Report.Engine.StiParser.StiParser;
+    class StiParserParameters {
+        storeToPrint: boolean;
+        executeIfStoreToPrint: boolean;
+        returnAsmList: boolean;
+        checkSyntaxMode: boolean;
+        syntaxCaseSensitive: boolean;
+        parser: StiParser;
+        conversionStore: Hashtable;
+        globalizedNameExt: string;
+        ignoreGlobalizedName: boolean;
+        constants: Hashtable;
+    }
+}
 declare namespace Stimulsoft.Report.Engine.StiParser {
+    import StiParserParameters = Stimulsoft.Report.Engine.StiParserParameters;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import StiText = Stimulsoft.Report.Components.StiText;
     import StiVariable = Stimulsoft.Report.Dictionary.StiVariable;
@@ -35518,6 +31184,7 @@ declare namespace Stimulsoft.Report.Engine.StiParser {
         private getVariableValue;
         private call_arrayElement;
         protected get_systemVariable(name: any): any;
+        static parseTextValue2(inputExpression: string, component: StiComponent, sender?: any, parameters?: StiParserParameters): any;
         static parseTextValue(inputExpression: string, component: StiComponent, sender?: any, REFstoreToPrint?: any, executeIfStoreToPrint?: boolean, returnAsmList?: boolean, parser?: StiParser): any;
         private parseToAsm;
         private static checkForStoreToPrint;
@@ -35530,11 +31197,13 @@ declare namespace Stimulsoft.Report.Engine.StiParser {
 }
 declare namespace Stimulsoft.Report.Dashboard {
     import StiParserGetDataFieldValueEventArgs = Stimulsoft.Report.Engine.StiParser.StiParserGetDataFieldValueEventArgs;
+    import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import StiPromise = Stimulsoft.System.StiPromise;
     import IStiReportComponent = Stimulsoft.Base.IStiReportComponent;
     class StiReportParser {
         private static cache;
-        static parse(expression: string, component: IStiReportComponent, allowCache?: boolean): string;
+        private static wrongCache;
+        static parse(expression: string, component: IStiReportComponent, allowCache?: boolean, constants?: Hashtable, allowDataLoading?: boolean, onlyExpression?: boolean): string;
         static parseAsync(expression: string, component: IStiReportComponent, allowCache?: boolean): StiPromise<string>;
         private static parseOrDefault;
         private static parseOrDefaultAsync;
@@ -35543,7 +31212,9 @@ declare namespace Stimulsoft.Report.Dashboard {
         static getDataFieldValueProcessorAsync(sender: any, e: StiParserGetDataFieldValueEventArgs): StiPromise<void>;
         private static getCacheKey;
         static addToCache(expression: string, result: string, component: IStiReportComponent): void;
+        static addToWrongCache(expression: string, result: string, component: IStiReportComponent): void;
         static getFromCache(expression: string, component: IStiReportComponent): string;
+        static getFromWrongCache(expression: string, component: IStiReportComponent): string;
         static cleanCache(reportKey: string): void;
     }
 }
@@ -35577,9 +31248,6 @@ declare namespace Stimulsoft.Report.Dashboard {
     }
 }
 declare namespace Stimulsoft.Report.Export {
-    /**
-     *  Enumeration for setting compression scheme of the exported Tiff image.
-     */
     enum StiTiffCompressionScheme {
         Default = 20,
         LZW = 2,
@@ -35588,183 +31256,54 @@ declare namespace Stimulsoft.Report.Export {
         Rle = 5,
         None = 6
     }
-    /**
-     *  Enumeration which sets an exported mode for the Html export.
-     */
     enum StiHtmlExportMode {
-        /**
-         *  A span tag of the HTML will be used for the exporting of the rendered document.
-         */
         Span = 1,
-        /**
-         *  A div tag of the HTML will be used for the exporting of the rendered document.
-         */
         Div = 2,
-        /**
-         *  A table tag of the HTML will be used for the exporting of the rendered document.
-         */
         Table = 3
     }
-    /**
-     *  Enumeration which sets a quality of images which will be exported.
-     */
     enum StiHtmlExportQuality {
-        /**
-         *  Sets a high quality of the exported images.
-         */
         High = 1,
-        /**
-         *  Sets a low quality of the exported images.
-         */
         Low = 2
     }
-    /**
-     *  Enumeration describes possible user access privileges to the pdf document.
-     *  User access privileges are managed by the user password.
-     *  Owner with the correct owner password has all possible privileges for the content of the
-     *  pdf document and a rule for setting document permissions.
-     */
     enum StiUserAccessPrivileges {
-        /**
-         *  User password allows only opening the pdf document, decrypt it, and display it on the screen.
-         */
         None = 0,
-        /**
-         *  User password allows opening the pdf document, decrypt it, display it on the screen and print
-         *  its content.
-         */
         PrintDocument = 1,
-        /**
-         *  User password allows modifying the content of the pdf document.
-         */
         ModifyContents = 2,
-        /**
-         *  User password allows copying text and graphics objects from the content of the pdf document.
-         */
         CopyTextAndGraphics = 4,
-        /**
-         *  User password allows adding or modifying text annotations in the content of the pdf document.
-         */
         AddOrModifyTextAnnotations = 8,
-        /**
-         *  User password allows all modifications on the content of the pdf document.
-         */
         All = 15
     }
-    /**
-     *  Enumeration which sets an encryption key length of the resulting pdf file.
-     */
     enum StiPdfEncryptionKeyLength {
-        /**
-         *  RC4 algorithm, 40 bit encryption key length (Acrobat 3).
-         */
         Bit40 = 1,
-        /**
-         *  RC4 algorithm, 128 bit encryption key length (Acrobat 5).
-         */
         Bit128 = 2,
-        /**
-         *  AES algorithm, 128 bit encryption key length, revision 4 (Acrobat 7).
-         */
         Bit128_r4 = 3,
-        /**
-         *  AES algorithm, 256 bit encryption key length, revision 5 (Acrobat 9).
-         */
         Bit256_r5 = 4,
-        /**
-         *  AES algorithm, 256 bit encryption key length, revision 6 (Acrobat X).
-         */
         Bit256_r6 = 5
     }
-    /**
-     *  Enumeration which sets an image compression method for PDF export.
-     */
     enum StiPdfImageCompressionMethod {
-        /**
-         *  A Jpeg method (DCTDecode) will be used for the exporting of the rendered document.
-         */
         Jpeg = 1,
-        /**
-         *  A Flate method (FlateDecode) will be used for the exporting of the rendered document.
-         */
         Flate = 2,
-        /**
-         *  A Indexed method (IndexedColors + FlateDecode) will be used for the exporting of the rendered document.
-         */
         Indexed = 3
     }
-    /**
-     *  Enumeration which sets an AutoPrint mode for pdf files
-     */
     enum StiPdfAutoPrintMode {
-        /**
-         *  Do not use AutoPrint feature
-         */
         None = 1,
-        /**
-         *  Use printing with print dialog
-         */
         Dialog = 2,
-        /**
-         *  Use silent printing
-         */
         Silent = 3
     }
-    /**
-     *  Enumeration describes a type of the border.
-     */
     enum StiTxtBorderType {
-        /**
-         *  A border which consists of "+","-","|" symbols.
-         */
         Simple = 1,
-        /**
-         *  A border which consists of character graphics symbols.
-         *  A Single type of the border.
-         */
         UnicodeSingle = 2,
-        /**
-         *  A border consists of character graphics symbols.
-         *  A Double type of the border.
-         */
         UnicodeDouble = 3
     }
-    /**
-     *  Enumeration describes a type of palette of the PCX file.
-     */
     enum StiPcxPaletteType {
-        /**
-         *  Monochrome palette (1 bit)
-         */
         Monochrome = 1,
-        /**
-         *  Color palette (24 bit)
-         */
         Color = 2
     }
-    /**
-     *  Enumeration describes a type of dithering for monochrome PCX file.
-     */
     enum StiMonochromeDitheringType {
-        /**
-         *  Without dithering.
-         *  Low quality, small size of file.
-         */
         None = 1,
-        /**
-         *  Floyd-Steinberg dithering.
-         *  Good quality, big size of file.
-         */
         FloydSteinberg = 2,
-        /**
-         *  Ordered dithering with Bayer matrix 4x4.
-         *  Poor quality, medium size of file.
-         */
         Ordered = 3
     }
-    /**
-     *  Enumeration describes a type of the images for the exports.
-     */
     enum StiImageType {
         Bmp = 1,
         Gif = 2,
@@ -35776,42 +31315,21 @@ declare namespace Stimulsoft.Report.Export {
         Svg = 8,
         Svgz = 9
     }
-    /**
-     *  Enumeration describes a type of the html exports.
-     */
     enum StiHtmlType {
         Html = 1,
         Html5 = 2,
         Mht = 3
     }
-    /**
-     *  Enumeration describes a type of the chart in the html exports.
-     */
     enum StiHtmlChartType {
         Image = 1,
         Vector = 2,
         AnimatedVector = 3
     }
-    /**
-     *  Enumeration describes a type of the excel exports.
-     */
     enum StiExcelType {
-        /**
-         *  Excel format from Office 97 to Office 2003.
-         */
         ExcelBinary = 1,
-        /**
-         *  Xml Excel format starts from Office 2003.
-         */
         ExcelXml = 2,
-        /**
-         *  Excel format starts from Office 2007.
-         */
         Excel2007 = 3
     }
-    /**
-     *  Enumeration describes a type of the data exports.
-     */
     enum StiDataType {
         Csv = 1,
         Dbf = 2,
@@ -35820,9 +31338,6 @@ declare namespace Stimulsoft.Report.Export {
         Xml = 5,
         Json = 6
     }
-    /**
-     *  Enumeration which defines a position of the export item in the export menu.
-     */
     enum StiExportPosition {
         Pdf = 0,
         Xps = 1,
@@ -35859,165 +31374,48 @@ declare namespace Stimulsoft.Report.Export {
         ReportOnly = 2,
         All = 3
     }
-    /**
-     *  Enumeration for setting Code Pages.
-     */
     enum StiDbfCodePages {
-        /**
-         *  A parameter indicating that the code page of the exported document will not be specified.
-         */
         Default = 0,
-        /**
-         *  A code page of the exported document is U.S. MS-DOS. Code page number 437.
-         */
         USDOS = 437,
-        /**
-         *  A code page of the exported document is Mazovia (Polish) MS-DOS. Code page number 620.
-         */
         MazoviaDOS = 620,
-        /**
-         *  A code page of the exported document is Greek MS-DOS (437G). Code page number 737.
-         */
         GreekDOS = 737,
-        /**
-         *  A code page of the exported document is International MS-DOS. Code page number 850.
-         */
         InternationalDOS = 850,
-        /**
-         *  A code page of the exported document is Eastern European MS-DOS. Code page number 852.
-         */
         EasternEuropeanDOS = 852,
-        /**
-         *  A code page of the exported document is Icelandic MS-DOS. Code page number 861.
-         */
         IcelandicDOS = 861,
-        /**
-         *  A code page of the exported document is Nordic MS-DOS. Code page number 865.
-         */
         NordicDOS = 865,
-        /**
-         *  A code page of the exported document is Russian MS-DOS. Code page number 866.
-         */
         RussianDOS = 866,
-        /**
-         *  A code page of the exported document is Kamenicky (Czech) MS-DOS. Code page number 895.
-         */
         KamenickyDOS = 895,
-        /**
-         *  A code page of the exported document is Turkish MS-DOS. Code page number 857.
-         */
         TurkishDOS = 857,
-        /**
-         *  A code page of the exported document is EasternEuropean MS-DOS. Code page number 1250.
-         */
         EasternEuropeanWindows = 1250,
-        /**
-         *  A code page of the exported document is Russian Windows. Code page number 1251.
-         */
         RussianWindows = 1251,
-        /**
-         *  A code page of the exported document is Windows ANSI. Code page number 1252.
-         */
         WindowsANSI = 1252,
-        /**
-         *  A code page of the exported document is Greek Windows. Code page number 1253.
-         */
         GreekWindows = 1253,
-        /**
-         *  A code page of the exported document is Turkish Windows. Code page number 1254.
-         */
         TurkishWindows = 1254,
-        /**
-         *  A code page of the exported document is Standard Macintosh. Code page number 10000.
-         */
         StandardMacintosh = 10000,
-        /**
-         *  A code page of the exported document is Greek Macintosh. Code page number 10006.
-         */
         GreekMacintosh = 10006,
-        /**
-         *  A code page of the exported document is Russian Macintosh. Code page number 10007.
-         */
         RussianMacintosh = 10007,
-        /**
-         *  A code page of the exported document is Eastern European Macintosh. Code page number 10029.
-         */
         EasternEuropeanMacintosh = 10029
     }
-    /**
-     *  Enumeration for the types of data for the export.
-     */
     enum StiExportDataType {
-        /**
-         *  A string type.
-         */
         String = 0,
-        /**
-         *  An Integer32 type.
-         */
         Int = 1,
-        /**
-         *  An Integer64 type.
-         */
         Long = 2,
-        /**
-         *  A Float type.
-         */
         Float = 3,
-        /**
-         *  A Double type.
-         */
         Double = 4,
-        /**
-         *  A Data type.
-         */
         Date = 5,
-        /**
-         *  A Boolean type.
-         */
         Bool = 6
     }
-    /**
-     *  Enumeration for setting format of the exported images.
-     */
     enum StiImageFormat {
-        /**
-         *  Images are exported in the color mode.
-         */
         Color = 1,
-        /**
-         *  Images are exported in the grayscale mode.
-         */
         Grayscale = 2,
-        /**
-         *  Images are exported in the monochrome mode.
-         */
         Monochrome = 3
     }
-    /**
-     *  Enumeration for setting modes of the rtf export.
-     */
     enum StiRtfExportMode {
-        /**
-         *
-         */
         Table = 4,
-        /**
-         *
-         */
         Frame = 1,
-        /**
-         *
-         */
         WinWord = 2,
-        /**
-         *
-         */
         TabbedText = 3
     }
-    /**
-     *  Enumeration for setting modes of the data export.
-     */
     enum StiDataExportMode {
         Data = 1,
         Headers = 2,
@@ -36027,67 +31425,31 @@ declare namespace Stimulsoft.Report.Export {
         DataAndHeadersFooters = 7,
         AllBands = 15
     }
-    /**
-     *  Enumeration for setting modes of restrict editing
-     */
     enum StiWord2007RestrictEditing {
-        /**
-         *  No restrictions
-         */
         No = 1,
-        /**
-         *  Except Editable fields
-         */
         ExceptEditableFields = 2,
-        /**
-         *  Yes
-         */
         Yes = 3
     }
-    /**
-     *  Enumeration for setting modes of restrict editing
-     */
     enum StiExcel2007RestrictEditing {
-        /**
-         *  No restrictions
-         */
         No = 1,
-        /**
-         *  Except Editable fields
-         */
         ExceptEditableFields = 2,
-        /**
-         *  Yes
-         */
         Yes = 3
     }
-    /**
-     *  Enumeration for setting modes of restrict editing
-     */
     enum StiPdfAllowEditable {
         No = 1,
         Yes = 2
     }
-    /**
-     *  Enumeration for setting modes of using of image resolution
-     */
     enum StiImageResolutionMode {
         Exactly = 1,
         NoMoreThan = 2,
         Auto = 3
     }
-    /**
-     *  Enumeration for setting modes of compliance
-     */
     enum StiPdfComplianceMode {
         None = 0,
         A1 = 1,
         A2 = 2,
         A3 = 3
     }
-    /**
-     *  Enumeration for setting modes of Excel sheet view
-     */
     enum StiExcelSheetViewMode {
         Normal = 1,
         PageLayout = 2,
@@ -36176,10 +31538,6 @@ declare namespace Stimulsoft.Report.Dashboard {
         loadFromXml(xmlNode: XmlNode): void;
         static createFromJsonObject(jObject: StiJson): StiElementLayout;
         static createFromXml(xmlNode: XmlNode): StiElementLayout;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiElementLayout;
         get isDefault(): boolean;
         fullScreenButton: boolean;
@@ -36207,54 +31565,19 @@ declare namespace Stimulsoft.Report.Dashboard {
     import StiJson = Stimulsoft.Base.StiJson;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
-    /**
-     *  Describes the class that realizes object margin.
-     */
     class StiMargin implements ICloneable, IStiJsonReportObject {
         saveToJsonObject(mode: StiJsonSaveMode, defLeft?: number, defTop?: number, defRight?: number, defBotttom?: number): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets left margin size on the object.
-         */
         left: number;
-        /**
-         *  Gets or sets top margin size on the object.
-         */
         top: number;
-        /**
-         *  Gets or sets right margin size on the object.
-         */
         right: number;
-        /**
-         *  Gets or sets bottom margin size on the object.
-         */
         bottom: number;
         get isEmpty(): boolean;
-        /**
-         *  Tests to see whether the specified object is a SizeD with the same dimensions as this SizeD.
-         *  @param obj The Object to test.
-         *  @returns This method returns true if obj is a SizeD and has the same width and height as this SizeD; otherwise, false.
-         */
         equals(obj: any): boolean;
         static empty: StiMargin;
-        /**
-         *  Creates a new object of the type StiMargin.
-         *  @param all The margin size for all sides of the object.
-         */
         static create(all?: number): StiMargin;
-        /**
-         *  Creates a new object of the type StiMargin.
-         *  @param left Left margin size on the object.
-         *  @param top Top margin size on the object.
-         *  @param right Right margin size on the object.
-         *  @param bottom Bottom margin size on the object.
-         */
         constructor(left: number, top: number, right: number, bottom: number);
     }
 }
@@ -36264,54 +31587,19 @@ declare namespace Stimulsoft.Report.Dashboard {
     import StiJson = Stimulsoft.Base.StiJson;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
-    /**
-     *  Describes the class that realizes object padding.
-     */
     class StiPadding implements ICloneable, IStiJsonReportObject {
         saveToJsonObject(mode: StiJsonSaveMode, defLeft?: number, defTop?: number, defRight?: number, defBotttom?: number): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets left padding size on the object.
-         */
         left: number;
-        /**
-         *  Gets or sets top padding size on the object.
-         */
         top: number;
-        /**
-         *  Gets or sets right padding size on the object.
-         */
         right: number;
-        /**
-         *  Gets or sets bottom padding size on the object.
-         */
         bottom: number;
         get isEmpty(): boolean;
-        /**
-         *  Tests to see whether the specified object is a SizeD with the same dimensions as this SizeD.
-         *  @param obj The Object to test.
-         *  @returns This method returns true if obj is a SizeD and has the same width and height as this SizeD; otherwise, false.
-         */
         equals(obj: any): boolean;
         static empty: StiPadding;
-        /**
-         *  Creates a new object of the type StiPadding.
-         *  @param all The padding size for all sides of the object.
-         */
         static create(all?: number): StiPadding;
-        /**
-         *  Creates a new object of the type StiPadding.
-         *  @param left Left padding size on the object.
-         *  @param top Top padding size on the object.
-         *  @param right Right padding size on the object.
-         *  @param bottom Bottom padding size on the object.
-         */
         constructor(left: number, top: number, right: number, bottom: number);
     }
 }
@@ -36605,60 +31893,15 @@ declare namespace Stimulsoft.Report.Dictionary {
 }
 declare namespace Stimulsoft.Report.Dictionary {
     import Type = Stimulsoft.System.Type;
-    /**
-     *  Describes the adapter of the data transformation.
-     */
     class StiDataTransformationAdapterService extends StiDataStoreAdapterService {
-        /**
-         *  Gets a service name.
-         */
         serviceName: string;
         isObjectAdapter: boolean;
-        /**
-         *  Calls the form for Data Source edition.
-         *
-         *  @param dictionary Dictionary in which Data Source is located.
-         *  @param dataSource Data Source.
-         *  @returns Result of gialog form.
-         */
         edit(dictionary: StiDictionary, dataSource: StiDataSource): boolean;
-        /**
-         *  Calls the form for a new Data Source edition.
-         *
-         * @param dictionary Dictionary in which Data Source is located.
-         * @param dataSource Data Source.
-         * @returns>Result of gialog form.
-         */
         new(dictionary: StiDictionary, dataSource: StiDataSource): boolean;
-        /**
-         *  Returns the array of data types to which the Data Source may refer.
-         *
-         * @returns Array of data types.
-         */
         getDataTypes(): Type[];
-        /**
-         *  Returns a collection of columns of data.
-         *
-         * @param data Data to find column.
-         * @returns> Collection of columns found.
-         */
         getColumnsFromData(data: StiData, dataSource: StiDataSource): StiDataColumnsCollection;
-        /**
-         *  Returns a collection of parameters of data.
-         *
-         * @param data Data to find parameters.
-         * @returns Collection of parameters found.
-         */
         getParametersFromData(data: StiData, dataSource: StiDataSource): StiDataParametersCollection;
-        /**
-         *  Returns name of category for data.
-         */
         getDataCategoryName(data: StiData): string;
-        /**
-         *  Returns the type of the Data Source.
-         *
-         * @returns The type of Data Source.
-         */
         getDataSourceType(): Type;
         connectDataSourceToData(dictionary: StiDictionary, dataSource: StiDataSource, loadData: boolean): void;
     }
@@ -37509,9 +32752,6 @@ declare namespace Stimulsoft.Report.Dictionary {
     import IStiMeter = Stimulsoft.Base.Meters.IStiMeter;
     import StiJson = Stimulsoft.Base.StiJson;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
-    /**
-     *  Describes the object which helps in data transformation.
-     */
     class StiDataTransformation extends StiDataStoreSource implements IStiQueryObject, IStiJsonReportObject {
         private static ImplementsStiDataTransformation;
         implements(): string[];
@@ -37522,10 +32762,6 @@ declare namespace Stimulsoft.Report.Dictionary {
         getDataSources(dataNames: List<string>): List<IStiAppDataSource>;
         getKey(): string;
         isDataSource: true;
-        /**
-         *  Returns a DataTable with data from this datasource.
-         *  @returns The DataTable with data.
-         */
         getDataTable2(allowConnectToData: boolean): Promise<DataTable>;
         getDataAdapterType(): Type;
         sorts: List<StiDataSortRule>;
@@ -37537,9 +32773,6 @@ declare namespace Stimulsoft.Report.Dictionary {
         getMeter(column: StiDataTransformationColumn): IStiMeter;
         componentId: StiComponentId;
         createNew(): StiDataSource;
-        /**
-         *  Creates a new object of the type StiDataTransformation.
-         */
         constructor(nameInSource?: string, name?: string, key?: string);
     }
 }
@@ -37565,15 +32798,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         clone(): StiDataColumn;
         memberwiseClone(): StiDataColumn;
         getNameInSource(): string;
-        /**
-         *  Returns a name of the data column.
-         *  @returns The name of the data column.
-         */
         getName(): string;
-        /**
-         *  Returns a type of the data column.
-         *  @returns The name of the data column.
-         */
         getDataType(): Type;
         getKey(): string;
         setKey(key: string): void;
@@ -37624,29 +32849,13 @@ declare namespace Stimulsoft.Report.Dictionary {
     import Type = Stimulsoft.System.Type;
     import StiJson = Stimulsoft.Base.StiJson;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
-    /**
-     * Describes a data transformation column.
-     */
     class StiDataTransformationColumn extends StiDataColumn implements IStiJsonReportObject {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         * Gets or sets an expression of the calculated column.
-         */
         expression: string;
-        /**
-         *  Gets or sets the type of the resource.
-         */
         mode: StiDataTransformationMode;
         getDictionaryColumn(): StiDataColumn;
-        /**
-         *  Creates a new object of the type StiCalcDataColumn.
-         *  @param name Name of column.let
-         *  @param alias Alias of column.let
-         *  @param type Type of data of column.let
-         *  @param key Key string.let
-         */
         constructor(name?: string, alias?: string, type?: Type, expression?: string, key?: string, mode?: StiDataTransformationMode);
     }
 }
@@ -37664,9 +32873,6 @@ declare namespace Stimulsoft.Report.Dictionary {
         private static ImplementsStiDimensionTransformationMeter;
         implements(): string[];
         getUniqueCode(): number;
-        /**
-         * Gets or sets unically object identificator.
-         */
         key: string;
         constructor(expression: string, label: string, key: string);
     }
@@ -37677,9 +32883,6 @@ declare namespace Stimulsoft.Report.Dictionary {
         private static ImplementsStiMeasureTransformationMeter;
         implements(): string[];
         getUniqueCode(): number;
-        /**
-         *  Gets or sets unically object identificator.
-         */
         key: string;
         constructor(expression: string, label: string, key: string);
     }
@@ -37687,8 +32890,14 @@ declare namespace Stimulsoft.Report.Dictionary {
 declare namespace Stimulsoft.Report.Helpers {
     import StiDataLoaderHelperData = Stimulsoft.Base.StiDataLoaderHelperData;
     class StiUniversalDataLoader {
-        static loadMutiple(report: StiReport, path: string, filter: string, binary: boolean): StiDataLoaderHelperData[];
-        static loadSingle(report: StiReport, path: string, binary: boolean): StiDataLoaderHelperData;
+        static loadMutiple(report: StiReport, path: string, filter: string, binary: boolean, headers: {
+            key: string;
+            value: string;
+        }[]): StiDataLoaderHelperData[];
+        static loadSingle(report: StiReport, path: string, binary: boolean, headers: {
+            key: string;
+            value: string;
+        }[]): StiDataLoaderHelperData;
     }
 }
 declare namespace Stimulsoft.Report.Events {
@@ -37972,14 +33181,8 @@ declare namespace Stimulsoft.Report.Dictionary {
     }
     class StiByteArrayRangeDialogInfoItem extends StiRangeDialogInfoItem {
         get componentId(): StiComponentId;
-        /**
-         *  Gets or sets value which will be used as From key of range item in GUI.
-         */
         get from(): number[];
         set form(value: number[]);
-        /**
-         *  Gets or sets value which will be used as To key of range item in GUI.
-         */
         get to(): number[];
         set to(value: number[]);
     }
@@ -38186,6 +33389,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         get componentId(): StiComponentId;
         separator: string;
         codePage: number;
+        private getDataSet;
         getDatabaseInformation(dictionary: StiDictionary): StiDatabaseInformation;
         regData(dictionary: StiDictionary, loadData: boolean): void;
         constructor(name?: string, pathData?: string, codePage?: number, separator?: string, key?: string);
@@ -38843,35 +34047,11 @@ declare namespace Stimulsoft.Report.Dictionary {
         get name(): string;
         set name(value: string);
         getName(): string;
-        /**
-         *  Returns reference to the dictionary which contains this datasource.
-         *  @returns Reference to the app.
-         */
         getDictionary(): IStiAppDictionary;
-        /**
-         *  Returns parent data source of this relation.
-         *  @returns Reference to the data source.
-         */
         getParentDataSource(): IStiAppDataSource;
-        /**
-         *  Returns child data source of this relation.
-         *  @returns Reference to the data source.
-         */
         getChildDataSource(): IStiAppDataSource;
-        /**
-         *  Returns an enumeration of the parent column keys of the data relation.
-         *  @returns An reference to the enumeration.
-         */
         fetchParentColumns(): List<string>;
-        /**
-         *  Returns an enumeration of the child column keys of the data relation.
-         *  @returns An reference to the enumeration.
-         */
         fetchChildColumns(): List<string>;
-        /**
-         *  Returns the status of the relation.
-         *  @returns The status of the relation.
-         */
         getActiveState(): boolean;
         getKey(): string;
         setKey(key: string): void;
@@ -38901,9 +34081,6 @@ declare namespace Stimulsoft.Report.Dictionary {
         get alias(): string;
         set alias(value: string);
         IsCloud: boolean;
-        /**
-         *  Gets or sets value which indicates that this data relation is active.
-         */
         active: boolean;
         private _key;
         get key(): string;
@@ -39037,62 +34214,17 @@ declare namespace Stimulsoft.Report.Dictionary {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
         clone(): StiDictionary;
-        /**
-         *  Returns an enumeration of the data source from this dictionary.
-         *  @returns The enumeration of the data source.
-         */
         fetchDataSources(): List<IStiAppDataSource>;
-        /**
-         *  Returns an enumeration of the data relations from this dictionary.
-         *  @returns The enumeration of the data relations.
-         */
         fetchDataRelations(): List<IStiAppDataRelation>;
-        /**
-         *  Returns an enumeration of the variables from this dictionary.
-         *  @returns The enumeration of the variables.
-         */
         fetchVariables(): List<IStiAppVariable>;
-        /**
-         *  Returns datasource from the data dictionary by its name.
-         *  @param name A name of the datasource.
-         *  @returns The datasource from the data dictionary.Returns null, if datasource with specified name is not exists.
-         */
         getDataSourceByName(name: string): IStiAppDataSource;
-        /**
-         *  Returns data column from the data dictionary by its name.
-         *  @param name A name of the data column.
-         *  @returns The data column from the data dictionary. Returns null, if data column with specified name is not exists.
-         */
         getColumnByName(name: string): IStiAppDataColumn;
-        /**
-         *  Returns variable from the data dictionary by its name.
-         *
-         *  @param name A name of the variable.
-         *  @returns The variable from the data dictionary. Returns null, if variable with specified name not exists.
-         */
         getVariableByName(name: string): IStiAppVariable;
-        /**
-         *  Returns true if a specified name is a name of a system variable.
-         *
-         *  @param name The name of the system variable.
-         *  @returns True, if the specified name is the name of system variable.
-         */
+        getVariableValueByName(name: string): any;
         isSystemVariable(name: string): boolean;
-        /**
-         *  Returns value of a specified system variable.
-         *
-         *  @param name A name of the system variable.
-         *  @returns The value of the specified system variable.
-         */
         getSystemVariableValue(name: string): any;
         getApp(): IStiApp;
-        /**
-         *  Opens specified connections to the data. Opens all connections if none of them is specified.
-         */
         openConnections(connections: List<IStiAppConnection>): List<IStiAppConnection>;
-        /**
-         *  Closes all specified connections. Closes all connections if none of them is specified.
-         */
         closeConnections(connections: List<IStiAppConnection>): void;
         private _cachedUserNamesAndPasswords;
         get cachedUserNamesAndPasswords(): Hashtable;
@@ -39504,16 +34636,13 @@ declare namespace Stimulsoft.Report.Engine {
         removeKeepDetailsRowAsync(masterDataBand: StiDataBand): Promise<void>;
         removeKeepDetailsRow(masterDataBand: StiDataBand): void;
         startBands(masterDataBand: StiDataBand, bands: StiComponentsCollection): void;
-        /** Starts monitoring of specified band OnAllPages. */
         startBand(masterDataBand: StiDataBand, band: StiBand): void;
-        /** Ends monitoring of band OnAllPages. */
         endBands(masterDataBand: StiDataBand): void;
         getGroupHeaderResult(masterDataBand: StiDataBand, groupHeaderBand: StiGroupHeaderBand): boolean;
         getGroupFooterResult(masterDataBand: StiDataBand, groupHeaderBand: StiGroupHeaderBand): boolean;
         linkGroupHeadersAndGroupFooters(masterDataBand: StiDataBand): void;
         resetLinkGroupHeadersAndGroupFooters(masterDataBand: StiDataBand): void;
         static prepareGroupResults(masterDataBand: StiDataBand): void;
-        /** Renders all group headers of this databand. */
         renderGroupHeadersAsync(masterDataBand: StiDataBand): Promise<void>;
         renderGroupHeaders(masterDataBand: StiDataBand): void;
         renderGroupFootersAsync(masterDataBand: StiDataBand): Promise<void>;
@@ -39521,13 +34650,10 @@ declare namespace Stimulsoft.Report.Engine {
         static setDetails(masterDataBand: StiDataBand): void;
         renderDetailDataBandsAsync(masterDataBand: StiDataBand): Promise<void>;
         renderDetailDataBands(masterDataBand: StiDataBand): void;
-        /** Returns databand on which specified container in splaced. */
         private getParentDataBand;
-        /** Returns true if specified detail DataBand can be printed. */
         private isAllow;
         allowDetailDataBands(masterDataBand: StiDataBand): boolean;
         isDenyDetailsOnFirstPage(masterDataBand: StiDataBand): boolean;
-        /** Gets value indicates that all detail components are empty. */
         static isDetailDataSourcesEmpty(masterDataBand: StiDataBand): boolean;
         static isPrintIfDetailEmpty(masterDataBand: StiDataBand): boolean;
         renderHeadersAsync(masterDataBand: StiDataBand, keepHeaders: boolean[]): Promise<void>;
@@ -39561,10 +34687,8 @@ declare namespace Stimulsoft.Report.Engine {
         renderColumns(masterDataBand: StiDataBand): void;
         registerEmptyBands(masterDataBand: StiDataBand): void;
         static isCollapsed(masterDataBand: StiContainer, isRendering: boolean): boolean;
-        /** Sets system variables which are specific for the specified component. */
         setReportVariables(masterComp: StiComponent): void;
         prepare(masterComp: StiComponent): void;
-        /** Clears a component after rendering. */
         unPrepare(masterComp: StiComponent): void;
         private static invokeCollapsedEvent;
         renderAsync(masterComp: StiComponent): Promise<StiComponent>;
@@ -39765,17 +34889,11 @@ declare namespace Stimulsoft.Report.Engine {
         private bands;
         engine: StiEngine;
         private _denyRendering;
-        /** If the property is true then bands rendering on all pages is blocked. The property is used to
-         * output headers, with the height higher than one page, on all pages.
-         */
         get denyRendering(): boolean;
         set denyRendering(value: boolean);
-        /** Starts monitoring of this band for rendering OnAllPages. */
         add(dataBand: StiDataBand, band: StiBand): void;
-        /** Ends monitoring of this band for rendering OnAllPages. All bands which are dependent on the specified DataBand are removed. */
         remove(dataBand: StiDataBand): void;
         private allowRenderBand;
-        /** Outputs bands, which were previously added to the collection of bands, which are output on all pages, on a new page. */
         renderAsync(): Promise<void>;
         render(): void;
         private renderBandAsync;
@@ -39818,15 +34936,10 @@ declare namespace Stimulsoft.Report.Engine {
         rightToLeft: boolean;
         minRowsInColumn: number;
         private engine;
-        /** Adds a specified container into the container of columns. The CountOfItems field is increased on 1. */
         addContainer(container: StiContainer): void;
-        /** Returns the height of space to place a container into the current container of colimns. */
         howMuchAdditionalSpaceNeeded(currentHeight: number, container: StiContainer): number;
-        /** Finishes column formation in the container of columns. All containers are placed on their proper places. */
         finishColumns(onlyCalc?: boolean): number;
-        /** Returns the number of a column on the current moment. The number starts with 1. */
         getCurrentColumn(): number;
-        /** Returns the number of output databands in the last row. The method can be used only for the  AcrossThenDown mode. */
         getLengthOfLastRow(): number;
         constructor(engine?: StiEngine);
     }
@@ -39836,19 +34949,11 @@ declare namespace Stimulsoft.Report.Engine {
     class StiColumnsOnDataBand {
         engine: StiEngine;
         private _enabled;
-        /** Gets or sets value which indicates about current state of column on DataBand mode. */
         get enabled(): boolean;
         set enabled(value: boolean);
-        /** Adds a container of columns to the current page.
-         * A container of columns is used to output columns on a databand.
-         */
         renderColumnsAsync(dataBand: StiDataBand): Promise<StiColumnsContainer>;
         renderColumns(dataBand: StiDataBand): StiColumnsContainer;
-        /** Returns a container of columns that is the last on a page.
-         * If after a container of columns other bands were output then return null.
-         */
         getColumns(): StiColumnsContainer;
-        /** Creates and returns a container to output columns on a Databand. */
         createColumns(dataBand: StiDataBand): StiColumnsContainer;
         constructor(engine: StiEngine);
     }
@@ -39892,85 +34997,38 @@ declare namespace Stimulsoft.Report.Engine {
     import StiComponentsCollection = Stimulsoft.Report.Components.StiComponentsCollection;
     import StiPage = Stimulsoft.Report.Components.StiPage;
     class StiEngine {
-        /** If true then it is allowed to add any Bookmarks. If false then
-         * add Bookmarks of components which the IsRendered property = false
-         * (in other words it is rendered first time). This property allows adding Bookmarks
-         * for static components only once (to avoid duplication).
-         */
         isDynamicBookmarksMode: boolean;
-        /** This property is set to true for printing CrossBands. */
         isCrossBandsMode: boolean;
-        /** Returns true if the first DataBand is printed on the current page. */
         isFirstDataBandOnPage: boolean;
-        /** Returns true if the last DataBand is printed on the current page. */
         isLastDataBandOnPage: boolean;
-        /** Contains the list of bands which should be passed when rendering. */
         printOnAllPagesIgnoreList: Hashtable;
         private printOnAllPagesIgnoreList2;
-        /** A class helps to output the progress bar when report rendering. */
-        /** Contains a collection of bands which should be output on all pages. */
         bandsOnAllPages: StiBandsOnAllPages;
-        /** If true then the Render method of a container will not render components of the
-         * Master type. This property is used with the RenderSimpleComponents method of a page.
-         * It is used to deny master components and render simple ones.
-         */
         denyRenderMasterComponentsInContainer: boolean;
-        /** Contains a collection of bands which should be output on the bottom of a page.
-         * The list is filled when stream rendering and the list is cleared when rendering
-         * of the current stream is finished.
-         */
         printAtBottom: StiPrintAtBottom;
-        /** Cotnains a collection of Footers which should be output on the bottom of a page.
-         * The list is filled when stream rendering and the list is cleared when rendering
-         * of the current stream is finished.
-         */
         footersOnAllPages: StiFootersOnAllPages;
-        /** An object helps to output static bands on a page. */
         staticBands: StiStaticBandsHelper;
-        /** This object helps to print groups of bands from containers which are placed directly on a page. */
         threads: StiThreads;
-        /** An object helps to work with IStiBreakable interface. */
         breakable: StiBreakableHelper;
-        /** If true then it is impossible to change stream of printing. */
         denyChangeThread: boolean;
-        /** Contains a list of Slave Engines. */
         slaveEngines: Hashtable;
-        /** If an engine is slave then this reference indicates the parent report engine. */
         masterEngine: StiEngine;
-        /** Used to output EmptyBands in the current container. */
         emptyBands: StiEmptyBandsHelper;
         pageNumbers: StiPageNumberHelper;
-        /** Used to output columns on the DataBand. */
         columnsOnDataBand: StiColumnsOnDataBand;
-        /** Used to output columns on the Panel. */
         columnsOnPanel: StiColumnsOnPanel;
-        /** Contains a freespace in a container in what the printing is done. */
         freeSpace: number;
-        /** Contains a freespace in a container in what the printing is done. Used to output Cross bands only. */
         crossFreeSpace: number;
-        /** Indicates the current position bands output on the X axis. */
         positionX: number;
-        /** Indicates the current position bands output on the Y axis. */
         positionY: number;
-        /** Indicates the current position bands output on the Y axis on the bottom of a page. */
         positionBottomY: number;
-        /** Gets or sets a container in what rendering of bands is done. */
         containerForRender: StiContainer;
-        /** Gets or sets a page in what rendering of bands is done. */
         page: StiPage;
-        /** Gets or sets a page from a template. This page is being rendered in the current moment. */
         templatePage: StiPage;
-        /** Gets or sets a container from a template. This page is being rendered in the current moment. If a page is output then
-         * the TemplateContainer property is equal in TemplatePage.
-         */
         templateContainer: StiContainer;
-        /** Gets or sets a report that is being rendered in the current moment. */
         report: StiReport;
-        /** Gets or sets a master report that is being rendered in the current moment. */
         masterReport: StiReport;
-        /** If true then UnlimitedHeight property is ignored when NewPage method is called. */
         ignoreUnlimitedHeightForNewPage: boolean;
-        /** Contains a list of stored bands for keepFirstDetailTogether property */
         keepFirstDetailTogetherList: Hashtable;
         keepFirstDetailTogetherTablesList: Hashtable;
         specialContainerHeight: number;
@@ -39985,16 +35043,10 @@ declare namespace Stimulsoft.Report.Engine {
         generateNewPageBeforeBand: boolean;
         ignoreSkipFirst: boolean;
         generateNewColumnBeforeBand: boolean;
-        /** Коллекция служит для определения случая пропуска генерации новой страницы или новой колонки при помощи свойства SkipFirst.
-         * Если бэнд уже пропускал один раз генерацию новой страницы или колонки, то он заносится в эту коллекцию.
-         */
         pageBreakSkipFirstCollection: Hashtable;
         indexOfStartList: number;
         skipFirstPageBeforePrintEvent: boolean;
         firstCallNewPage: boolean;
-        /** Флаг устанавливается во время рендеринга StiBandsOnAllPages для того,
-         * чтобы датабэнды, которые выводятся на каждой странице, не обнуляли этот список
-         */
         denyClearPrintOnAllPagesIgnoreList: boolean;
         duplilcatesLastValues: Hashtable;
         anchorsArguments: Hashtable;
@@ -40029,16 +35081,9 @@ declare namespace Stimulsoft.Report.Engine {
         private newContainer;
         newDestinationAsync(ignoreKeepContainers?: boolean): Promise<void>;
         newDestination(ignoreKeepContainers?: boolean): void;
-        /** Adds a FooterMarker (special container) into the current container of output.
-         * A container-marker is used for the engine to know on what place in a container
-         * of output FooterBands for PrintOnAllPages should be replaced after their rendering is complete.
-         */
         addFooterMarker(footerMaster: StiFooterBand): void;
-        /** Adds a container-marker of the beginning of grouping before the last rendered DataBand. */
         addKeepLevelAtLatestDataBand(): void;
-        /** Adds a container-marker of the beginning of grouping into the current position of output in the stream. */
         addLevel(): void;
-        /** Adds a container-marker of the end of grouping into the current position of output in the stream. */
         removeLevel(): void;
         private getChildBands;
         clearPageBreakSkipFirst(): void;
@@ -40072,7 +35117,6 @@ declare namespace Stimulsoft.Report.Engine {
         finishContainer(containerForRender: StiContainer): void;
         finishResetPageNumberContainer(containerForRender: StiContainer, isFinal: boolean): void;
         finishColumns(containerForRender: StiContainer): void;
-        /** Adds a specified container into the container for output. */
         addContainerToDestination(container: StiContainer): void;
         invokePageAfterPrint(): void;
         addPageToRenderedPages(page: StiPage): void;
@@ -40211,9 +35255,7 @@ declare namespace Stimulsoft.Report.Engine {
         getTotalPageCount(param1: StiPage | number | any): number;
         getPageNumberThrough(param1: StiPage | number | any): number;
         getTotalPageCountThrough(pageIndex: number): number;
-        /** Calculates the PageNumber and TotalPageCount values for each page in the specified range. */
         private setSystemVariables;
-        /** Counts the PageNumber, TotalPageCount, PageNumberThrough, and TotalPageCountThrough values for every page. */
         processPageNumbers(): void;
         clear(): void;
         clearNotFixed(): void;
@@ -40368,13 +35410,10 @@ declare namespace Stimulsoft.Report.Engine {
         currentPage: number;
         currentColumn: number;
         destinationName: string;
-        /** Prepares a new page to output a container. A new page is not always a page */
         newPageAsync(): Promise<void>;
         newPage(): void;
-        /** Sets the stream to output the specified component. If the stream does not exist then it is created. */
         selectThreadFromContainerAsync(container: StiContainer): Promise<void>;
         selectThreadFromContainer(container: StiContainer): void;
-        /** Creates a new engine sample to output in the specified container. */
         createContainerEngineAsync(destinationName: string, report: StiReport, masterEngine: StiEngine, indexOfStartRenderedPages: number): Promise<StiEngine>;
         createContainerEngine(destinationName: string, report: StiReport, masterEngine: StiEngine, indexOfStartRenderedPages: number): StiEngine;
         getTemplateContainer(template?: StiContainer, name?: string): StiContainer;
@@ -40392,7 +35431,7 @@ declare namespace Stimulsoft.Report.Engine {
             ref: boolean;
         }): boolean;
         static setDefaultValueForRequestFromUserVariables(compiledReport: StiReport): void;
-        static setDefaultValueForRequestFromUserVariablesAsync(compiledReport: StiReport, haveVars: boolean, allowParseQuery?: boolean): Promise<unknown>;
+        static setDefaultValueForRequestFromUserVariablesAsync(compiledReport: StiReport, haveVars: boolean, allowParseQuery?: boolean): Promise<void>;
         static getDataSourcesWithRequestFromUserVariablesInCommand(report: StiReport): string[];
         private static checkExpressionForVariables;
     }
@@ -40486,13 +35525,7 @@ declare namespace Stimulsoft.Report.Events {
 declare namespace Stimulsoft.Report {
     import EventHandler = Stimulsoft.System.EventHandler;
     import EventArgs = Stimulsoft.System.EventArgs;
-    /**
-     * @hidden
-     */
     let StiGotoCompEventHandler: EventHandler;
-    /**
-     * @hidden
-     */
     class StiGotoCompEventArgs extends EventArgs {
         component: Stimulsoft.Report.Components.StiComponent;
         constructor(component: Stimulsoft.Report.Components.StiComponent);
@@ -40602,10 +35635,6 @@ declare namespace Stimulsoft.Report.Export {
     class StiExportService {
         exportFormat: StiExportFormat;
         isStopped: boolean;
-        /**
-         *  Gets a value indicating a number of files in exported document as a result of export
-         *  of one page of the rendered report.
-         */
         multipleFiles: boolean;
         renderedPagesCount: number;
         currentPassNumber: number;
@@ -40636,53 +35665,19 @@ declare namespace Stimulsoft.Report.Export {
 }
 declare namespace Stimulsoft.Report.Export {
     import MemoryStream = Stimulsoft.System.IO.MemoryStream;
-    /**
-     *  A class for the Csv export.
-     */
     class StiDataExportService extends StiExportService {
-        /**
-         *  Gets or sets a default extension of export.
-         */
         get defaultExtension(): string;
         get exportFormat(): StiExportFormat;
-        /**
-         *  Gets a group of the export in the context menu.
-         */
         get groupCategory(): string;
-        /**
-         *  Gets a position of the export in the context menu.
-         */
         get position(): number;
-        /**
-         *  Gets a name of the export in the context menu.
-         */
         get exportNameInMenu(): string;
-        /**
-         *  Exports a document to the stream without dialog of the saving file.
-         *  @param report A report which is to be exported.
-         *  @param stream A stream in which report will be exported.
-         *  @param settings A settings for the report exporting.
-         */
         exportTo(report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
         private exportSettings;
         private report;
         private fileName;
         private sendEMail;
-        /**
-         *  Gets a value indicating a number of files in exported document as a result of export
-         *  of one page of the rendered report.
-         */
         get multipleFiles(): boolean;
-        /**
-         *  Returns the filter of all available services which serves for saving, loading a document.
-         *  @returns Filter.
-         */
         getFilter(): string;
-        /**
-         *  Exports a rendered report to a csv file.
-         *  @param report A report which is to be exported.
-         *  @param stream A stream for export of a document.
-         */
         exportData(report: StiReport, stream: MemoryStream, settings: StiDataExportSettings): void;
     }
 }
@@ -41800,9 +36795,6 @@ declare namespace Stimulsoft.Report.Maps {
         private _mapMode;
         get mapMode(): StiMapMode;
         set mapMode(value: StiMapMode);
-        /**
-         *  Internal use only.
-         */
         dataTable: StiDataTable;
         private _isHashDataEmpty;
         get isHashDataEmpty(): boolean;
@@ -41836,26 +36828,20 @@ declare namespace Stimulsoft.Report.Export {
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     class StiSvgData {
         private _x;
-        /** X coordinate of the border. */
         get x(): number;
         set x(value: number);
         private _y;
-        /** Y coordinate of the border. */
         get y(): number;
         set y(value: number);
         private _width;
-        /** Width of the border. */
         get width(): number;
         set width(value: number);
         private _height;
-        /** Height of the border. */
         get height(): number;
         set height(value: number);
         private _right;
-        /** Right (X + Width) coordinate of the border. */
         get right(): number;
         private _bottom;
-        /** Bottom (Y + Height) coordinate of the border. */
         get bottom(): number;
         component: StiComponent;
     }
@@ -42042,6 +37028,8 @@ declare namespace Stimulsoft.Report.Export {
         renderAsDocument: boolean;
         removeEmptySpaceAtBottom: boolean;
         pageHorAlignment: StiHorAlignment;
+        static fontScale: Hashtable;
+        static getFontScale(fontName: string, fontSize: number): number;
         private addCoord;
         private formatCoords;
         formatCoord(value: number): string;
@@ -42106,78 +37094,31 @@ declare namespace Stimulsoft.Report.Export {
     }
 }
 declare namespace Stimulsoft.Report.Export {
-    /**
-     *  Class for exporting reports in the image format.
-     */
     class StiImageExportService extends StiExportService {
-        /**
-         *  Gets or sets a default extension of export.
-         */
         get defaultExtension(): string;
         get exportFormat(): StiExportFormat;
-        /**
-         *  Gets a group of the export in the context menu.
-         */
         get groupCategory(): string;
-        /**
-         *  Gets a name of the export in the context menu.
-         */
         exportNameInMenu: string;
-        /**
-         *  Gets a position of the export in the context menu.
-         */
         position: StiExportPosition;
-        /**
-         *  Returns a filter for files with bmp images.
-         *  @returns> Returns a filter for files with bmp images.
-         */
         getFilter(): string;
-        /**
-         *  Exports a document to the stream without dialog of the saving file.
-         *  @param report A report which is to be exported.
-         *  @param stream A stream in which report will be exported.
-         *  @param settings A settings for the report exporting.
-         */
         exportTo(report: StiReport, refString: {
             ref: string;
         }, settings: StiExportSettings): void;
-        /**
-         *  Exports a rendered document to the file as image.
-         *  @param report A report which is to be exported.
-         *  @param fileName A name of the file for exporting a rendered report.
-         *  @param sendEMail A parameter indicating whether the exported report will be sent via e - mail.
-         */
         imageSettings: StiImageExportSettings;
         report: StiReport;
         private fileName;
         private sendEMail;
-        /**
-         *  Exports a rendered document to the stream as an image.
-         */
         exportImage(report: StiReport, refString: {
             ref: string;
         }, settings: StiImageExportSettings): void;
         private getSettings;
-        /**
-         *  Exports a rendered document to the stream as an image.
-         */
         private exportImage1;
         constructor();
     }
 }
 declare namespace Stimulsoft.Report.Export {
-    /**
-     *  A class for the export in the SVG image format.
-     */
     class StiSvgExportService extends StiImageExportService {
-        /**
-         *  Gets a name of the export in the context menu.
-         */
         exportNameInMenu: string;
-        /**
-         *  Returns a filter for files with svg images.
-         *  @returns Returns a filter for files with svg images.
-         */
         getFilter(): string;
     }
 }
@@ -42337,6 +37278,60 @@ declare namespace Stimulsoft.Report.Export {
 }
 declare namespace Stimulsoft.Report.Export {
     class StiExcelXmlExportService extends StiExportService {
+    }
+}
+declare namespace Stimulsoft.Report.Export {
+    import MemoryStream = Stimulsoft.System.IO.MemoryStream;
+    class StiPpt2007ExportService extends StiExportService {
+        getDefaultExtension(): String;
+        exportTo(report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
+        exportToAsync(onExport: Function, report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
+        private report;
+        private fileName;
+        private sendEMail;
+        private imageListOffset;
+        private imageResolution;
+        private imageQuality;
+        private imageCache;
+        private idCounter;
+        private hyperlinkList;
+        private xmlIndentation;
+        private currentCulture;
+        private newCulture;
+        private getLineStyle;
+        private stringToUrl;
+        private wrongUrlSymbols;
+        private HiToTwips;
+        private convert;
+        private convertTwipsToEmu;
+        private convertToEmu;
+        private writeColor;
+        private writeContentTypes;
+        private writeMainRels;
+        private writeDocPropsApp;
+        private writeDocPropsCore;
+        private writeTableStyles;
+        private writePresProps;
+        private writeViewProps;
+        private writeTheme;
+        private writeSlideMasterRels;
+        private writeSlideMaster;
+        private writeSlideLayoutRels;
+        private writeSlideLayout;
+        private writePresentationRels;
+        private writePresentation;
+        private writeSlideRels;
+        private writeSlide;
+        private writeStiTextbox;
+        private writeStiImage;
+        private writeSpPr;
+        private writeBorder;
+        private writeLine;
+        private capStyleToPptStyle;
+        private writeWatermark;
+        private writeHyperlinkInfo;
+        private writeImage;
+        exportPowerPoint(report: StiReport, stream: MemoryStream, settings: StiPpt2007ExportSettings): void;
     }
 }
 declare namespace Stimulsoft.Report.Export {
@@ -43104,6 +38099,51 @@ declare namespace Stimulsoft.Report.Export {
     }
 }
 declare namespace Stimulsoft.Report.Export {
+    import MemoryStream = Stimulsoft.System.IO.MemoryStream;
+    class StiOdsExportService extends StiExportService {
+        get defaultExtension(): string;
+        get exportFormat(): StiExportFormat;
+        get groupCategory(): string;
+        get position(): number;
+        get exportNameInMenu(): string;
+        get multipleFiles(): boolean;
+        getFilter(): string;
+        exportTo(report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
+        exportToAsync(onExport: Function, report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
+        private report;
+        private matrix;
+        private imageCache;
+        private cellStyleList;
+        private dataStyleList;
+        private sheetNameList;
+        private matrixList;
+        private firstPageIndexList;
+        private minRowList;
+        private maxRowList;
+        private cellStyleTableList;
+        private imageQuality;
+        private imageResolution;
+        private currentCulture;
+        private xmlIndentation;
+        private doubleToString;
+        private getColumnName;
+        private getColorString;
+        private getCellStyleNumber;
+        private getStringFromBorder;
+        private getDataStyleNumber;
+        private writeMimetype;
+        private writeMeta;
+        private writeManifest;
+        private writeImage;
+        private writeSettings;
+        private writeStyles;
+        private writeContent;
+        private writeDateTimeFormatString;
+        private writeTableFromMatrix;
+        exportOds(report: StiReport, stream: MemoryStream, settings: StiOdsExportSettings): void;
+    }
+}
+declare namespace Stimulsoft.Report.Export {
     import StiOdtExportSettings = Stimulsoft.Report.Export.StiOdtExportSettings;
     import MemoryStream = Stimulsoft.System.IO.MemoryStream;
     class StiOdtExportService extends StiExportService {
@@ -43140,6 +38180,7 @@ declare namespace Stimulsoft.Report.Export {
         private writeImage;
         private writeSettings;
         private writeStyles;
+        private writeContent;
         exportOdt(report: StiReport, stream: MemoryStream, settings: StiOdtExportSettings): void;
     }
 }
@@ -43285,55 +38326,21 @@ declare namespace Stimulsoft.Report.Export {
     import StiImageFormat = Stimulsoft.Report.Export.StiImageFormat;
     import StiMonochromeDitheringType = Stimulsoft.Report.Export.StiMonochromeDitheringType;
     import StiImageType = Stimulsoft.Report.Export.StiImageType;
-    /**
-     *  Base class which describes export settings for all types of exports to image formats.
-     */
     class StiImageExportSettings extends StiPageRangeExportSettings {
         getExportFormat(): StiExportFormat;
-        /**
-         *  Gets or sets image type for exported images.
-         */
         imageType: StiImageType;
-        /**
-         *  Gets or sets image zoom factor for exported images. This property can't be used with EMF, SVG, SVGZ formats.
-         */
         imageZoom: number;
-        /**
-         *  Gets or sets image resolution for exported images. This property can't be used with EMF, SVG, SVGZ formats.
-         */
         imageResolution: number;
-        /**
-         *  Gets or sets value which indicates that page margins will be cut or not. This property can't be used with EMF, SVG, SVGZ formats.
-         */
         cutEdges: boolean;
-        /**
-         *  Gets or sets image format for exported images. This property can't be used with EMF, SVG, SVGZ formats.
-         */
         imageFormat: StiImageFormat;
-        /**
-         *  Gets or sets value which indicates that export engine will be create one solid file or multiple files (one file per page).
-         *  This property can't be used with EMF, SVG, SVGZ formats.
-         */
         multipleFiles: boolean;
-        /**
-         *  Gets or sets type of dithering. This property can't be used with EMF, SVG, SVGZ formats.
-         */
         ditheringType: StiMonochromeDitheringType;
-        /**
-         *  Gets or sets compression scheme of TIFF format. This property can't be used with EMF, SVG, SVGZ formats.
-         */
         tiffCompressionScheme: StiTiffCompressionScheme;
         constructor(imageType?: StiImageType);
     }
 }
 declare namespace Stimulsoft.Report.Export {
-    /**
-     *  Class contains settings for export to SVG image format.
-     */
     class StiSvgExportSettings extends StiImageExportSettings {
-        /**
-         *  Gets or sets image type for exported images.
-         */
         constructor();
     }
 }
@@ -43360,6 +38367,13 @@ declare namespace Stimulsoft.Report.Export {
     }
 }
 declare namespace Stimulsoft.Report.Export {
+    class StiPpt2007ExportSettings extends StiPageRangeExportSettings {
+        getExportFormat(): StiExportFormat;
+        imageQuality: number;
+        imageResolution: number;
+    }
+}
+declare namespace Stimulsoft.Report.Export {
     class StiWord2007ExportSettings extends StiPageRangeExportSettings {
         getExportFormat(): StiExportFormat;
         usePageHeadersAndFooters: boolean;
@@ -43369,6 +38383,13 @@ declare namespace Stimulsoft.Report.Export {
         companyString: string;
         lastModifiedString: string;
         restrictEditing: StiWord2007RestrictEditing;
+    }
+}
+declare namespace Stimulsoft.Report.Export {
+    class StiOdsExportSettings extends StiPageRangeExportSettings {
+        getExportFormat(): StiExportFormat;
+        imageQuality: number;
+        imageResolution: number;
     }
 }
 declare namespace Stimulsoft.Report.Export {
@@ -44215,9 +39236,6 @@ declare namespace Stimulsoft.Report.Helpers {
 }
 declare namespace Stimulsoft.Report.Helpers {
     import List = Stimulsoft.System.Collections.List;
-    /**
-     *  Representation of an ISO3166-1 Country or State
-     */
     class StiIsoCountry {
         names: List<string>;
         ruNames: List<string>;
@@ -44240,27 +39258,12 @@ declare namespace Stimulsoft.Report.Helpers {
         private static get canadaProvinces();
         private static _brazilProvinces;
         private static get brazilProvinces();
-        /**
-         *  Gets ISO3166-1 Alpha2 code based on country name. Returns null, if country is not recognized.
-         */
         static getIsoAlpha2FromName(name: string, mapId?: string): string;
-        /**
-         *  Gets ISO3166-1 Alpha3 code based on country name. Returns null, if country is not recognized.
-         */
         static getIsoAlpha3FromName(name: string, mapId?: string): string;
-        /**
-         *  Gets ISO3166-1 Country based on its alpha3 code. Returns null, if country is not recognized.
-         */
         static getCountryFromName(name: string, mapId?: string): StiIsoCountry;
         private static getCountries;
         private static isEqual;
-        /**
-         *  Gets ISO3166-1 Country based on its alpha3 code.
-         */
         static getCountryFromAlpha3(alpha3: string, mapId?: string): StiIsoCountry;
-        /**
-         *  Obtain ISO3166-1 Country based on its alpha2 code.
-         */
         static getCountryFromAlpha2(alpha2: string, mapId?: string): StiIsoCountry;
         private static initializeCountries;
         private static initializeUsStates;
@@ -45035,11 +40038,9 @@ declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
 declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
     class StiStyleConditionComponentNameElement extends StiStyleConditionElement {
         private _operationComponentName;
-        /** Gets or sets type of operation which will be used for comparison of component names. */
         get operationComponentName(): StiStyleConditionOperation;
         set operationComponentName(value: StiStyleConditionOperation);
         private _componentName;
-        /** Gets or sets component name or part of component name. */
         get componentName(): string;
         set componentName(value: string);
         constructor(componentName: string, operationComponentName?: StiStyleConditionOperation);
@@ -45048,11 +40049,9 @@ declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
 declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
     class StiStyleConditionComponentTypeElement extends StiStyleConditionElement {
         private _componentType;
-        /** Gets or sets component type which can be detected by style condition. */
         get componentType(): StiStyleComponentType;
         set componentType(value: StiStyleComponentType);
         private _operationComponentType;
-        /** Gets or sets type of operation which will be used for comparison of component types. */
         get operationComponentType(): StiStyleConditionOperation;
         set operationComponentType(value: StiStyleConditionOperation);
         constructor(componentType: StiStyleComponentType, operationComponentType?: StiStyleConditionOperation);
@@ -45061,11 +40060,9 @@ declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
 declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
     class StiStyleConditionLocationElement extends StiStyleConditionElement {
         private _operationLocation;
-        /** Gets or sets type of operation which will be used for comparison of component locations. */
         get operationLocation(): StiStyleConditionOperation;
         set operationLocation(value: StiStyleConditionOperation);
         private _location;
-        /** Gets or sets variant of component location on parent component area. */
         get location(): StiStyleLocation;
         set location(value: StiStyleLocation);
         constructor(location: StiStyleLocation, operationLocation?: StiStyleConditionOperation);
@@ -45074,11 +40071,9 @@ declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
 declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
     class StiStyleConditionPlacementElement extends StiStyleConditionElement {
         private _placement;
-        /** Gets or sets type of bands on which component can be placed. */
         get placement(): StiStyleComponentPlacement;
         set placement(value: StiStyleComponentPlacement);
         private _operationPlacement;
-        /** Gets or sets type of operation which will be used for comparison of component placements. */
         get operationPlacement(): StiStyleConditionOperation;
         set operationPlacement(value: StiStyleConditionOperation);
         constructor(placement: StiStyleComponentPlacement, operationPlacement?: StiStyleConditionOperation);
@@ -45087,11 +40082,9 @@ declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
 declare namespace Stimulsoft.Report.Styles.Conditions.Elements {
     class StiStyleConditionPlacementNestedLevelElement extends StiStyleConditionElement {
         private _placementNestedLevel;
-        /** Gets or sets value which indicates nested level of specified component. */
         get placementNestedLevel(): number;
         set placementNestedLevel(value: number);
         private _operationPlacementNestedLevel;
-        /** Gets or sets type of operation which will be used for comparison of component nested level. */
         get operationPlacementNestedLevel(): StiStyleConditionOperation;
         set operationPlacementNestedLevel(value: StiStyleConditionOperation);
         constructor(placementNestedLevel: number, operationPlacementNestedLevel?: StiStyleConditionOperation);
@@ -45111,47 +40104,36 @@ declare namespace Stimulsoft.Report.Styles.Conditions {
         loadFromXml(xmlNode: XmlNode): void;
         clone(): StiStyleCondition;
         private _type;
-        /** Gets or sets type of this style condition. */
         get type(): StiStyleConditionType;
         set type(value: StiStyleConditionType);
         private _operationPlacement;
-        /** Gets or sets type of operation which will be used for comparison of component placements. */
         get operationPlacement(): StiStyleConditionOperation;
         set operationPlacement(value: StiStyleConditionOperation);
         private _operationPlacementNestedLevel;
-        /** Gets or sets type of operation which will be used for comparison of component nested level. */
         get operationPlacementNestedLevel(): StiStyleConditionOperation;
         set operationPlacementNestedLevel(value: StiStyleConditionOperation);
         private _operationComponentType;
-        /** Gets or sets type of operation which will be used for comparison of component types. */
         get operationComponentType(): StiStyleConditionOperation;
         set operationComponentType(value: StiStyleConditionOperation);
         private _operationLocation;
-        /** Gets or sets type of operation which will be used for comparison of component locations. */
         get operationLocation(): StiStyleConditionOperation;
         set operationLocation(value: StiStyleConditionOperation);
         private _operationComponentName;
-        /** Gets or sets type of operation which will be used for comparison of component names. */
         get operationComponentName(): StiStyleConditionOperation;
         set operationComponentName(value: StiStyleConditionOperation);
         private _placement;
-        /** Gets or sets type of bands on which component can be placed. */
         get placement(): StiStyleComponentPlacement;
         set placement(value: StiStyleComponentPlacement);
         private _placementNestedLevel;
-        /** Gets or sets value which indicates nested level of specified component. */
         get placementNestedLevel(): number;
         set placementNestedLevel(value: number);
         private _componentType;
-        /** Gets or sets component type which can be detected by style condition. */
         get componentType(): StiStyleComponentType;
         set componentType(value: StiStyleComponentType);
         private _location;
-        /** Gets or sets variant of component location on parent component area. */
         get location(): StiStyleLocation;
         set location(value: StiStyleLocation);
         private _componentName;
-        /** Gets or sets component name or part of component name. */
         get componentName(): string;
         set componentName(value: string);
         fromElements(elements: StiStyleConditionElement[]): void;
@@ -45159,7 +40141,6 @@ declare namespace Stimulsoft.Report.Styles.Conditions {
     }
 }
 declare namespace Stimulsoft.Report.Styles {
-    /** Enum provide types of style condition. */
     enum StiStyleConditionType {
         ComponentType = 1,
         Placement = 2,
@@ -45167,7 +40148,6 @@ declare namespace Stimulsoft.Report.Styles {
         ComponentName = 8,
         Location = 16
     }
-    /** Enum provide type of bands on which component can be placed. */
     enum StiStyleComponentPlacement {
         None = 0,
         ReportTitle = 1,
@@ -45192,7 +40172,6 @@ declare namespace Stimulsoft.Report.Styles {
         Page = 524288,
         AllExeptStyles = 1042431
     }
-    /** Enum provide component type which can be detected by style condition. */
     enum StiStyleComponentType {
         Text = 1,
         Primitive = 2,
@@ -45201,7 +40180,6 @@ declare namespace Stimulsoft.Report.Styles {
         Chart = 16,
         CheckBox = 32
     }
-    /** Enum provide all variants of location component on parent component area. */
     enum StiStyleLocation {
         None = 0,
         TopLeft = 1,
@@ -45287,21 +40265,8 @@ declare namespace Stimulsoft.Report {
         needleBorderWidth: number;
         needleCapBrush: StiBrush;
         needleCapBorderBrush: StiBrush;
-        /**
-         *  Gets a style from the component.
-         *  @param component Component.
-         */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements): void;
-        /**
-         *  Sets style to a component.
-         *  @param component Component
-         */
         setStyleToComponent(component: StiComponent): void;
-        /**
-         *  Creates a new object of the type StiGaugeStyle.
-         *  @param name Style name.
-         *  @param description Style description.
-         */
         constructor(name?: string, description?: string, report?: StiReport);
     }
 }
@@ -45312,9 +40277,6 @@ declare namespace Stimulsoft.Report {
     import StiBaseStyle = Stimulsoft.Report.Styles.StiBaseStyle;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import Color = Stimulsoft.System.Drawing.Color;
-    /**
-     *  Describes the class that contains a style for Indicator components.
-     */
     class StiIndicatorStyle extends StiBaseStyle {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -45326,21 +40288,8 @@ declare namespace Stimulsoft.Report {
         hotForeColor: Color;
         positiveColor: Color;
         negativeColor: Color;
-        /**
-         *  Gets a style from the component.
-         *  @param component Component.
-         */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements): void;
-        /**
-         *  Sets style to a component.
-         *  @param component Component.
-         */
         setStyleToComponent(component: StiComponent): void;
-        /**
-         *  Creates a new object of the type StiIndicatorStyle.
-         *  @param name Style name.
-         *  @param description Style description.
-         */
         constructor(name?: string, description?: string, report?: StiReport);
     }
 }
@@ -45351,9 +40300,6 @@ declare namespace Stimulsoft.Report {
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import Color = Stimulsoft.System.Drawing.Color;
     import StiBaseStyle = Stimulsoft.Report.Styles.StiBaseStyle;
-    /**
-     *  Describes the class that contains a style for Progress components.
-     */
     class StiProgressStyle extends StiBaseStyle {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -45363,21 +40309,8 @@ declare namespace Stimulsoft.Report {
         seriesColors: Color[];
         foreColor: Color;
         backColor: Color;
-        /**
-         *  Gets a style from the component.
-         *  @param component Component.
-         */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements): void;
-        /**
-         *  Sets style to a component.
-         *  @param component Component.
-         */
         setStyleToComponent(component: StiComponent): void;
-        /**
-         *  Creates a new object of the type StiProgressStyle.
-         *  @param name Style name.
-         *  @param description Style description.
-         */
         constructor(name?: string, description?: string, report?: StiReport);
     }
 }
@@ -45402,89 +40335,63 @@ declare namespace Stimulsoft.Report.Styles {
         loadFromXml(xmlNode: XmlNode): void;
         clone(): any;
         private _horAlignment;
-        /** Gets or sets a horizontal alignment of the style. */
         get horAlignment(): StiTextHorAlignment;
         set horAlignment(value: StiTextHorAlignment);
         private _vertAlignment;
-        /** Gets or sets a vertical alignment of the style. */
         get vertAlignment(): StiVertAlignment;
         set vertAlignment(value: StiVertAlignment);
         private _font;
-        /** Gets or sets a font for drawing this style. */
         get font(): Font;
         set font(value: Font);
         private _border;
-        /** Gets or sets a border of the component. */
         get border(): StiBorder;
         set border(value: StiBorder);
         private _brush;
-        /** Gets or sets a brush to fill the style. */
         get brush(): StiBrush;
         set brush(value: StiBrush);
         private _textBrush;
-        /** Gets or sets a brush to draw the text. */
         get textBrush(): StiBrush;
         set textBrush(value: StiBrush);
-        /**
-         *  Gets or sets the format of the component.
-         */
         textFormat: Stimulsoft.Report.Components.TextFormats.StiFormatService;
         private _allowUseHorAlignment;
-        /** Gets or sets a value which indicates whether a report engine can use HorAlignment formatting or not. */
         get allowUseHorAlignment(): boolean;
         set allowUseHorAlignment(value: boolean);
         private _allowUseVertAlignment;
-        /** Gets or sets a value which indicates whether a report engine can use VertAlignment formatting or not. */
         get allowUseVertAlignment(): boolean;
         set allowUseVertAlignment(value: boolean);
         private _allowUseImage;
-        /** Gets or sets a value which indicates whether a report engine can use Image formatting or not. */
         get allowUseImage(): boolean;
         set allowUseImage(value: boolean);
         private _allowUseFont;
-        /** Gets or sets a value which indicates whether a report engine can use Font formatting or not. */
         get allowUseFont(): boolean;
         set allowUseFont(value: boolean);
-        /** Gets or sets a value which indicates whether a report engine can use Border formatting or not. */
         get allowUseBorder(): boolean;
         set allowUseBorder(value: boolean);
         private _allowUseBorderFormatting;
-        /** Gets or sets a value which indicates whether a report engine can use Border formatting or not. */
         get allowUseBorderFormatting(): boolean;
         set allowUseBorderFormatting(value: boolean);
         private _allowUseBorderSides;
-        /** Gets or sets a value which indicates whether a report engine can use Border Sides or not. */
         get allowUseBorderSides(): boolean;
         set allowUseBorderSides(value: boolean);
         private _allowUseBorderSidesFromLocation;
-        /** Gets or sets a value which indicates whether a report engine can set border sides of a component depending on the component location. */
         get allowUseBorderSidesFromLocation(): boolean;
         set allowUseBorderSidesFromLocation(value: boolean);
         private _allowUseBrush;
-        /** Gets or sets a value which indicates whether a report engine can use Brush formatting or not. */
         get allowUseBrush(): boolean;
         set allowUseBrush(value: boolean);
         private _allowUseTextBrush;
-        /** Gets or sets a value which indicates whether a report engine can use TextBrush formatting or not. */
         get allowUseTextBrush(): boolean;
         set allowUseTextBrush(value: boolean);
         allowUseNegativeTextBrush: boolean;
         allowUseTextFormat: boolean;
         private _allowUseTextOptions;
-        /** Gets or sets a value which indicates whether a report engine can use TextOptions formatting or not. */
         get allowUseTextOptions(): boolean;
         set allowUseTextOptions(value: boolean);
-        /** Gets a style from the component. */
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements, componentStyle?: StiBaseStyle): void;
-        /** Sets style to a component. */
         setStyleToComponent(component: StiComponent): void;
         private _image;
-        /** Gets or sets an image to fill the Image property of the Image component. */
         get image(): Image;
         set image(value: Image);
-        /**
-         *  Gets or sets a brush to draw the negative values.
-         */
         negativeTextBrush: StiBrush;
     }
 }
@@ -45502,7 +40409,6 @@ declare namespace Stimulsoft.Report.Styles {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
         add(style: StiBaseStyle): void;
-        /** Removes all objects from the CollectionBase instance. */
         clear(): void;
         addRange(styles: StiBaseStyle[] | StiStylesCollection | any): void;
         contains(style: StiBaseStyle | string | any): boolean;
@@ -45575,7 +40481,6 @@ declare namespace Stimulsoft.Report {
 declare namespace Stimulsoft.Report.Styles {
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import StiBorderSides = Stimulsoft.Base.Drawing.StiBorderSides;
-    /** This class contains method which helps convert component location to its border sides. */
     class StiStylesHelper {
         static getBorderSidesFromLocation(component: StiComponent): StiBorderSides;
         static changeComponentStyleName(comp: StiComponent, oldName: string, newName: string): void;
@@ -45837,20 +40742,9 @@ declare namespace Stimulsoft.Report {
         saveDocumentToJsonString(): string;
         saveDocumentFile(path: string): void;
         saveEncryptedDocumentToByteArray(key: string): number[];
-        /**
-         *  Returns reference to the data dictionary of the report.
-         *  @returns Data dictioanary from the report.
-         */
         getDictionary(): IStiAppDictionary;
-        /**
-         *  Returns unique key to this application.
-         */
         getKey(): string;
         setKey(key: string): void;
-        /**
-         *  Returns an enumeration of the pages from this report.
-         *  @returns The enumeration of the pages.
-         */
         fetchPages(): List<IStiReportPage>;
         private _pageNumber;
         get pageNumber(): number;
@@ -45988,19 +40882,15 @@ declare namespace Stimulsoft.Report {
         getAnchorPageNumber(value: any): number;
         getAnchorPageNumberThrough(value: any): number;
         private getAnchor;
-        /** Returns a list of all components, including pages in the report. */
         getComponents(): StiComponentsCollection;
         getRenderedComponents(): StiComponentsCollection;
         getComponentsCount(): number;
-        /** Renames a style with the specified name to a new name. */
         renameStyle(oldStylename: string, newStyleName: string): void;
         localizeReport(cultureName: string): void;
         private anchors;
-        /** The master report for subreports. Do not use this field. */
         subReportsMasterReport: StiReport;
         subReportsResetPageNumber: boolean;
         subReportsPrintOnPreviousPage: boolean;
-        /** Internal use only. */
         indexName: number;
         containsTables: boolean;
         cachedTotals: Hashtable;
@@ -46021,15 +40911,11 @@ declare namespace Stimulsoft.Report {
         private _subReports;
         get subReports(): StiReportsCollection;
         set subReports(value: StiReportsCollection);
-        /**
-         * Gets or sets the report key.
-         */
         key: string;
         private _reportGuid;
         get reportGuid(): string;
         set reportGuid(value: string);
         private _imageCachePath;
-        /** Gets path to the report image cache path. Path can't be changed. */
         get imageCachePath(): string;
         set imageCachePath(value: string);
         private _parentReport;
@@ -46093,9 +40979,6 @@ declare namespace Stimulsoft.Report {
         private isPrintingValue;
         get isPrinting(): boolean;
         set isPrinting(value: boolean);
-        /**
-         *  Gets or sets value, which indicates that the report contains dashboard pages.
-         */
         get containsDashboard(): boolean;
         get isDesigning(): boolean;
         private _isPreviewDialogs;
@@ -46128,7 +41011,6 @@ declare namespace Stimulsoft.Report {
         private _styles;
         get styles(): StiStylesCollection;
         private _numberOfPass;
-        /** Gets or sets the number of passes which the report generator makes while report rendering. */
         get numberOfPass(): StiNumberOfPass;
         set numberOfPass(value: StiNumberOfPass);
         private _calculationMode;
@@ -46236,9 +41118,7 @@ declare namespace StiOptions {
         static CrossTab: CrossTab2;
     }
     class Image {
-        /** Gets or sets absolute path which will be used in combination with path from File property of image component. */
         absolutePathOfImages: string;
-        /** Gets or sets a value forcing render RichText components in other application domain. */
         useImageCloning: boolean;
     }
     class Watemark {
@@ -46256,43 +41136,24 @@ declare namespace StiOptions {
         allowUseVariableAlias: boolean;
     }
     class Engine {
-        /** A class which controls of settings of the report engine. */
         static Image: Image;
         static Watermark: Watemark;
         static printIfDetailEmptyDefaultValue: boolean;
-        /**
-         *  Gets or sets the base type for the report creation in the designer.
-         */
         static baseReportType: typeof Stimulsoft.Report.StiReport;
         static fullTrust: boolean;
         static allowUseResetMethodInBusinessObject: boolean;
         static allowResetValuesAtComponent: boolean;
-        /**
-         * If the property is set to true, the report generator will use the PrintOn property when rendering a report.
-         * Using this mode is not recommended because of problems with page numbers.
-         * If the property is set to false, then the property will be processed after rendering a report.
-         */
         static useAdvancedPrint: boolean;
-        /** The default value for the TextQuality property. */
         static defaultTextQualityMode: StiTextQuality;
-        /** If the value is set to true, the names of the new components are generated as localized regardless the settings of the report designer. */
         static forceGenerationLocalizedName: boolean;
-        /** If the property is set to true, the report generator will use the PrintOn property when rendering a report.
-         * Using this mode is not recommended because of problems with page numbers.
-         * If the property is set to false, then the property will be processed after rendering a report.
-         */
         static useAdvancedPrintOnEngine: boolean;
-        /** If the value is set to true, the names of the new components are generated as not localized regardless the settings of the report designer. */
         static forceGenerationNonLocalizedName: boolean;
         static forceNewPageForExtraColumns: boolean;
         static useRoundForToCurrencyWordsFunctions: boolean;
         static forceNewPageInSubReports: boolean;
         static useTemplateForPagePrintEvents: boolean;
-        /** Gets or sets a value which controls of naming of new components in the report. */
         static namingRule: StiNamingRule;
-        /** Gets or sets a value which indicates whether use the CheckSize method for Continued containers */
         static useCheckSizeForContinuedContainers: boolean;
-        /** Gets or sets a value, which indicates that if data are absent then controls of the data emulation. This value is used for report rendering in the designer without data. */
         static emulateData: boolean;
         static allowCacheForGetActualSize: boolean;
         static allowBreakContainerOptimization: boolean;
@@ -46320,9 +41181,6 @@ declare namespace StiOptions {
         static reportResources: any;
         static filterDataInDataSourceBeforeSorting: boolean;
         static allowConvertingInFormatting: boolean;
-        /**
-         *  Gets or sets a color which is used for coloring negative values in the text formatting.
-         */
         static negativeColor: Color;
     }
     class Print {
@@ -46339,13 +41197,9 @@ declare namespace StiOptions {
     }
     class Dictionary {
         static BusinessObjects: BusinessObjects;
-        /** Gets or sets a value indicating that instead of a database name an alias will be shown. */
         static showOnlyAliasForDatabase: boolean;
-        /** Gets or sets a value indicating that instead of a data name an alias will be shown. */
         static showOnlyAliasForData: boolean;
-        /** Gets or sets a value indicating that instead of a DataColumn name an alias will be shown. */
         static showOnlyAliasForDataColumn: boolean;
-        /** Gets or sets a value indicating that instead of a DataRelation name an alias will be shown. */
         static showOnlyAliasForDataRelation: boolean;
         static hideRelationExceptions: boolean;
         static autoSynchronize: StiAutoSynchronizeMode;
@@ -46436,6 +41290,15 @@ declare namespace StiOptions {
     }
     class ExportWriter {
         removeEmptySpaceAtBottom: boolean;
+        allowImageComparer: boolean;
+        divideSegmentPages: boolean;
+    }
+    class ExportCalc {
+        removeEmptySpaceAtBottom: boolean;
+        allowImageComparer: boolean;
+        divideSegmentPages: boolean;
+        divideBigCells: boolean;
+        maximumSheetHeight: number;
     }
     class ExportHtml {
         convertDigitsToArabic: boolean;
@@ -46468,6 +41331,10 @@ declare namespace StiOptions {
         RenderHtmlTagsAsImage: boolean;
         RestrictEditing: StiExcel2007RestrictEditing;
         FitToOnePageWide: boolean;
+    }
+    class ExportPowerPoint {
+        AllowImageComparer: boolean;
+        StoreImagesAsPng: boolean;
     }
     class ExportPdf {
         divideSegmentPages: boolean;
@@ -46509,8 +41376,10 @@ declare namespace StiOptions {
     class Export {
         static Word: ExportWord;
         static OpenDocumentWriter: ExportWriter;
+        static OpenDocumentCalc: ExportCalc;
         static Html: ExportHtml;
         static Excel: ExportExcel;
+        static PowerPoint: ExportPowerPoint;
         static Pdf: ExportPdf;
         static Text: ExportText;
         static CheckBoxReplacementForExcelValue: CheckBoxReplacementForExcelValue_;
@@ -46930,6 +41799,7 @@ declare namespace Stimulsoft.Report.Chart {
         set valueDataColumn(value: string);
         get valuesString(): string;
         set valuesString(value: string);
+        originalArguments: any[];
         private _arguments;
         get arguments(): any[];
         set arguments(value: any[]);
@@ -46992,10 +41862,8 @@ declare namespace Stimulsoft.Report.Chart {
         set allowSeriesElements(value: boolean);
         get coreTitle(): string;
         set coreTitle(value: string);
-        /**
-         *  Gets or sets value which indicates that this series is used in dashboards mode and IsDesign property will ingore.
-         */
         isDashboard: boolean;
+        legendColor: Color;
         private _interaction;
         get interaction(): IStiSeriesInteraction;
         set interaction(value: IStiSeriesInteraction);
@@ -48541,9 +43409,6 @@ declare namespace Stimulsoft.Report.Chart {
         private _wordWrap;
         get wordWrap(): boolean;
         set wordWrap(value: boolean);
-        /**
-         *  DBS use only!
-         */
         formatService: StiFormatService;
         constructor(format?: string, textBefore?: string, textAfter?: string, angle?: number, font?: Font, antialiasing?: boolean, placement?: StiLabelsPlacement, color?: Color, width?: number, textAlignment?: StiHorAlignment, step?: number, allowApplyStyle?: boolean, wordWrap?: boolean);
     }
@@ -49543,6 +44408,8 @@ declare namespace Stimulsoft.Report.Chart {
         renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
         renderAreas(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, series: IStiSeries[]): void;
+        private getPointValue;
+        private getPointValue1;
         private isTopmostLine;
         correctPoint(point: PointD, rect: RectangleD, correctY: number): PointD;
         getSeriesBrush(colorIndex: number, colorCount: number): StiBrush;
@@ -55347,7 +50214,7 @@ declare namespace Stimulsoft.Report.Chart {
     import ICloneable = Stimulsoft.System.ICloneable;
     import StiPage = Stimulsoft.Report.Components.StiPage;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
-    class StiSeriesInteraction implements /*IStiDefault,*/ IStiSeriesInteraction, IStiJsonReportObject, ICloneable {
+    class StiSeriesInteraction implements IStiSeriesInteraction, IStiJsonReportObject, ICloneable {
         private static implementsStiSeriesInteraction;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -56074,10 +50941,6 @@ declare namespace Stimulsoft.Report.Gauge.Collections {
         loadFromJsonObject(jObject: StiJson): void;
         private scale;
         private scaleType;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiGaugeElementCollection;
         get isReadOnly(): boolean;
         setByIndex(index: number, value: StiGaugeElement): void;
@@ -58300,9 +53163,6 @@ declare namespace Stimulsoft.Report.Gauge {
     import Color = Stimulsoft.System.Drawing.Color;
     import StiSolidBrush = Stimulsoft.Base.Drawing.StiSolidBrush;
     class StiGaugeStyleCoreXF29 extends StiGaugeStyleCoreXF {
-        /**
-         *  Gets a localized name of style.
-         */
         get localizedName(): string;
         brush: StiSolidBrush;
         foreColor: Color;
@@ -58349,9 +53209,6 @@ declare namespace Stimulsoft.Report.Gauge {
     import StiGaugeStyleCoreXF = Stimulsoft.Report.Gauge.StiGaugeStyleCoreXF;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     class StiGaugeStyleCoreXF30 extends StiGaugeStyleCoreXF {
-        /**
-         *  Gets a localized name of style.
-         */
         get localizedName(): string;
         brush: StiBrush;
         foreColor: Color;
@@ -58396,9 +53253,6 @@ declare namespace Stimulsoft.Report.Gauge {
     import StiGaugeStyleCoreXF30 = Stimulsoft.Report.Gauge.StiGaugeStyleCoreXF30;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     class StiGaugeStyleCoreXF31 extends StiGaugeStyleCoreXF30 {
-        /**
-         *  Gets a localized name of style.
-         */
         get localizedName(): string;
         brush: StiBrush;
         foreColor: Color;
@@ -58414,9 +53268,6 @@ declare namespace Stimulsoft.Report.Gauge {
     import StiGaugeStyleCoreXF30 = Stimulsoft.Report.Gauge.StiGaugeStyleCoreXF30;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     class StiGaugeStyleCoreXF32 extends StiGaugeStyleCoreXF30 {
-        /**
-         *  Gets a localized name of style.
-         */
         get localizedName(): string;
         brush: StiBrush;
         foreColor: Color;
@@ -58439,9 +53290,6 @@ declare namespace Stimulsoft.Report.Gauge {
     import Font = System.Drawing.Font;
     import Color = System.Drawing.Color;
     class StiGaugeStyleCoreXF33 extends StiGaugeStyleCoreXF30 {
-        /**
-         *  Gets a localized name of style.
-         */
         get localizedName(): string;
         brush: StiBrush;
         foreColor: Color;
@@ -58749,9 +53597,6 @@ declare namespace Stimulsoft.Report.Components {
         get style(): IStiGaugeStyle;
         set style(value: IStiGaugeStyle);
         private _allowApplyStyle;
-        /**
-         * Gets or sets value which indicates that gauge style will be used.
-         */
         get allowApplyStyle(): boolean;
         set allowApplyStyle(value: boolean);
         private _customStyleName;
@@ -58767,25 +53612,15 @@ declare namespace Stimulsoft.Report.Components {
         drawGauge(context: StiGaugeContextPainter): void;
         createNew(): StiComponent;
         applyStyle(style: IStiGaugeStyle): void;
-        /**
-         *  Creates a new StiGauge.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
 
-/**
- * @hidden
- */
 declare namespace Stimulsoft.Reflection {
     class StiTypesHelper {
         static run(type?: Stimulsoft.System.Type, namespace?: string): void;
     }
 }
-/**
- * @hidden
- */
 declare var _module: any;
 
 declare namespace Stimulsoft.Report.Maps {
@@ -58936,6 +53771,16 @@ declare namespace Stimulsoft.Report.Maps {
 declare namespace Stimulsoft.Report.Maps {
     class StiMapResourcesFrance {
         static France: string;
+    }
+}
+declare namespace Stimulsoft.Report.Maps {
+    class StiMapResourcesFrance18Regions {
+        static France18Regions: string;
+    }
+}
+declare namespace Stimulsoft.Report.Maps {
+    class StiMapResourcesFranceDepartments {
+        static FranceDepartments: string;
     }
 }
 declare namespace Stimulsoft.Report.Maps {
@@ -59260,31 +54105,19 @@ declare namespace Stimulsoft.Report.Maps {
 }
 
 declare namespace Stimulsoft.Dashboard.Components.Design {
-    /**
-     *  Converts a StiMeter object from one data type to another.
-     */
     class StiMeterConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart.Design {
     import StiMeterConverter = Stimulsoft.Dashboard.Components.Design.StiMeterConverter;
-    /**
-     *  Converts a StiValueChartMeter object from one data type to another.
-     */
     class StiValueChartMeterConverter extends StiMeterConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart.Design {
-    /**
-     *  Converts a StiXChartAxis object from one data type to another.
-     */
     class StiXChartAxisConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart.Design {
-    /**
-     *  Converts a StiYChartAxis object from one data type to another.
-     */
     class StiYChartAxisConverter {
     }
 }
@@ -59300,21 +54133,8 @@ declare namespace Stimulsoft.Dashboard.Components.Chart.Helpers {
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart.Helpers {
     import StiSeries = Stimulsoft.Report.Chart.StiSeries;
-    /**
-     *  This class helps in creation of new  chart series object based on specified Ident of series type.
-     */
     class StiChartSeriesCreator {
-        /**
-         *  Creates new  chart series object with help of its identification type name.
-         *  @param typeName A name of the identification type which is used for the series creation.
-         *  @returns Created series object.
-         */
         static neww(typeName: string): StiSeries;
-        /**
-         *  Creates new  chart series object with help of it type.
-         *  @param type An idendification type of the series.
-         *  @returns Created series object.
-         */
         static neww2(type: StiChartSeriesType): StiSeries;
     }
 }
@@ -59378,7 +54198,7 @@ declare namespace Stimulsoft.Dashboard.Components {
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import StiJson = Stimulsoft.Base.StiJson;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
-    class StiMeter/* extends StiObject*/  implements IStiMeter, IStiLocalizedMeter, IStiJsonReportObject {
+    class StiMeter implements IStiMeter, IStiLocalizedMeter, IStiJsonReportObject {
         private static ImplementsStiMeter;
         implements(): string[];
         clone(cloneProperties?: boolean, cloneComponents?: boolean): any;
@@ -59390,17 +54210,8 @@ declare namespace Stimulsoft.Dashboard.Components {
         getUniqueCode(): number;
         expression: string;
         label: string;
-        /**
-         *  Localized name of this component type.
-         */
         localizedName: string;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Gets or sets unically object identificator.
-         */
         key: string;
         get isDefault(): boolean;
         toString(): string;
@@ -59420,13 +54231,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiArgumentChartMeter extends StiDimensionMeter implements IStiArgumentMeter {
         private static ImplementsStiArgumentChartMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -59443,35 +54248,13 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiChartArea;
         colorEach: boolean;
-        /**
-         *  Gets or sets value which indicate that all values on horizontal axis is reverse.
-         */
         reverseHor: boolean;
-        /**
-         *  Gets or sets value which indicate that all values on vertical axis is reverse.
-         */
         reverseVert: boolean;
-        /**
-         *  Gets or sets interlacing settings on horizontal axis.
-         */
         interlacingHor: StiHorChartInterlacing;
-        /**
-         *  Gets or sets interlacing settings on vertical axis.
-         */
         interlacingVert: StiVertChartInterlacing;
-        /**
-         *  Gets or sets horizontal grid lines on left axis.
-         */
         gridLinesHor: StiHorChartGridLines;
-        /**
-         *  Gets or sets grid lines on vertical axis.
-         */
         gridLinesVert: StiVertChartGridLines;
         constructor(colorEach?: boolean, reverseHor?: boolean, reverseVert?: boolean, gridLinesHor?: StiHorChartGridLines, gridLinesVert?: StiVertChartGridLines, interlacingHor?: StiHorChartInterlacing, interlacingVert?: StiVertChartInterlacing);
     }
@@ -59493,40 +54276,15 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets angle of label rotation.
-         */
         angle: number;
-        /**
-         *  Gets or sets color of labels drawing.
-         */
         color: Color;
         private shouldSerializeColor;
-        /**
-         *  Gets or sets font which will be used for axis label drawing.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or set mode of labels placement on axis.
-         */
         placement: StiLabelsPlacement;
-        /**
-         *  Gets or sets label text alignment.
-         */
         textAlignment: StiHorAlignment;
-        /**
-         *  Gets or sets string which will be output after argument string representation.
-         */
         textAfter: string;
-        /**
-         *  Gets or sets string which will be output before argument string representation.
-         */
         textBefore: string;
         get isDefault(): boolean;
         constructor(textBefore?: string, textAfter?: string, angle?: number, font?: Font, placement?: StiLabelsPlacement, color?: Color, textAlignment?: StiHorAlignment);
@@ -59543,17 +54301,10 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiChartAxis implements IStiJsonReportObject, IStiDefault, ICloneable {
         private static ImplementsStiChartAxis;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets or sets axis labels settings.
-         */
         labels: StiChartAxisLabels;
         private shouldSerializeLabels;
         get isDefault(): boolean;
@@ -59586,36 +54337,14 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets visibility of axis.
-         */
         visible: boolean;
-        /**
-         *  Gets or sets title text alignment.
-         */
         alignment: StringAlignment;
-        /**
-         *  Gets or sets color which will be used for title drawing.
-         */
         color: Color;
         private shouldSerializeColor;
-        /**
-         *  Gets or set font which will be used for axis title drawing.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets title text position.
-         */
         position: StiTitlePosition;
-        /**
-         *  Gets or sets title text.
-         */
         text: string;
         get isDefault(): boolean;
         constructor(font?: Font, text?: string, color?: Color, alignment?: StringAlignment, position?: StiTitlePosition, visible?: boolean);
@@ -59636,10 +54365,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiChartConstantLines;
         text: string;
         lineStyle: StiPenStyle;
@@ -59665,10 +54390,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiChartMarker;
         isDefault(): boolean;
         size: number;
@@ -59685,13 +54406,7 @@ declare namespace Stimulsoft.Dashboard.Components.TreeViewBox {
     class StiKeyTreeViewBoxMeter extends StiDimensionMeter implements IStiValueMeter {
         private static ImplementsStiKeyTreeViewBoxMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -59701,13 +54416,7 @@ declare namespace Stimulsoft.Dashboard.Components.TreeView {
     class StiKeyTreeViewMeter extends StiDimensionMeter implements IStiValueMeter {
         private static ImplementsStiKeyTreeViewMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -59754,13 +54463,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         hyperlinkDestination: StiInteractionOpenHyperlinkDestination;
         toolTip: string;
         hyperlink: string;
-        /**
-         *  Describes a key of the dashboard page which should be opened.
-         */
         drillDownPageKey: string;
-        /**
-         *  Describes a list of drillDownParameters.
-         */
         drillDownParameters: List<StiDashboardDrillDownParameter>;
         constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>);
     }
@@ -59804,40 +54507,18 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean, report?: StiReport): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets a text horizontal alignment.
-         */
         horAlignment: StiHorAlignment;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         dashboardInteraction: IStiDashboardInteraction;
         private shouldSerializeDashboardInteraction;
         get isDefault(): boolean;
         getUniqueCode(): number;
-        /**
-         *  Gets or sets a visibility of the column.
-         */
         visible: boolean;
-        /**
-         *  Gets or sets a visibility of column totals.
-         */
         showTotalSummary: boolean;
-        /**
-         *   Gets or sets a summary type of column totals.
-         */
         summaryType: StiSummaryColumnType;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color, showTotalSummary?: boolean, interaction?: StiTableColumnDashboardInteraction);
     }
@@ -59851,13 +54532,7 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
     class StiMeasureColumn extends StiTableColumn implements IStiMeasureMeter, IStiMeasureColumn {
         private static ImplementsStiMeasureColumn;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color);
     }
@@ -59870,13 +54545,7 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
     class StiIndicatorColumn extends StiMeasureColumn implements IStiIndicatorColumn {
         private static ImplementsStiIndicatorColumn;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color);
     }
@@ -59889,13 +54558,7 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
     class StiColorScaleColumn extends StiMeasureColumn implements IStiColorScaleColumn {
         private static ImplementsStiColorScaleColumn;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color);
     }
@@ -59917,13 +54580,7 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean, report?: StiReport): void;
         getUniqueCode(): number;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color);
     }
@@ -59944,26 +54601,11 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean, report?: StiReport): void;
-        /**
-         *  Gets or sets the type of the sparklines.
-         */
         type: StiSparklinesType;
-        /**
-         *  Gets or sets the value which indicates that high and low points should be show.
-         */
         showHighLowPoints: boolean;
-        /**
-         *  Gets or sets the value which indicates that first and last points should be show.
-         */
         showFirstLastPoints: boolean;
         getUniqueCode(): number;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, type?: StiSparklinesType, showHighLowPoints?: boolean, showFirstLastPoints?: boolean, visible?: boolean, foreColor?: Color);
     }
@@ -60026,21 +54668,9 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean, report?: StiReport): void;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
-        /**
-         *  Shows or not hyperlink.
-         */
         showHyperlink: boolean;
-        /**
-         *  A hyperlink pattern.
-         */
         hyperlinkPattern: string;
         get isDefault(): boolean;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color, showHyperlink?: boolean, hyperlinkPattern?: string);
@@ -60048,95 +54678,10 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
 }
 declare namespace Stimulsoft.Dashboard.Components.RegionMap {
     import IStiColorMapMeter = Stimulsoft.Base.Meters.IStiColorMapMeter;
-    /**
-     *  Describes a column with data.
-     */
     class StiColorMapMeter extends StiDimensionMeter implements IStiColorMapMeter {
         private static ImplementsStiColorMapMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
-        get localizedName(): string;
-        constructor(key?: string, expression?: string, label?: string);
-    }
-}
-declare namespace Stimulsoft.Dashboard.Components.RegionMap {
-    import IStiValueMapMeter = Stimulsoft.Base.Meters.IStiValueMapMeter;
-    /**
-     *  Describes a column with data.
-     */
-    class StiValueMapMeter extends StiDimensionMeter implements IStiValueMapMeter {
-        private static ImplementsStiValueMapMeter;
-        implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
-        ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
-        get localizedName(): string;
-        constructor(key?: string, expression?: string, label?: string);
-    }
-}
-declare namespace Stimulsoft.Dashboard.Components.RegionMap {
-    import IStiGroupMapMeter = Stimulsoft.Base.Meters.IStiGroupMapMeter;
-    /**
-     *  Describes a column with data.
-     */
-    class StiGroupMapMeter extends StiDimensionMeter implements IStiGroupMapMeter {
-        private static ImplementsStiGroupMapMeter;
-        implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
-        ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
-        get localizedName(): string;
-        constructor(key?: string, expression?: string, label?: string);
-    }
-}
-declare namespace Stimulsoft.Dashboard.Components.RegionMap {
-    import IStiNameMapMeter = Stimulsoft.Base.Meters.IStiNameMapMeter;
-    /**
-     *  Describes a column with data.
-     */
-    class StiNameMapMeter extends StiDimensionMeter implements IStiNameMapMeter {
-        private static ImplementsStiNameMapMeter;
-        implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
-        ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
-        get localizedName(): string;
-        constructor(key?: string, expression?: string, label?: string);
-    }
-}
-declare namespace Stimulsoft.Dashboard.Components.RegionMap {
-    import IStiKeyMapMeter = Stimulsoft.Base.Meters.IStiKeyMapMeter;
-    /**
-     *  Describes a column with data.
-     */
-    class StiKeyMapMeter extends StiDimensionMeter implements IStiKeyMapMeter {
-        private static ImplementsStiKeyMapMeter;
-        implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
-        ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60149,18 +54694,52 @@ declare namespace Stimulsoft.Dashboard.Components {
         constructor(key?: string, expression?: string, label?: string);
     }
 }
+declare namespace Stimulsoft.Dashboard.Components.RegionMap {
+    import IStiValueMapMeter = Stimulsoft.Base.Meters.IStiValueMapMeter;
+    class StiValueMapMeter extends StiMeasureMeter implements IStiValueMapMeter {
+        private static ImplementsStiValueMapMeter;
+        implements(): string[];
+        ident: StiMeterIdent;
+        get localizedName(): string;
+        constructor(key?: string, expression?: string, label?: string);
+    }
+}
+declare namespace Stimulsoft.Dashboard.Components.RegionMap {
+    import IStiGroupMapMeter = Stimulsoft.Base.Meters.IStiGroupMapMeter;
+    class StiGroupMapMeter extends StiDimensionMeter implements IStiGroupMapMeter {
+        private static ImplementsStiGroupMapMeter;
+        implements(): string[];
+        ident: StiMeterIdent;
+        get localizedName(): string;
+        constructor(key?: string, expression?: string, label?: string);
+    }
+}
+declare namespace Stimulsoft.Dashboard.Components.RegionMap {
+    import IStiNameMapMeter = Stimulsoft.Base.Meters.IStiNameMapMeter;
+    class StiNameMapMeter extends StiDimensionMeter implements IStiNameMapMeter {
+        private static ImplementsStiNameMapMeter;
+        implements(): string[];
+        ident: StiMeterIdent;
+        get localizedName(): string;
+        constructor(key?: string, expression?: string, label?: string);
+    }
+}
+declare namespace Stimulsoft.Dashboard.Components.RegionMap {
+    import IStiKeyMapMeter = Stimulsoft.Base.Meters.IStiKeyMapMeter;
+    class StiKeyMapMeter extends StiDimensionMeter implements IStiKeyMapMeter {
+        private static ImplementsStiKeyMapMeter;
+        implements(): string[];
+        ident: StiMeterIdent;
+        get localizedName(): string;
+        constructor(key?: string, expression?: string, label?: string);
+    }
+}
 declare namespace Stimulsoft.Dashboard.Components.Progress {
     import IStiValueMeter = Stimulsoft.Base.Meters.IStiValueMeter;
     class StiValueProgressMeter extends StiMeasureMeter implements IStiValueMeter {
         private static ImplementsStiValueProgressMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60170,13 +54749,7 @@ declare namespace Stimulsoft.Dashboard.Components.Progress {
     class StiTargetProgressMeter extends StiMeasureMeter implements IStiValueMeter {
         private static ImplementsStiValueProgressMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60186,13 +54759,7 @@ declare namespace Stimulsoft.Dashboard.Components.Progress {
     class StiSeriesProgressMeter extends StiDimensionMeter implements IStiValueMeter {
         private static ImplementsStiSeriesProgressMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60213,35 +54780,16 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
     class StiPivotColumn extends StiMeter implements IStiDimensionMeter, IStiHorAlignment, IStiTextFormat, IStiPivotColumn, IStiDataTopN, IStiJsonReportObject {
         private static ImplementsStiPivotColumn;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets or sets the text horizontal alignment.
-         */
         horAlignment: StiHorAlignment;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         * Gets or sets the TopN
-         */
         topN: StiDataTopN;
         getUniqueCode(): number;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, topN?: StiDataTopN);
     }
@@ -60262,35 +54810,16 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
     class StiPivotRow extends StiMeter implements IStiDimensionMeter, IStiHorAlignment, IStiTextFormat, IStiPivotRow, IStiDataTopN, IStiJsonReportObject {
         private static ImplementsStiPivotRow;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets or sets the text horizontal alignment.
-         */
         horAlignment: StiHorAlignment;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         * Gets or sets the TopN
-         */
         topN: StiDataTopN;
         getUniqueCode(): number;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, topN?: StiDataTopN);
     }
@@ -60308,63 +54837,29 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
     class StiPivotSummary extends StiMeasureMeter implements IStiHorAlignment, IStiTextFormat, IStiPivotSummary, IStiJsonReportObject {
         private static ImplementsStiPivotSummary;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets or sets the text horizontal alignment.
-         */
         horAlignment: StiHorAlignment;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
         getUniqueCode(): number;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
-    /**
-     *  Describes a column with data.
-     */
     class StiLatitudeMapMeter extends StiDimensionMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
-    /**
-     *  Describes a column with data.
-     */
     class StiLongitudeMapMeter extends StiDimensionMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60374,13 +54869,7 @@ declare namespace Stimulsoft.Dashboard.Components.ListBox {
     class StiKeyListBoxMeter extends StiDimensionMeter implements IStiValueMeter {
         private static ImplementsStiKeyListBoxMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60390,13 +54879,7 @@ declare namespace Stimulsoft.Dashboard.Components.ListBox {
     class StiNameListBoxMeter extends StiDimensionMeter implements IStiArgumentMeter {
         private static ImplementsStiNameListBoxMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60406,26 +54889,14 @@ declare namespace Stimulsoft.Dashboard.Components.DatePicker {
     class StiValueDatePickerMeter extends StiDimensionMeter implements IStiValueMeter {
         private static ImplementsStiValueDatePickerMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiEndValueChartMeter extends StiMeasureMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60435,13 +54906,7 @@ declare namespace Stimulsoft.Dashboard.Components.ComboBox {
     class StiNameComboBoxMeter extends StiDimensionMeter implements IStiArgumentMeter {
         private static ImplementsStiNameComboBoxMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60451,13 +54916,7 @@ declare namespace Stimulsoft.Dashboard.Components.ComboBox {
     class StiKeyComboBoxMeter extends StiDimensionMeter implements IStiValueMeter {
         private static ImplementsStiKeyComboBoxMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60467,13 +54926,7 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
     class StiSeriesGaugeMeter extends StiDimensionMeter implements IStiSeriesMeter {
         private static ImplementsStiSeriesGaugeMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60483,13 +54936,7 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
     class StiValueGaugeMeter extends StiMeasureMeter implements IStiValueMeter {
         private static ImplementsStiValueGaugeMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60499,13 +54946,7 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
     class StiSeriesIndicatorMeter extends StiDimensionMeter implements IStiSeriesMeter {
         private static ImplementsStiSeriesIndicatorMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60515,13 +54956,7 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
     class StiValueIndicatorMeter extends StiMeasureMeter implements IStiValueMeter {
         private static ImplementsStiValueIndicatorMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60531,26 +54966,14 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
     class StiTargetIndicatorMeter extends StiMeasureMeter implements IStiTargetMeter {
         private static ImplementsStiTargetIndicatorMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiWeightChartMeter extends StiMeasureMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60568,27 +54991,15 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
         seriesType: StiChartSeriesType;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
         getUniqueCode(): number;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, seriesType?: StiChartSeriesType);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiOpenValueChartMeter extends StiValueChartMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         seriesType: StiChartSeriesType;
         constructor(key?: string, expression?: string, label?: string, seriesType?: StiChartSeriesType);
@@ -60596,39 +55007,21 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiCloseValueChartMeter extends StiMeasureMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiLowValueChartMeter extends StiMeasureMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiHighValueChartMeter extends StiMeasureMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60638,77 +55031,35 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiSeriesChartMeter extends StiDimensionMeter implements IStiSeriesMeter {
         private static ImplementsStiSeriesChartMeter;
         implements(): string[];
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
-    /**
-     *  Describes a column with data.
-     */
     class StiLocationMapMeter extends StiDimensionMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
-    /**
-     *  Describes a column with data.
-     */
     class StiLocationColorMapMeter extends StiDimensionMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
-    /**
-     *  Describes a column with data.
-     */
     class StiLocationValueMapMeter extends StiDimensionMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
-    /**
-     *  Describes a column with data.
-     */
     class StiLocationArgumentMapMeter extends StiDimensionMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -60935,24 +55286,11 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets color which will be used for title drawing.
-         */
         color: Color;
         private shouldSerializeColor;
-        /**
-         *  Gets or set font which will be used for axis title drawing.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets title text.
-         */
         text: string;
         get isDefault(): boolean;
         constructor(font?: Font, text?: string, color?: Color);
@@ -60974,23 +55312,10 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets color of legend labels drawing.
-         */
         color: Color;
         private shouldSerializeColor;
-        /**
-         *  Gets or sets font which will be used for legend label drawing.
-         */
         font: Font;
-        /**
-         * Gets or sets which type of information will be shown in legend.
-         */
         valueType: StiSeriesLabelsValueType;
         private shouldSerializeFont;
         get isDefault(): boolean;
@@ -61019,38 +55344,13 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets horizontal alignment of legend placement.
-         */
         horAlignment: StiLegendHorAlignment;
-        /**
-         *  Gets or sets vertical alignment of legend placement.
-         */
         vertAlignment: StiLegendVertAlignment;
-        /**
-         *  Gets or sets visibility of legend.
-         */
         visible: boolean;
-        /**
-         *  Gets or sets direction which used for series drawing in legend.
-         */
         direction: StiLegendDirection;
-        /**
-         *  Gets or sets amount of columns.
-         */
         columns: number;
-        /**
-         *  Gets or sets legend labels settings.
-         */
         labels: StiChartLegendLabels;
-        /**
-         *  Gets or sets legend title settings.
-         */
         title: StiChartLegendTitle;
         get isDefault(): boolean;
         constructor(title?: StiChartLegendTitle, labels?: StiChartLegendLabels, horAlignment?: StiLegendHorAlignment, vertAlignment?: StiLegendVertAlignment, visible?: boolean, direction?: StiLegendDirection, columns?: number);
@@ -61070,9 +55370,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets or set text direction for axis title drawing.
-         */
         direction: StiDirection;
         get isDefault(): boolean;
         constructor(font?: Font, text?: string, color?: Color, alignment?: StringAlignment, direction?: StiDirection, position?: StiTitlePosition, visible?: boolean);
@@ -61085,17 +55382,10 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     class StiYChartAxis extends StiChartAxis implements IStiJsonReportObject {
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets or sets axis title settings.
-         */
         title: StiYChartAxisTitle;
         private shouldSerializeTitle;
         get isDefault(): boolean;
@@ -61108,17 +55398,10 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     import StiJson = Stimulsoft.Base.StiJson;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     class StiXChartAxis extends StiChartAxis implements IStiJsonReportObject {
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets or sets axis title settings.
-         */
         title: StiXChartAxisTitle;
         private shouldSerializeTitle;
         get isDefault(): boolean;
@@ -61127,13 +55410,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiYChartMeter extends StiDimensionMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -61156,37 +55433,15 @@ declare namespace Stimulsoft.Dashboard.Components {
         loadFromXml(xmlNode: XmlNode): void;
         static createFromJsonObject(jObject: StiJson): StiTitle;
         static createFromXml(xmlNode: XmlNode): StiTitle;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
-        /**
-         *  Gets or sets title text alignment.
-         */
         horAlignment: StiHorAlignment;
-        /**
-         *  Gets or set font which will be used for title drawing.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets a back color.
-         */
         backColor: Color;
         private shouldSerializeBackColor;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
-        /**
-         *  Gets or sets title text.
-         */
         text: string;
-        /**
-         *  Gets or sets visibility of title.
-         */
         visible: boolean;
         constructor(text?: string, foreColor?: Color, backColor?: Color, font?: Font, alignment?: StiHorAlignment, visible?: boolean);
     }
@@ -61218,18 +55473,12 @@ declare namespace Stimulsoft.Dashboard.Components.Panel {
     import IStiPanel = Stimulsoft.Report.Dashboard.IStiPanel;
     import IStiSimpleBorder = Stimulsoft.Report.Components.IStiSimpleBorder;
     import StiPanel = Stimulsoft.Report.Components.StiPanel;
-    /**
-     *  Panel component of the dashboards.
-     */
     class StiPanelElement extends StiPanel implements IStiSimpleBorder, IStiPanel, IStiPadding, IStiMargin, IStiJsonReportObject {
         private static ImplementsStiPanelElement;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         getMeters(nested?: boolean, group?: string): List<IStiMeter>;
         getElements(nested?: boolean, group?: string): List<IStiElement>;
@@ -61241,69 +55490,30 @@ declare namespace Stimulsoft.Dashboard.Components.Panel {
         isDefined: boolean;
         isQuerable: boolean;
         isEnabled: boolean;
-        /**
-         *  Gets zoom of a report.
-         */
         get zoom(): number;
         retrieveUsedDataNames(group: string): List<string>;
         getDictionary(): IStiAppDictionary;
-        /**
-         *  Gets or sets element margin.
-         */
         margin: StiMargin;
         private shouldSerializeMargin;
-        /**
-         *  Gets or sets element padding.
-         */
         padding: StiPadding;
         shouldSerializePadding(): boolean;
-        /**
-         *  Gets or sets border of the element.
-         */
         border2: StiSimpleBorder;
         private shouldSerializeBorder;
-        /**
-         *  Gets or sets a back color.
-         */
         backColor: Color;
         private shouldSerializeBackColor;
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         helpUrl: string;
         get brush(): StiBrush;
         set brush(value: StiBrush);
-        /**
-         *  Gets a service category.
-         */
         serviceCategory: string;
-        /**
-         *  Gets a localized name of the component category.
-         */
         localizedCategory: string;
         toolboxCategory: StiToolboxCategory;
-        /**
-         *  May this container be located in the specified component.
-         *  @param component Component for checking.
-         *  @returns true, if this container may is located in the specified component.
-         */
         canContainIn(component: StiComponent): boolean;
         createNew(): StiComponent;
         get key(): string;
         set key(value: string);
-        /**
-         *  Creates a new  component of the type StiPanelElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -61330,9 +55540,6 @@ declare namespace Stimulsoft.Dashboard.Components {
     import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
-    /**
-     *  Describes the base class for all dashboards elements.
-     */
     class StiElement extends StiComponent implements IStiElement, IStiSimpleBorder, IStiBackColor, IStiPadding, IStiMargin, IStiJsonReportObject {
         private static ImplementsStiElement;
         implements(): string[];
@@ -61350,71 +55557,24 @@ declare namespace Stimulsoft.Dashboard.Components {
         retrieveUsedDataNames2(group: string): List<string>;
         retrieveUsedDataNames(): List<string>;
         getDictionary(): IStiAppDictionary;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
-        /**
-         *  Gets or sets border of the element.
-         */
         border2: StiSimpleBorder;
         private shouldSerializeBorder;
-        /**
-         *  Gets or sets a back color.
-         */
         backColor: Color;
         private shouldSerializeBackColor;
-        /**
-         *  Gets or sets element margin.
-         */
         margin: StiMargin;
         private shouldSerializeMargin;
-        /**
-         *  Gets or sets element padding.
-         */
         padding: StiPadding;
         shouldSerializePadding(): boolean;
-        /**
-         *  Gets a service category.
-         */
         serviceCategory: string;
-        /**
-         *  Return events collection of this component;
-         */
-        /**
-         *  May this container be located in the specified component.
-         *  @param component Component for checking.
-         *  @returns true, if this container may is located in the specified component.
-         */
         canContainIn(component: StiComponent): boolean;
         toolboxCategory: StiToolboxCategory;
-        /**
-         *  Gets a localized name of the component category.
-         */
         localizedCategory: string;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         get key(): string;
         set key(value: string);
-        /**
-         *  Returns a list of the nested pages.
-         */
         getNestedPages(): List<StiPage>;
-        /**
-         *  Gets default event for this report control.
-         *  @returns Default event.
-         */
-        /**
-         *  Creates a new  StiElement.
-         *  @param rect The rectangle describes sizes and position of the control.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -61530,17 +55690,10 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiChartElement extends StiElement implements IStiChartElement, IStiSkipOwnFilter, IStiTitleElement, IStiElementLayout, IStiJsonReportObject, IStiGlobalizationProvider, IStiSeriesColors, IStiNegativeSeriesColors, IStiElementInteraction, IStiDrillDownElement {
         private static ImplementsStiChartElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         convertToBubble(): void;
         convertFromBubble(): void;
@@ -61622,9 +55775,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         retrieveUsedDataNames(): List<string>;
         get isDefined(): boolean;
         title: StiTitle;
-        /**
-         *  Gets layout of the element.
-         */
         layout: StiElementLayout;
         private shouldSerializeLayout;
         group: string;
@@ -61643,35 +55793,14 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         private shouldSerializeDataTransformation;
         isDefaultDataTransformation(): boolean;
         dataFilters: List<StiDataFilterRule>;
-        /**
-         *  Gets or sets a list of colors which will be used for drawing series.
-         */
         seriesColors: Color[];
-        /**
-         *  Gets or sets a list of colors which will be used for drawing series with negative values.
-         */
         negativeSeriesColors: Color[];
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
         dashboardInteraction: IStiDashboardInteraction;
         get shouldSerializeDashboardInteraction(): boolean;
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
         helpUrl: string;
         get colorEach(): boolean;
@@ -61692,40 +55821,19 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         private shouldSerializeWeights;
         series: StiSeriesChartMeter;
         private shouldSerializeSeries;
-        /**
-         *  Gets or sets settings of XAxis.
-         */
         xAxis: StiXChartAxis;
         private shouldSerializeXAxis;
-        /**
-         *  Gets or sets settings of YAxis.
-         */
         yAxis: StiYChartAxis;
         private shouldSerializeYAxis;
-        /**
-         *  Gets or sets settings of the legend.
-         */
         legend: StiChartLegend;
         private shouldSerializeLegend;
-        /**
-         *  Gets or sets settings of the chart area.
-         */
         area: StiChartArea;
-        /**
-         *  Gets or sets settings of the chart labels.
-         */
         private _labels;
         get labels(): StiChartLabels;
         set labels(value: StiChartLabels);
         private shouldSerializeLabels;
-        /**
-         *  Gets or sets the format of the arguments.
-         */
         argumentFormat: StiFormatService;
         private shouldSerializeArgumentFormat;
-        /**
-         *  Gets or sets the format of the values.
-         */
         valueFormat: StiFormatService;
         private shouldSerializeValueFormat;
         constantLines: List<StiChartConstantLines>;
@@ -61738,6 +55846,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         private shouldSerializeIcon;
         get isAxisAreaChart(): boolean;
         get isBubbleChart(): boolean;
+        get isBarChart(): boolean;
         get isRange(): boolean;
         get isFinancial(): boolean;
         get isPieChart(): boolean;
@@ -61746,9 +55855,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         get isTreemapChart(): boolean;
         get isParetoChart(): boolean;
         get isFullStackedChart(): boolean;
-        /**
-         *  Returns a list of the nested pages.
-         */
         getNestedPages(): List<StiPage>;
         drillDownFiltersList: List<List<StiDataFilterRule>>;
         drillDownFilters: List<StiDataFilterRule>;
@@ -61758,10 +55864,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         checkBrowsableProperties(): void;
         private setBrowsableProperty;
         getChartSeries(): IStiSeries;
-        /**
-         *  Creates a new  component of the type StiChartElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -61783,10 +55885,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiChartElementCondition;
         color: Color;
         markerAngle: number;
@@ -61815,14 +55913,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiChartGridLines;
-        /**
-         *  Gets or sets color which will be used for drawing major grid lines.
-         */
         color: Color;
         visible: boolean;
         get isDefault(): boolean;
@@ -61839,18 +55930,8 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiChartInterlacing;
-        /**
-         * Gets or sets color which used for drawing interlaced bars.
-         */
         color: Color;
-        /**
-         *  Gets or sets visibility of interlaced bars.
-         */
         visible: boolean;
         get isDefault(): boolean;
         constructor(color?: Color, visible?: boolean);
@@ -61871,14 +55952,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        /**
-         *  Creates a new object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): StiChartLabels;
-        /**
-         *  Gets or sets a position of the labels.
-         */
         get position(): StiChartLabelsPosition;
         set position(value: StiChartLabelsPosition);
         private shouldSerializePosition;
@@ -61887,29 +55961,11 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         doughnutPosition: StiChartLabelsPosition;
         funnelPosition: StiChartLabelsPosition;
         treemapPosition: StiChartLabelsPosition;
-        /**
-         *  Gets or sets a color which will be used for the labels drawing.
-         */
         foreColor: Color;
-        /**
-         *  Gets or set a font which will be used for the labels drawing.
-         */
         font: Font;
-        /**
-         *  Gets or sets value which enables or disables auto rotate mode drawing of the labels.
-         */
         autoRotate: boolean;
-        /**
-         *  Gets or sets a style of the labels.
-         */
         style: StiChartLabelsStyle;
-        /**
-         *  Gets or sets string which will be output after the labels string representation.
-         */
         textAfter: string;
-        /**
-         *  Gets or sets string which will be output before the labels string representation.
-         */
         textBefore: string;
         element: StiChartElement;
         get isDefault(): boolean;
@@ -61919,9 +55975,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiHorChartGridLines extends StiChartGridLines {
-        /**
-         *  Gets or sets visibility of major grid lines.
-         */
         visible: boolean;
         get isDefault(): boolean;
         constructor(color?: Color, visible?: boolean);
@@ -61936,9 +55989,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiVertChartGridLines extends StiChartGridLines {
-        /**
-         *  Gets or sets visibility of major grid lines.
-         */
         visible: boolean;
         get isDefault(): boolean;
         constructor(color?: Color, visible?: boolean);
@@ -61964,9 +56014,6 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets or set text direction for axis title drawing.
-         */
         direction: StiDirection;
         get isDefault(): boolean;
         constructor(font?: Font, text?: string, color?: Color, alignment?: StringAlignment, direction?: StiDirection, position?: StiTitlePosition, visible?: boolean);
@@ -61974,13 +56021,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiXChartMeter extends StiDimensionMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -62012,17 +56053,10 @@ declare namespace Stimulsoft.Dashboard.Components.ComboBox {
     class StiComboBoxElement extends StiElement implements IStiComboBoxElement, IStiFixedHeightElement, IStiJsonReportObject {
         private static ImplementsStiComboBoxElement;
         implements(): string[];
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         group: string;
         getParentKey(): string;
@@ -62038,14 +56072,8 @@ declare namespace Stimulsoft.Dashboard.Components.ComboBox {
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
         customStyleName: string;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         fetchAllMeters(): List<IStiMeter>;
@@ -62066,22 +56094,10 @@ declare namespace Stimulsoft.Dashboard.Components.ComboBox {
         createNewNameMeter(): void;
         createNextMeter(dataColumn: StiDataColumn): void;
         convertFrom(element: IStiElement): void;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         get minSize(): Size;
         set minSize(value: Size);
@@ -62092,10 +56108,6 @@ declare namespace Stimulsoft.Dashboard.Components.ComboBox {
         parentKey: string;
         nameMeter: StiNameComboBoxMeter;
         keyMeter: StiKeyComboBoxMeter;
-        /**
-         *  Creates a new  element of the type StiComboBoxElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -62149,17 +56161,10 @@ declare namespace Stimulsoft.Dashboard.Components.DatePicker {
     class StiDatePickerElement extends StiElement implements IStiDatePickerElement, IStiFixedHeightElement, IStiGroupElement, IStiJsonReportObject {
         private static ImplementsStiDatePickerElement;
         implements(): string[];
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         group: string;
         getParentKey(): string;
@@ -62171,14 +56176,8 @@ declare namespace Stimulsoft.Dashboard.Components.DatePicker {
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
         customStyleName: string;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         fetchAllMeters(): List<IStiMeter>;
@@ -62191,21 +56190,9 @@ declare namespace Stimulsoft.Dashboard.Components.DatePicker {
         removeValueMeter(): void;
         createNewValueMeter(): void;
         convertFrom(element: IStiElement): void;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         get minSize(): Size;
         set minSize(value: Size);
@@ -62217,10 +56204,6 @@ declare namespace Stimulsoft.Dashboard.Components.DatePicker {
         selectionMode: StiDateSelectionMode;
         valueMeter: StiValueDatePickerMeter;
         initialRangeSelection: StiInitialDateRangeSelection;
-        /**
-         *  Creates a new  element of the type StiDatePickerElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -62256,30 +56239,18 @@ declare namespace Stimulsoft.Dashboard.Components.Design {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Design {
-    /**
-     *  Converts a StiElementStyleIdent object from one data type to another.
-     */
     class StiElementStyleConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Design {
-    /**
-     *  Converts a List of StiMeter object from one data type to another.
-     */
     class StiMeterListConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Design {
-    /**
-     *  Converts a StiTitle object from one data type to another.
-     */
     class StiTitleConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Gauge.Design {
-    /**
-     *  Converts a StiGaugeRange object from one data type to another.
-     */
     class StiGaugeRangeConverter {
     }
 }
@@ -62297,26 +56268,14 @@ declare namespace Stimulsoft.Dashboard.Render {
 }
 declare namespace Stimulsoft.Dashboard.Components.Gauge {
     class StiMinGaugeMeter extends StiMeasureMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Gauge {
     class StiMaxGaugeMeter extends StiMeasureMeter {
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         ident: StiMeterIdent;
-        /**
-         *  Localized name of this component type.
-         */
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -62375,10 +56334,6 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
         end: number;
         static loadFromJson(json: StiJson): StiGaugeRange;
         static loadFromXml(xmlNode: XmlNode): StiGaugeRange;
-        /**
-         *  Saves element to String.
-         *  @returns String representation which contains schema.
-         */
         saveToString(): string;
         getStringRepresentation(): string;
         constructor(color?: Color, start?: number, end?: number);
@@ -62453,17 +56408,10 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
     class StiGaugeElement extends StiElement implements IStiGaugeElement, IStiTitleElement, IStiFont, IStiForeColor, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider {
         private static ImplementsStiGaugeElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         addValue2(dataColumn: StiDataColumn): void;
         addValue(meter: IStiMeter): void;
@@ -62486,23 +56434,14 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
         convertFrom(element: IStiElement): void;
         group: string;
         title: StiTitle;
-        /**
-         *  Gets layout of the element.
-         */
         layout: StiElementLayout;
         private shouldSerializeLayout;
         fetchAllMeters(): List<IStiMeter>;
         getMeters(): List<IStiMeter>;
         retrieveUsedDataNames(): List<string>;
         get isDefined(): boolean;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         transformActions: List<StiDataActionRule>;
@@ -62515,25 +56454,10 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
         customStyleName: string;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
@@ -62550,29 +56474,12 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
         ranges: List<StiGaugeRange>;
         isSampleForStyles: boolean;
         createNew(): StiComponent;
-        /**
-         *  Creates a new  component of the type StiGaugeElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Helpers {
-    /**
-     *  Class helps in creation new  object of the StiMeter type.
-     */
     class StiMeterCreator {
-        /**
-         *  Creates new  meter object with help of its identification type name.
-         *  @param identName A name of the identification type which is used for the meter creation.
-         *  @returns Created meter object.
-         */
         static neww(identName: string): StiMeter;
-        /**
-         *  Creates new  meter object with help of it identification type.
-         *  @param ident An idendification type of the meter.
-         *  @returns Created meter object.
-         */
         static neww2(ident: StiMeterIdent): StiMeter;
     }
 }
@@ -62581,9 +56488,6 @@ declare namespace Stimulsoft.Dashboard.Components.Helpers {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Image.Design {
-    /**
-     *  Converts image to string description.
-     */
     class StiImageBytesConverter {
     }
 }
@@ -62624,20 +56528,10 @@ declare namespace Stimulsoft.Dashboard.Components.Image {
     import IStiVertAlignment = Stimulsoft.Report.Components.IStiVertAlignment;
     import IStiHorAlignment = Stimulsoft.Report.Components.IStiHorAlignment;
     import StiFontIcons = Stimulsoft.Report.Helpers.StiFontIcons;
-    /**
-     *  Image component of the dashboards.
-     */
     class StiImageElement extends StiElement implements IStiHorAlignment, IStiVertAlignment, IStiImageElement, IStiTitleElement, IStiJsonReportObject, IStiGlobalizationProvider, IStiElementInteraction {
         private static ImplementsStiImageElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -62654,55 +56548,24 @@ declare namespace Stimulsoft.Dashboard.Components.Image {
         icon: StiFontIcons;
         iconColor: Color;
         copyAllImageProperties(image: IStiImageElement): void;
-        /**
-         *  Gets or sets the image horizontal alignment.
-         */
         horAlignment: StiHorAlignment;
-        /**
-         *  Gets or sets the vertical alignment of an image.
-         */
         vertAlignment: StiVertAlignment;
         shouldSerializePadding(): boolean;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
         dashboardInteraction: IStiDashboardInteraction;
         get shouldSerializeDashboardInteraction(): boolean;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         helpUrl: string;
-        /**
-         *  Returns a list of the nested pages.
-         */
         getNestedPages(): List<StiPage>;
         createNew(): StiComponent;
         resetAllImageProperties(): void;
         get isImageDefined(): boolean;
         get isImageIconDefined(): boolean;
         get isImageHyperlinkDefined(): boolean;
-        /**
-         *  Creates a new  component of the type StiImageElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -62739,6 +56602,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Indicator {
+    import StiTargetMode = Stimulsoft.Report.Dashboard.StiTargetMode;
     import IStiDashboardInteraction = Stimulsoft.Report.Dashboard.IStiDashboardInteraction;
     import IStiElementInteraction = Stimulsoft.Report.Dashboard.IStiElementInteraction;
     import StiIndicatorConditionPermissions = Stimulsoft.Report.Dashboard.StiIndicatorConditionPermissions;
@@ -62776,23 +56640,13 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
     import IStiIndicatorElement = Stimulsoft.Report.Dashboard.IStiIndicatorElement;
     import IStiTextFormat = Stimulsoft.Report.Components.IStiTextFormat;
     import IStiGlobalizationProvider = Stimulsoft.Report.IStiGlobalizationProvider;
-    /**
-     *  Indicator component of the dashboards.
-     */
     class StiIndicatorElement extends StiElement implements IStiTextFormat, IStiIndicatorElement, IStiTitleElement, IStiFont, IStiForeColor, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider {
         private static ImplementsStiIndicatorElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         group: string;
         addValue2(dataColumn: StiDataColumn): void;
@@ -62817,19 +56671,10 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
         fetchIndicatorConditions(): List<IStiIndicatorElementCondition>;
         clearIndicatorConditions(): void;
         convertFrom(element: IStiElement): void;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         fetchAllMeters(): List<IStiMeter>;
@@ -62837,9 +56682,6 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
         retrieveUsedDataNames(): List<string>;
         get isDefined(): boolean;
         title: StiTitle;
-        /**
-         *  Gets layout of the element.
-         */
         layout: StiElementLayout;
         private shouldSerializeLayout;
         transformActions: List<StiDataActionRule>;
@@ -62855,36 +56697,15 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
         customStyleName: string;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
         get shouldSerializeDashboardInteraction(): boolean;
-        /**
-         *  Gets or sets glyph color for this element.
-         */
         glyphColor: Color;
         private shouldSerializeGlyphColor;
         value: StiValueIndicatorMeter;
@@ -62894,14 +56715,11 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
         icon: StiFontIcons;
         iconSet: StiFontIconSet;
         iconAlignment: StiIconAlignment;
+        targetMode: StiTargetMode;
         indicatorConditions: List<StiIndicatorElementCondition>;
         private shouldSerializeConditions;
         isSampleForStyles: boolean;
         createNew(): StiComponent;
-        /**
-         *  Creates a new  component of the type StiIndicatorElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -62971,14 +56789,7 @@ declare namespace Stimulsoft.Dashboard.Components.ListBox {
     class StiListBoxElement extends StiElement implements IStiListBoxElement, IStiTitleElement, IStiJsonReportObject, IStiGlobalizationProvider {
         private static ImplementsStiListBoxElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -63016,54 +56827,23 @@ declare namespace Stimulsoft.Dashboard.Components.ListBox {
         transformSorts: List<StiDataSortRule>;
         dataTransformation: {};
         dataFilters: List<StiDataFilterRule>;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         helpUrl: string;
         createNew(): StiComponent;
         parentKey: string;
         nameMeter: StiNameListBoxMeter;
         keyMeter: StiKeyListBoxMeter;
-        /**
-         *  Creates a new  element of the type StiListBoxElement with specified location.
-         * <param name="rect" > The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -63145,29 +56925,16 @@ declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
     import StiOnlineMapLocationColorType = Stimulsoft.Report.Dashboard.StiOnlineMapLocationColorType;
     import StiOnlineMapValueViewMode = Stimulsoft.Report.Dashboard.StiOnlineMapValueViewMode;
     import Color = Stimulsoft.System.Drawing.Color;
-    /**
-     *  Map component of the dashboards.
-     */
     class StiOnlineMapElement extends StiElement implements IStiOnlineMapElement, IStiTitleElement, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider {
         private static ImplementsStiOnlineMapElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         group: string;
         title: StiTitle;
-        /**
-         *  Gets layout of the element.
-         */
         layout: StiElementLayout;
         private shouldSerializeLayout;
         fetchAllMeters(): List<IStiMeter>;
@@ -63210,25 +56977,10 @@ declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
         getLocationArgumentMeter(): IStiMeter;
         removeLocationArgumentMeter(): void;
         createNewLocationArgumentMeter(): void;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
@@ -63248,34 +57000,21 @@ declare namespace Stimulsoft.Dashboard.Components.OnlineMap {
         iconColor: Color;
         customIcon: number[];
         createNew(): StiComponent;
-        /**
-         *  Creates a new  component of the type StiOnlineMapElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.PivotTable.Design {
     import StiMeterConverter = Stimulsoft.Dashboard.Components.Design.StiMeterConverter;
-    /**
-     *  Converts a StiPivotColumn object from one data type to another.
-     */
     class StiPivotColumnConverter extends StiMeterConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.PivotTable.Design {
     import StiMeterConverter = Stimulsoft.Dashboard.Components.Design.StiMeterConverter;
-    /**
-     *  Converts a StiPivotRow object from one data type to another.
-     */
     class StiPivotRowConverter extends StiMeterConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.PivotTable.Design {
     import StiMeterConverter = Stimulsoft.Dashboard.Components.Design.StiMeterConverter;
-    /**
-     *  Converts a StiPivotSummary object from one data type to another.
-     */
     class StiPivotSummaryConverter extends StiMeterConverter {
     }
 }
@@ -63355,17 +57094,10 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
         private static ImplementsStiPivotTableElement;
         implements(): string[];
         maxIconSize: number;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         retrieveUsedDataNames(): List<string>;
         fetchAllMeters(): List<IStiMeter>;
@@ -63373,9 +57105,6 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
         get isDefined(): boolean;
         group: string;
         title: StiTitle;
-        /**
-         *  Gets layout of the element.
-         */
         layout: StiElementLayout;
         private shouldSerializeLayout;
         transformActions: List<StiDataActionRule>;
@@ -63414,25 +57143,10 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
         fetchPivotTableConditions(): List<IStiPivotTableElementCondition>;
         clearPivotTableConditions(): void;
         convertFrom(element: IStiElement): void;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         * Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         * Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
@@ -63448,10 +57162,6 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
         shouldSerializeConditions(): boolean;
         createNew(): StiComponent;
         getFormatObjects(): List<any>;
-        /**
-         *  Creates a new  component of the type StiPivotTableElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -63514,16 +57224,9 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import StiJson = Stimulsoft.Base.StiJson;
-    /**
-     *  Pivot Table Condition
-     */
     class StiPivotTableElementCondition implements IStiPivotTableElementCondition {
         private static ImplementsStiPivotTableElementCondition;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         static loadFromJson(jObject: StiJson): StiPivotTableElementCondition;
@@ -63550,10 +57253,6 @@ declare namespace Stimulsoft.Dashboard.Components.PivotTable {
         get iconSize(): Size;
         getIcon(): Promise<number[]>;
         getUniqueCode(): number;
-        /**
-         *  Creates a new  component of the type StiPivotTableElementCondition with specified location.
-         *
-         */
         constructor(keyValueMeter?: string, dataType?: StiFilterDataType, condition?: StiFilterCondition, value?: string, font?: Font, textColor?: Color, backColor?: Color, permissions?: StiConditionPermissions, icon?: StiFontIcons, iconAlignment?: StiIconAlignment, customIcon?: number[], iconColor?: Color);
     }
 }
@@ -63623,23 +57322,13 @@ declare namespace Stimulsoft.Dashboard.Components.Progress {
     import IStiProgressElement = Stimulsoft.Report.Dashboard.IStiProgressElement;
     import IStiTextFormat = Stimulsoft.Report.Components.IStiTextFormat;
     import IStiGlobalizationProvider = Stimulsoft.Report.IStiGlobalizationProvider;
-    /**
-     *  Progress component of the dashboards.
-     */
     class StiProgressElement extends StiElement implements IStiTextFormat, IStiProgressElement, IStiTitleElement, IStiFont, IStiForeColor, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider, IStiSeriesColors {
         private static ImplementsStiProgressElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         group: string;
         addValue2(dataColumn: StiDataColumn): void;
@@ -63661,25 +57350,13 @@ declare namespace Stimulsoft.Dashboard.Components.Progress {
         getSeries2(meter: IStiMeter): IStiMeter;
         createNewSeries(): void;
         convertFrom(element: IStiElement): void;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         title: StiTitle;
-        /**
-         *  Gets layout of the element.
-         */
         layout: StiElementLayout;
         private shouldSerializeLayout;
         fetchAllMeters(): List<IStiMeter>;
@@ -63699,33 +57376,12 @@ declare namespace Stimulsoft.Dashboard.Components.Progress {
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
         customStyleName: string;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets or sets a list of colors which will be used for drawing series.
-         */
         seriesColors: Color[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
@@ -63737,10 +57393,6 @@ declare namespace Stimulsoft.Dashboard.Components.Progress {
         mode: StiProgressElementMode;
         isSampleForStyles: boolean;
         createNew(): StiComponent;
-        /**
-         *  Creates a new  component of the type StiProgressElement with specified location.
-         * <param name="rect" > The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -63808,17 +57460,10 @@ declare namespace Stimulsoft.Dashboard.Components.RegionMap {
     class StiRegionMapElement extends StiElement implements IStiRegionMapElement, IStiSkipOwnFilter, IStiTitleElement, IStiElementLayout, IStiJsonReportObject, IStiGlobalizationProvider, IStiElementInteraction {
         private static ImplementsStiRegionMapElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         group: string;
         get allowSkipOwnFilter(): boolean;
@@ -63828,9 +57473,6 @@ declare namespace Stimulsoft.Dashboard.Components.RegionMap {
         get isDefined(): boolean;
         get isQuerable(): boolean;
         title: StiTitle;
-        /**
-         *  Gets layout of the element.
-         */
         layout: StiElementLayout;
         private shouldSerializeLayout;
         private _style;
@@ -63869,25 +57511,10 @@ declare namespace Stimulsoft.Dashboard.Components.RegionMap {
         getColorMeter(): IStiMeter;
         removeColorMeter(): void;
         createNewColorMeter(): void;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
@@ -63905,16 +57532,9 @@ declare namespace Stimulsoft.Dashboard.Components.RegionMap {
         valueMeter: StiValueMapMeter;
         groupMeter: StiGroupMapMeter;
         colorMeter: StiColorMapMeter;
-        /**
-         *  Returns a list of the nested pages.
-         */
         getNestedPages(): List<StiPage>;
         getMapData(): List<StiMapData>;
         createNew(): StiComponent;
-        /**
-         *  Creates a new  component of the type StiRegionMapElement with specified location.
-         * <param name="rect" > The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -63937,147 +57557,64 @@ declare namespace Stimulsoft.Dashboard.Components.Shape {
     class StiShapeElement extends StiElement implements IStiShapeElement, IStiTitleElement, IStiJsonReportObject, IStiGlobalizationProvider {
         private static ImplementsStiShapeElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
         helpUrl: string;
         isDefined: boolean;
         isQuerable: boolean;
         title: StiTitle;
         shouldSerializePadding(): boolean;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
         createNew(): StiComponent;
-        /**
-         *  Gets or sets type of the shape.
-         */
         shapeType: StiRectangleShapeType;
         private _size;
-        /**
-         *  Gets or sets size of the border.
-         */
         get size(): number;
         set size(value: number);
-        /**
-         *  Gets or sets a brush to fill a component.
-         */
         fill: StiBrush;
-        /**
-         *  Gets or sets stroke shape.
-         */
         stroke: Color;
-        /**
-         *  Creates a new  component of the type StiShapeElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Table.Design {
     import StiMeterConverter = Stimulsoft.Dashboard.Components.Design.StiMeterConverter;
-    /**
-     *  Converts a StiDataBarsColumn object from one data type to another.
-     */
     class StiDataBarsColumnConverter extends StiMeterConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Table.Design {
     import StiMeterConverter = Stimulsoft.Dashboard.Components.Design.StiMeterConverter;
-    /**
-     *  Converts a StiDimensionColumn object from one data type to another.
-     */
     class StiDimensionColumnConverter extends StiMeterConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Table.Design {
     import StiMeterConverter = Stimulsoft.Dashboard.Components.Design.StiMeterConverter;
-    /**
-     *  Converts a StiDataBarsColumn object from one data type to another.
-     */
     class StiSparklinesColumnConverter extends StiMeterConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Table.Design {
     import StiMeterConverter = Stimulsoft.Dashboard.Components.Design.StiMeterConverter;
-    /**
-     *  Converts a StiTableColumn object from one data type to another.
-     */
     class StiTableColumnConverter extends StiMeterConverter {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Table {
-    /**
-     *  In which direction data bar will be filled by brush, from left to right or from right to left.
-     */
     enum StiDataBarsDirection {
-        /**
-         *  From left to right direction.
-         */
         LeftToRight = 0,
-        /**
-         *  From right to left direction.
-         */
         RighToLeft = 1
     }
-    /**
-     *  Styles of brush for drawing Data Bars Indicator
-     */
     enum StiDataBarsBrushType {
-        /**
-         *  Solid brush.
-         */
         Solid = 0,
-        /**
-         *  Gradient brush.
-         */
         Gradient = 1
     }
-    /**
-     *  Types of the sparklines
-     */
     enum StiSparklinesType {
-        /**
-         *  Line type.
-         */
         Line = 0,
-        /**
-         *  Area type.
-         */
         Area = 1,
-        /**
-         *  Column.
-         */
         Column = 2,
-        /**
-         *  WinLoss
-         */
         WinLoss = 3
     }
 }
@@ -64169,17 +57706,10 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
     class StiTableElement extends StiElement implements IStiTableElement, IStiTitleElement, IStiElementLayout, IStiJsonReportObject, IStiGlobalizationProvider, IStiElementInteraction, IStiSkipOwnFilter {
         private static ImplementsStiTableElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         createMeters(source: IStiTableElement): void;
         createMeters2(dataSource: StiDataSource): void;
@@ -64197,21 +57727,12 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
         retrieveUsedDataNames(): List<string>;
         get isDefined(): boolean;
         title: StiTitle;
-        /**
-         *  Gets layout of the element.
-         */
         layout: StiElementLayout;
         private shouldSerializeLayout;
         group: string;
         get allowSkipOwnFilter(): boolean;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
         private _style;
@@ -64225,75 +57746,32 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
         transformSorts: List<StiDataSortRule>;
         dataTransformation: {};
         dataFilters: List<StiDataFilterRule>;
-        /**
-         *  Gets or sets value indicates is the component selected or not.
-         */
-        /**
-         * Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
         dashboardInteraction: IStiDashboardInteraction;
         get shouldSerializeDashboardInteraction(): boolean;
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
         helpUrl: string;
         columns: List<StiTableColumn>;
         private shouldSerializeColumns;
-        /**
-         *  Gets or sets the column size mode.
-         */
         sizeMode: StiTableSizeMode;
-        /**
-         *  Gets or sets fore color for the table header.
-         */
         headerForeColor: Color;
         private shouldSerializeHeaderForeColor;
-        /**
-         *  Gets or sets the font of the table header.
-         */
         headerFont: Font;
         private shouldSerializeHeaderFont;
-        /**
-         *  Gets or sets fore color for the table footer.
-         */
         footerForeColor: Color;
         private shouldSerializeFooterForeColor;
-        /**
-         *  Gets or sets the font of the table footer.
-         */
         footerFont: Font;
         private shouldSerializeFooterFont;
-        /**
-         *  Returns a list of the nested pages.
-         */
         getNestedPages(): List<StiPage>;
         getFormatObjects(): List<any>;
         createNew(): StiComponent;
-        /**
-         *  Creates a new  component of the type StiTableElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Text.Design {
-    /**
-     *  Converts text to string description.
-     */
     class StiTextConverter {
     }
 }
@@ -64340,14 +57818,7 @@ declare namespace Stimulsoft.Dashboard.Components.Text {
     class StiTextElement extends StiElement implements IStiTextFont, IStiForeColor, IStiTextHorAlignment, IStiVertAlignment, IStiTextElement, IStiTitleElement, IStiJsonReportObject, IStiGlobalizationProvider, IStiElementInteraction {
         private static ImplementsStiTextElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -64357,9 +57828,6 @@ declare namespace Stimulsoft.Dashboard.Components.Text {
         title: StiTitle;
         text: string;
         getSimpleText(): string;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         getFont(): Font;
@@ -64370,53 +57838,22 @@ declare namespace Stimulsoft.Dashboard.Components.Text {
         setFontBoldStyle(isBold: boolean): void;
         setFontItalicStyle(isItalic: boolean): void;
         setFontUnderlineStyle(isUnderline: boolean): void;
-        /**
-         *  Gets or sets the text horizontal alignment.
-         */
         get horAlignment(): StiTextHorAlignment;
         set horAlignment(value: StiTextHorAlignment);
-        /**
-         *  Gets or sets the vertical alignment of an object.
-         */
         vertAlignment: StiVertAlignment;
         shouldSerializePadding(): boolean;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
         dashboardInteraction: IStiDashboardInteraction;
         get shouldSerializeDashboardInteraction(): boolean;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         helpUrl: string;
-        /**
-         *  Returns a list of the nested pages.
-         */
         getNestedPages(): List<StiPage>;
         createNew(): StiComponent;
         getHtmlTextHelper(): IStiHtmlTextHelper;
-        /**
-         *  Creates a new  component of the type StiTextElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -64458,14 +57895,7 @@ declare namespace Stimulsoft.Dashboard.Components.TreeView {
     class StiTreeViewElement extends StiElement implements IStiTreeViewElement, IStiTitleElement, IStiGlobalizationProvider, IStiJsonReportObject {
         private static ImplementsStiTreeViewElement;
         implements(): string[];
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -64489,14 +57919,8 @@ declare namespace Stimulsoft.Dashboard.Components.TreeView {
         transformSorts: List<StiDataSortRule>;
         dataTransformation: {};
         dataFilters: List<StiDataFilterRule>;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         showAllValue: boolean;
@@ -64509,43 +57933,18 @@ declare namespace Stimulsoft.Dashboard.Components.TreeView {
         addNewKeyMeter(): IStiMeter;
         addKey(dataColumn: StiDataColumn): void;
         convertFrom(element: IStiElement): void;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         *  Sets localized string to specified property name.
-         */
         setString(propertyName: string, value: string): void;
-        /**
-         *  Gets localized string from specified property name.
-         */
         getString(propertyName: string): string;
-        /**
-         *  Returns array of the property names which can be localized.
-         */
         getAllStrings(): string[];
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         helpUrl: string;
         createNew(): StiComponent;
         parentKey: string;
         keyMeters: List<StiKeyTreeViewMeter>;
-        /**
-         *  Creates a new  element of the type StiTreeViewElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -64590,17 +57989,10 @@ declare namespace Stimulsoft.Dashboard.Components.TreeViewBox {
     class StiTreeViewBoxElement extends StiElement implements IStiTreeViewBoxElement, IStiFixedHeightElement, IStiJsonReportObject {
         private static ImplementsStiTreeViewBoxElement;
         implements(): string[];
-        /**
-         *  ID code of this component. Used in JSON saving.
-         */
         componentId: StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        /**
-         *  Creates a new  object that is a copy of the current instance.
-         *  @returns A new object that is a copy of this instance.
-         */
         clone(cloneProperties: boolean): any;
         group: string;
         getParentKey(): string;
@@ -64620,14 +58012,8 @@ declare namespace Stimulsoft.Dashboard.Components.TreeViewBox {
         transformSorts: List<StiDataSortRule>;
         dataTransformation: {};
         dataFilters: List<StiDataFilterRule>;
-        /**
-         *  Gets or sets the font of the text displayed by the control.
-         */
         font: Font;
         private shouldSerializeFont;
-        /**
-         *  Gets or sets font color for this element.
-         */
         foreColor: Color;
         private shouldSerializeForeColor;
         showAllValue: boolean;
@@ -64640,22 +58026,10 @@ declare namespace Stimulsoft.Dashboard.Components.TreeViewBox {
         addNewKeyMeter(): IStiMeter;
         addKey(dataColumn: StiDataColumn): void;
         convertFrom(element: IStiElement): void;
-        /**
-         *  Gets or sets the format of the text.
-         */
         textFormat: StiFormatService;
         private shouldSerializeTextFormat;
-        /**
-         *  Gets value to sort a position in the toolbox.
-         */
         toolboxPosition: StiComponentToolboxPosition;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
-        /**
-         *  Gets or sets the default client area of a component.
-         */
         defaultClientRectangle: Rectangle;
         get minSize(): Size;
         set minSize(value: Size);
@@ -64665,10 +58039,6 @@ declare namespace Stimulsoft.Dashboard.Components.TreeViewBox {
         createNew(): StiComponent;
         parentKey: string;
         keyMeters: List<StiKeyTreeViewBoxMeter>;
-        /**
-         *  Creates a new  element of the type StiTreeViewBoxElement with specified location.
-         *  @param rect The rectangle describes size and position of the component.
-         */
         constructor(rect?: Rectangle);
     }
 }
@@ -64745,9 +58115,6 @@ declare namespace Stimulsoft.Dashboard.Components {
     import IStiDashboard = Stimulsoft.Report.Dashboard.IStiDashboard;
     import StiPage = Stimulsoft.Report.Components.StiPage;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
-    /**
-     *  Represents a dashboard panel.
-     */
     class StiDashboard extends StiPage implements IStiDashboard, IStiJsonReportObject {
         private static ImplementsStiDashboard;
         implements(): string[];
@@ -64762,9 +58129,6 @@ declare namespace Stimulsoft.Dashboard.Components {
         getNestedPages(): List<StiPage>;
         get isDefined(): boolean;
         isQuerable: boolean;
-        /**
-         *  Gets or sets a back color.
-         */
         backColor: Color;
         private shouldSerializeBackColor;
         retrieveUsedDataNames(group: string): List<string>;
@@ -64772,17 +58136,8 @@ declare namespace Stimulsoft.Dashboard.Components {
         getDataSources(dataNames: List<string>): List<IStiAppDataSource>;
         getKey(): string;
         isDataSource: boolean;
-        /**
-         *  Gets a service category.
-         */
         serviceCategory: string;
-        /**
-         *  ID code of this meter. Used in JSON saving.
-         */
         componentId: StiComponentId;
-        /**
-         *  Gets a localized component name.
-         */
         get localizedName(): string;
         margins: StiMargins;
         get gridSize(): number;
@@ -64799,49 +58154,25 @@ declare namespace Stimulsoft.Dashboard.Components {
         set style(value: StiElementStyleIdent);
         customStyleName: string;
         private _width2;
-        /**
-         *  Gets or sets the total width of the dashboard.
-         */
         get width(): number;
         set width(value: number);
         private _height2;
-        /**
-         *  Gets or sets the total height of the dashboard.
-         */
         get height(): number;
         set height(value: number);
-        /**
-         *  Creates a new  StiDashboard.
-         */
         constructor(report?: StiReport);
     }
 }
 declare namespace Stimulsoft.Dashboard.Design.Helpers {
     enum StiRichTextAlignment {
-        /**
-         *  The text is aligned to the left.
-         */
         Left = 1,
-        /**
-         *  The text is aligned to the right.
-         */
         Right = 2,
-        /**
-         *  The text is aligned in the center.
-         */
         Center = 3,
-        /**
-         *  The text is justified.
-         */
         Justify = 4
     }
 }
 declare namespace Stimulsoft.Dashboard.Design.Helpers {
     import Color = Stimulsoft.System.Drawing.Color;
     import Font = Stimulsoft.System.Drawing.Font;
-    /**
-     *  Represents a Windows rich text box control, with some impovements.
-     */
     class StiRichBoxControl {
         selectionFont: Font;
         selectionColor: Color;
@@ -65201,9 +58532,6 @@ declare namespace Stimulsoft.Dashboard.Images {
     }
 }
 declare namespace Stimulsoft.Dashboard.Interactions.Design {
-    /**
-     *  Converts StiDashboardDrillDownParameter from one data type to another.
-     */
     class StiDashboardDrillDownParameterConverter {
     }
 }
@@ -65239,26 +58567,16 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
         static loadFromJson(json: StiJson): StiDashboardDrillDownParameter;
         static loadFromXml(xmlNode: XmlNode): StiDashboardDrillDownParameter;
-        /**
-         *  Saves element to string.
-         *  @returns String representation which contains schema.
-         */
         saveToString(): string;
         getStringRepresentation(): string;
         get isDefault(): boolean;
         name: string;
-        /**
-         * Gets or sets expression to fill drill-down parameter.
-         */
         expression: string;
         constructor();
     }
 }
 declare namespace Stimulsoft.Dashboard.Options {
     import Type = Stimulsoft.System.Type;
-    /**
-     *  Class for adjustment all aspects of Stimulsoft Dashboards.
-     */
     class StiDashboardOptions {
     }
     class Services {
@@ -65528,25 +58846,10 @@ declare namespace Stimulsoft.Dashboard.Export.Settings {
         private static ImplementsStiDashboardExportSettings;
         implements(): string[];
         format: StiDashboardExportFormat;
-        /**
-         *  Enables or disables rendering of the defined element borders.
-         */
         renderBorders: boolean;
-        /**
-         *  Export a single dashboard element to the entire page.
-         */
         renderSingleElement: boolean;
-        /**
-         *  Export only the first page if elements require multiple pages to be rendered.
-         */
         renderSinglePage: boolean;
-        /**
-         *  Gets or sets page orientation.
-         */
         orientation: StiPageOrientation;
-        /**
-         * Gets or sets the page size.
-         */
         paperSize: PaperKind;
         openAfterExport: boolean;
     }
@@ -65565,9 +58868,6 @@ declare namespace Stimulsoft.Dashboard.Export.Settings {
         private _height;
         get height(): number;
         set height(value: number);
-        /**
-         *  Gets or sets image scale for exported images.
-         */
         scale: number;
         constructor(imageType?: StiImageType);
     }
@@ -65576,13 +58876,7 @@ declare namespace Stimulsoft.Dashboard.Export.Settings {
     import StiImageType = Stimulsoft.Report.Export.StiImageType;
     class StiSvgDashboardExportSettings extends StiImageDashboardExportSettings {
         imageType: StiImageType;
-        /**
-         *  If false and the element has no data, render empty data 'Drag & Drop' message instead of element content
-         */
         renderEmptyContent: boolean;
-        /**
-         *  Export the element for use on the web designer page.
-         */
         designMode: boolean;
     }
 }
@@ -65598,9 +58892,6 @@ declare namespace Stimulsoft.Dashboard.Export.Settings {
         private _height;
         get height(): number;
         set height(value: number);
-        /**
-         *  Gets or sets image quality of images which will be exported to Excel file.
-         */
         imageQuality: number;
         exportDataOnly: boolean;
     }
@@ -65612,9 +58903,6 @@ declare namespace Stimulsoft.Dashboard.Export.Settings {
         implements(): string[];
         format: StiDashboardExportFormat;
         autoPrint: boolean;
-        /**
-         *  Gets or sets image quality of images which will be exported to result PDF file.
-         */
         imageQuality: number;
     }
 }
@@ -66025,33 +59313,12 @@ declare namespace Stimulsoft.Viewer {
         interaction: StiInteractionParams;
     }
     class StiInteractionParams {
-        /**
-         *  The the values of the request from user report variables after Submit.
-         */
         variables: {};
-        /**
-         *  The the values of the sorting parameters after Sorting action.
-         */
         sorting: {};
-        /**
-         *  The the values of the collapsing parameters after Collapsing action.
-         */
         collapsing: {};
-        /**
-         *  The the values of the parameters for all levels for drill-down report after DrillDown action.
-         */
         drillDown: any[];
-        /**
-         *  The the values of the edited report fields.
-         */
         editable: {};
-        /**
-         *  The the values of the filtering parameters after DashboardFiltering action.
-         */
         dashboardFiltering: {};
-        /**
-         *  The the values of the sorting  parameters after DashboardSorting action.
-         */
         dashboardSorting: {};
     }
 }
@@ -66106,6 +59373,8 @@ declare namespace Stimulsoft.Viewer.Helpers.Dashboards {
     }
 }
 declare namespace Stimulsoft.Viewer.Helpers.Dashboards {
+    import StiReport = Stimulsoft.Report.StiReport;
+    import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import KeyObjectType = Stimulsoft.System.KeyObjectType;
     import StiPromise = Stimulsoft.System.StiPromise;
     import IStiControlElement = Stimulsoft.Report.Dashboard.IStiControlElement;
@@ -66128,6 +59397,8 @@ declare namespace Stimulsoft.Viewer.Helpers.Dashboards {
         static getBingMapScriptAsync(element: IStiElement, showTitle: boolean): StiPromise<string>;
         static getDashboardInteraction(object_: any): KeyObjectType;
         static format(element: IStiControlElement, value: any): string;
+        static getConstants(value: string, cells: any): Hashtable;
+        static parseDashboardDrillDownParameters(drillDownParameters: any[], report: StiReport): void;
     }
 }
 declare namespace Stimulsoft.Viewer.Helpers.Dashboards {
@@ -66295,9 +59566,6 @@ declare namespace Stimulsoft.Viewer {
         private static getPdfDashboardExportSettings;
         private static getExcelDashboardExportSettings;
         private static getDataDashboardExportSettings;
-        /**
-         *  Exports dashboard page or element to the specified format
-         */
         static exportDashboardAsync(requestParams: any, report: StiReport, exportSettings: IStiDashboardExportSettings): StiPromise<number[]>;
     }
 }
@@ -66317,9 +59585,6 @@ declare namespace Stimulsoft.Viewer {
     import StiReport = Stimulsoft.Report.StiReport;
     import Color = Stimulsoft.System.Drawing.Color;
     class StiReportHelper {
-        /**
-         *  Get the color in HEX format.
-         */
         static getHtmlColor(color: Color): string;
         private static round;
         private static round2;
@@ -66377,165 +59642,97 @@ declare namespace Stimulsoft.Viewer {
     import Color = Stimulsoft.System.Drawing.Color;
     import StiHtmlExportMode = Stimulsoft.Report.Export.StiHtmlExportMode;
     class StiAppearanceOptions {
-        /** Gets or sets the background color of the viewer. */
         backgroundColor: Color;
-        /** Gets or sets a color of the report page border. */
         pageBorderColor: Color;
-        /** Gets or sets a value which controls of output objects in the right to left mode. */
         rightToLeft: boolean;
-        /** Gets or sets a value which indicates which indicates that the viewer is displayed in full screen mode. */
         fullScreenMode: boolean;
-        /** Gets or sets a value which indicates that the viewer will show the report area with scrollbars. */
         scrollbarsMode: boolean;
-        /** Gets or sets a browser window to open links from the report. */
         openLinksWindow: string;
-        /** Gets or sets a browser window to open the exported report. */
         openExportedReportWindow: string;
-        /** Gets or sets a value which indicates that show or hide tooltips. */
         showTooltips: boolean;
-        /** Gets or sets a value which indicates that show or hide the help link in tooltips. */
         showTooltipsHelp: boolean;
-        /** Gets or sets the alignment of the viewer page. */
         pageAlignment: StiContentAlignment;
-        /** Gets or sets a value which indicates that the shadow of the page will be displayed in the viewer. */
         showPageShadow: boolean;
-        /** Gets or sets a value which allows printing report bookmarks. */
         bookmarksPrint: boolean;
-        /** Gets or sets a width of the bookmarks tree in the viewer. */
         bookmarksTreeWidth: number;
         parametersPanelPosition: StiParametersPanelPosition;
-        /** Gets or sets a max height of parameters panel in the viewer. */
         parametersPanelMaxHeight: number;
-        /** Gets or sets a count columns in parameters panel. */
         parametersPanelColumnsCount: number;
-        /** Gets or sets a date format for datetime parameters in parameters panel. The default is the client browser date format. */
         parametersPanelDateFormat: string;
-        /** Gets or sets the type of the viewer interface. */
         interfaceType: StiInterfaceType;
-        /** Gets or sets the type of the chart in the viewer. */
         chartRenderType: StiChartRenderType;
-        /** Gets or sets a method how the viewer will show a report. */
         reportDisplayMode: StiHtmlExportMode;
-        /** Gets or sets the first day of week in the date picker */
         datePickerFirstDayOfWeek: StiFirstDayOfWeek;
-        /** Gets or sets a value which allows touch zoom in the viewer. */
         allowTouchZoom: boolean;
-        /** Obsolete. Please use the reportDisplayMode property instead. Should be removed in 2018.3 version. */
         htmlRenderMode: StiHtmlExportMode;
     }
 }
 declare namespace Stimulsoft.Viewer {
     class StiEmailOptions {
-        /** Gets or sets a value which allows to display the Email dialog, or send Email with the default settings. */
         showEmailDialog: boolean;
-        /** Gets or sets a value which allows to display the export dialog for Email, or export report for Email with the default settings. */
         showExportDialog: boolean;
-        /** Gets or sets the default email address of the message created in the viewer. */
         defaultEmailAddress: string;
-        /** Gets or sets the default subject of the message created in the viewer. */
         defaultEmailSubject: string;
-        /** Gets or sets the default text of the message created in the viewer. */
         defaultEmailMessage: string;
     }
 }
 declare namespace Stimulsoft.Viewer {
     class StiExportsOptions {
-        /** Gets or sets a value which allows store the export settings in the cookies. */
         storeExportSettings: boolean;
-        /** Gets or sets a value which allows to display the export dialog, or to export with the default settings. */
         showExportDialog: boolean;
-        /** Gets or sets a value which indicates that the user can save the report from the viewer to the report document file. */
         showExportToDocument: boolean;
-        /** Gets or sets a value which indicates that the user can save the report from the viewer to the PDF format. */
         showExportToPdf: boolean;
-        /** Gets or sets a value which indicates that the user can save the report from the viewer to the HTML format. */
         showExportToHtml: boolean;
-        /** Gets or sets a value which indicates that the user can save the report from the viewer to the HTML5 format. */
         showExportToHtml5: boolean;
-        /** Gets or sets a value which indicates that the user can save the report from the viewer to the Word 2007-2010 format. */
         showExportToWord2007: boolean;
-        /** Gets or sets a value which indicates that the user can save the report from the viewer to the Excel 2007-2010 format. */
         showExportToExcel2007: boolean;
-        /** Gets or sets a value which indicates that the user can save the report from the viewer to the CSV format. */
         showExportToCsv: boolean;
-        /** Gets or sets a value which indicates that the user can save the report from the viewer to the Text format. */
         showExportToText: boolean;
+        showExportToOpenDocumentWriter: boolean;
+        showExportToOpenDocumentCalc: boolean;
+        showExportToPowerPoint: boolean;
     }
 }
 declare namespace Stimulsoft.Viewer {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiToolbarOptions {
-        /** Gets or sets a value which indicates that toolbar will be shown in the viewer. */
         visible: boolean;
-        /** Gets or sets the display mode of the toolbar - simple or separated into upper and lower parts. */
         displayMode: StiToolbarDisplayMode;
-        /** Gets or sets a color of the toolbar background. The default value is the theme color. */
         backgroundColor: Color;
-        /** Gets or sets a color of the toolbar border. The default value is the theme color. */
         borderColor: Color;
-        /** Gets or sets a color of the toolbar texts. */
         fontColor: Color;
-        /** Gets or sets a value which indicates which font family will be used for drawing texts in the viewer. */
         fontFamily: string;
-        /** Gets or sets the alignment of the viewer toolbar. */
         alignment: StiContentAlignment;
-        /** Gets or sets a value which allows displaying or hiding toolbar buttons captions. */
         showButtonCaptions: boolean;
-        /** Gets or sets a visibility of the Print button in the toolbar of the viewer. */
         showPrintButton: boolean;
-        /** Gets or sets a visibility of the Open button in the toolbar of the viewer. */
         showOpenButton: boolean;
-        /** Gets or sets a visibility of the Save button in the toolbar of the viewer. */
         showSaveButton: boolean;
-        /** Gets or sets a visibility of the Send Email button in the toolbar of the viewer. */
         showSendEmailButton: boolean;
-        /** Gets or sets a visibility of the Find button in the toolbar of the viewer. */
         showFindButton: boolean;
-        /** Gets or sets a visibility of the Bookmarks button in the toolbar of the viewer. */
         showBookmarksButton: boolean;
-        /** Gets or sets a visibility of the Parameters button in the toolbar of the viewer. */
         showParametersButton: boolean;
-        /** Gets or sets a visibility of the Resources button in the toolbar of the viewer. */
         showResourcesButton: boolean;
-        /** Gets or sets a visibility of the Editor button in the toolbar of the viewer. */
         showEditorButton: boolean;
-        /** Gets or sets a visibility of the Full Screen button in the toolbar of the viewer. */
         showFullScreenButton: boolean;
-        /** Gets or sets a visibility of the First Page button in the toolbar of the viewer. */
         showFirstPageButton: boolean;
-        /** Gets or sets a visibility of the Prev Page button in the toolbar of the viewer. */
         showPreviousPageButton: boolean;
-        /** Gets or sets a visibility of the current page control in the toolbar of the viewer. */
         showCurrentPageControl: boolean;
-        /** Gets or sets a visibility of the Next Page button in the toolbar of the viewer. */
         showNextPageButton: boolean;
-        /** Gets or sets a visibility of the Last Page button in the toolbar of the viewer. */
         showLastPageButton: boolean;
-        /** Gets or sets a visibility of the Zoom control in the toolbar of the viewer. */
         showZoomButton: boolean;
-        /** Gets or sets a visibility of the View Mode button in the toolbar of the viewer. */
         showViewModeButton: boolean;
-        /** Gets or sets a visibility of the Design button in the toolbar of the viewer. */
         showDesignButton: boolean;
-        /** Gets or sets a visibility of the About button in the toolbar of the viewer. */
         showAboutButton: boolean;
-        /** Gets or sets a visibility of the Pin button in the toolbar of the viewer in mobile mode. */
         showPinToolbarButton: boolean;
-        /** Gets or sets the default mode of the report print destination. */
         printDestination: StiPrintDestination;
-        /** Gets or sets the mode of showing a report in the viewer - one page or the whole report. */
         viewMode: StiWebViewMode;
         multiPageWidthCount: number;
         multiPageHeightCount: number;
         private _zoom;
-        /** Gets or sets the report showing zoom. The default value is 100. */
         get zoom(): number;
         set zoom(value: number);
-        /** Gets or sets a value which indicates that menu animation is enabled. */
         menuAnimation: boolean;
-        /** Gets or sets the mode that shows menu of the viewer. */
         showMenuMode: StiShowMenuMode;
-        /** Gets or sets a value which allows automatically hide the viewer toolbar in mobile mode. */
         autoHide: boolean;
     }
 }
@@ -66690,17 +59887,11 @@ declare namespace Stimulsoft.Viewer {
 }
 declare namespace Stimulsoft.Viewer {
     class StiViewerOptions {
-        /** A class which controls settings of the viewer appearance. */
         appearance: StiAppearanceOptions;
-        /** A class which controls settings of the viewer toolbar. */
         toolbar: StiToolbarOptions;
-        /** A class which controls the export options. */
         exports: StiExportsOptions;
-        /** A class which controls the export options. */
         email: StiEmailOptions;
-        /** Gets or sets the width of the viewer. */
         width: string;
-        /** Gets or sets the height of the viewer. */
         height: string;
         viewerId: string;
         reportDesignerMode: boolean;
@@ -69807,217 +62998,125 @@ declare namespace Stimulsoft.Report.Check {
 declare namespace Stimulsoft.Designer {
     import StiReportUnitType = Stimulsoft.Report.StiReportUnitType;
     class StiAppearanceOptions {
-        /** Gets or sets a default value of unit in the designer. */
         defaultUnit: StiReportUnitType;
-        /** Gets or sets the type of the designer interface. */
         interfaceType: StiInterfaceType;
-        /** Gets or sets a value which indicates that animation is enabled. */
         showAnimation: boolean;
-        /** Gets or sets a visibility of the save dialog of the designer. */
         showSaveDialog: boolean;
-        /** Gets or sets a value which indicates that show or hide tooltips. */
         showTooltips: boolean;
-        /** Gets or sets a value which indicates that show or hide tooltips help icon. */
         showTooltipsHelp: boolean;
-        /** Gets or sets a value which indicates that show or hide the help button in dialogs. */
         showDialogsHelp: boolean;
-        /** Gets or sets a value which indicates that the designer is displayed in full screen mode. */
         fullScreenMode: boolean;
-        /** Gets or sets a value which indicates that the designer will be maximized after creation. */
         maximizeAfterCreating: boolean;
-        /** Gets or sets a visibility of the localization control of the designer. */
         private _showLocalization;
         get showLocalization(): boolean;
         set showLocalization(value: boolean);
-        /** Allow the designer to change the window title. */
         allowChangeWindowTitle: boolean;
-        /** Gets or sets a visibility of the properties grid in the designer. */
         showPropertiesGrid: boolean;
-        /** Gets or sets a visibility of the report tree in the designer. */
         showReportTree: boolean;
-        /** Gets or sets a position of the properties grid in the designer. */
         propertiesGridPosition: StiPropertiesGridPosition;
         private _zoom;
-        /** Gets or sets the report showing zoom. The default value is 100. */
         get zoom(): number;
         set zoom(value: number);
     }
 }
 declare namespace Stimulsoft.Designer {
     class StiBandsOptions {
-        /** Gets or sets a visibility of the ReportTitleBand item in the bands menu of the designer. */
         showReportTitleBand: boolean;
-        /** Gets or sets a visibility of the ReportSummaryBand item in the bands menu of the designer. */
         showReportSummaryBand: boolean;
-        /** Gets or sets a visibility of the PageHeaderBand item in the bands menu of the designer. */
         showPageHeaderBand: boolean;
-        /** Gets or sets a visibility of the PageFooterBand item in the bands menu of the designer. */
         showPageFooterBand: boolean;
-        /** Gets or sets a visibility of the GroupHeaderBand item in the bands menu of the designer. */
         showGroupHeaderBand: boolean;
-        /** Gets or sets a visibility of the GroupFooterBand item in the bands menu of the designer. */
         showGroupFooterBand: boolean;
-        /** Gets or sets a visibility of the HeaderBand item in the bands menu of the designer. */
         showHeaderBand: boolean;
-        /** Gets or sets a visibility of the FooterBand item in the bands menu of the designer. */
         showFooterBand: boolean;
-        /** Gets or sets a visibility of the ColumnHeaderBand item in the bands menu of the designer. */
         showColumnHeaderBand: boolean;
-        /** Gets or sets a visibility of the ColumnFooterBand item in the bands menu of the designer. */
         showColumnFooterBand: boolean;
-        /** Gets or sets a visibility of the DataBand item in the bands menu of the designer. */
         showDataBand: boolean;
-        /** Gets or sets a visibility of the HierarchicalBand item in the bands menu of the designer. */
         showHierarchicalBand: boolean;
-        /** Gets or sets a visibility of the ChildBand item in the bands menu of the designer. */
         showChildBand: boolean;
-        /** Gets or sets a visibility of the EmptyBand item in the bands menu of the designer. */
         showEmptyBand: boolean;
-        /** Gets or sets a visibility of the OverlayBand item in the bands menu of the designer. */
         showOverlayBand: boolean;
-        /** Gets or sets a visibility of the Table item in the bands menu of the designer. */
         showTable: boolean;
     }
 }
 declare namespace Stimulsoft.Designer {
     class StiComponentsOptions {
-        /** Gets or sets a visibility of the Text item in the components menu of the designer. */
         showText: boolean;
-        /** Gets or sets a visibility of the TextInCells item in the components menu of the designer. */
         showTextInCells: boolean;
-        /** Gets or sets a visibility of the RichText item in the components menu of the designer. */
         showRichText: boolean;
-        /** Gets or sets a visibility of the Image item in the components menu of the designer. */
         showImage: boolean;
-        /** Gets or sets a visibility of the BarCode item in the components menu of the designer. */
         showBarCode: boolean;
-        /** Gets or sets a visibility of the Shape item in the components menu of the designer. */
         showShape: boolean;
-        /** Gets or sets a visibility of the Panel item in the components menu of the designer. */
         showPanel: boolean;
-        /** Gets or sets a visibility of the Clone item in the components menu of the designer. */
         showClone: boolean;
-        /** Gets or sets a visibility of the CheckBox item in the components menu of the designer. */
         showCheckBox: boolean;
-        /** Gets or sets a visibility of the SubReport item in the components menu of the designer. */
         showSubReport: boolean;
-        /** Gets or sets a visibility of the ZipCode item in the components menu of the designer. */
         showZipCode: boolean;
-        /** Gets or sets a visibility of the Chart item in the components menu of the designer. */
         showChart: boolean;
-        /** Gets or sets a visibility of the Gauge item in the components menu of the designer. */
         showGauge: boolean;
     }
 }
 declare namespace Stimulsoft.Designer {
     class StiCrossBandsOptions {
-        /** Gets or sets a visibility of the CrossTab item in the crossbands menu of the designer. */
         showCrossTab: boolean;
-        /** Gets or sets a visibility of the CrossGroupHeaderBand item in the crossbands menu of the designer. */
         showCrossGroupHeaderBand: boolean;
-        /** Gets or sets a visibility of the CrossGroupFooterBand item in the crossbands menu of the designer. */
         showCrossGroupFooterBand: boolean;
-        /** Gets or sets a visibility of the CrossHeaderBand item in the crossbands menu of the designer. */
         showCrossHeaderBand: boolean;
-        /** Gets or sets a visibility of the CrossFooterBand item in the crossbands menu of the designer. */
         showCrossFooterBand: boolean;
-        /** Gets or sets a visibility of the CrossDataBand item in the crossbands menu of the designer. */
         showCrossDataBand: boolean;
     }
 }
 declare namespace Stimulsoft.Designer {
     class StiDashboardElementsOptions {
-        /** Gets or sets a visibility of the TableElement item in the designer. */
         showTableElement: boolean;
-        /** Gets or sets a visibility of the ChartElement item in the designer. */
         showChartElement: boolean;
-        /** Gets or sets a visibility of the GaugeElement item in the designer. */
         showGaugeElement: boolean;
-        /** Gets or sets a visibility of the PivotTableElement item in the designer. */
         showPivotTableElement: boolean;
-        /** Gets or sets a visibility of the IndicatorElement item in the designer. */
         showIndicatorElement: boolean;
-        /** Gets or sets a visibility of the ProgressElement item in the designer. */
         showProgressElement: boolean;
-        /** Gets or sets a visibility of the RegionMapElement item in the designer. */
         showRegionMapElement: boolean;
-        /** Gets or sets a visibility of the OnlineMapElement item in the designer. */
         showOnlineMapElement: boolean;
-        /** Gets or sets a visibility of the ImageElement item in the designer. */
         showImageElement: boolean;
-        /** Gets or sets a visibility of the TextElement item in the designer. */
         showTextElement: boolean;
-        /** Gets or sets a visibility of the PanelElement item in the designer. */
         showPanelElement: boolean;
-        /** Gets or sets a visibility of the ShapeElement item in the designer. */
         showShapeElement: boolean;
-        /** Gets or sets a visibility of the ListBoxElement item in the designer. */
         showListBoxElement: boolean;
-        /** Gets or sets a visibility of the ComboBoxElement item in the designer. */
         showComboBoxElement: boolean;
-        /** Gets or sets a visibility of the TreeViewElement item in the designer. */
         showTreeViewElement: boolean;
-        /** Gets or sets a visibility of the TreeViewBoxElement item in the designer. */
         showTreeViewBoxElement: boolean;
-        /** Gets or sets a visibility of the DatePickerElement item in the designer. */
         showDatePickerElement: boolean;
     }
 }
 declare namespace Stimulsoft.Designer {
     class StiDictionaryOptions {
-        /** Gets or sets a visibility of the other category in the new connection form. */
         showAdaptersInNewConnectionForm: boolean;
-        /** Gets or sets a visibility of the dictionary in the designer. */
         showDictionary: boolean;
-        /** Gets or sets a value of permissions for datasources in the designer. */
         dataSourcesPermissions: StiDesignerPermissions;
-        /** Gets or sets a value of connections for datasources in the designer. */
         dataConnectionsPermissions: StiDesignerPermissions;
-        /** Gets or sets a value of connections for columns in the designer. */
         dataColumnsPermissions: StiDesignerPermissions;
-        /** Gets or sets a value of connections for relations in the designer. */
         dataRelationsPermissions: StiDesignerPermissions;
-        /** Gets or sets a value of connections for business objects in the designer. */
         businessObjectsPermissions: StiDesignerPermissions;
-        /** Gets or sets a value of connections for variables in the designer. */
         variablesPermissions: StiDesignerPermissions;
-        /** Gets or sets a value of connections for resources in the designer. */
         resourcesPermissions: StiDesignerPermissions;
     }
 }
 declare namespace Stimulsoft.Designer {
     class StiToolbarOptions {
-        /** Gets or sets a value which indicates that toolbar will be shown in the designer. */
         visible: boolean;
-        /** Gets or sets a visibility of the preview button in the toolbar of the designer. */
         showPreviewButton: boolean;
-        /** Gets or sets a visibility of the save button in the toolbar of the designer. */
         showSaveButton: boolean;
-        /** Gets or sets a visibility of the about button in the toolbar of the designer. */
         showAboutButton: boolean;
-        /** Gets or sets a visibility of the publish button in the toolbar of the designer. */
         showPublishButton: boolean;
-        /** Gets or sets a visibility of the file menu of the designer. */
         showFileMenu: boolean;
-        /** Gets or sets a visibility of the item New in the file menu. */
         showFileMenuNew: boolean;
-        /** Gets or sets a visibility of the item Open in the file menu. */
         showFileMenuOpen: boolean;
-        /** Gets or sets a visibility of the item Save in the file menu. */
         showFileMenuSave: boolean;
-        /** Gets or sets a visibility of the item Save As in the file menu. */
         showFileMenuSaveAs: boolean;
-        /** Gets or sets a visibility of the item Close in the file menu. */
         showFileMenuClose: boolean;
-        /** Gets or sets a visibility of the item Exit in the file menu. */
         showFileMenuExit: boolean;
-        /** Gets or sets a visibility of the item Report Setup in the file menu. */
         showFileMenuReportSetup: boolean;
-        /** Gets or sets a visibility of the item Options in the file menu. */
         showFileMenuOptions: boolean;
-        /** Gets or sets a visibility of the item Info in the file menu. */
         showFileMenuInfo: boolean;
-        /** Gets or sets a visibility of the item About in the file menu. */
         showFileMenuAbout: boolean;
         showSetupToolboxButton: boolean;
         showNewPageButton: boolean;
@@ -70711,6 +63810,7 @@ declare namespace Stimulsoft.Designer.Dashboards {
     }
 }
 declare namespace Stimulsoft.Designer {
+    import StiReport = Stimulsoft.Report.StiReport;
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiGeneralFormatService = Stimulsoft.Report.Components.TextFormats.StiGeneralFormatService;
     import StiNumberFormatService = Stimulsoft.Report.Components.TextFormats.StiNumberFormatService;
@@ -70736,6 +63836,8 @@ declare namespace Stimulsoft.Designer {
         static getTextFormatItem(service: StiFormatService): any;
         static getDateAndTimeFormats(category: string, service: StiFormatService): any[];
         static getTextFormatItems(): any;
+        static updateTextFormatItemsByReportCulture(report: StiReport, param: any, callbackResult: any): void;
+        static updateSampleTextFormat(report: StiReport, param: any, callbackResult: any): void;
     }
 }
 declare namespace Stimulsoft.Designer.Dashboards {
@@ -71393,19 +64495,12 @@ declare namespace Stimulsoft.Designer {
         VariableRangeString = 154
     }
     enum StiDesignerPermissions {
-        /** Deny all. */
         None = 0,
-        /** Allows to create an item. */
         Create = 1,
-        /** Allows to delete an item. */
         Delete = 2,
-        /** Allows to modify an item. */
         Modify = 4,
-        /** Allows to view an item. */
         View = 8,
-        /** Allows modify and view an item. */
         ModifyView = 12,
-        /** Allow any action with an item. */
         All = 15
     }
     enum StiInterfaceType {
@@ -71538,23 +64633,14 @@ declare namespace Stimulsoft.Designer {
 declare namespace Stimulsoft.Designer {
     import StiViewerOptions = Stimulsoft.Viewer.StiViewerOptions;
     class StiDesignerOptions {
-        /** A class which controls settings of the designer appearance. */
         appearance: StiAppearanceOptions;
-        /** A class which controls settings of the designer toolbar. */
         toolbar: StiToolbarOptions;
-        /** A class which controls settings of the bands. */
         bands: StiBandsOptions;
-        /** A class which controls settings of the cross-bands. */
         crossBands: StiCrossBandsOptions;
-        /** A class which controls settings of the components. */
         components: StiComponentsOptions;
-        /** A class which controls settings of the dashboardElements. */
         dashboardElements: StiDashboardElementsOptions;
-        /** A class which controls settings of the dictionary. */
         dictionary: StiDictionaryOptions;
-        /** Gets or sets the width of the designer. */
         width: string;
-        /** Gets or sets the height of the designer. */
         height: string;
         viewerOptions: StiViewerOptions;
         mobileDesignerId: string;
