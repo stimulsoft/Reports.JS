@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2020.2.3
-Build date: 2020.04.29
+Version: 2020.3.1
+Build date: 2020.06.11
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System.Collections {
@@ -61,6 +61,7 @@ declare namespace Stimulsoft.System {
         compareTo(object: any): number;
         toBoolean(): boolean;
         toNumber(float?: boolean): number;
+        toString(): string;
         getType(): Stimulsoft.System.Type;
         getTypeName(): string;
         getNetTypeName(): string;
@@ -71,6 +72,7 @@ declare namespace Stimulsoft.System {
         static disableAllEnumerable(prototype: any, obj: any): void;
         static keys(obj: any): any[];
         static getOwnPropertyNames(obj: any): any[];
+        static saveAs(data: any, fileName: string, type?: string): void;
         constructor(value: any);
     }
     class StiNumber extends StiObject {
@@ -111,6 +113,7 @@ declare namespace Stimulsoft.System {
         indexOfAny(values: string[]): number;
         regexIndexOf(regex: RegExp, startpos: number): any;
         regexLastIndexOf(regex: RegExp, startpos: number): number;
+        split(...separators: any[]): string[];
         getType(): Stimulsoft.System.Type;
         getTypeName(): string;
         getNetTypeName(): string;
@@ -1095,6 +1098,7 @@ declare namespace Stimulsoft.System.Data {
     class DataView {
         clone(): DataView;
         rowFilter: string;
+        sort: string;
         table: DataTable;
         private ands;
         toTable(_and?: boolean): DataTable;
@@ -1253,6 +1257,7 @@ declare namespace Stimulsoft.System {
         toString(format?: string): string;
         negate(): TimeSpan;
         private static timeToTicks;
+        static create(days?: number, hours?: number, minutes?: number, seconds?: number, milliseconds?: number): TimeSpan;
         constructor(param1?: number, minutes?: number, seconds?: number, milliseconds?: number);
     }
 }
@@ -1958,6 +1963,7 @@ declare namespace Stimulsoft.System.Drawing {
         get italic(): boolean;
         get strikeout(): boolean;
         get underline(): boolean;
+        private _toString;
         toString(): string;
         getHeight(): number;
         private hashCode;
@@ -2024,6 +2030,7 @@ declare namespace Stimulsoft.System.Drawing {
         private static isWordWrapSymbol;
         static measureChars(chars: number[], count: number, font: Font): Size;
         private static rotate;
+        static clearCache(): void;
         constructor(context: CanvasRenderingContext2D);
     }
 }
@@ -2056,6 +2063,7 @@ declare namespace Stimulsoft.System.Drawing {
         set bytes(value: number[]);
         static fromFile(path: string): Image;
         static fromBytes(bytes: number[]): Image;
+        static fromBase64(base64: string): Image;
         private setData;
         convert(imageFormat: ImageFormat, flate?: boolean): StiPromise<Image>;
         tryConvertSync(imageFormat: ImageFormat): boolean;
@@ -2144,7 +2152,7 @@ declare namespace Stimulsoft.System.Drawing {
         width: number;
         height: number;
         get isEmpty(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         swap(): Size;
         round(digits?: number): Size;
         static convertFromXml(text: string): Size;
@@ -2691,6 +2699,11 @@ declare namespace Stimulsoft.System {
         static parse(enumType: any, value: string | number, ignoreCase?: boolean): number;
         static getNames(enumType: any): string[];
         static getValues(enumType: any): number[];
+        private name;
+        private value;
+        toString(): string;
+        compareTo(value: Enum): number;
+        constructor(name: string, value?: number);
     }
 }
 declare namespace Stimulsoft.System {
@@ -3329,6 +3342,7 @@ declare namespace Stimulsoft.Report {
         get fromTime(): Stimulsoft.System.TimeSpan;
         get toTime(): Stimulsoft.System.TimeSpan;
         contains(value: Stimulsoft.System.TimeSpan): boolean;
+        toString(): string;
         constructor(from?: Stimulsoft.System.TimeSpan, to?: Stimulsoft.System.TimeSpan);
     }
     class DecimalRange extends Range {
@@ -3556,6 +3570,7 @@ declare namespace Stimulsoft.System {
     class Byte {
     }
     class ByteArray {
+        static getTypeName(): string;
         static getNetTypeName(): string;
     }
     class Decimal {
@@ -3923,6 +3938,10 @@ declare namespace Stimulsoft.Base {
         get userName(): string;
         get password(): string;
         get addressBearer(): string;
+        headers: {
+            key: string;
+            value: string;
+        }[];
         private getConnectionStringKey;
         private getConnectionStringKey1;
         private bearerAccessToken;
@@ -3933,6 +3952,72 @@ declare namespace Stimulsoft.Base {
         static getBearerAccessToken(url: string, userName: string, password: string): string;
         private getDefaultWebClient;
         constructor(connectionString: string);
+    }
+}
+declare namespace Stimulsoft.Base.Data.Connectors {
+    class StiConnectionStringHelper {
+        static getConnectionStringKey(connectionString: string, key: string): string;
+        static getConnectionStringKey2(connectionString: string): string;
+        static setConnectionStringKey(connectionString: string, key: string, value: string): string;
+        static removeConnectionStringKey(connectionString: string, key: string): string;
+    }
+}
+declare namespace Stimulsoft.Base {
+    import DataTable = Stimulsoft.System.Data.DataTable;
+    class StiQuickBooksConnector {
+        private stimulsoftClientId;
+        private stimulsoftClientSecret;
+        private oauth2Url;
+        private bearerUrl;
+        private baseUrl;
+        private stimulsoftRedirectUrl;
+        private responseType;
+        private scope;
+        private state;
+        connectionString: string;
+        сonnectionIdent: StiConnectionIdent;
+        connectionOrder: StiConnectionOrder;
+        name: string;
+        isAvailable: boolean;
+        get useApp(): boolean;
+        set useApp(value: boolean);
+        get clientId(): string;
+        set clientId(value: string);
+        get clientIdPrivate(): string;
+        set clientIdPrivate(value: string);
+        get clientSecret(): string;
+        set clientSecret(value: string);
+        get clientSecretPrivate(): string;
+        set clientSecretPrivate(value: string);
+        get redirectURL(): string;
+        set redirectURL(value: string);
+        get redirectURLPrivate(): string;
+        set redirectURLPrivate(value: string);
+        get authorizationCode(): string;
+        set authorizationCode(value: string);
+        get realmId(): string;
+        set realmId(value: string);
+        get accessToken(): string;
+        set accessToken(value: string);
+        get refreshToken(): string;
+        set refreshToken(value: string);
+        connectionTimeout: number;
+        fillAuthorizationCode(): void;
+        private getDefaultWebClient;
+        private getAuthorizationUrl;
+        fillTokens(): void;
+        refreshAccessToken(): void;
+        private getTableNames;
+        private getColumns;
+        retrieveSchema(allowException?: boolean): StiDataSchema;
+        getDataTable(collectionName: string, query: string): DataTable;
+        fillDataTable(table: DataTable, query: string): void;
+        private executeQuery;
+        private removeUnsupportedColumns;
+        private correctRefColumns;
+        getSampleConnectionString(): string;
+        static Get(connectionString?: string): StiQuickBooksConnector;
+        constructor(connectionString?: string);
     }
 }
 declare namespace Stimulsoft.Base {
@@ -4041,7 +4126,8 @@ declare namespace Stimulsoft.Base {
         OneDriveCloudStorage = 26,
         SharePointCloudStorage = 27,
         DataWorldDataSource = 28,
-        Unspecified = 29
+        QuickBooksDataSource = 29,
+        Unspecified = 30
     }
     enum StiConnectionOrder {
         MsSqlDataSource = 10,
@@ -4071,6 +4157,8 @@ declare namespace Stimulsoft.Base {
         GoogleDriveCloudStorage = 250,
         OneDriveCloudStorage = 260,
         SharePointCloudStorage = 270,
+        DataWorldDataSource = 330,
+        QuickBooksDataSource = 340,
         Unspecified = 0
     }
     enum StiFileType {
@@ -4207,7 +4295,7 @@ declare namespace Stimulsoft.ExternalLibrary.XLSX {
 declare namespace Stimulsoft.Base.Design {
     let IStiDefault: string;
     interface IStiDefault {
-        isDefault: boolean;
+        isDefault(): boolean;
     }
 }
 declare namespace Stimulsoft.Base.Drawing {
@@ -4399,7 +4487,7 @@ declare namespace Stimulsoft.Base.Drawing {
         set dropShadow(value: boolean);
         get topmost(): boolean;
         set topmost(value: boolean);
-        get isDefault(): boolean;
+        isDefault(): boolean;
         static loadFromXml(text: string): StiBorder;
         constructor(side?: StiBorderSides, color?: Color, size?: number, style?: StiPenStyle, dropShadow?: boolean, shadowSize?: number, shadowBrush?: StiBrush, topmost?: boolean);
     }
@@ -4431,7 +4519,7 @@ declare namespace Stimulsoft.Base.Drawing {
         set size(value: number);
         get style(): StiPenStyle;
         set style(value: StiPenStyle);
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(topSide?: StiBorderSide, bottomSide?: StiBorderSide, leftSide?: StiBorderSide, rightSide?: StiBorderSide, dropShadow?: boolean, shadowSize?: number, shadowBrush?: StiBrush, topmost?: boolean);
     }
 }
@@ -4454,7 +4542,7 @@ declare namespace Stimulsoft.Base.Drawing {
         private _style;
         get style(): StiPenStyle;
         set style(value: StiPenStyle);
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(color?: Color, size?: number, style?: StiPenStyle);
     }
 }
@@ -4661,7 +4749,7 @@ declare namespace Stimulsoft.Base.Drawing {
         private shouldSerializeColor;
         size: number;
         style: StiPenStyle;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
@@ -4764,7 +4852,7 @@ declare namespace Stimulsoft.Base.Drawing {
         set hotkeyPrefix(value: HotkeyPrefix);
         get trimming(): StringTrimming;
         set trimming(value: StringTrimming);
-        get isDefault(): boolean;
+        isDefault(): boolean;
         getHashCode(): number;
         constructor(rightToLeft?: boolean, lineLimit?: boolean, wordWrap?: boolean, angle?: number, hotkeyPrefix?: HotkeyPrefix, trimming?: StringTrimming, firstTabOffset?: number, distanceBetweenTabs?: number);
     }
@@ -5230,8 +5318,6 @@ declare namespace Stimulsoft.Base.Licenses {
         productDescription: string;
         productUrl: string;
         clone(): StiLicenseKey;
-        get isServerLicense(): boolean;
-        get isProductLicense(): boolean;
         static get1(bytes: number[]): StiLicenseKey;
         static get2(str: string): StiLicenseKey;
         constructor();
@@ -5240,7 +5326,7 @@ declare namespace Stimulsoft.Base.Licenses {
 declare namespace Stimulsoft.Base {
     class StiLicense {
         static licenseKey: any;
-        private static _key;
+        static _key: string;
         static get key(): string;
         static set key(value: string);
         static get Key(): string;
@@ -5306,4781 +5392,4800 @@ declare namespace Stimulsoft.Base.Localization {
             "@language": string;
             "@description": string;
             "@cultureName": string;
-            "A_WebViewer": {
-                "AbbreviatedDayFriday": string;
-                "AbbreviatedDayMonday": string;
-                "AbbreviatedDaySaturday": string;
-                "AbbreviatedDaySunday": string;
-                "AbbreviatedDayThursday": string;
-                "AbbreviatedDayTuesday": string;
-                "AbbreviatedDayWednesday": string;
-                "Attachment": string;
-                "ButtonNext": string;
-                "ButtonPrev": string;
-                "ButtonSend": string;
-                "CategoryAlreadyExists": string;
-                "DayFriday": string;
-                "DayMonday": string;
-                "DaySaturday": string;
-                "DaySunday": string;
-                "DayThursday": string;
-                "DayTuesday": string;
-                "DayWednesday": string;
-                "Email": string;
-                "EmailOptions": string;
-                "FirstPage": string;
-                "Hours": string;
-                "LabelFrom": string;
-                "LabelSelectExportFormat": string;
-                "LabelTo": string;
-                "LastPage": string;
-                "Loading": string;
-                "Message": string;
-                "Minutes": string;
-                "MonthApril": string;
-                "MonthAugust": string;
-                "MonthDecember": string;
-                "MonthFebruary": string;
-                "MonthJanuary": string;
-                "MonthJuly": string;
-                "MonthJune": string;
-                "MonthMarch": string;
-                "MonthMay": string;
-                "MonthNovember": string;
-                "MonthOctober": string;
-                "MonthSeptember": string;
-                "NextPage": string;
-                "OnePage": string;
-                "Page": string;
-                "PageOf": string;
-                "PreviousPage": string;
-                "PrintContinue": string;
-                "PrintReport": string;
-                "PrintToPdf": string;
-                "PrintToXps": string;
-                "PrintWithoutPreview": string;
-                "PrintWithPreview": string;
-                "SaveReport": string;
-                "Subject": string;
-                "TabItemContacts": string;
-                "TextComputer": string;
-                "TextItemsRoot": string;
-                "TodayDate": string;
-                "WholeReport": string;
-            };
-            "Adapters": {
-                "AdapterBusinessObjects": string;
-                "AdapterConnection": string;
-                "AdapterCrossTabDataSource": string;
-                "AdapterCsvFiles": string;
-                "AdapterDataTables": string;
-                "AdapterDataViews": string;
-                "AdapterDB2Connection": string;
-                "AdapterDBaseFiles": string;
-                "AdapterFirebirdConnection": string;
-                "AdapterInformixConnection": string;
-                "AdapterMySQLConnection": string;
-                "AdapterOdbcConnection": string;
-                "AdapterOleDbConnection": string;
-                "AdapterOracleConnection": string;
-                "AdapterOracleODPConnection": string;
-                "AdapterPostgreSQLConnection": string;
-                "AdapterSqlCeConnection": string;
-                "AdapterSqlConnection": string;
-                "AdapterSQLiteConnection": string;
-                "AdapterTeradataConnection": string;
-                "AdapterUniDirectConnection": string;
-                "AdapterUserSources": string;
-                "AdapterVirtualSource": string;
-                "AdapterVistaDBConnection": string;
-            };
-            "BarCode": {
-                "Post": string;
-                "TwoDimensional": string;
-            };
-            "Buttons": {
-                "Upgrade": string;
-                "UpgradeNow": string;
-                "Add": string;
-                "AddAllColumns": string;
-                "Attach": string;
-                "Build": string;
-                "Buttons": string;
-                "Cancel": string;
-                "Check": string;
-                "Close": string;
-                "Delete": string;
-                "Design": string;
-                "Down": string;
-                "Duplicate": string;
-                "Export": string;
-                "ForceDelete": string;
-                "Help": string;
-                "Install": string;
-                "LessOptions": string;
-                "LoadDataSet": string;
-                "More": string;
-                "MoreApps": string;
-                "MoreOptions": string;
-                "MoveLeft": string;
-                "MoveRight": string;
-                "MoveToResource": string;
-                "No": string;
-                "Ok": string;
-                "Open": string;
-                "Print": string;
-                "Publish": string;
-                "QuickPrint": string;
-                "Remove": string;
-                "RemoveAll": string;
-                "Rename": string;
-                "RestoreDefaults": string;
-                "Reverse": string;
-                "Save": string;
-                "SaveCopy": string;
-                "SetAll": string;
-                "ShowLess": string;
-                "ShowMore": string;
-                "ShowSpecific": string;
-                "Submit": string;
-                "Test": string;
-                "Up": string;
-                "Upload": string;
-                "Waiting": string;
-                "Yes": string;
-            };
-            "Chart": {
-                "AddCondition": string;
-                "AddConstantLine": string;
-                "AddFilter": string;
-                "AddSeries": string;
-                "AddStrip": string;
-                "Area": string;
-                "Axes": string;
-                "AxisReverse": string;
-                "AxisX": string;
-                "AxisY": string;
-                "Bubble": string;
-                "Candlestick": string;
-                "ChartConditionsCollectionForm": string;
-                "ChartEditorForm": string;
-                "ChartFiltersCollectionForm": string;
-                "ChartType": string;
-                "CheckBoxAutoRotation": string;
-                "ClusteredBar": string;
-                "ClusteredColumn": string;
-                "Common": string;
-                "ConstantLine": string;
-                "ConstantLinesEditorForm": string;
-                "TrendLinesEditorForm": string;
-                "DataColumns": string;
-                "Doughnut": string;
-                "Financial": string;
-                "FullStackedArea": string;
-                "FullStackedBar": string;
-                "FullStackedColumn": string;
-                "FullStackedLine": string;
-                "FullStackedSpline": string;
-                "FullStackedSplineArea": string;
-                "Funnel": string;
-                "FunnelWeightedSlices": string;
-                "Gantt": string;
-                "GridInterlaced": string;
-                "GridLines": string;
-                "LabelAlignment": string;
-                "LabelAlignmentHorizontal": string;
-                "LabelAlignmentVertical": string;
-                "LabelAngle": string;
-                "LabelArgumentDataColumn": string;
-                "LabelAutoRotation": string;
-                "LabelCloseValueDataColumn": string;
-                "LabelEndValueDataColumn": string;
-                "LabelHighValueDataColumn": string;
-                "LabelHorizontal": string;
-                "LabelLowValueDataColumn": string;
-                "LabelMinorCount": string;
-                "LabelOpenValueDataColumn": string;
-                "Labels": string;
-                "LabelsCenter": string;
-                "LabelSeriesName": string;
-                "LabelsInside": string;
-                "LabelsInsideBase": string;
-                "LabelsInsideEnd": string;
-                "LabelsNone": string;
-                "LabelsOutside": string;
-                "LabelsOutsideBase": string;
-                "LabelsOutsideEnd": string;
-                "LabelsStyleCategory": string;
-                "LabelsStyleCategoryPercentOfTotal": string;
-                "LabelsStyleCategoryValue": string;
-                "LabelsStylePercentOfTotal": string;
-                "LabelsStyleValue": string;
-                "LabelsTwoColumns": string;
-                "LabelTextAfter": string;
-                "LabelTextBefore": string;
-                "LabelTitleAlignment": string;
-                "LabelValueDataColumn": string;
-                "LabelValueType": string;
-                "LabelVertical": string;
-                "LabelVisible": string;
-                "Legend": string;
-                "LegendSpacing": string;
-                "Line": string;
-                "ListOfValues": string;
-                "Marker": string;
-                "MoveConstantLineDown": string;
-                "MoveConstantLineUp": string;
-                "MoveSeriesDown": string;
-                "MoveSeriesUp": string;
-                "MoveStripDown": string;
-                "MoveStripUp": string;
-                "NoConditions": string;
-                "NoFilters": string;
-                "Pareto": string;
-                "Pictorial": string;
-                "Pie": string;
-                "Radar": string;
-                "RadarArea": string;
-                "RadarColumn": string;
-                "RadarLine": string;
-                "RadarPoint": string;
-                "Range": string;
-                "RangeBar": string;
-                "RemoveCondition": string;
-                "RemoveConstantLine": string;
-                "RemoveFilter": string;
-                "RemoveSeries": string;
-                "RemoveStrip": string;
-                "RunChartWizard": string;
-                "Scatter": string;
-                "ScatterLine": string;
-                "ScatterSpline": string;
-                "Series": string;
-                "SeriesColorsCollectionForm": string;
-                "SeriesEditorForm": string;
-                "Serieses": string;
-                "SparklinesArea": string;
-                "SparklinesColumn": string;
-                "SparklinesLine": string;
-                "SparklinesWinLoss": string;
-                "Spline": string;
-                "SplineArea": string;
-                "SplineRange": string;
-                "StackedArea": string;
-                "StackedBar": string;
-                "StackedColumn": string;
-                "StackedLine": string;
-                "StackedSpline": string;
-                "StackedSplineArea": string;
-                "SteppedArea": string;
-                "SteppedLine": string;
-                "SteppedRange": string;
-                "Stock": string;
-                "Strip": string;
-                "StripsEditorForm": string;
-                "Style": string;
-                "Treemap": string;
-                "Sunburst": string;
-                "Waterfall": string;
-            };
-            "CharterMapEditor": {
-                "Characters": string;
-            };
-            "ChartRibbon": {
-                "Axes": string;
-                "AxesArrowStyle": string;
-                "AxesArrowStyleLines": string;
-                "AxesArrowStyleNone": string;
-                "AxesArrowStyleTriangle": string;
-                "AxesLabel": string;
-                "AxesLabelsNone": string;
-                "AxesLabelsOneLine": string;
-                "AxesLabelsTwoLines": string;
-                "AxesReverseHorizontal": string;
-                "AxesReverseVertical": string;
-                "AxesTicks": string;
-                "AxesTicksMajor": string;
-                "AxesTicksMinor": string;
-                "AxesTicksNone": string;
-                "AxesVisible": string;
-                "AxesXAxis": string;
-                "AxesXTopAxis": string;
-                "AxesYAxis": string;
-                "AxesYRightAxis": string;
-                "CenterLabels": string;
-                "ChangeType": string;
-                "GridLines": string;
-                "GridLinesHorizontal": string;
-                "GridLinesVertical": string;
-                "HorAlCenter": string;
-                "HorAlLeft": string;
-                "HorAlLeftOutside": string;
-                "HorAlRight": string;
-                "HorAlRightOutside": string;
-                "HorizontalMajor": string;
-                "HorizontalMajorMinor": string;
-                "HorizontalMinor": string;
-                "HorizontalNone": string;
-                "InsideBaseLabels": string;
-                "InsideEndLabels": string;
-                "Labels": string;
-                "Legend": string;
-                "LegendHorizontalAlignment": string;
-                "LegendMarker": string;
-                "LegendMarkerAlignmentLeft": string;
-                "LegendMarkerAlignmentRight": string;
-                "LegendMarkerVisible": string;
-                "LegendVerticalAlignment": string;
-                "LegendVisible": string;
-                "NoneLabels": string;
-                "OutsideBaseLabels": string;
-                "OutsideEndLabels": string;
-                "OutsideLabels": string;
-                "ribbonBarAxis": string;
-                "ribbonBarChartStyles": string;
-                "ribbonBarChartType": string;
-                "ribbonBarLabels": string;
-                "ribbonBarLegend": string;
-                "Style": string;
-                "TwoColumnsPieLabels": string;
-                "VertAlBottom": string;
-                "VertAlBottomOutside": string;
-                "VertAlCenter": string;
-                "VertAlTop": string;
-                "VertAlTopOutside": string;
-                "VerticalMajor": string;
-                "VerticalMajorMinor": string;
-                "VerticalMinor": string;
-                "VerticalNone": string;
-            };
-            "Cloud": {
-                "SearchForOnlineTemplates": string;
-                "AcceptTermsAndPrivacyPolicy": string;
-                "AccountSettings": string;
-                "AddAPlace": string;
-                "AreYouSureYouWantDeleteReport": string;
-                "Authorize": string;
-                "AuthorizeWithLicenseKey": string;
-                "ButtonChangePassword": string;
-                "ButtonDeleteAll": string;
-                "ButtonDesign": string;
-                "ButtonLater": string;
-                "ButtonLogout": string;
-                "ButtonPublish": string;
-                "ButtonPurchase": string;
-                "ButtonRecover": string;
-                "ButtonRenew": string;
-                "ButtonResendEmail": string;
-                "ButtonResetPassword": string;
-                "ButtonRun": string;
-                "ButtonShare": string;
-                "ButtonSignUp": string;
-                "ButtonSignUpWith": string;
-                "ButtonLogInWith": string;
-                "ButtonSkip": string;
-                "ButtonView": string;
-                "ButtonWhereUsed": string;
-                "Cancel": string;
-                "CheckBoxMoveToRecycleBin": string;
-                "CheckBoxRememberMe": string;
-                "CheckForUpdate": string;
-                "Cloud": string;
-                "Collection": string;
-                "Create": string;
-                "CreateError": string;
-                "CreateNewCollection": string;
-                "CreatingReport": string;
-                "DashboardWindowTitleNew": string;
-                "DeleteFile": string;
-                "DoNotAskMe": string;
-                "ExecutionError": string;
-                "ExpiredDate": string;
-                "FileStorageWindowTitleEdit": string;
-                "FileStorageWindowTitleNew": string;
-                "FolderWindowTitleEdit": string;
-                "FolderWindowTitleNew": string;
-                "ForExample": string;
-                "GroupBoxAttachedItems": string;
-                "HyperlinkAgreeToTerms": string;
-                "HyperlinkAlreadyHaveAccount": string;
-                "HyperlinkForgotPassword": string;
-                "HyperlinkHavePassword": string;
-                "HyperlinkRegisterAccount": string;
-                "InstallSamples": string;
-                "LabelAddCloudFolder": string;
-                "LabelAddFolder": string;
-                "labelCollectionName": string;
-                "LabelCreated": string;
-                "LabelCreateFolder": string;
-                "LabelCreateNewDashboard": string;
-                "LabelCreateReportTemplate": string;
-                "LabelCurrentPassword": string;
-                "LabelDataFile": string;
-                "LabelDataUrl": string;
-                "LabelEndDate": string;
-                "labelFileName": string;
-                "LabelForeground": string;
-                "LabelFromReport": string;
-                "LabelFromReportCode": string;
-                "LabelLastLogin": string;
-                "LabelLastTime": string;
-                "LabelModified": string;
-                "LabelNewPassword": string;
-                "LabelNextTime": string;
-                "labelPassword": string;
-                "LabelPermission": string;
-                "LabelPicture": string;
-                "LabelRenderedReport": string;
-                "LabelResponseAsFile": string;
-                "LabelResultType": string;
-                "LabelSeparateReport": string;
-                "LabelShowReport": string;
-                "labelUserName": string;
-                "License": string;
-                "LicenseInformation": string;
-                "LicenseKey": string;
-                "Login": string;
-                "NofM": string;
-                "Open": string;
-                "OpenFile": string;
-                "OperationCreate": string;
-                "OperationDelete": string;
-                "OperationDownload": string;
-                "OperationGetList": string;
-                "OperationLogin": string;
-                "OperationRename": string;
-                "OperationUpload": string;
-                "page": string;
-                "Platforms": string;
-                "Port": string;
-                "PrivacyPolicy": string;
-                "Products": string;
-                "Proxy": string;
-                "PublishMessage": string;
-                "questionOpenThisFile": string;
-                "questionOverrideItem": string;
-                "questionRemoveItem": string;
-                "RefreshList": string;
-                "ReportDocumentFormatNotRecognized": string;
-                "ReportTemplateFormatNotRecognized": string;
-                "RequestChangesWhenSavingToCloud": string;
-                "RibbonButtonAddRole": string;
-                "RibbonButtonAddUser": string;
-                "RibbonButtonAddWorkspace": string;
-                "RibbonButtonFolder": string;
-                "RibbonTabUsers": string;
-                "Root": string;
-                "RootFolder": string;
-                "Save": string;
-                "SaveAccountSettings": string;
-                "SaveAsType": string;
-                "SaveFile": string;
-                "SavingToStimulsoftCloudPleaseWait": string;
-                "ShareWindowTitleNew": string;
-                "ShowAllFiles": string;
-                "ShowNotificationMessages": string;
-                "Subscriptions": string;
-                "TabItemEmbedCode": string;
-                "TabItemQRCode": string;
-                "TabItemShare": string;
-                "TermsOfUse": string;
-                "TextActivated": string;
-                "TextActivationDate": string;
-                "TextDelete": string;
-                "TextDeletingItems": string;
-                "TextDescriptionChanges": string;
-                "TextFirstName": string;
-                "TextFromTo": string;
-                "TextItemsWorkspace": string;
-                "TextLastName": string;
-                "TextModify": string;
-                "TextNoFavoriteFiles": string;
-                "TextNoFiles": string;
-                "TextNoNotifications": string;
-                "TextNoRecentFiles": string;
-                "TextOwner": string;
-                "TextProfile": string;
-                "TextReports": string;
-                "TextRestoringItems": string;
-                "TextRole": string;
-                "TextRun": string;
-                "TextUser": string;
-                "TextUserName": string;
-                "TimeHoursAgoFive": string;
-                "TimeHoursAgoFour": string;
-                "TimeHoursAgoOne": string;
-                "TimeHoursAgoThree": string;
-                "TimeHoursAgoTwo": string;
-                "TimeMinutesAgoFive": string;
-                "TimeMinutesAgoFour": string;
-                "TimeMinutesAgoLessOne": string;
-                "TimeMinutesAgoN": string;
-                "TimeMinutesAgoOne": string;
-                "TimeMinutesAgoThree": string;
-                "TimeMinutesAgoTwo": string;
-                "TimeToday": string;
-                "TimeYesterday": string;
-                "ToolTipAddRole": string;
-                "ToolTipAddUser": string;
-                "ToolTipAspNet": string;
-                "ToolTipAspNetMvc": string;
-                "ToolTipAttach": string;
-                "ToolTipCreate": string;
-                "ToolTipDelete": string;
-                "ToolTipDeleted": string;
-                "ToolTipDownload": string;
-                "ToolTipEdit": string;
-                "ToolTipGridMode": string;
-                "ToolTipInfo": string;
-                "ToolTipJs": string;
-                "ToolTipPublish": string;
-                "ToolTipRecover": string;
-                "ToolTipRunWithoutPreview": string;
-                "ToolTipShare": string;
-                "ToolTipSort": string;
-                "ToolTipThumbnailMode": string;
-                "ToolTipViewFile": string;
-                "ToolTipViewReport": string;
-                "WeDidntFindAnything": string;
-                "WindowDescriptionDelete": string;
-                "WindowDescriptionRecover": string;
-                "WindowTitleDelete": string;
-                "WindowTitleForgotPassword": string;
-                "WindowTitleLogin": string;
-                "WindowTitleRecover": string;
-                "WindowTitleRoleEdit": string;
-                "WindowTitleRoleNew": string;
-                "WindowTitleSignUp": string;
-                "WindowTitleUserEdit": string;
-                "WindowTitleUserNew": string;
-                "WindowTitleWorkspaceEdit": string;
-                "WindowTitleWorkspaceNew": string;
-                "WizardBlankReportDescription": string;
-                "WizardExcelDescription": string;
-                "WizardJsonDescription": string;
-                "WizardPrivateShare": string;
-                "WizardPrivateShareDescription": string;
-                "WizardPublicShare": string;
-                "WizardPublicShareDescription": string;
-                "WizardRegisteredShare": string;
-                "WizardRegisteredShareDescription": string;
-                "WizardXmlDescription": string;
-            };
-            "Components": {
-                "StiBarCode": string;
-                "StiChart": string;
-                "StiCheckBox": string;
-                "StiChildBand": string;
-                "StiClone": string;
-                "StiColumnFooterBand": string;
-                "StiColumnHeaderBand": string;
-                "StiComboBox": string;
-                "StiComponent": string;
-                "StiContainer": string;
-                "StiContourText": string;
-                "StiCrossColumn": string;
-                "StiCrossColumnTotal": string;
-                "StiCrossDataBand": string;
-                "StiCrossFooterBand": string;
-                "StiCrossGroupFooterBand": string;
-                "StiCrossGroupHeaderBand": string;
-                "StiCrossHeaderBand": string;
-                "StiCrossRow": string;
-                "StiCrossRowTotal": string;
-                "StiCrossSummary": string;
-                "StiCrossSummaryHeader": string;
-                "StiCrossTab": string;
-                "StiCrossTitle": string;
-                "StiDashboard": string;
-                "StiDataBand": string;
-                "StiDatePicker": string;
-                "StiEmptyBand": string;
-                "StiFooterBand": string;
-                "StiGauge": string;
-                "StiGroupFooterBand": string;
-                "StiGroupHeaderBand": string;
-                "StiHeaderBand": string;
-                "StiHierarchicalBand": string;
-                "StiHorizontalLinePrimitive": string;
-                "StiImage": string;
-                "StiIndicator": string;
-                "StiListBox": string;
-                "StiMap": string;
-                "StiOnlineMap": string;
-                "StiOverlayBand": string;
-                "StiPage": string;
-                "StiPageFooterBand": string;
-                "StiPageHeaderBand": string;
-                "StiPanel": string;
-                "StiPivotColumn": string;
-                "StiPivotRow": string;
-                "StiPivotSummary": string;
-                "StiPivotTable": string;
-                "StiProgress": string;
-                "StiRectanglePrimitive": string;
-                "StiRegionMap": string;
-                "StiReport": string;
-                "StiReportSummaryBand": string;
-                "StiReportTitleBand": string;
-                "StiRichText": string;
-                "StiRoundedRectanglePrimitive": string;
-                "StiShape": string;
-                "StiSubReport": string;
-                "StiSystemText": string;
-                "StiTable": string;
-                "StiText": string;
-                "StiTextInCells": string;
-                "StiTreeView": string;
-                "StiTreeViewBox": string;
-                "StiVerticalLinePrimitive": string;
-                "StiWinControl": string;
-                "StiZipCode": string;
-            };
-            "Dashboard": {
-                "AddRange": string;
-                "AfterGroupingData": string;
-                "AllowUserDrillDown": string;
-                "AllowUserFiltering": string;
-                "AllowUserSorting": string;
-                "Blanks": string;
-                "BooleanFilters": string;
-                "CannotLoadDashboard": string;
-                "ChangeChartType": string;
-                "ChangeMapType": string;
-                "ClearAllFormatting": string;
-                "ClearFilterFrom": string;
-                "ColorScale": string;
-                "ColumnInteractions": string;
-                "CustomFilter": string;
-                "DataBars": string;
-                "DataNotDefined": string;
-                "DateFilters": string;
-                "Dimension": string;
-                "Dimensions": string;
-                "DragDropData": string;
-                "DragDropDataFromDictionary": string;
-                "DrillDown": string;
-                "DrillDownFiltered": string;
-                "DrillDownSelected": string;
-                "DrillUp": string;
-                "DuplicateField": string;
-                "EditExpression": string;
-                "EditField": string;
-                "EmptyDashboardFooter": string;
-                "EmptyDashboardHeader": string;
-                "FieldInteractions": string;
-                "FieldTypeRestrictionHint": string;
-                "FirstLastPoints": string;
-                "FirstRowIndex": string;
-                "FullRowSelect": string;
-                "HighLowPoints": string;
-                "ImageNotSpecified": string;
-                "Indicator": string;
-                "InitialValue": string;
-                "LimitRows": string;
-                "Measure": string;
-                "Measures": string;
-                "NewDimension": string;
-                "NewField": string;
-                "NewMeasure": string;
-                "NoRanges": string;
-                "NoResult": string;
-                "NSelected": string;
-                "Nulls": string;
-                "NumberFilters": string;
-                "ParentElement": string;
-                "RangeMode": string;
-                "RangeType": string;
-                "RemoveActions": string;
-                "RemoveAllFields": string;
-                "RemoveField": string;
-                "RemoveMobileSurface": string;
-                "ReplaceValues": string;
-                "ReportSnapshot": string;
-                "RowsCount": string;
-                "RunFieldsEditor": string;
-                "RunFieldsEditorInfo": string;
-                "SelectAll": string;
-                "ShowAllValue": string;
-                "ShowAsPercentages": string;
-                "SkipFirstRows": string;
-                "SortAZ": string;
-                "SortLargestToSmallest": string;
-                "SortNewestToOldest": string;
-                "SortOldestToNewest": string;
-                "SortSmallestToLargest": string;
-                "SortZA": string;
-                "Sparklines": string;
-                "StringFilters": string;
-                "TransformationHint": string;
-                "Trend": string;
-                "ViewModeDesktop": string;
-                "ViewModeMobile": string;
-            };
-            "Database": {
-                "Connection": string;
-                "Database": string;
-                "DatabaseDB2": string;
-                "DatabaseFirebird": string;
-                "DatabaseInformix": string;
-                "DatabaseJson": string;
-                "DatabaseMySQL": string;
-                "DatabaseOdbc": string;
-                "DatabaseOleDb": string;
-                "DatabaseOracle": string;
-                "DatabaseOracleODP": string;
-                "DatabasePostgreSQL": string;
-                "DatabaseSql": string;
-                "DatabaseSqlCe": string;
-                "DatabaseSQLite": string;
-                "DatabaseTeradata": string;
-                "DatabaseUniDirect": string;
-                "DatabaseVistaDB": string;
-                "DatabaseXml": string;
-            };
-            "DatePickerRanges": {
-                "CurrentMonth": string;
-                "CurrentQuarter": string;
-                "CurrentWeek": string;
-                "CurrentYear": string;
-                "FirstQuarter": string;
-                "FourthQuarter": string;
-                "Index": string;
-                "Last14Days": string;
-                "Last30Days": string;
-                "Last7Days": string;
-                "MonthToDate": string;
-                "NextMonth": string;
-                "NextQuarter": string;
-                "NextWeek": string;
-                "NextYear": string;
-                "PreviousMonth": string;
-                "PreviousQuarter": string;
-                "PreviousWeek": string;
-                "PreviousYear": string;
-                "Quarter": string;
-                "QuarterToDate": string;
-                "SecondQuarter": string;
-                "ThirdQuarter": string;
-                "Today": string;
-                "Tomorrow": string;
-                "WeekToDate": string;
-                "Year": string;
-                "YearToDate": string;
-                "Yesterday": string;
-            };
-            "DesignerFx": {
-                "AlreadyExists": string;
-                "CanNotLoadThisReportTemplate": string;
-                "CloseDataSourceEditor": string;
-                "CloseEditor": string;
-                "CompilingReport": string;
-                "Connecting": string;
-                "ConnectionError": string;
-                "ConnectionSuccessfull": string;
-                "Continue": string;
-                "DecryptionError": string;
-                "EmailSuccessfullySent": string;
-                "ErrorAtSaving": string;
-                "ErrorCode": string;
-                "ErrorServer": string;
-                "ExportingReport": string;
-                "LoadingCode": string;
-                "LoadingConfiguration": string;
-                "LoadingData": string;
-                "LoadingDocument": string;
-                "LoadingImages": string;
-                "LoadingLanguage": string;
-                "LoadingReport": string;
-                "PreviewAs": string;
-                "RenderingReport": string;
-                "ReportSuccessfullySaved": string;
-                "RetrieveError": string;
-                "RetrievingColumns": string;
-                "SavingConfiguration": string;
-                "SavingReport": string;
-                "TestConnection": string;
-                "TextNotFound": string;
-            };
-            "Desktop": {
-                "PleaseAnswerWhoAreYou": string;
-                "WhoAreYouBeginnerDescription": string;
-                "WhoAreYouCreatorDescription": string;
-                "WhoAreYouDeveloperDescription": string;
-                "ButtonAddCloud": string;
-                "ButtonAddFolder": string;
-                "ButtonCreateDashboard": string;
-                "ButtonCreateReport": string;
-                "DoYouWantToInstallReports": string;
-                "InstallSamplesDesc": string;
-                "WhoAreYou": string;
-                "Beginner": string;
-                "Creator": string;
-                "Developer": string;
-            };
-            "Dialogs": {
-                "StiButtonControl": string;
-                "StiCheckBoxControl": string;
-                "StiCheckedListBoxControl": string;
-                "StiComboBoxControl": string;
-                "StiDateTimePickerControl": string;
-                "StiForm": string;
-                "StiGridControl": string;
-                "StiGroupBoxControl": string;
-                "StiLabelControl": string;
-                "StiListBoxControl": string;
-                "StiListViewControl": string;
-                "StiLookUpBoxControl": string;
-                "StiNumericUpDownControl": string;
-                "StiPanelControl": string;
-                "StiPictureBoxControl": string;
-                "StiRadioButtonControl": string;
-                "StiReportControl": string;
-                "StiRichTextBoxControl": string;
-                "StiTextBoxControl": string;
-                "StiTreeViewControl": string;
-            };
-            "Editor": {
-                "CantFind": string;
-                "CollapseToDefinitions": string;
-                "Column": string;
-                "EntireScope": string;
-                "Find": string;
-                "FindNext": string;
-                "FindWhat": string;
-                "FromCursor": string;
-                "GotoLine": string;
-                "InsertSymbol": string;
-                "InsertLink": string;
-                "Line": string;
-                "LineNumber": string;
-                "LineNumberIndex": string;
-                "MarkAll": string;
-                "MatchCase": string;
-                "MatchWholeWord": string;
-                "Outlining": string;
-                "PromptOnReplace": string;
-                "Replace": string;
-                "ReplaceAll": string;
-                "ReplaceWith": string;
-                "Search": string;
-                "SearchHiddenText": string;
-                "SearchUp": string;
-                "SelectionOnly": string;
-                "ShowAutoGeneratedCode": string;
-                "ShowLineNumbers": string;
-                "StopOutlining": string;
-                "titleFind": string;
-                "titleGotoLine": string;
-                "titleReplace": string;
-                "ToggleAllOutlining": string;
-                "ToggleOutliningExpansion": string;
-                "TypeToSearch": string;
-                "UseRegularExpressions": string;
-            };
-            "Errors": {
-                "ComponentIsNotRelease": string;
-                "ContainerIsNotValidForComponent": string;
-                "DataNotFound": string;
-                "DataNotLoaded": string;
-                "Error": string;
-                "ErrorsList": string;
-                "FieldRequire": string;
-                "FileNotFound": string;
-                "IdentifierIsNotValid": string;
-                "ImpossibleFindDataSource": string;
-                "NameExists": string;
-                "NoServices": string;
-                "NotAssign": string;
-                "NotCorrectFormat": string;
-                "PrimaryColumnAction": string;
-                "RelationsNotFound": string;
-                "ReportCannotBeSaveDueToErrors": string;
-                "ServiceNotFound": string;
-            };
-            "Export": {
-                "AddPageBreaks": string;
-                "AllBands": string;
-                "AllowAddOrModifyTextAnnotations": string;
-                "AllowCopyTextAndGraphics": string;
-                "AllowEditable": string;
-                "AllowModifyContents": string;
-                "AllowPrintDocument": string;
-                "Auto": string;
-                "BandsFilter": string;
-                "CancelExport": string;
-                "Color": string;
-                "Compressed": string;
-                "CompressToArchive": string;
-                "ContinuousPages": string;
-                "DataAndHeaders": string;
-                "DataAndHeadersFooters": string;
-                "DataOnly": string;
-                "DigitalSignature": string;
-                "DigitalSignatureCertificateNotSelected": string;
-                "DigitalSignatureError": string;
-                "DocumentSecurity": string;
-                "DotMatrixMode": string;
-                "EmbeddedFonts": string;
-                "EmbeddedImageData": string;
-                "Encoding": string;
-                "EncryptionError": string;
-                "EscapeCodes": string;
-                "Exactly": string;
-                "ExceptEditableFields": string;
-                "ExportDataOnly": string;
-                "ExportEachPageToSheet": string;
-                "Exporting": string;
-                "ExportingCalculatingCoordinates": string;
-                "ExportingCreatingDocument": string;
-                "ExportingFormatingObjects": string;
-                "ExportingReport": string;
-                "ExportMode": string;
-                "ExportModeFrame": string;
-                "ExportModeTable": string;
-                "ExportObjectFormatting": string;
-                "ExportPageBreaks": string;
-                "ExportRtfTextAsImage": string;
-                "ExportTypeBmpFile": string;
-                "ExportTypeCalcFile": string;
-                "ExportTypeCsvFile": string;
-                "ExportTypeDataFile": string;
-                "ExportTypeDbfFile": string;
-                "ExportTypeDifFile": string;
-                "ExportTypeExcel2007File": string;
-                "ExportTypeExcelFile": string;
-                "ExportTypeExcelXmlFile": string;
-                "ExportTypeGifFile": string;
-                "ExportTypeHtml5File": string;
-                "ExportTypeHtmlFile": string;
-                "ExportTypeImageFile": string;
-                "ExportTypeJpegFile": string;
-                "ExportTypeJsonFile": string;
-                "ExportTypeMetafile": string;
-                "ExportTypeMhtFile": string;
-                "ExportTypePcxFile": string;
-                "ExportTypePdfFile": string;
-                "ExportTypePngFile": string;
-                "ExportTypePpt2007File": string;
-                "ExportTypeRtfFile": string;
-                "ExportTypeSvgFile": string;
-                "ExportTypeSvgzFile": string;
-                "ExportTypeSylkFile": string;
-                "ExportTypeTiffFile": string;
-                "ExportTypeTxtFile": string;
-                "ExportTypeWord2007File": string;
-                "ExportTypeWriterFile": string;
-                "ExportTypeXmlFile": string;
-                "ExportTypeXpsFile": string;
-                "GetCertificateFromCryptoUI": string;
-                "ImageCompressionMethod": string;
-                "ImageCutEdges": string;
-                "ImageFormat": string;
-                "ImageGrayscale": string;
-                "ImageMonochrome": string;
-                "ImageQuality": string;
-                "ImageResolution": string;
-                "ImageResolutionMode": string;
-                "ImageType": string;
-                "labelEncryptionKeyLength": string;
-                "labelOwnerPassword": string;
-                "labelSubjectNameString": string;
-                "labelUserPassword": string;
-                "MonochromeDitheringType": string;
-                "MoreSettings": string;
-                "MultipleFiles": string;
-                "NoMoreThan": string;
-                "OpenAfterExport": string;
-                "PdfACompliance": string;
-                "PrintingReport": string;
-                "RemoveEmptySpaceAtBottom": string;
-                "RestrictEditing": string;
-                "Scale": string;
-                "Separator": string;
-                "Settings": string;
-                "SkipColumnHeaders": string;
-                "StandardPDFFonts": string;
-                "TiffCompressionScheme": string;
-                "title": string;
-                "TxtBorderType": string;
-                "TxtBorderTypeDouble": string;
-                "TxtBorderTypeSimple": string;
-                "TxtBorderTypeSingle": string;
-                "TxtCutLongLines": string;
-                "TxtDrawBorder": string;
-                "TxtKillSpaceGraphLines": string;
-                "TxtKillSpaceLines": string;
-                "TxtPutFeedPageCode": string;
-                "Type": string;
-                "UseDefaultSystemEncoding": string;
-                "UseDigitalSignature": string;
-                "UseEscapeCodes": string;
-                "UseOnePageHeaderAndFooter": string;
-                "UsePageHeadersAndFooters": string;
-                "UseUnicode": string;
-                "X": string;
-                "Y": string;
-                "Zoom": string;
-            };
-            "FileFilters": {
-                "AllFiles": string;
-                "AllImageFiles": string;
-                "BitmapFiles": string;
-                "BmpFiles": string;
-                "CalcFiles": string;
-                "CsvFiles": string;
-                "DashboardTemplates": string;
-                "DataSetXmlData": string;
-                "DataSetXmlSchema": string;
-                "DbfFiles": string;
-                "DictionaryFiles": string;
-                "DifFiles": string;
-                "DllFiles": string;
-                "DocumentFiles": string;
-                "EmfFiles": string;
-                "EncryptedDocumentFiles": string;
-                "EncryptedReportFiles": string;
-                "Excel2007Files": string;
-                "ExcelAllFiles": string;
-                "ExcelFiles": string;
-                "ExcelXmlFiles": string;
-                "ExeFiles": string;
-                "GifFiles": string;
-                "HtmlFiles": string;
-                "InheritedLanguageFiles": string;
-                "JpegFiles": string;
-                "JsonDocumentFiles": string;
-                "JsonFiles": string;
-                "JsonReportFiles": string;
-                "LanguageFiles": string;
-                "LanguageForSilverlightFiles": string;
-                "MetaFiles": string;
-                "MhtFiles": string;
-                "PackedDocumentFiles": string;
-                "PackedReportFiles": string;
-                "PageFiles": string;
-                "PcxFiles": string;
-                "PdfFiles": string;
-                "PngFiles": string;
-                "Ppt2007Files": string;
-                "ReportEmbededDataFiles": string;
-                "ReportFiles": string;
-                "RtfFiles": string;
-                "StandaloneReportFiles": string;
-                "StylesFiles": string;
-                "SvgFiles": string;
-                "SvgzFiles": string;
-                "SylkFiles": string;
-                "TiffFiles": string;
-                "TxtFiles": string;
-                "Word2007Files": string;
-                "WordFiles": string;
-                "WriterFiles": string;
-                "XmlFiles": string;
-                "XpsFiles": string;
-                "ZipArchives": string;
-            };
-            "Formats": {
-                "custom01": string;
-                "custom02": string;
-                "custom03": string;
-                "custom04": string;
-                "custom05": string;
-                "custom06": string;
-                "custom07": string;
-                "custom08": string;
-                "custom09": string;
-                "custom10": string;
-                "custom11": string;
-                "custom12": string;
-                "custom13": string;
-                "custom14": string;
-                "custom15": string;
-                "custom16": string;
-                "custom17": string;
-                "custom18": string;
-                "date01": string;
-                "date02": string;
-                "date03": string;
-                "date04": string;
-                "date05": string;
-                "date06": string;
-                "date07": string;
-                "date08": string;
-                "date09": string;
-                "date10": string;
-                "date11": string;
-                "date12": string;
-                "date13": string;
-                "date14": string;
-                "date15": string;
-                "date16": string;
-                "date17": string;
-                "date18": string;
-                "date19": string;
-                "date20": string;
-                "date21": string;
-                "date22": string;
-                "time01": string;
-                "time02": string;
-                "time03": string;
-                "time04": string;
-                "time06": string;
-            };
-            "FormBand": {
-                "AddFilter": string;
-                "AddGroup": string;
-                "AddResult": string;
-                "AddSort": string;
-                "And": string;
-                "Ascending": string;
-                "Descending": string;
-                "NoFilters": string;
-                "NoSort": string;
-                "RemoveFilter": string;
-                "RemoveGroup": string;
-                "RemoveResult": string;
-                "RemoveSort": string;
-                "SortBy": string;
-                "ThenBy": string;
-                "title": string;
-            };
-            "FormColorBoxPopup": {
-                "Color": string;
-                "Custom": string;
-                "NoColor": string;
-                "Others": string;
-                "System": string;
-                "Web": string;
-            };
-            "FormConditions": {
-                "AaBbCcYyZz": string;
-                "AddCondition": string;
-                "AddLevel": string;
-                "AssignExpression": string;
-                "BreakIfTrue": string;
-                "BreakIfTrueToolTip": string;
-                "ChangeFont": string;
-                "ComponentIsEnabled": string;
-                "NoConditions": string;
-                "RemoveCondition": string;
-                "SelectStyle": string;
-                "title": string;
-            };
-            "FormCrossTabDesigner": {
-                "Columns": string;
-                "DataSource": string;
-                "Properties": string;
-                "Rows": string;
-                "Summary": string;
-                "Swap": string;
-                "title": string;
-            };
-            "FormDatabaseEdit": {
-                "ClientId": string;
-                "ClientSecret": string;
-                "ConnectionString": string;
-                "DashboardConnections": string;
-                "DB2Edit": string;
-                "DB2New": string;
-                "EditConnection": string;
-                "Favorites": string;
-                "FirebirdEdit": string;
-                "FirebirdNew": string;
-                "FirstRowIsHeader": string;
-                "ImportData": string;
-                "InformixEdit": string;
-                "InformixNew": string;
-                "InitialCatalog": string;
-                "JsonEdit": string;
-                "JsonNew": string;
-                "MySQLEdit": string;
-                "MySQLNew": string;
-                "NewConnection": string;
-                "OdbcEdit": string;
-                "OdbcNew": string;
-                "OleDbEdit": string;
-                "OleDbNew": string;
-                "OracleEdit": string;
-                "OracleNew": string;
-                "OracleODPEdit": string;
-                "OracleODPNew": string;
-                "PathData": string;
-                "PathJsonData": string;
-                "PathSchema": string;
-                "PathToData": string;
-                "Pin": string;
-                "PostgreSQLEdit": string;
-                "PostgreSQLNew": string;
-                "PromptUserNameAndPassword": string;
-                "RecentConnections": string;
-                "RelationDirection": string;
-                "ReportConnections": string;
-                "SelectData": string;
-                "SpreadsheetId": string;
-                "SqlCeEdit": string;
-                "SqlCeNew": string;
-                "SqlEdit": string;
-                "SQLiteEdit": string;
-                "SQLiteNew": string;
-                "SqlNew": string;
-                "TeradataEdit": string;
-                "TeradataNew": string;
-                "Token": string;
-                "UniDirectEdit": string;
-                "UniDirectNew": string;
-                "Unpin": string;
-                "UseBearerAuthentication": string;
-                "VistaDBEdit": string;
-                "VistaDBNew": string;
-                "XmlEdit": string;
-                "XmlNew": string;
-                "XmlType": string;
-            };
-            "FormDesigner": {
-                "Code": string;
-                "ColumnsOne": string;
-                "ColumnsThree": string;
-                "ColumnsTwo": string;
-                "CompilingReport": string;
-                "DockingPanels": string;
-                "HtmlPreview": string;
-                "JsPreview": string;
-                "labelPleaseSelectTypeOfInterface": string;
-                "LoadImage": string;
-                "LocalizePropertyGrid": string;
-                "MarginsNarrow": string;
-                "MarginsNormal": string;
-                "MarginsWide": string;
-                "OrderToolbars": string;
-                "Others": string;
-                "Pages": string;
-                "Preview": string;
-                "PropertyChange": string;
-                "RTPreview": string;
-                "SetupToolbox": string;
-                "ShowDescription": string;
-                "SLPreview": string;
-                "title": string;
-                "WebPreview": string;
-            };
-            "FormDictionaryDesigner": {
-                "Actions": string;
-                "AutoSort": string;
-                "BusinessObjectEdit": string;
-                "CalcColumnEdit": string;
-                "CalcColumnNew": string;
-                "CategoryEdit": string;
-                "CategoryNew": string;
-                "Child": string;
-                "ChildOfBusinessObject": string;
-                "ChildSource": string;
-                "ClickHere": string;
-                "ColumnEdit": string;
-                "ColumnNew": string;
-                "CreateNewDataSource": string;
-                "CreateNewReport": string;
-                "CsvSeparatorComma": string;
-                "CsvSeparatorOther": string;
-                "CsvSeparatorSemicolon": string;
-                "CsvSeparatorSpace": string;
-                "CsvSeparatorSystem": string;
-                "CsvSeparatorTab": string;
-                "DatabaseEdit": string;
-                "DatabaseNew": string;
-                "DataParameterEdit": string;
-                "DataParameterNew": string;
-                "DataSetToBusinessObjects": string;
-                "DataSourceEdit": string;
-                "DataSourceNew": string;
-                "DataSourcesNew": string;
-                "DataTransformationEdit": string;
-                "DataTransformationNew": string;
-                "Delete": string;
-                "DesignTimeQueryText": string;
-                "DictionaryMerge": string;
-                "DictionaryNew": string;
-                "DictionaryOpen": string;
-                "DictionarySaveAs": string;
-                "DragNewDataSource": string;
-                "DragNewReport": string;
-                "EditQuery": string;
-                "ExecutedSQLStatementSuccessfully": string;
-                "ExpressionNew": string;
-                "GetColumnsFromAssembly": string;
-                "ImportRelations": string;
-                "LabelSeparator": string;
-                "MarkUsedItems": string;
-                "NewBusinessObject": string;
-                "NewItem": string;
-                "OpenAssembly": string;
-                "Parent": string;
-                "ParentSource": string;
-                "Queries": string;
-                "QueryNew": string;
-                "QueryText": string;
-                "QueryTimeout": string;
-                "RelationEdit": string;
-                "RelationNew": string;
-                "ResourceEdit": string;
-                "ResourceNew": string;
-                "RetrieveColumns": string;
-                "RetrieveColumnsAllowRun": string;
-                "RetrieveColumnsAndParameters": string;
-                "RetrieveParameters": string;
-                "RetrievingDatabaseInformation": string;
-                "Run": string;
-                "SelectTypeOfBusinessObject": string;
-                "SkipSchemaWizard": string;
-                "SortItems": string;
-                "Synchronize": string;
-                "SynchronizeHint": string;
-                "TextDropDataFileHere": string;
-                "TextDropFileHere": string;
-                "TextDropImageHere": string;
-                "title": string;
-                "ValueNew": string;
-                "VariableEdit": string;
-                "VariableNew": string;
-                "ViewData": string;
-                "ViewQuery": string;
-            };
-            "FormFormatEditor": {
-                "Boolean": string;
-                "BooleanDisplay": string;
-                "BooleanValue": string;
-                "Currency": string;
-                "CurrencySymbol": string;
-                "Custom": string;
-                "Date": string;
-                "DateTimeFormat": string;
-                "DecimalDigits": string;
-                "DecimalSeparator": string;
-                "FormatMask": string;
-                "Formats": string;
-                "General": string;
-                "GroupSeparator": string;
-                "GroupSize": string;
-                "nameFalse": string;
-                "nameNo": string;
-                "nameOff": string;
-                "nameOn": string;
-                "nameTrue": string;
-                "nameYes": string;
-                "NegativeInRed": string;
-                "NegativePattern": string;
-                "Number": string;
-                "Percentage": string;
-                "PercentageSymbol": string;
-                "PositivePattern": string;
-                "Properties": string;
-                "Sample": string;
-                "SampleText": string;
-                "TextFormat": string;
-                "Time": string;
-                "title": string;
-                "UseAbbreviation": string;
-                "UseGroupSeparator": string;
-                "UseLocalSetting": string;
-            };
-            "FormGlobalizationEditor": {
-                "AddCulture": string;
-                "AutoLocalizeReportOnRun": string;
-                "CreateNewCulture": string;
-                "GetCulture": string;
-                "qnGetCulture": string;
-                "qnSetCulture": string;
-                "RemoveCulture": string;
-                "SetCulture": string;
-                "title": string;
-            };
-            "FormInteraction": {
-                "HyperlinkExternalDocuments": string;
-                "HyperlinkUsingInteractionBookmark": string;
-                "HyperlinkUsingInteractionTag": string;
-            };
-            "FormOptions": {
-                "AutoSave": string;
-                "AutoSaveReportToReportClass": string;
-                "BlankDashboard": string;
-                "BlankReport": string;
-                "Default": string;
-                "Drawing": string;
-                "DrawMarkersWhenMoving": string;
-                "EditAfterInsert": string;
-                "EnableAutoSaveMode": string;
-                "FillBands": string;
-                "FillComponents": string;
-                "FillContainers": string;
-                "FillCrossBands": string;
-                "GenerateLocalizedName": string;
-                "Grid": string;
-                "GridDots": string;
-                "GridLines": string;
-                "GridMode": string;
-                "GridSize": string;
-                "groupAutoSaveOptions": string;
-                "groupColorScheme": string;
-                "groupGridDrawingOptions": string;
-                "groupGridOptions": string;
-                "groupGridSize": string;
-                "groupMainOptions": string;
-                "groupMarkersStyle": string;
-                "groupOptionsOfQuickInfo": string;
-                "groupPleaseSelectTypeOfGui": string;
-                "groupReportDisplayOptions": string;
-                "labelColorScheme": string;
-                "labelInfoAutoSave": string;
-                "labelInfoDrawing": string;
-                "labelInfoGrid": string;
-                "labelInfoGui": string;
-                "labelInfoMain": string;
-                "labelInfoQuickInfo": string;
-                "Main": string;
-                "MarkersStyle": string;
-                "MarkersStyleCorners": string;
-                "MarkersStyleDashedRectangle": string;
-                "MarkersStyleNone": string;
-                "MessageLeftRightNotValid": string;
-                "MessageTopBottomNotValid": string;
-                "Minutes": string;
-                "SaveReportEvery": string;
-                "ScaleMode": string;
-                "SelectUILanguage": string;
-                "ShowDialogForms": string;
-                "ShowDimensionLines": string;
-                "ShowOldGaugeEditor": string;
-                "StartScreen": string;
-                "title": string;
-                "UseComponentColor": string;
-                "UseLastFormat": string;
-                "Welcome": string;
-            };
-            "FormPageSetup": {
-                "ApplyTo": string;
-                "Bottom": string;
-                "Columns": string;
-                "groupColumns": string;
-                "groupImage": string;
-                "groupMargins": string;
-                "groupOrientation": string;
-                "groupPaper": string;
-                "groupPaperSource": string;
-                "groupText": string;
-                "Height": string;
-                "labelAngle": string;
-                "labelColumnGaps": string;
-                "labelColumnWidth": string;
-                "labelImageAlignment": string;
-                "labelImageTransparency": string;
-                "labelInfoColumns": string;
-                "labelInfoPaper": string;
-                "labelInfoUnit": string;
-                "labelInfoWatermark": string;
-                "labelMultipleFactor": string;
-                "labelPaperSourceOfFirstPage": string;
-                "labelPaperSourceOfOtherPages": string;
-                "labelSelectBrush": string;
-                "labelSelectColor": string;
-                "labelSelectFont": string;
-                "labelSelectImage": string;
-                "labelText": string;
-                "Left": string;
-                "Margins": string;
-                "NumberOfColumns": string;
-                "Orientation": string;
-                "PageOrientationLandscape": string;
-                "PageOrientationPortrait": string;
-                "Paper": string;
-                "RebuildReport": string;
-                "Right": string;
-                "ScaleContent": string;
-                "Size": string;
-                "title": string;
-                "Top": string;
-                "Width": string;
-            };
-            "FormReportSetup": {
-                "groupDates": string;
-                "groupDescription": string;
-                "groupMainParameters": string;
-                "groupNames": string;
-                "groupScript": string;
-                "groupUnits": string;
-                "labelInfoDescription": string;
-                "labelInfoMain": string;
-                "labelNumberOfPass": string;
-                "labelReportCacheMode": string;
-                "ReportChanged": string;
-                "ReportCreated": string;
-                "title": string;
-            };
-            "FormRichTextEditor": {
-                "Bullets": string;
-                "FontName": string;
-                "FontSize": string;
-                "Insert": string;
-                "title": string;
-            };
-            "FormStyleDesigner": {
-                "Add": string;
-                "AddCollectionName": string;
-                "ApplyStyleCollectionToReportComponents": string;
-                "ApplyStyles": string;
-                "ColorCollectionEditor": string;
-                "CreateNewComponentStyle": string;
-                "CreateStyleCollection": string;
-                "Duplicate": string;
-                "EditColors": string;
-                "FromStyle": string;
-                "GetStyle": string;
-                "MoreStyles": string;
-                "NotSpecified": string;
-                "Open": string;
-                "Predefined": string;
-                "qnApplyStyleCollection": string;
-                "Remove": string;
-                "RemoveExistingStyles": string;
-                "Save": string;
-                "Style": string;
-                "StyleCollectionsNotFound": string;
-                "title": string;
-            };
-            "FormSystemTextEditor": {
-                "Condition": string;
-                "LabelDataBand": string;
-                "LabelDataColumn": string;
-                "LabelShowInsteadNullValues": string;
-                "LabelSummaryFunction": string;
-                "pageExpression": string;
-                "pageSummary": string;
-                "pageSystemVariable": string;
-                "RunningTotal": string;
-                "SummaryRunning": string;
-                "SummaryRunningByColumn": string;
-                "SummaryRunningByPage": string;
-                "SummaryRunningByReport": string;
-            };
-            "FormTitles": {
-                "ChartWizardForm": string;
-                "ConditionEditorForm": string;
-                "ConnectionSelectForm": string;
-                "ContainerSelectForm": string;
-                "DataAdapterServiceSelectForm": string;
-                "DataRelationSelectForm": string;
-                "DataSetName": string;
-                "DataSourceSelectForm": string;
-                "DataSourcesNewForm": string;
-                "DataStoreViewerForm": string;
-                "DesignerApplication": string;
-                "EventEditorForm": string;
-                "ExpressionEditorForm": string;
-                "GroupConditionForm": string;
-                "InteractionDrillDownPageSelectForm": string;
-                "MasterComponentSelectForm": string;
-                "PageAddForm": string;
-                "PageSizeForm": string;
-                "PagesManagerForm": string;
-                "PromptForm": string;
-                "ReportWizard": string;
-                "ServiceSelectForm": string;
-                "SqlExpressionsForm": string;
-                "SubReportPageSelectForm": string;
-                "TextEditorForm": string;
-                "ViewDataForm": string;
-                "ViewerApplication": string;
-            };
-            "FormViewer": {
-                "Bookmarks": string;
-                "Close": string;
-                "CollapseAll": string;
-                "CompressedDocumentFile": string;
-                "ContextMenu": string;
-                "DocumentFile": string;
-                "Editor": string;
-                "EncryptedDocumentFile": string;
-                "ExpandAll": string;
-                "Export": string;
-                "Find": string;
-                "FirstPage": string;
-                "FullScreen": string;
-                "GoToPage": string;
-                "HorScrollBar": string;
-                "LabelPageN": string;
-                "LastPage": string;
-                "NextPage": string;
-                "Open": string;
-                "PageControl": string;
-                "PageDelete": string;
-                "PageDesign": string;
-                "PageNew": string;
-                "PageNofM": string;
-                "PageofM": string;
-                "PageSize": string;
-                "PageViewModeContinuous": string;
-                "PageViewModeMultiplePages": string;
-                "PageViewModeSinglePage": string;
-                "Parameters": string;
-                "PrevPage": string;
-                "Print": string;
-                "qnPageDelete": string;
-                "Save": string;
-                "SendEMail": string;
-                "StatusBar": string;
-                "Thumbnails": string;
-                "title": string;
-                "titlePageSettings": string;
-                "Toolbar": string;
-                "VerScrollBar": string;
-                "ViewMode": string;
-                "Zoom": string;
-                "ZoomMultiplePages": string;
-                "ZoomOnePage": string;
-                "ZoomPageWidth": string;
-                "ZoomTwoPages": string;
-                "ZoomXXPages": string;
-                "ZoomXXPagesCancel": string;
-            };
-            "FormViewerFind": {
-                "Close": string;
-                "FindNext": string;
-                "FindPrevious": string;
-                "FindWhat": string;
-            };
-            "Gauge": {
-                "AddNewItem": string;
-                "BarRangeList": string;
-                "GaugeEditorForm": string;
-                "Kind": string;
-                "LinearBar": string;
-                "LinearMarker": string;
-                "LinearRange": string;
-                "LinearRangeList": string;
-                "LinearScale": string;
-                "LinearTickLabelCustom": string;
-                "LinearTickLabelMajor": string;
-                "LinearTickLabelMinor": string;
-                "LinearTickMarkCustom": string;
-                "LinearTickMarkMajor": string;
-                "LinearTickMarkMinor": string;
-                "Needle": string;
-                "RadialBar": string;
-                "RadialMarker": string;
-                "RadialRange": string;
-                "RadialRangeList": string;
-                "RadialScale": string;
-                "RadialTickLabelCustom": string;
-                "RadialTickLabelMajor": string;
-                "RadialTickLabelMinor": string;
-                "RadialTickMarkCustom": string;
-                "RadialTickMarkMajor": string;
-                "RadialTickMarkMinor": string;
-                "StateIndicator": string;
-                "StateIndicatorFilter": string;
-                "TickCustomValue": string;
-            };
-            "Gui": {
-                "barname_cancel": string;
-                "barname_caption": string;
-                "barname_msginvalidname": string;
-                "barname_name": string;
-                "barname_ok": string;
-                "barrename_caption": string;
-                "barsys_autohide_tooltip": string;
-                "barsys_close_tooltip": string;
-                "barsys_customize_tooltip": string;
-                "colorpicker_morecolors": string;
-                "colorpicker_nofill": string;
-                "colorpicker_standardcolorslabel": string;
-                "colorpicker_themecolorslabel": string;
-                "colorpickerdialog_bluelabel": string;
-                "colorpickerdialog_cancelbutton": string;
-                "colorpickerdialog_caption": string;
-                "colorpickerdialog_colormodellabel": string;
-                "colorpickerdialog_currentcolorlabel": string;
-                "colorpickerdialog_customcolorslabel": string;
-                "colorpickerdialog_greenlabel": string;
-                "colorpickerdialog_newcolorlabel": string;
-                "colorpickerdialog_okbutton": string;
-                "colorpickerdialog_redlabel": string;
-                "colorpickerdialog_rgblabel": string;
-                "colorpickerdialog_standardcolorslabel": string;
-                "colorpickerdialog_tabcustom": string;
-                "colorpickerdialog_tabstandard": string;
-                "cust_btn_close": string;
-                "cust_btn_delete": string;
-                "cust_btn_keyboard": string;
-                "cust_btn_new": string;
-                "cust_btn_rename": string;
-                "cust_btn_reset": string;
-                "cust_btn_resetusage": string;
-                "cust_caption": string;
-                "cust_cbo_fade": string;
-                "cust_cbo_none": string;
-                "cust_cbo_random": string;
-                "cust_cbo_slide": string;
-                "cust_cbo_system": string;
-                "cust_cbo_unfold": string;
-                "cust_chk_delay": string;
-                "cust_chk_fullmenus": string;
-                "cust_chk_showsk": string;
-                "cust_chk_showst": string;
-                "cust_lbl_cats": string;
-                "cust_lbl_cmds": string;
-                "cust_lbl_cmdsins": string;
-                "cust_lbl_menuan": string;
-                "cust_lbl_other": string;
-                "cust_lbl_pmt": string;
-                "cust_lbl_tlbs": string;
-                "cust_mnu_addremove": string;
-                "cust_mnu_cust": string;
-                "cust_mnu_reset": string;
-                "cust_mnu_tooltip": string;
-                "cust_msg_delete": string;
-                "cust_pm_begingroup": string;
-                "cust_pm_delete": string;
-                "cust_pm_name": string;
-                "cust_pm_reset": string;
-                "cust_pm_stydef": string;
-                "cust_pm_styimagetext": string;
-                "cust_pm_stytextonly": string;
-                "cust_tab_commands": string;
-                "cust_tab_options": string;
-                "cust_tab_toolbars": string;
-                "mdisysmenu_close": string;
-                "mdisysmenu_maximize": string;
-                "mdisysmenu_minimize": string;
-                "mdisysmenu_move": string;
-                "mdisysmenu_next": string;
-                "mdisysmenu_restore": string;
-                "mdisysmenu_size": string;
-                "mdisystt_close": string;
-                "mdisystt_minimize": string;
-                "mdisystt_restore": string;
-                "monthcalendar_clearbutton": string;
-                "monthcalendar_todaybutton": string;
-                "navbar_navpaneoptions": string;
-                "navbar_showfewerbuttons": string;
-                "navbar_showmorebuttons": string;
-                "navPaneCollapseTooltip": string;
-                "navPaneExpandTooltip": string;
-                "sys_custombar": string;
-                "sys_morebuttons": string;
-            };
-            "HelpComponents": {
-                "StiBarCode": string;
-                "StiChart": string;
-                "StiChartElement": string;
-                "StiCheckBox": string;
-                "StiChildBand": string;
-                "StiClone": string;
-                "StiColumnFooterBand": string;
-                "StiColumnHeaderBand": string;
-                "StiComboBoxElement": string;
-                "StiContainer": string;
-                "StiCrossDataBand": string;
-                "StiCrossFooterBand": string;
-                "StiCrossGroupFooterBand": string;
-                "StiCrossGroupHeaderBand": string;
-                "StiCrossHeaderBand": string;
-                "StiCrossTab": string;
-                "StiDataBand": string;
-                "StiDatePickerElement": string;
-                "StiEmptyBand": string;
-                "StiFilterCategory": string;
-                "StiFooterBand": string;
-                "StiGauge": string;
-                "StiGaugeElement": string;
-                "StiGroupFooterBand": string;
-                "StiGroupHeaderBand": string;
-                "StiHeaderBand": string;
-                "StiHierarchicalBand": string;
-                "StiHorizontalLinePrimitive": string;
-                "StiImage": string;
-                "StiImageElement": string;
-                "StiIndicatorElement": string;
-                "StiListBoxElement": string;
-                "StiMap": string;
-                "StiMapCategory": string;
-                "StiMapElement": string;
-                "StiOnlineMapElement": string;
-                "StiOverlayBand": string;
-                "StiPageFooterBand": string;
-                "StiPageHeaderBand": string;
-                "StiPanel": string;
-                "StiPanelElement": string;
-                "StiPivotTableElement": string;
-                "StiProgressElement": string;
-                "StiRectanglePrimitive": string;
-                "StiRegionMapElement": string;
-                "StiReportSummaryBand": string;
-                "StiReportTitleBand": string;
-                "StiRichText": string;
-                "StiRoundedRectanglePrimitive": string;
-                "StiShape": string;
-                "StiShapeElement": string;
-                "StiSubReport": string;
-                "StiTable": string;
-                "StiTableElement": string;
-                "StiText": string;
-                "StiTextElement": string;
-                "StiTextInCells": string;
-                "StiTreeViewBoxElement": string;
-                "StiTreeViewElement": string;
-                "StiVerticalLinePrimitive": string;
-                "StiWinControl": string;
-                "StiZipCode": string;
-            };
-            "HelpDesigner": {
-                "ActiveRelation": string;
-                "Align": string;
-                "AlignBottom": string;
-                "AlignCenter": string;
-                "AlignComponentBottom": string;
-                "AlignComponentCenter": string;
-                "AlignComponentLeft": string;
-                "AlignComponentMiddle": string;
-                "AlignComponentRight": string;
-                "AlignComponentTop": string;
-                "AlignLeft": string;
-                "AlignMiddle": string;
-                "AlignRight": string;
-                "AlignToGrid": string;
-                "AlignTop": string;
-                "AlignWidth": string;
-                "Angle": string;
-                "AngleWatermark": string;
-                "Background": string;
-                "biConditions": string;
-                "BorderColor": string;
-                "BorderSidesAll": string;
-                "BorderSidesBottom": string;
-                "BorderSidesLeft": string;
-                "BorderSidesNone": string;
-                "BorderSidesRight": string;
-                "BorderSidesTop": string;
-                "BorderStyle": string;
-                "BringToFront": string;
-                "CenterHorizontally": string;
-                "CenterVertically": string;
-                "Close": string;
-                "Columns": string;
-                "ComponentSize": string;
-                "CopyStyle": string;
-                "CopyToClipboard": string;
-                "CurrencySymbol": string;
-                "DashboardNew": string;
-                "DataStore": string;
-                "DateTimeFormat": string;
-                "DockingPanels": string;
-                "DockStyleBottom": string;
-                "DockStyleFill": string;
-                "DockStyleLeft": string;
-                "DockStyleNone": string;
-                "DockStyleRight": string;
-                "DockStyleTop": string;
-                "FontGrow": string;
-                "FontName": string;
-                "FontNameWatermark": string;
-                "FontShrink": string;
-                "FontSize": string;
-                "FontSizeWatermark": string;
-                "FontStyleBold": string;
-                "FontStyleBoldWatermark": string;
-                "FontStyleItalic": string;
-                "FontStyleItalicWatermark": string;
-                "FontStyleUnderline": string;
-                "FontStyleUnderlineWatermark": string;
-                "FormatBoolean": string;
-                "FormatCurrency": string;
-                "FormatCustom": string;
-                "FormatDate": string;
-                "FormatGeneral": string;
-                "FormatNumber": string;
-                "FormatPercentage": string;
-                "FormatTime": string;
-                "FormNew": string;
-                "GridMode": string;
-                "ImageAlignment": string;
-                "ImageTransparency": string;
-                "Interaction": string;
-                "LineSpacing": string;
-                "Link": string;
-                "LoadImage": string;
-                "Lock": string;
-                "MainMenu": string;
-                "MakeHorizontalSpacingEqual": string;
-                "MakeVerticalSpacingEqual": string;
-                "Margins": string;
-                "menuCheckIssues": string;
-                "menuDesignerOptions": string;
-                "menuEditClearContents": string;
-                "menuEditCopy": string;
-                "menuEditCut": string;
-                "menuEditDelete": string;
-                "menuEditPaste": string;
-                "menuFAQPage": string;
-                "menuGlobalizationStrings": string;
-                "menuHelpAboutProgramm": string;
-                "menuHomePage": string;
-                "menuPageOptions": string;
-                "menuPagesManager": string;
-                "menuPreviewSettings": string;
-                "menuPrint": string;
-                "menuPrintPreview": string;
-                "menuPrintQuick": string;
-                "menuReportOptions": string;
-                "menuStyleDesigner": string;
-                "menuSupport": string;
-                "menuViewAlignToGrid": string;
-                "menuViewNormal": string;
-                "menuViewPageBreakPreview": string;
-                "menuViewQuickInfo": string;
-                "menuViewShowGrid": string;
-                "menuViewShowHeaders": string;
-                "menuViewShowOrder": string;
-                "menuViewShowRulers": string;
-                "MoveBackward": string;
-                "MoveForward": string;
-                "Orientation": string;
-                "PageDelete": string;
-                "PageNew": string;
-                "PageSetup": string;
-                "PageSize": string;
-                "PagesManager": string;
-                "PressF1": string;
-                "Redo": string;
-                "ReportNew": string;
-                "ReportOpen": string;
-                "ReportPreview": string;
-                "ReportSave": string;
-                "SelectAll": string;
-                "SelectUILanguage": string;
-                "SendToBack": string;
-                "ServicesConfigurator": string;
-                "Shadow": string;
-                "ShowBehind": string;
-                "ShowImageBehind": string;
-                "ShowToolbox": string;
-                "StimulsoftHelp": string;
-                "StyleDesigner": string;
-                "TellMeMore": string;
-                "Text": string;
-                "TextBrush": string;
-                "TextBrushWatermark": string;
-                "TextColor": string;
-                "TextFormat": string;
-                "ToolbarStyle": string;
-                "Undo": string;
-                "WordWrap": string;
-                "Zoom": string;
-            };
-            "HelpDialogs": {
-                "StiButtonControl": string;
-                "StiCheckBoxControl": string;
-                "StiCheckedListBoxControl": string;
-                "StiComboBoxControl": string;
-                "StiDateTimePickerControl": string;
-                "StiGridControl": string;
-                "StiGroupBoxControl": string;
-                "StiLabelControl": string;
-                "StiListBoxControl": string;
-                "StiListViewControl": string;
-                "StiLookUpBoxControl": string;
-                "StiNumericUpDownControl": string;
-                "StiPanelControl": string;
-                "StiPictureBoxControl": string;
-                "StiRadioButtonControl": string;
-                "StiRichTextBoxControl": string;
-                "StiTextBoxControl": string;
-                "StiTreeViewControl": string;
-            };
-            "HelpViewer": {
-                "AddPageBreaks": string;
-                "AllowAddOrModifyTextAnnotations": string;
-                "AllowCopyTextAndGraphics": string;
-                "AllowEditable": string;
-                "AllowModifyContents": string;
-                "AllowPrintDocument": string;
-                "Bookmarks": string;
-                "BorderType": string;
-                "Close": string;
-                "CloseDotMatrix": string;
-                "Compressed": string;
-                "CompressToArchive": string;
-                "ContinuousPages": string;
-                "CurrentPage": string;
-                "CutEdges": string;
-                "CutLongLines": string;
-                "DigitalSignature": string;
-                "DitheringType": string;
-                "DotMatrixMode": string;
-                "DrawBorder": string;
-                "Edit": string;
-                "EmbeddedFonts": string;
-                "EmbeddedImageData": string;
-                "Encoding": string;
-                "EncodingData": string;
-                "EncryptionKeyLength": string;
-                "ExportDataOnly": string;
-                "ExportEachPageToSheet": string;
-                "ExportMode": string;
-                "ExportModeHtml": string;
-                "ExportModeRtf": string;
-                "ExportObjectFormatting": string;
-                "ExportPageBreaks": string;
-                "ExportRtfTextAsImage": string;
-                "Find": string;
-                "FullScreen": string;
-                "GetCertificateFromCryptoUI": string;
-                "ImageCompressionMethod": string;
-                "ImageFormat": string;
-                "ImageQuality": string;
-                "ImageQualityPdf": string;
-                "ImageResolution": string;
-                "ImageType": string;
-                "KillSpaceLines": string;
-                "MultipleFiles": string;
-                "Open": string;
-                "OpenAfterExport": string;
-                "OwnerPassword": string;
-                "PageAll": string;
-                "PageDelete": string;
-                "PageDesign": string;
-                "PageFirst": string;
-                "PageGoTo": string;
-                "PageLast": string;
-                "PageNew": string;
-                "PageNext": string;
-                "PagePrevious": string;
-                "PageSize": string;
-                "Parameters": string;
-                "PdfACompliance": string;
-                "Print": string;
-                "PutFeedPageCode": string;
-                "RangePages": string;
-                "RemoveEmptySpaceAtBottom": string;
-                "Resources": string;
-                "RestrictEditing": string;
-                "Save": string;
-                "ScaleHtml": string;
-                "ScaleImage": string;
-                "SendEMail": string;
-                "Separator": string;
-                "SkipColumnHeaders": string;
-                "StandardPdfFonts": string;
-                "SubjectNameString": string;
-                "Thumbnails": string;
-                "TiffCompressionScheme": string;
-                "ToolEditor": string;
-                "TypeExport": string;
-                "UseDefaultSystemEncoding": string;
-                "UseOnePageHeaderAndFooter": string;
-                "UsePageHeadersAndFooters": string;
-                "UserPassword": string;
-                "UseUnicode": string;
-                "ViewModeContinuous": string;
-                "ViewModeMultiplePages": string;
-                "ViewModeSinglePage": string;
-                "ZoomMultiplePages": string;
-                "ZoomOnePage": string;
-                "ZoomPageWidth": string;
-                "ZoomTwoPages": string;
-                "ZoomTxt": string;
-            };
-            "Interface": {
-                "Mouse": string;
-                "MouseDescription": string;
-                "Touch": string;
-                "TouchDescription": string;
-            };
-            "MainMenu": {
-                "menuCheckIssues": string;
-                "menuContextClone": string;
-                "menuContextDesign": string;
-                "menuContextTextFormat": string;
-                "menuConvertToCheckBox": string;
-                "menuConvertToImage": string;
-                "MenuConvertToRichText": string;
-                "menuConvertToText": string;
-                "menuDeleteColumn": string;
-                "menuDeleteRow": string;
-                "menuEdit": string;
-                "menuEditBusinessObjectFromDataSetNew": string;
-                "menuEditBusinessObjectNew": string;
-                "menuEditCalcColumnNew": string;
-                "menuEditCantRedo": string;
-                "menuEditCantUndo": string;
-                "menuEditCategoryNew": string;
-                "menuEditClearContents": string;
-                "menuEditColumnNew": string;
-                "menuEditConnectionNew": string;
-                "menuEditCopy": string;
-                "menuEditCut": string;
-                "menuEditDataParameterNew": string;
-                "menuEditDataSourceNew": string;
-                "menuEditDataSourcesNew": string;
-                "menuEditDataTransformationNew": string;
-                "menuEditDelete": string;
-                "menuEditEdit": string;
-                "menuEditImportRelations": string;
-                "menuEditPaste": string;
-                "menuEditRedo": string;
-                "menuEditRedoText": string;
-                "menuEditRelationNew": string;
-                "menuEditRemoveUnused": string;
-                "menuEditResourceNew": string;
-                "menuEditSelectAll": string;
-                "menuEditSynchronize": string;
-                "menuEditUndo": string;
-                "menuEditUndoText": string;
-                "menuEditVariableNew": string;
-                "menuEditViewData": string;
-                "menuEmbedAllDataToResources": string;
-                "menuFile": string;
-                "menuFileClose": string;
-                "menuFileDashboardDelete": string;
-                "menuFileDashboardNew": string;
-                "menuFileDashboardOpen": string;
-                "menuFileDashboardSaveAs": string;
-                "menuFileExit": string;
-                "menuFileExportXMLSchema": string;
-                "menuFileFormNew": string;
-                "menuFileImportXMLSchema": string;
-                "menuFileMerge": string;
-                "menuFileMergeXMLSchema": string;
-                "menuFileNew": string;
-                "menuFileOpen": string;
-                "menuFilePageDelete": string;
-                "menuFilePageNew": string;
-                "menuFilePageOpen": string;
-                "menuFilePageSaveAs": string;
-                "menuFilePageSetup": string;
-                "menuFileRecentDocuments": string;
-                "menuFileRecentLocations": string;
-                "menuFileReportNew": string;
-                "menuFileReportOpen": string;
-                "menuFileReportOpenFromGoogleDocs": string;
-                "menuFileReportPreview": string;
-                "menuFileReportSave": string;
-                "menuFileReportSaveAs": string;
-                "menuFileReportSaveAsToGoogleDocs": string;
-                "menuFileReportSetup": string;
-                "menuFileReportWizardNew": string;
-                "menuFileSave": string;
-                "menuFileSaveAs": string;
-                "menuHelp": string;
-                "menuHelpAboutProgramm": string;
-                "menuHelpContents": string;
-                "menuHelpDemos": string;
-                "menuHelpDocumentation": string;
-                "menuHelpFAQPage": string;
-                "menuHelpForum": string;
-                "menuHelpHowToRegister": string;
-                "menuHelpProductHomePage": string;
-                "menuHelpSamples": string;
-                "menuHelpSupport": string;
-                "menuHelpTrainingCourses": string;
-                "menuHelpVideos": string;
-                "menuInsertColumnToLeft": string;
-                "menuInsertColumnToRight": string;
-                "menuInsertRowAbove": string;
-                "menuInsertRowBelow": string;
-                "menuJoinCells": string;
-                "menuMakeThisRelationActive": string;
-                "menuSelectColumn": string;
-                "menuSelectRow": string;
-                "menuTable": string;
-                "menuTools": string;
-                "menuToolsDataStore": string;
-                "menuToolsDictionary": string;
-                "menuToolsOptions": string;
-                "menuToolsPagesManager": string;
-                "menuToolsServicesConfigurator": string;
-                "menuToolsStyleDesigner": string;
-                "menuView": string;
-                "menuViewAlignToGrid": string;
-                "menuViewNormal": string;
-                "menuViewOptions": string;
-                "menuViewPageBreakPreview": string;
-                "menuViewQuickInfo": string;
-                "menuViewQuickInfoNone": string;
-                "menuViewQuickInfoOverlay": string;
-                "menuViewQuickInfoShowAliases": string;
-                "menuViewQuickInfoShowComponentsNames": string;
-                "menuViewQuickInfoShowContent": string;
-                "menuViewQuickInfoShowEvents": string;
-                "menuViewQuickInfoShowFields": string;
-                "menuViewQuickInfoShowFieldsOnly": string;
-                "menuViewShowGrid": string;
-                "menuViewShowHeaders": string;
-                "menuViewShowInsertTab": string;
-                "menuViewShowOrder": string;
-                "menuViewShowRulers": string;
-                "menuViewShowToolbox": string;
-                "menuViewToolbars": string;
-            };
-            "Map": {
-                "LinkDataForm": string;
-                "MapEditorForm": string;
-            };
-            "Messages": {
-                "ChangeRequestTimeout": string;
-                "DoNotShowAgain": string;
-                "MessageTimeOutExpired": string;
-                "RenderingWillOccurInTheInterpretationMode": string;
-                "ResourceCannotBeDeleted": string;
-                "ShareURLOfTheItemHasBeenUpdated": string;
-                "ShareYourReportYouShouldSave": string;
-                "TextRegistrationSuccessfully": string;
-                "ThisFieldIsNotSpecified": string;
-                "ThisFunctionEmbedsAllReportDataToTheReport": string;
-                "YouNeedToLoginFirstToStartUsingTheSoftware": string;
-            };
-            "Notices": {
-                "AuthTokenIsNotCorrect": string;
-                "AuthUserNameNotAssociatedWithYourAccount": string;
-                "AccessDenied": string;
-                "AccountLocked": string;
-                "ActivationExpiriedBeforeFirstRelease": string;
-                "ActivationLicenseIsNotCorrect": string;
-                "ActivationLockedAccount": string;
-                "ActivationMaxActivationsReached": string;
-                "ActivationServerIsNotAvailableNow": string;
-                "ActivationServerVersionNotAllowed": string;
-                "ActivationSomeTroublesOccurred": string;
-                "ActivationUserNameOrPasswordIsWrong": string;
-                "ActivationWrongAccountType": string;
-                "AuthAccountCantBeUsedNow": string;
-                "AuthAccountIsNotActivated": string;
-                "AuthCantChangeRoleBecauseLastAdministratorUser": string;
-                "AuthCantChangeRoleBecauseLastSupervisorUser": string;
-                "AuthCantChangeSystemRole": string;
-                "AuthCantDeleteHimselfUser": string;
-                "AuthCantDeleteLastAdministratorUser": string;
-                "AuthCantDeleteLastSupervisorUser": string;
-                "AuthCantDeleteSystemRole": string;
-                "AuthCantDisableUserBecauseLastAdministratorUser": string;
-                "AuthCantDisableUserBecauseLastSupervisorUser": string;
-                "AuthFirstNameIsNotSpecified": string;
-                "AuthLastNameIsNotSpecified": string;
-                "AuthOAuthIdNotSpecified": string;
-                "AuthPasswordIsNotCorrect": string;
-                "AuthPasswordIsNotSpecified": string;
-                "AuthPasswordIsTooShort": string;
-                "AuthRoleCantBeDeletedBecauseUsedByUsers": string;
-                "AuthRoleNameAlreadyExists": string;
-                "AuthRoleNameIsSystemRole": string;
-                "AuthSendMessageWithInstructions": string;
-                "AuthUserHasLoggedOut": string;
-                "AuthUserNameAlreadyExists": string;
-                "AuthUserNameIsNotSpecified": string;
-                "AuthUserNameOrPasswordIsNotCorrect": string;
-                "AuthUserNameShouldLookLikeAnEmailAddress": string;
-                "AuthWorkspaceNameAlreadyInUse": string;
-                "CommandTimeOut": string;
-                "Congratulations": string;
-                "EndDateShouldBeGreaterThanCurrentDate": string;
-                "EndDateShouldBeGreaterThanStartDate": string;
-                "ExecutionError": string;
-                "IsIdentical": string;
-                "IsNotAuthorized": string;
-                "IsNotCorrect": string;
-                "IsNotDeleted": string;
-                "IsNotEqual": string;
-                "IsNotFound": string;
-                "IsNotRecognized": string;
-                "IsNotSpecified": string;
-                "IsRequiredFile": string;
-                "ItemCantBeAttachedToItself": string;
-                "ItemCantBeDeletedBecauseItemIsAttachedToOtherItems": string;
-                "ItemCantBeMovedToSpecifiedPlace": string;
-                "ItemDoesNotSupport": string;
-                "KeyAndToKeyAreEqual": string;
-                "MessageMaximumFileSizeExceeded": string;
-                "NewProduct": string;
-                "NewVersionsAvailable": string;
-                "NotificationFailed": string;
-                "NotificationFilesUploadingComplete": string;
-                "NotificationFileUploading": string;
-                "NotificationItemDelete": string;
-                "NotificationItemDeleteComplete": string;
-                "NotificationItemRestore": string;
-                "NotificationItemRestoreComplete": string;
-                "NotificationItemTransfer": string;
-                "NotificationItemTransferComplete": string;
-                "NotificationItemWaitingProcessing": string;
-                "NotificationMailing": string;
-                "NotificationMailingComplete": string;
-                "NotificationMailingWaitingProcessing": string;
-                "NotificationOperationAborted": string;
-                "NotificationRecycleBinCleaning": string;
-                "NotificationRecycleBinCleaningComplete": string;
-                "NotificationRecycleBinWaitingProcessing": string;
-                "NotificationReportExporting": string;
-                "NotificationReportExportingComplete": string;
-                "NotificationReportRendering": string;
-                "NotificationReportRenderingComplete": string;
-                "NotificationReportWaitingProcessing": string;
-                "NotificationSchedulerRunning": string;
-                "NotificationSchedulerRunningComplete": string;
-                "NotificationSchedulerWaitingProcessing": string;
-                "NotificationTitleFilesUploading": string;
-                "NotificationTitleItemRefreshing": string;
-                "NotificationTitleItemTransferring": string;
-                "NotificationTitleMailing": string;
-                "NotificationTitleReportExporting": string;
-                "NotificationTitleReportRendering": string;
-                "NotificationTitleSchedulerRunning": string;
-                "NotificationTransferring": string;
-                "NotificationTransferringComplete": string;
-                "NotificationValueIsNotCorrect": string;
-                "NotificationFailedAddFollowingFiles": string;
-                "OutOfRange": string;
-                "ParsingCommandException": string;
-                "PleaseLogin": string;
-                "QuotaMaximumRefreshCountExceeded": string;
-                "QuotaMaximumComputingCyclesCountExceeded": string;
-                "QuotaMaximumDataRowsCountExceeded": string;
-                "QuotaMaximumFileSizeExceeded": string;
-                "QuotaMaximumItemsCountExceeded": string;
-                "QuotaMaximumReportPagesCountExceeded": string;
-                "QuotaMaximumResourcesCountExceeded": string;
-                "QuotaMaximumResourceSizeExceeded": string;
-                "QuotaMaximumUsersCountExceeded": string;
-                "QuotaMaximumWorkspacesCountExceeded": string;
-                "SchedulerCantRunItSelf": string;
-                "SessionTimeOut": string;
-                "SnapshotAlreadyProcessed": string;
-                "SpecifiedItemIsNot": string;
-                "SubscriptionExpired": string;
-                "SubscriptionExpiredDate": string;
-                "SubscriptionsOut10": string;
-                "SubscriptionsOut20": string;
-                "SuccessfullyRenewed": string;
-                "TrialToLicense": string;
-                "VersionCopyFromItem": string;
-                "VersionCreatedFromFile": string;
-                "VersionCreatedFromItem": string;
-                "VersionLoadedFromFile": string;
-                "VersionNewItemCreation": string;
-                "Warning": string;
-                "WindowClosePreventWhileUploading": string;
-                "WithSpecifiedKeyIsNotFound": string;
-                "WouldYouLikeToUpdateNow": string;
-                "YourTimeSessionHasExpired": string;
-                "YouUsingTrialVersion": string;
-            };
-            "NuGet": {
-                "AlreadyDownloaded": string;
-                "AssemblyLoadedSuccessfully": string;
-                "AssemblyNotFound": string;
-                "Author": string;
-                "Dependencies": string;
-                "Download": string;
-                "DownloadAll": string;
-                "DownloadAndInstall": string;
-                "DownloadDataAdapter": string;
-                "Downloads": string;
-                "IAccept": string;
-                "IDecline": string;
-                "LicenceFormDesc": string;
-                "LicenceFormDesc1": string;
-                "LicenceFormTitle": string;
-                "License": string;
-                "ProjectUrl": string;
-                "ReportAbuse": string;
-                "RetrievingInformation": string;
-                "Tags": string;
-                "Title": string;
-                "ViewLicense": string;
-            };
-            "Panels": {
-                "Dictionary": string;
-                "Messages": string;
-                "Properties": string;
-                "ReportTree": string;
-            };
-            "Password": {
-                "gbPassword": string;
-                "lbPasswordLoad": string;
-                "lbPasswordSave": string;
-                "PasswordNotEntered": string;
-                "StiLoadPasswordForm": string;
-                "StiSavePasswordForm": string;
-            };
-            "Permissions": {
-                "AdminAPI": string;
-                "AdminBackgroundTasks": string;
-                "AdminPermissions": string;
-                "AdminRecycleBin": string;
-                "AdminShare": string;
-                "AdminTransfers": string;
-                "ItemCalendars": string;
-                "ItemCloudStorages": string;
-                "ItemContactLists": string;
-                "ItemDashboards": string;
-                "ItemDataSources": string;
-                "ItemFiles": string;
-                "ItemFolders": string;
-                "ItemReportSnapshots": string;
-                "ItemReportTemplates": string;
-                "ItemSchedulers": string;
-                "ReportDesignerBusinessObjects": string;
-                "ReportDesignerDataColumns": string;
-                "ReportDesignerDataConnections": string;
-                "ReportDesignerDataRelations": string;
-                "ReportDesignerDataSources": string;
-                "ReportDesignerDictionaryActions": string;
-                "ReportDesignerRestrictions": string;
-                "ReportDesignerVariables": string;
-                "SystemBackupRestore": string;
-                "SystemEmailTemplates": string;
-                "SystemLicensing": string;
-                "SystemMonitoring": string;
-                "SystemUpdate": string;
-                "SystemWorkspaces": string;
-                "TextAdministration": string;
-                "TextItems": string;
-                "TextReportDesigner": string;
-                "TextSystem": string;
-                "TextUsers": string;
-                "UserHimself": string;
-                "UserRoles": string;
-                "Users": string;
-                "UserWorkspace": string;
-            };
-            "PlacementComponent": {
-                "MoveLeftFreeSpace": string;
-                "MoveRightFreeSpace": string;
-            };
-            "PropertyCategory": {
-                "AppearanceCategory": string;
-                "AreaCategory": string;
-                "ArgumentCategory": string;
-                "AxisCategory": string;
-                "BarCodeAdditionalCategory": string;
-                "BarCodeCategory": string;
-                "BehaviorCategory": string;
-                "CapNeedle": string;
-                "CellCategory": string;
-                "ChartAdditionalCategory": string;
-                "ChartCategory": string;
-                "ChartMap": string;
-                "CheckCategory": string;
-                "ColorsCategory": string;
-                "ColumnsCategory": string;
-                "ComboBoxCategory": string;
-                "ControlCategory": string;
-                "ControlsEventsCategory": string;
-                "CrossTabCategory": string;
-                "DashboardCategory": string;
-                "DataCategory": string;
-                "DatePickerCategory": string;
-                "DescriptionCategory": string;
-                "DesignCategory": string;
-                "DisplayCategory": string;
-                "EngineCategory": string;
-                "ExportCategory": string;
-                "ExportEventsCategory": string;
-                "FooterTableCategory": string;
-                "GaugeCategory": string;
-                "GlobalizationCategory": string;
-                "GridLinesCategory": string;
-                "HeaderTableCategory": string;
-                "HierarchicalCategory": string;
-                "ImageAdditionalCategory": string;
-                "ImageCategory": string;
-                "IndicatorCategory": string;
-                "InterlacingCategory": string;
-                "LabelsCategory": string;
-                "LegendCategory": string;
-                "ListBoxCategory": string;
-                "MainCategory": string;
-                "MarkerCategory": string;
-                "MiscCategory": string;
-                "MouseEventsCategory": string;
-                "NavigationCategory": string;
-                "NavigationEventsCategory": string;
-                "Needle": string;
-                "OnlineMapCategory": string;
-                "OptionsCategory": string;
-                "PageAdditionalCategory": string;
-                "PageCategory": string;
-                "PageColumnBreakCategory": string;
-                "ParametersCategory": string;
-                "PivotTableCategory": string;
-                "PositionCategory": string;
-                "PrimitiveCategory": string;
-                "PrintEventsCategory": string;
-                "ProgressCategory": string;
-                "RegionMapCategory": string;
-                "RenderEventsCategory": string;
-                "SeriesCategory": string;
-                "SeriesLabelsCategory": string;
-                "ShapeCategory": string;
-                "Size": string;
-                "SubReportCategory": string;
-                "TableCategory": string;
-                "TextAdditionalCategory": string;
-                "TextCategory": string;
-                "TitleCategory": string;
-                "TreeViewBoxCategory": string;
-                "TreeViewCategory": string;
-                "TrendLineCategory": string;
-                "ValueCategory": string;
-                "ValueCloseCategory": string;
-                "ValueEndCategory": string;
-                "ValueEventsCategory": string;
-                "ValueHighCategory": string;
-                "ValueLowCategory": string;
-                "ValueOpenCategory": string;
-                "ViewCategory": string;
-                "WeightCategory": string;
-                "WinControlCategory": string;
-                "ZipCodeCategory": string;
-            };
-            "PropertyColor": {
-                "AliceBlue": string;
-                "AntiqueWhite": string;
-                "Aqua": string;
-                "Aquamarine": string;
-                "Azure": string;
-                "Beige": string;
-                "Bisque": string;
-                "Black": string;
-                "BlanchedAlmond": string;
-                "Blue": string;
-                "BlueViolet": string;
-                "Brown": string;
-                "BurlyWood": string;
-                "CadetBlue": string;
-                "Carmine": string;
-                "Chartreuse": string;
-                "Chocolate": string;
-                "Coral": string;
-                "CornflowerBlue": string;
-                "Cornsilk": string;
-                "Crimson": string;
-                "Cyan": string;
-                "DarkBlue": string;
-                "DarkCyan": string;
-                "DarkGoldenrod": string;
-                "DarkGray": string;
-                "DarkGreen": string;
-                "DarkKhaki": string;
-                "DarkMagenta": string;
-                "DarkOliveGreen": string;
-                "DarkOrange": string;
-                "DarkOrchid": string;
-                "DarkRed": string;
-                "DarkSalmon": string;
-                "DarkSeaGreen": string;
-                "DarkSlateBlue": string;
-                "DarkSlateGray": string;
-                "DarkTurquoise": string;
-                "DarkViolet": string;
-                "DeepPink": string;
-                "DeepSkyBlue": string;
-                "DimGray": string;
-                "DodgerBlue": string;
-                "Firebrick": string;
-                "FloralWhite": string;
-                "ForestGreen": string;
-                "Fuchsia": string;
-                "Gainsboro": string;
-                "GhostWhite": string;
-                "Gold": string;
-                "Goldenrod": string;
-                "Gray": string;
-                "Green": string;
-                "GreenYellow": string;
-                "Honeydew": string;
-                "HotPink": string;
-                "IndianRed": string;
-                "Indigo": string;
-                "Ivory": string;
-                "Khaki": string;
-                "Lavender": string;
-                "LavenderBlush": string;
-                "LawnGreen": string;
-                "LemonChiffon": string;
-                "LightBlue": string;
-                "LightCoral": string;
-                "LightCyan": string;
-                "LightGoldenrodYellow": string;
-                "LightGray": string;
-                "LightGreen": string;
-                "LightPink": string;
-                "LightSalmon": string;
-                "LightSeaGreen": string;
-                "LightSkyBlue": string;
-                "LightSlateGray": string;
-                "LightSteelBlue": string;
-                "LightYellow": string;
-                "Lime": string;
-                "LimeGreen": string;
-                "Linen": string;
-                "Magenta": string;
-                "Maroon": string;
-                "MediumAquamarine": string;
-                "MediumBlue": string;
-                "MediumOrchid": string;
-                "MediumPurple": string;
-                "MediumSeaGreen": string;
-                "MediumSlateBlue": string;
-                "MediumSpringGreen": string;
-                "MediumTurquoise": string;
-                "MediumVioletRed": string;
-                "MidnightBlue": string;
-                "MintCream": string;
-                "MistyRose": string;
-                "Moccasin": string;
-                "NavajoWhite": string;
-                "Navy": string;
-                "OldLace": string;
-                "Olive": string;
-                "OliveDrab": string;
-                "Orange": string;
-                "OrangeRed": string;
-                "Orchid": string;
-                "PaleGoldenrod": string;
-                "PaleGreen": string;
-                "PaleTurquoise": string;
-                "PaleVioletRed": string;
-                "PapayaWhip": string;
-                "PeachPuff": string;
-                "Peru": string;
-                "Pink": string;
-                "Plum": string;
-                "PowderBlue": string;
-                "Purple": string;
-                "Red": string;
-                "RosyBrown": string;
-                "RoyalBlue": string;
-                "SaddleBrown": string;
-                "Salmon": string;
-                "SandyBrown": string;
-                "SeaGreen": string;
-                "SeaShell": string;
-                "Sienna": string;
-                "Silver": string;
-                "SkyBlue": string;
-                "SlateBlue": string;
-                "SlateGray": string;
-                "Snow": string;
-                "SpringGreen": string;
-                "SteelBlue": string;
-                "Tan": string;
-                "Teal": string;
-                "Thistle": string;
-                "Tomato": string;
-                "Transparent": string;
-                "Turquoise": string;
-                "VeryDarkGray": string;
-                "Violet": string;
-                "Wheat": string;
-                "White": string;
-                "WhiteSmoke": string;
-                "Yellow": string;
-                "YellowGreen": string;
-            };
-            "PropertyEnum": {
-                "StiChartTrendLineTypeLinear": string;
-                "StiChartTrendLineTypeLogarithmic": string;
-                "StiChartTrendLineTypeNone": string;
-                "StiChartTrendLineTypeExponential": string;
-                "boolFalse": string;
-                "boolTrue": string;
-                "BorderStyleFixed3D": string;
-                "BorderStyleFixedSingle": string;
-                "BorderStyleNone": string;
-                "ChartAxesTicksAll": string;
-                "ChartAxesTicksMajor": string;
-                "ChartAxesTicksNone": string;
-                "ChartGridLinesAll": string;
-                "ChartGridLinesMajor": string;
-                "ChartGridLinesNone": string;
-                "ComboBoxStyleDropDown": string;
-                "ComboBoxStyleDropDownList": string;
-                "ComboBoxStyleSimple": string;
-                "ContentAlignmentBottomCenter": string;
-                "ContentAlignmentBottomLeft": string;
-                "ContentAlignmentBottomRight": string;
-                "ContentAlignmentMiddleCenter": string;
-                "ContentAlignmentMiddleLeft": string;
-                "ContentAlignmentMiddleRight": string;
-                "ContentAlignmentTopCenter": string;
-                "ContentAlignmentTopLeft": string;
-                "ContentAlignmentTopRight": string;
-                "DataGridLineStyleNone": string;
-                "DataGridLineStyleSolid": string;
-                "DateTimePickerFormatCustom": string;
-                "DateTimePickerFormatLong": string;
-                "DateTimePickerFormatShort": string;
-                "DateTimePickerFormatTime": string;
-                "DialogResultAbort": string;
-                "DialogResultCancel": string;
-                "DialogResultIgnore": string;
-                "DialogResultNo": string;
-                "DialogResultNone": string;
-                "DialogResultOK": string;
-                "DialogResultRetry": string;
-                "DialogResultYes": string;
-                "DuplexDefault": string;
-                "DuplexHorizontal": string;
-                "DuplexSimplex": string;
-                "DuplexVertical": string;
-                "FormStartPositionCenterParent": string;
-                "FormStartPositionCenterScreen": string;
-                "FormStartPositionManual": string;
-                "FormStartPositionWindowsDefaultBounds": string;
-                "FormStartPositionWindowsDefaultLocation": string;
-                "FormWindowStateMaximized": string;
-                "FormWindowStateMinimized": string;
-                "FormWindowStateNormal": string;
-                "HorizontalAlignmentCenter": string;
-                "HorizontalAlignmentLeft": string;
-                "HorizontalAlignmentRight": string;
-                "HotkeyPrefixHide": string;
-                "HotkeyPrefixNone": string;
-                "HotkeyPrefixShow": string;
-                "LeftRightAlignmentLeft": string;
-                "LeftRightAlignmentRight": string;
-                "PictureBoxSizeModeAutoSize": string;
-                "PictureBoxSizeModeCenterImage": string;
-                "PictureBoxSizeModeNormal": string;
-                "PictureBoxSizeModeStretchImage": string;
-                "RelationDirectionChildToParent": string;
-                "RelationDirectionParentToChild": string;
-                "RightToLeftInherit": string;
-                "RightToLeftNo": string;
-                "RightToLeftYes": string;
-                "SelectionModeMultiExtended": string;
-                "SelectionModeMultiSimple": string;
-                "SelectionModeNone": string;
-                "SelectionModeOne": string;
-                "StiAnchorModeBottom": string;
-                "StiAnchorModeLeft": string;
-                "StiAnchorModeRight": string;
-                "StiAnchorModeTop": string;
-                "StiAngleAngle0": string;
-                "StiAngleAngle180": string;
-                "StiAngleAngle270": string;
-                "StiAngleAngle45": string;
-                "StiAngleAngle90": string;
-                "StiArrowStyleArc": string;
-                "StiArrowStyleArcAndCircle": string;
-                "StiArrowStyleCircle": string;
-                "StiArrowStyleLines": string;
-                "StiArrowStyleNone": string;
-                "StiArrowStyleTriangle": string;
-                "StiBorderSidesAll": string;
-                "StiBorderSidesBottom": string;
-                "StiBorderSidesLeft": string;
-                "StiBorderSidesNone": string;
-                "StiBorderSidesRight": string;
-                "StiBorderSidesTop": string;
-                "StiBorderStyleBump": string;
-                "StiBorderStyleEtched": string;
-                "StiBorderStyleFlat": string;
-                "StiBorderStyleNone": string;
-                "StiBorderStyleRaised": string;
-                "StiBorderStyleRaisedInner": string;
-                "StiBorderStyleRaisedOuter": string;
-                "StiBorderStyleSunken": string;
-                "StiBorderStyleSunkenInner": string;
-                "StiBorderStyleSunkenOuter": string;
-                "StiBrushTypeGlare": string;
-                "StiBrushTypeGradient0": string;
-                "StiBrushTypeGradient180": string;
-                "StiBrushTypeGradient270": string;
-                "StiBrushTypeGradient45": string;
-                "StiBrushTypeGradient90": string;
-                "StiBrushTypeSolid": string;
-                "StiCalculationModeCompilation": string;
-                "StiCalculationModeInterpretation": string;
-                "StiCapStyleArrow": string;
-                "StiCapStyleDiamond": string;
-                "StiCapStyleNone": string;
-                "StiCapStyleOpen": string;
-                "StiCapStyleOval": string;
-                "StiCapStyleSquare": string;
-                "StiCapStyleStealth": string;
-                "StiChartLabelsStyleCategory": string;
-                "StiChartLabelsStyleCategoryPercentOfTotal": string;
-                "StiChartLabelsStyleCategoryValue": string;
-                "StiChartLabelsStylePercentOfTotal": string;
-                "StiChartLabelsStyleValue": string;
-                "StiChartTitleDockBottom": string;
-                "StiChartTitleDockLeft": string;
-                "StiChartTitleDockRight": string;
-                "StiChartTitleDockTop": string;
-                "StiCheckStyleCheck": string;
-                "StiCheckStyleCheckRectangle": string;
-                "StiCheckStyleCross": string;
-                "StiCheckStyleCrossCircle": string;
-                "StiCheckStyleCrossRectangle": string;
-                "StiCheckStyleDotCircle": string;
-                "StiCheckStyleDotRectangle": string;
-                "StiCheckStyleNone": string;
-                "StiCheckStyleNoneCircle": string;
-                "StiCheckStyleNoneRectangle": string;
-                "StiCheckSumNo": string;
-                "StiCheckSumYes": string;
-                "StiCode11CheckSumAuto": string;
-                "StiCode11CheckSumNone": string;
-                "StiCode11CheckSumOneDigit": string;
-                "StiCode11CheckSumTwoDigits": string;
-                "StiColorScaleTypeColor2": string;
-                "StiColorScaleTypeColor3": string;
-                "StiColumnDirectionAcrossThenDown": string;
-                "StiColumnDirectionDownThenAcross": string;
-                "StiCrossHorAlignmentCenter": string;
-                "StiCrossHorAlignmentLeft": string;
-                "StiCrossHorAlignmentNone": string;
-                "StiCrossHorAlignmentRight": string;
-                "StiDateSelectionModeAutoRange": string;
-                "StiDateSelectionModeRange": string;
-                "StiDateSelectionModeSingle": string;
-                "StiDateTimeTypeDate": string;
-                "StiDateTimeTypeDateAndTime": string;
-                "StiDateTimeTypeTime": string;
-                "StiDesignerScaleModeAutomaticScaling": string;
-                "StiDesignerScaleModeScaling100": string;
-                "StiDesignerSpecificationAuto": string;
-                "StiDesignerSpecificationBICreator": string;
-                "StiDesignerSpecificationDeveloper": string;
-                "StiDesignerSpecificationBeginner": string;
-                "StiDisplayNameTypeFull": string;
-                "StiDisplayNameTypeNone": string;
-                "StiDisplayNameTypeShort": string;
-                "StiDockStyleBottom": string;
-                "StiDockStyleFill": string;
-                "StiDockStyleLeft": string;
-                "StiDockStyleNone": string;
-                "StiDockStyleRight": string;
-                "StiDockStyleTop": string;
-                "StiDrillDownModeMultiPage": string;
-                "StiDrillDownModeSinglePage": string;
-                "StiEanSupplementTypeFiveDigit": string;
-                "StiEanSupplementTypeNone": string;
-                "StiEanSupplementTypeTwoDigit": string;
-                "StiEmptySizeModeAlignFooterToBottom": string;
-                "StiEmptySizeModeAlignFooterToTop": string;
-                "StiEmptySizeModeDecreaseLastRow": string;
-                "StiEmptySizeModeIncreaseLastRow": string;
-                "StiEnumeratorTypeABC": string;
-                "StiEnumeratorTypeArabic": string;
-                "StiEnumeratorTypeNone": string;
-                "StiEnumeratorTypeRoman": string;
-                "StiExtendedStyleBoolFalse": string;
-                "StiExtendedStyleBoolFromStyle": string;
-                "StiExtendedStyleBoolTrue": string;
-                "StiFilterConditionBeginningWith": string;
-                "StiFilterConditionBetween": string;
-                "StiFilterConditionContaining": string;
-                "StiFilterConditionEndingWith": string;
-                "StiFilterConditionEqualTo": string;
-                "StiFilterConditionGreaterThan": string;
-                "StiFilterConditionGreaterThanOrEqualTo": string;
-                "StiFilterConditionIsBlank": string;
-                "StiFilterConditionIsNotBlank": string;
-                "StiFilterConditionIsNotNull": string;
-                "StiFilterConditionIsNull": string;
-                "StiFilterConditionLessThan": string;
-                "StiFilterConditionLessThanOrEqualTo": string;
-                "StiFilterConditionNotBetween": string;
-                "StiFilterConditionNotContaining": string;
-                "StiFilterConditionNotEqualTo": string;
-                "StiFilterDataTypeBoolean": string;
-                "StiFilterDataTypeDateTime": string;
-                "StiFilterDataTypeExpression": string;
-                "StiFontSizeModeAuto": string;
-                "StiFontSizeModeValue": string;
-                "StiFontSizeModeTarget": string;
-                "StiFilterDataTypeNumeric": string;
-                "StiFilterDataTypeString": string;
-                "StiFilterEngineReportEngine": string;
-                "StiFilterEngineSQLQuery": string;
-                "StiFilterItemArgument": string;
-                "StiFilterItemExpression": string;
-                "StiFilterItemValue": string;
-                "StiFilterItemValueClose": string;
-                "StiFilterItemValueEnd": string;
-                "StiFilterItemValueHigh": string;
-                "StiFilterItemValueLow": string;
-                "StiFilterItemValueOpen": string;
-                "StiFilterModeAnd": string;
-                "StiFilterModeOr": string;
-                "StiFontIconGroupAccessibilityIcons": string;
-                "StiFontIconGroupBrandIcons": string;
-                "StiFontIconGroupDirectionalIcons": string;
-                "StiFontIconGroupGenderIcons": string;
-                "StiFontIconGroupMedicalIcons": string;
-                "StiFontIconGroupPaymentIcons": string;
-                "StiFontIconGroupSpinnerIcons": string;
-                "StiFontIconGroupTransportationIcons": string;
-                "StiFontIconGroupVideoPlayerIcons": string;
-                "StiFontIconGroupWebApplicationIcons": string;
-                "StiFormStartModeOnEnd": string;
-                "StiFormStartModeOnPreview": string;
-                "StiFormStartModeOnStart": string;
-                "StiGaugeCalculationModeAuto": string;
-                "StiGaugeCalculationModeCustom": string;
-                "StiGaugeRangeModePercentage": string;
-                "StiGaugeRangeModeValue": string;
-                "StiGaugeRangeTypeColor": string;
-                "StiGaugeRangeTypeNone": string;
-                "StiGaugeTypeFullCircular": string;
-                "StiGaugeTypeHalfCircular": string;
-                "StiGaugeTypeLinear": string;
-                "StiGaugeTypeHorizontalLinear": string;
-                "StiGaugeTypeBullet": string;
-                "StiGroupSortDirectionAscending": string;
-                "StiGroupSortDirectionDescending": string;
-                "StiGroupSortDirectionNone": string;
-                "StiHorAlignmentCenter": string;
-                "StiHorAlignmentLeft": string;
-                "StiHorAlignmentRight": string;
-                "StiIconAlignmentBottom": string;
-                "StiIconAlignmentLeft": string;
-                "StiIconAlignmentNone": string;
-                "StiIconAlignmentRight": string;
-                "StiIconAlignmentTop": string;
-                "StiImageProcessingDuplicatesTypeGlobalHide": string;
-                "StiImageProcessingDuplicatesTypeGlobalMerge": string;
-                "StiImageProcessingDuplicatesTypeGlobalRemoveImage": string;
-                "StiImageProcessingDuplicatesTypeHide": string;
-                "StiImageProcessingDuplicatesTypeMerge": string;
-                "StiImageProcessingDuplicatesTypeNone": string;
-                "StiImageProcessingDuplicatesTypeRemoveImage": string;
-                "StiImageRotationFlipHorizontal": string;
-                "StiImageRotationFlipVertical": string;
-                "StiImageRotationNone": string;
-                "StiImageRotationRotate180": string;
-                "StiImageRotationRotate90CCW": string;
-                "StiImageRotationRotate90CW": string;
-                "StiInteractionOnClick": string;
-                "StiInteractionOnClickApplyFilter": string;
-                "StiInteractionOnClickDrillDown": string;
-                "StiInteractionOnClickOpenHyperlink": string;
-                "StiInteractionOnClickShowDashboard": string;
-                "StiInteractionOnHoverNone": string;
-                "StiInteractionOnHoverShowHyperlink": string;
-                "StiInteractionOnHoverShowToolTip": string;
-                "StiInteractionOpenHyperlinkDestinationCurrentTab": string;
-                "StiInteractionOpenHyperlinkDestinationNewTab": string;
-                "StiItemSelectionModeMulti": string;
-                "StiItemSelectionModeOne": string;
-                "StiKeepDetailsKeepDetailsTogether": string;
-                "StiKeepDetailsKeepFirstDetailTogether": string;
-                "StiKeepDetailsKeepFirstRowTogether": string;
-                "StiKeepDetailsNone": string;
-                "StiLabelsPlacementAutoRotation": string;
-                "StiLabelsPlacementNone": string;
-                "StiLabelsPlacementOneLine": string;
-                "StiLabelsPlacementTwoLines": string;
-                "StiLegendDirectionBottomToTop": string;
-                "StiLegendDirectionLeftToRight": string;
-                "StiLegendDirectionRightToLeft": string;
-                "StiLegendDirectionTopToBottom": string;
-                "StiLegendHorAlignmentCenter": string;
-                "StiLegendHorAlignmentLeft": string;
-                "StiLegendHorAlignmentLeftOutside": string;
-                "StiLegendHorAlignmentRight": string;
-                "StiLegendHorAlignmentRightOutside": string;
-                "StiLegendVertAlignmentBottom": string;
-                "StiLegendVertAlignmentBottomOutside": string;
-                "StiLegendVertAlignmentCenter": string;
-                "StiLegendVertAlignmentTop": string;
-                "StiLegendVertAlignmentTopOutside": string;
-                "StiMapModeChoropleth": string;
-                "StiMapModeOnline": string;
-                "StiMapTypeGroup": string;
-                "StiMapTypeHeatmap": string;
-                "StiMapTypeHeatmapWithGroup": string;
-                "StiMapTypeIndividual": string;
-                "StiMapTypeNone": string;
-                "StiMapTypePoints": string;
-                "StiMarkerAlignmentCenter": string;
-                "StiMarkerAlignmentLeft": string;
-                "StiMarkerAlignmentRight": string;
-                "StiMarkerTypeCircle": string;
-                "StiMarkerTypeHalfCircle": string;
-                "StiMarkerTypeHexagon": string;
-                "StiMarkerTypeRectangle": string;
-                "StiMarkerTypeStar5": string;
-                "StiMarkerTypeStar6": string;
-                "StiMarkerTypeStar7": string;
-                "StiMarkerTypeStar8": string;
-                "StiMarkerTypeTriangle": string;
-                "StiNestedFactorHigh": string;
-                "StiNestedFactorLow": string;
-                "StiNestedFactorNormal": string;
-                "StiNumberOfPassDoublePass": string;
-                "StiNumberOfPassSinglePass": string;
-                "StiOnlineMapHeatmapColorGradientTypeBlackAquaWhite": string;
-                "StiOnlineMapHeatmapColorGradientTypeBlueRed": string;
-                "StiOnlineMapHeatmapColorGradientTypeColorSpectrum": string;
-                "StiOnlineMapHeatmapColorGradientTypeDeepSea": string;
-                "StiOnlineMapHeatmapColorGradientTypeHeatedMetal": string;
-                "StiOnlineMapHeatmapColorGradientTypeIncandescent": string;
-                "StiOnlineMapHeatmapColorGradientTypeSteppedColors": string;
-                "StiOnlineMapHeatmapColorGradientTypeSunrise": string;
-                "StiOnlineMapHeatmapColorGradientTypeVisibleSpectrum": string;
-                "StiOnlineMapLocationTypeAdminDivision1": string;
-                "StiOnlineMapLocationTypeAdminDivision2": string;
-                "StiOnlineMapLocationTypeAuto": string;
-                "StiOnlineMapLocationTypeCountryRegion": string;
-                "StiOnlineMapLocationTypeNeighborhood": string;
-                "StiOnlineMapLocationTypePopulatedPlace": string;
-                "StiOnlineMapLocationTypePostcode1": string;
-                "StiOnlineMapLocationTypePostcode2": string;
-                "StiOnlineMapLocationTypePostcode3": string;
-                "StiOnlineMapLocationTypePostcode4": string;
-                "StiOrientationHorizontal": string;
-                "StiOrientationHorizontalRight": string;
-                "StiOrientationVertical": string;
-                "StiPageOrientationLandscape": string;
-                "StiPageOrientationPortrait": string;
-                "StiPenStyleDash": string;
-                "StiPenStyleDashDot": string;
-                "StiPenStyleDashDotDot": string;
-                "StiPenStyleDot": string;
-                "StiPenStyleDouble": string;
-                "StiPenStyleNone": string;
-                "StiPenStyleSolid": string;
-                "StiPlesseyCheckSumModulo10": string;
-                "StiPlesseyCheckSumModulo11": string;
-                "StiPlesseyCheckSumNone": string;
-                "StiPreviewModeDotMatrix": string;
-                "StiPreviewModeStandard": string;
-                "StiPreviewModeStandardAndDotMatrix": string;
-                "StiPrintOnEvenOddPagesTypeIgnore": string;
-                "StiPrintOnEvenOddPagesTypePrintOnEvenPages": string;
-                "StiPrintOnEvenOddPagesTypePrintOnOddPages": string;
-                "StiPrintOnTypeAllPages": string;
-                "StiPrintOnTypeExceptFirstAndLastPage": string;
-                "StiPrintOnTypeExceptFirstPage": string;
-                "StiPrintOnTypeExceptLastPage": string;
-                "StiPrintOnTypeOnlyFirstAndLastPage": string;
-                "StiPrintOnTypeOnlyFirstPage": string;
-                "StiPrintOnTypeOnlyLastPage": string;
-                "StiProcessAtEndOfPage": string;
-                "StiProcessAtEndOfReport": string;
-                "StiProcessAtNone": string;
-                "StiProcessingDuplicatesTypeBasedOnTagHide": string;
-                "StiProcessingDuplicatesTypeBasedOnTagMerge": string;
-                "StiProcessingDuplicatesTypeBasedOnTagRemoveText": string;
-                "StiProcessingDuplicatesTypeBasedOnValueAndTagHide": string;
-                "StiProcessingDuplicatesTypeBasedOnValueAndTagMerge": string;
-                "StiProcessingDuplicatesTypeBasedOnValueRemoveText": string;
-                "StiProcessingDuplicatesTypeGlobalBasedOnValueAndTagHide": string;
-                "StiProcessingDuplicatesTypeGlobalBasedOnValueAndTagMerge": string;
-                "StiProcessingDuplicatesTypeGlobalBasedOnValueRemoveText": string;
-                "StiProcessingDuplicatesTypeGlobalHide": string;
-                "StiProcessingDuplicatesTypeGlobalMerge": string;
-                "StiProcessingDuplicatesTypeGlobalRemoveText": string;
-                "StiProcessingDuplicatesTypeHide": string;
-                "StiProcessingDuplicatesTypeMerge": string;
-                "StiProcessingDuplicatesTypeNone": string;
-                "StiProcessingDuplicatesTypeRemoveText": string;
-                "StiProgressElementModeCircle": string;
-                "StiProgressElementModeDataBars": string;
-                "StiProgressElementModePie": string;
-                "StiRadarStyleXFCircle": string;
-                "StiRadarStyleXFPolygon": string;
-                "StiReportCacheModeAuto": string;
-                "StiReportCacheModeOff": string;
-                "StiReportCacheModeOn": string;
-                "StiReportUnitTypeCentimeters": string;
-                "StiReportUnitTypeHundredthsOfInch": string;
-                "StiReportUnitTypeInches": string;
-                "StiReportUnitTypeMillimeters": string;
-                "StiReportUnitTypePixels": string;
-                "StiRestrictionsAll": string;
-                "StiRestrictionsAllowChange": string;
-                "StiRestrictionsAllowDelete": string;
-                "StiRestrictionsAllowMove": string;
-                "StiRestrictionsAllowResize": string;
-                "StiRestrictionsAllowSelect": string;
-                "StiRestrictionsNone": string;
-                "StiSelectionModeFirst": string;
-                "StiSelectionModeFromVariable": string;
-                "StiSelectionModeNothing": string;
-                "StiSeriesLabelsValueTypeArgument": string;
-                "StiSeriesLabelsValueTypeArgumentValue": string;
-                "StiSeriesLabelsValueTypeSeriesTitle": string;
-                "StiSeriesLabelsValueTypeSeriesTitleArgument": string;
-                "StiSeriesLabelsValueTypeSeriesTitleValue": string;
-                "StiSeriesLabelsValueTypeTag": string;
-                "StiSeriesLabelsValueTypeValue": string;
-                "StiSeriesLabelsValueTypeValueArgument": string;
-                "StiSeriesLabelsValueTypeWeight": string;
-                "StiSeriesSortDirectionAscending": string;
-                "StiSeriesSortDirectionDescending": string;
-                "StiSeriesSortTypeArgument": string;
-                "StiSeriesSortTypeNone": string;
-                "StiSeriesSortTypeValue": string;
-                "StiSeriesXAxisBottomXAxis": string;
-                "StiSeriesXAxisTopXAxis": string;
-                "StiSeriesYAxisLeftYAxis": string;
-                "StiSeriesYAxisRightYAxis": string;
-                "StiShapeDirectionDown": string;
-                "StiShapeDirectionLeft": string;
-                "StiShapeDirectionRight": string;
-                "StiShapeDirectionUp": string;
-                "StiShiftModeDecreasingSize": string;
-                "StiShiftModeIncreasingSize": string;
-                "StiShiftModeNone": string;
-                "StiShiftModeOnlyInWidthOfComponent": string;
-                "StiShowSeriesLabelsFromChart": string;
-                "StiShowSeriesLabelsFromSeries": string;
-                "StiShowSeriesLabelsNone": string;
-                "StiShowXAxisBoth": string;
-                "StiShowXAxisBottom": string;
-                "StiShowXAxisCenter": string;
-                "StiShowYAxisBoth": string;
-                "StiShowYAxisCenter": string;
-                "StiShowYAxisLeft": string;
-                "StiSizeModeAutoSize": string;
-                "StiSizeModeFit": string;
-                "StiSortDirectionAsc": string;
-                "StiSortDirectionDesc": string;
-                "StiSortDirectionNone": string;
-                "StiSortTypeByDisplayValue": string;
-                "StiSortTypeByValue": string;
-                "StiSqlSourceTypeStoredProcedure": string;
-                "StiSqlSourceTypeTable": string;
-                "StiStyleComponentTypeChart": string;
-                "StiStyleComponentTypeCheckBox": string;
-                "StiStyleComponentTypeCrossTab": string;
-                "StiStyleComponentTypeImage": string;
-                "StiStyleComponentTypePrimitive": string;
-                "StiStyleComponentTypeText": string;
-                "StiStyleConditionTypeComponentName": string;
-                "StiStyleConditionTypeComponentType": string;
-                "StiStyleConditionTypeLocation": string;
-                "StiStyleConditionTypePlacement": string;
-                "StiSummaryValuesAllValues": string;
-                "StiSummaryValuesSkipNulls": string;
-                "StiSummaryValuesSkipZerosAndNulls": string;
-                "StiTablceCellTypeCheckBox": string;
-                "StiTablceCellTypeImage": string;
-                "StiTablceCellTypeRichText": string;
-                "StiTablceCellTypeText": string;
-                "StiTableAutoWidthNone": string;
-                "StiTableAutoWidthPage": string;
-                "StiTableAutoWidthTable": string;
-                "StiTableAutoWidthTypeFullTable": string;
-                "StiTableAutoWidthTypeLastColumns": string;
-                "StiTableAutoWidthTypeNone": string;
-                "StiTargetModePercentage": string;
-                "StiTargetModeVariation": string;
-                "StiTextHorAlignmentCenter": string;
-                "StiTextHorAlignmentLeft": string;
-                "StiTextHorAlignmentRight": string;
-                "StiTextHorAlignmentWidth": string;
-                "StiTextPositionCenterBottom": string;
-                "StiTextPositionCenterTop": string;
-                "StiTextPositionLeftBottom": string;
-                "StiTextPositionLeftTop": string;
-                "StiTextPositionRightBottom": string;
-                "StiTextPositionRightTop": string;
-                "StiTextQualityStandard": string;
-                "StiTextQualityTypographic": string;
-                "StiTextQualityWysiwyg": string;
-                "StiTitlePositionInside": string;
-                "StiTitlePositionOutside": string;
-                "StiTypeModeList": string;
-                "StiTypeModeNullableValue": string;
-                "StiTypeModeRange": string;
-                "StiTypeModeValue": string;
-                "StiVertAlignmentBottom": string;
-                "StiVertAlignmentCenter": string;
-                "StiVertAlignmentTop": string;
-                "StiViewModeNormal": string;
-                "StiViewModePageBreakPreview": string;
-                "StiXmlTypeAdoNetXml": string;
-                "StiXmlTypeXml": string;
-                "StringAlignmentCenter": string;
-                "StringAlignmentFar": string;
-                "StringAlignmentNear": string;
-                "StringTrimmingCharacter": string;
-                "StringTrimmingEllipsisCharacter": string;
-                "StringTrimmingEllipsisPath": string;
-                "StringTrimmingEllipsisWord": string;
-                "StringTrimmingNone": string;
-                "StringTrimmingWord": string;
-            };
-            "PropertyEvents": {
-                "AfterPrintEvent": string;
-                "AfterSelectEvent": string;
-                "BeforePrintEvent": string;
-                "BeginRenderEvent": string;
-                "CheckedChangedEvent": string;
-                "ClickEvent": string;
-                "ClosedFormEvent": string;
-                "ClosingFormEvent": string;
-                "ColumnBeginRenderEvent": string;
-                "ColumnEndRenderEvent": string;
-                "ConnectedEvent": string;
-                "ConnectingEvent": string;
-                "DisconnectedEvent": string;
-                "DisconnectingEvent": string;
-                "DoubleClickEvent": string;
-                "EndRenderEvent": string;
-                "EnterEvent": string;
-                "ExportedEvent": string;
-                "ExportingEvent": string;
-                "GetArgumentEvent": string;
-                "GetBookmarkEvent": string;
-                "GetCollapsedEvent": string;
-                "GetCrossValueEvent": string;
-                "GetCutPieListEvent": string;
-                "GetDataUrlEvent": string;
-                "GetDisplayCrossValueEvent": string;
-                "GetDrillDownReportEvent": string;
-                "GetExcelSheetEvent": string;
-                "GetExcelValueEvent": string;
-                "GetHyperlinkEvent": string;
-                "GetImageDataEvent": string;
-                "GetImageURLEvent": string;
-                "GetListOfArgumentsEvent": string;
-                "GetListOfHyperlinksEvent": string;
-                "GetListOfTagsEvent": string;
-                "GetListOfToolTipsEvent": string;
-                "GetListOfValuesEndEvent": string;
-                "GetListOfValuesEvent": string;
-                "GetListOfWeights": string;
-                "GetListOfWeightsEvent": string;
-                "GetSummaryExpressionEvent": string;
-                "GetTagEvent": string;
-                "GetTitleEvent": string;
-                "GetToolTipEvent": string;
-                "GetValueEndEvent": string;
-                "GetValueEvent": string;
-                "GetWeightEvent": string;
-                "LeaveEvent": string;
-                "LoadFormEvent": string;
-                "MouseDownEvent": string;
-                "MouseEnterEvent": string;
-                "MouseLeaveEvent": string;
-                "MouseMoveEvent": string;
-                "MouseUpEvent": string;
-                "NewAutoSeriesEvent": string;
-                "PositionChangedEvent": string;
-                "PrintedEvent": string;
-                "PrintingEvent": string;
-                "ProcessCellEvent": string;
-                "ProcessChartEvent": string;
-                "RenderingEvent": string;
-                "ReportCacheProcessingEvent": string;
-                "SelectedIndexChangedEvent": string;
-                "StateRestoreEvent": string;
-                "StateSaveEvent": string;
-                "ValueChangedEvent": string;
-            };
-            "PropertyHatchStyle": {
-                "BackwardDiagonal": string;
-                "Cross": string;
-                "DarkDownwardDiagonal": string;
-                "DarkHorizontal": string;
-                "DarkUpwardDiagonal": string;
-                "DarkVertical": string;
-                "DashedDownwardDiagonal": string;
-                "DashedHorizontal": string;
-                "DashedUpwardDiagonal": string;
-                "DashedVertical": string;
-                "DiagonalBrick": string;
-                "DiagonalCross": string;
-                "Divot": string;
-                "DottedDiamond": string;
-                "DottedGrid": string;
-                "ForwardDiagonal": string;
-                "Horizontal": string;
-                "HorizontalBrick": string;
-                "LargeCheckerBoard": string;
-                "LargeConfetti": string;
-                "LargeGrid": string;
-                "LightDownwardDiagonal": string;
-                "LightHorizontal": string;
-                "LightUpwardDiagonal": string;
-                "LightVertical": string;
-                "NarrowHorizontal": string;
-                "NarrowVertical": string;
-                "OutlinedDiamond": string;
-                "Percent05": string;
-                "Percent10": string;
-                "Percent20": string;
-                "Percent25": string;
-                "Percent30": string;
-                "Percent40": string;
-                "Percent50": string;
-                "Percent60": string;
-                "Percent70": string;
-                "Percent75": string;
-                "Percent80": string;
-                "Percent90": string;
-                "Plaid": string;
-                "Shingle": string;
-                "SmallCheckerBoard": string;
-                "SmallConfetti": string;
-                "SmallGrid": string;
-                "SolidDiamond": string;
-                "Sphere": string;
-                "Trellis": string;
-                "Vertical": string;
-                "Wave": string;
-                "Weave": string;
-                "WideDownwardDiagonal": string;
-                "WideUpwardDiagonal": string;
-                "ZigZag": string;
-            };
-            "PropertyMain": {
-                "FontSizeMode": string;
-                "ParetoSeriesColors": string;
-                "AcceptsReturn": string;
-                "AcceptsTab": string;
-                "Actual": string;
-                "AddClearZone": string;
-                "Advanced": string;
-                "AggregateFunction": string;
-                "AggregateFunctions": string;
-                "Alias": string;
-                "Alignment": string;
-                "AllowApplyBorderColor": string;
-                "AllowApplyBrush": string;
-                "AllowApplyBrushNegative": string;
-                "AllowApplyColorNegative": string;
-                "AllowApplyStyle": string;
-                "AllowApplyLineColor": string;
-                "AllowExpressions": string;
-                "AllowHtmlTags": string;
-                "AllowSeries": string;
-                "AllowSeriesElements": string;
-                "AllowSorting": string;
-                "AllowUseBackColor": string;
-                "AllowUseBorder": string;
-                "AllowUseBorderFormatting": string;
-                "AllowUseBorderSides": string;
-                "AllowUseBorderSidesFromLocation": string;
-                "AllowUseBrush": string;
-                "AllowUseFont": string;
-                "AllowUseForeColor": string;
-                "AllowUseHorAlignment": string;
-                "AllowUseImage": string;
-                "AllowUseNegativeTextBrush": string;
-                "AllowUserValues": string;
-                "AllowUseTextBrush": string;
-                "AllowUseTextFormat": string;
-                "AllowUseTextOptions": string;
-                "AllowUseVertAlignment": string;
-                "AllowUsingAsSqlParameter": string;
-                "AlternatingBackColor": string;
-                "AlternatingCellBackColor": string;
-                "AlternatingCellForeColor": string;
-                "AlternatingDataColor": string;
-                "AlternatingDataForeground": string;
-                "Anchor": string;
-                "Angle": string;
-                "Antialiasing": string;
-                "Area": string;
-                "Argument": string;
-                "ArgumentDataColumn": string;
-                "ArgumentFormat": string;
-                "Arguments": string;
-                "ArrowHeight": string;
-                "ArrowStyle": string;
-                "ArrowWidth": string;
-                "AspectRatio": string;
-                "Author": string;
-                "Auto": string;
-                "AutoCalculateCenterPoint": string;
-                "AutoDataColumns": string;
-                "AutoDataRows": string;
-                "AutoLocalizeReportOnRun": string;
-                "AutoRefresh": string;
-                "AutoRotate": string;
-                "AutoScale": string;
-                "AutoSeriesColorDataColumn": string;
-                "AutoSeriesKeyDataColumn": string;
-                "AutoSeriesTitleDataColumn": string;
-                "AutoWidth": string;
-                "AutoWidthType": string;
-                "AvailableInTheViewer": string;
-                "AxisLabelsColor": string;
-                "AxisLineColor": string;
-                "AxisTitleColor": string;
-                "AxisValue": string;
-                "BackColor": string;
-                "Background": string;
-                "BackgroundColor": string;
-                "BandColor": string;
-                "BarCodeType": string;
-                "BasicStyleColor": string;
-                "Blend": string;
-                "Bold": string;
-                "Bookmark": string;
-                "Border": string;
-                "BorderBrush": string;
-                "BorderColor": string;
-                "BorderColorNegative": string;
-                "Borders": string;
-                "BorderSize": string;
-                "BorderStyle": string;
-                "BorderWidth": string;
-                "Bottom": string;
-                "BottomSide": string;
-                "BubbleBackColor": string;
-                "BubbleBorderColor": string;
-                "BreakIfLessThan": string;
-                "Brush": string;
-                "BrushNegative": string;
-                "BrushType": string;
-                "BusinessObject": string;
-                "CacheAllData": string;
-                "CacheTotals": string;
-                "CalcInvisible": string;
-                "CalculatedDataColumn": string;
-                "CalculationMode": string;
-                "CanBreak": string;
-                "Cancel": string;
-                "CanGrow": string;
-                "CanShrink": string;
-                "Categories": string;
-                "Category": string;
-                "CategoryConnections": string;
-                "CellBackColor": string;
-                "CellDockStyle": string;
-                "CellForeColor": string;
-                "CellHeight": string;
-                "CellType": string;
-                "CellWidth": string;
-                "Center": string;
-                "CenterPoint": string;
-                "ChartAreaBorderColor": string;
-                "ChartAreaBrush": string;
-                "ChartAreaShowShadow": string;
-                "ChartType": string;
-                "Checked": string;
-                "CheckOnClick": string;
-                "CheckStyle": string;
-                "CheckStyleForFalse": string;
-                "CheckStyleForTrue": string;
-                "Checksum": string;
-                "CheckSum": string;
-                "CheckSum1": string;
-                "CheckSum2": string;
-                "Child": string;
-                "ChildColumns": string;
-                "ChildSource": string;
-                "ClearFormat": string;
-                "CloneContainer": string;
-                "CloseValues": string;
-                "Code": string;
-                "CodePage": string;
-                "Collapsed": string;
-                "CollapseGroupFooter": string;
-                "CollapsingEnabled": string;
-                "Collate": string;
-                "CollectionName": string;
-                "Color": string;
-                "ColorDataColumn": string;
-                "ColorEach": string;
-                "ColorMeter": string;
-                "Colors": string;
-                "ColorScaleCondition": string;
-                "ColorScaleType": string;
-                "Column": string;
-                "ColumnCount": string;
-                "ColumnDirection": string;
-                "ColumnGaps": string;
-                "ColumnHeaderBackColor": string;
-                "ColumnHeaderForeColor": string;
-                "ColumnHeadersVisible": string;
-                "Columns": string;
-                "ColumnWidth": string;
-                "CommandTimeout": string;
-                "CompanyPrefix": string;
-                "ComponentStyle": string;
-                "Condition": string;
-                "ConditionOptions": string;
-                "Conditions": string;
-                "ConnectionString": string;
-                "ConnectOnStart": string;
-                "ConstantLines": string;
-                "Container": string;
-                "ContinuousText": string;
-                "ContourColor": string;
-                "Converting": string;
-                "ConvertNulls": string;
-                "Copies": string;
-                "Count": string;
-                "CountData": string;
-                "Create": string;
-                "CreateFieldOnDoubleClick": string;
-                "CreateLabel": string;
-                "Culture": string;
-                "CustomFonts": string;
-                "CustomFormat": string;
-                "CutPieList": string;
-                "Data": string;
-                "DataAdapter": string;
-                "DataAdapters": string;
-                "DataBarCondition": string;
-                "DataBindings": string;
-                "DataColor": string;
-                "DataColumn": string;
-                "DataColumns": string;
-                "DataField": string;
-                "DataForeground": string;
-                "DataRelation": string;
-                "DataRows": string;
-                "DataSource": string;
-                "DataSources": string;
-                "DataTextField": string;
-                "DataTransformation": string;
-                "DataType": string;
-                "DataUrl": string;
-                "DateInfo": string;
-                "DateTimeStep": string;
-                "Default": string;
-                "DefaultColor": string;
-                "DefaultHeightCell": string;
-                "DefaultNamespace": string;
-                "DependentColumn": string;
-                "DependentValue": string;
-                "Description": string;
-                "Destination": string;
-                "DetectUrls": string;
-                "DeviceWidth": string;
-                "DialogResult": string;
-                "Diameter": string;
-                "Direction": string;
-                "Disabled": string;
-                "DisplayNameType": string;
-                "DisplayValue": string;
-                "Distance": string;
-                "DistanceBetweenTabs": string;
-                "Dock": string;
-                "DockableTable": string;
-                "DockStyle": string;
-                "DrawBorder": string;
-                "DrawHatch": string;
-                "DrawLine": string;
-                "DrillDown": string;
-                "DrillDownEnabled": string;
-                "DrillDownMode": string;
-                "DrillDownPage": string;
-                "DrillDownParameter1": string;
-                "DrillDownParameter2": string;
-                "DrillDownParameter3": string;
-                "DrillDownParameter4": string;
-                "DrillDownParameter5": string;
-                "DrillDownParameters": string;
-                "DrillDownReport": string;
-                "DropDownAlign": string;
-                "DropDownStyle": string;
-                "DropDownWidth": string;
-                "DropShadow": string;
-                "Duplex": string;
-                "Editable": string;
-                "Effects": string;
-                "EmptyBorderBrush": string;
-                "EmptyBorderWidth": string;
-                "EmptyBrush": string;
-                "EmptyValue": string;
-                "Enabled": string;
-                "EnableLog": string;
-                "EncodingMode": string;
-                "EncodingType": string;
-                "EndCap": string;
-                "EndColor": string;
-                "EndValue": string;
-                "EndValues": string;
-                "EndWidth": string;
-                "EngineVersion": string;
-                "EnumeratorSeparator": string;
-                "EnumeratorType": string;
-                "ErrorCorrectionLevel": string;
-                "ErrorsCorrectionLevel": string;
-                "EvenStyle": string;
-                "ExcelSheet": string;
-                "ExcelValue": string;
-                "Exponential": string;
-                "ExportAsImage": string;
-                "Expression": string;
-                "ExtensionDigit": string;
-                "FaqPage": string;
-                "Field": string;
-                "FieldIs": string;
-                "File": string;
-                "Fill": string;
-                "FillColor": string;
-                "Filter": string;
-                "FilterElements": string;
-                "FilterEngine": string;
-                "FilterMode": string;
-                "FilterOn": string;
-                "Filters": string;
-                "FirstTabOffset": string;
-                "FixedWidth": string;
-                "Flat": string;
-                "FlatMode": string;
-                "Focus": string;
-                "Font": string;
-                "FontBold": string;
-                "FontItalic": string;
-                "FontName": string;
-                "FontSize": string;
-                "FontStrikeout": string;
-                "FontSubscript": string;
-                "FontSuperscript": string;
-                "FontUnderline": string;
-                "FontUnit": string;
-                "FooterCanBreak": string;
-                "FooterCanGrow": string;
-                "FooterCanShrink": string;
-                "FooterColor": string;
-                "FooterFont": string;
-                "FooterForeColor": string;
-                "FooterForeground": string;
-                "FooterPrintAtBottom": string;
-                "FooterPrintIfEmpty": string;
-                "FooterPrintOn": string;
-                "FooterPrintOnAllPages": string;
-                "FooterPrintOnEvenOddPages": string;
-                "FooterRowsCount": string;
-                "Footers": string;
-                "ForeColor": string;
-                "Format": string;
-                "From": string;
-                "FullConvertExpression": string;
-                "Function": string;
-                "Functions": string;
-                "GlobalizationStrings": string;
-                "GlobalizedName": string;
-                "GlyphColor": string;
-                "GridColor": string;
-                "GridLineColor": string;
-                "GridLinesHor": string;
-                "GridLinesHorColor": string;
-                "GridLinesHorRight": string;
-                "GridLineStyle": string;
-                "GridLinesVert": string;
-                "GridLinesVertColor": string;
-                "GridOutline": string;
-                "Group": string;
-                "GroupDataColumn": string;
-                "GroupMeter": string;
-                "GrowToHeight": string;
-                "HeaderBackColor": string;
-                "HeaderCanBreak": string;
-                "HeaderCanGrow": string;
-                "HeaderCanShrink": string;
-                "HeaderColor": string;
-                "HeaderFont": string;
-                "HeaderForeColor": string;
-                "HeaderForeground": string;
-                "HeaderPrintAtBottom": string;
-                "HeaderPrintIfEmpty": string;
-                "HeaderPrintOn": string;
-                "HeaderPrintOnAllPages": string;
-                "HeaderPrintOnEvenOddPages": string;
-                "HeaderRowsCount": string;
-                "Headers": string;
-                "HeaderText": string;
-                "HeatmapColors": string;
-                "Height": string;
-                "HideSeriesWithEmptyTitle": string;
-                "HideZeros": string;
-                "High": string;
-                "HighlightCondition": string;
-                "HighValues": string;
-                "HorAlignment": string;
-                "HorSpacing": string;
-                "HotBackColor": string;
-                "HotColumnHeaderBackColor": string;
-                "HotForeColor": string;
-                "HotGlyphColor": string;
-                "HotHeaderColor": string;
-                "HotkeyPrefix": string;
-                "HotRowHeaderBackColor": string;
-                "HotSelectedBackColor": string;
-                "HotSelectedForeColor": string;
-                "HotSelectedGlyphColor": string;
-                "HtmlTags": string;
-                "Hyperlink": string;
-                "HyperlinkDataColumn": string;
-                "Icon": string;
-                "IconAlignment": string;
-                "IconSet": string;
-                "IconSetCondition": string;
-                "Idents": string;
-                "Image": string;
-                "ImageAlign": string;
-                "ImageAlignment": string;
-                "ImageData": string;
-                "ImageHorAlignment": string;
-                "ImageMultipleFactor": string;
-                "ImageRotation": string;
-                "ImageStretch": string;
-                "ImageTiling": string;
-                "ImageTransparency": string;
-                "ImageURL": string;
-                "ImageVertAlignment": string;
-                "ImportRelations": string;
-                "Increment": string;
-                "Indent": string;
-                "IndividualColor": string;
-                "InitBy": string;
-                "InitialSelection": string;
-                "InitialSelectionSource": string;
-                "Insert": string;
-                "Interaction": string;
-                "InterlacedBrush": string;
-                "InterlacingHor": string;
-                "InterlacingHorBrush": string;
-                "InterlacingVert": string;
-                "InterlacingVertBrush": string;
-                "Interpolation": string;
-                "IsReversed": string;
-                "Italic": string;
-                "Item": string;
-                "ItemHeight": string;
-                "Items": string;
-                "KeepChildTogether": string;
-                "KeepCrossTabTogether": string;
-                "KeepDetails": string;
-                "KeepDetailsTogether": string;
-                "KeepFooterTogether": string;
-                "KeepGroupFooterTogether": string;
-                "KeepGroupHeaderTogether": string;
-                "KeepGroupTogether": string;
-                "KeepHeaderTogether": string;
-                "KeepMergedCellsTogether": string;
-                "KeepReportSummaryTogether": string;
-                "KeepSubReportTogether": string;
-                "Key": string;
-                "KeyDataColumn": string;
-                "KeyMeter": string;
-                "KeyMeters": string;
-                "Keys": string;
-                "Label": string;
-                "LabelColor": string;
-                "LabelForeground": string;
-                "LabelRotationMode": string;
-                "Labels": string;
-                "LabelsColor": string;
-                "LabelShadowForeground": string;
-                "LabelsOffset": string;
-                "Language": string;
-                "LargeHeight": string;
-                "LargeHeightFactor": string;
-                "Latitude": string;
-                "Layout": string;
-                "Left": string;
-                "LeftSide": string;
-                "Legend": string;
-                "LegendBorderColor": string;
-                "LegendBrush": string;
-                "LegendLabelsColor": string;
-                "LegendTitleColor": string;
-                "LegendValueType": string;
-                "Length": string;
-                "LengthUnderLabels": string;
-                "Lighting": string;
-                "LimitRows": string;
-                "Linear": string;
-                "LinearBarBorderBrush": string;
-                "LinearBarBrush": string;
-                "LinearBarEmptyBorderBrush": string;
-                "LinearBarEmptyBrush": string;
-                "LineColor": string;
-                "LineColorNegative": string;
-                "LineLimit": string;
-                "LineMarker": string;
-                "LinesOfUnderline": string;
-                "LineSpacing": string;
-                "LineStyle": string;
-                "LineWidth": string;
-                "Linked": string;
-                "ListOfArguments": string;
-                "ListOfHyperlinks": string;
-                "ListOfTags": string;
-                "ListOfToolTips": string;
-                "ListOfValues": string;
-                "ListOfValuesClose": string;
-                "ListOfValuesEnd": string;
-                "ListOfValuesHigh": string;
-                "ListOfValuesLow": string;
-                "ListOfValuesOpen": string;
-                "ListOfWeights": string;
-                "Localizable": string;
-                "Location": string;
-                "Locked": string;
-                "Logarithmic": string;
-                "LogarithmicScale": string;
-                "Longitude": string;
-                "Low": string;
-                "LowValues": string;
-                "MajorInterval": string;
-                "MapID": string;
-                "Maps": string;
-                "MapStyle": string;
-                "MapType": string;
-                "Margin": string;
-                "Margins": string;
-                "Marker": string;
-                "MarkerAlignment": string;
-                "MarkerAngle": string;
-                "MarkerBorder": string;
-                "MarkerBrush": string;
-                "MarkerColor": string;
-                "MarkerSize": string;
-                "MarkerType": string;
-                "MarkerVisible": string;
-                "MasterComponent": string;
-                "MasterKeyDataColumn": string;
-                "MatrixSize": string;
-                "MaxDate": string;
-                "MaxDropDownItems": string;
-                "MaxHeight": string;
-                "Maximum": string;
-                "MaximumValue": string;
-                "MaxLength": string;
-                "MaxNumberOfLines": string;
-                "MaxSize": string;
-                "MaxValue": string;
-                "MaxWidth": string;
-                "MergeDuplicates": string;
-                "MergeHeaders": string;
-                "Mid": string;
-                "MinDate": string;
-                "MinHeight": string;
-                "Minimum": string;
-                "MinimumFontSize": string;
-                "MinimumValue": string;
-                "MinorColor": string;
-                "MinorCount": string;
-                "MinorInterval": string;
-                "MinorLength": string;
-                "MinorStyle": string;
-                "MinorVisible": string;
-                "MinRowsInColumn": string;
-                "MinSize": string;
-                "MinValue": string;
-                "MinWidth": string;
-                "MirrorMargins": string;
-                "Mode": string;
-                "Module": string;
-                "Move": string;
-                "Multiline": string;
-                "MultipleFactor": string;
-                "Name": string;
-                "NameDataColumn": string;
-                "NameInSource": string;
-                "NameMeter": string;
-                "NameParent": string;
-                "Namespaces": string;
-                "NeedleBorderBrush": string;
-                "NeedleBorderWidth": string;
-                "NeedleBrush": string;
-                "NeedleCapBorderBrush": string;
-                "NeedleCapBrush": string;
-                "Negative": string;
-                "NegativeColor": string;
-                "NegativeSeriesColors": string;
-                "NegativeTextBrush": string;
-                "NestedLevel": string;
-                "NewColumnAfter": string;
-                "NewColumnBefore": string;
-                "NewPageAfter": string;
-                "NewPageBefore": string;
-                "NextPage": string;
-                "NoIcon": string;
-                "NullText": string;
-                "NumberOfColumns": string;
-                "NumberOfCopies": string;
-                "NumberOfPass": string;
-                "NumberOfValues": string;
-                "OddStyle": string;
-                "Offset": string;
-                "OffsetAngle": string;
-                "OnClick": string;
-                "OnDataManipulation": string;
-                "OnHover": string;
-                "OnlyText": string;
-                "OpenValues": string;
-                "Operation": string;
-                "Options": string;
-                "Orientation": string;
-                "OthersText": string;
-                "Padding": string;
-                "PageHeight": string;
-                "PageNumbers": string;
-                "PageWidth": string;
-                "Paper": string;
-                "PaperSize": string;
-                "PaperSourceOfFirstPage": string;
-                "PaperSourceOfOtherPages": string;
-                "Parameter": string;
-                "Parameters": string;
-                "ParametersDateFormat": string;
-                "ParametersOrientation": string;
-                "ParentColumns": string;
-                "ParentSource": string;
-                "ParentValue": string;
-                "PasswordChar": string;
-                "Path": string;
-                "PathData": string;
-                "PathSchema": string;
-                "Pattern": string;
-                "Placement": string;
-                "PlaceOnToolbox": string;
-                "PointAtCenter": string;
-                "Position": string;
-                "Positive": string;
-                "PositiveColor": string;
-                "PreferredColumnWidth": string;
-                "PreferredRowHeight": string;
-                "PreventIntersection": string;
-                "PreviewMode": string;
-                "PreviewSettings": string;
-                "Printable": string;
-                "PrintAtBottom": string;
-                "PrinterName": string;
-                "PrinterSettings": string;
-                "PrintHeadersFootersFromPreviousPage": string;
-                "PrintIfDetailEmpty": string;
-                "PrintIfEmpty": string;
-                "PrintIfParentDisabled": string;
-                "PrintOn": string;
-                "PrintOnAllPages": string;
-                "PrintOnEvenOddPages": string;
-                "PrintOnPreviousPage": string;
-                "PrintTitleOnAllPages": string;
-                "PrintVerticalBars": string;
-                "ProcessAt": string;
-                "ProcessAtEnd": string;
-                "ProcessingDuplicates": string;
-                "ProcessTilde": string;
-                "ProductHomePage": string;
-                "RadarStyle": string;
-                "RadialBarBorderBrush": string;
-                "RadialBarBrush": string;
-                "RadialBarEmptyBorderBrush": string;
-                "RadialBarEmptyBrush": string;
-                "Radius": string;
-                "RadiusMode": string;
-                "Range": string;
-                "RangeColorMode": string;
-                "RangeFrom": string;
-                "RangeMode": string;
-                "RangeScrollEnabled": string;
-                "RangeTo": string;
-                "RangeType": string;
-                "Ratio": string;
-                "RatioY": string;
-                "ReadOnly": string;
-                "RecentFonts": string;
-                "ReconnectOnEachRow": string;
-                "ReferencedAssemblies": string;
-                "Refresh": string;
-                "RefreshTime": string;
-                "Regular": string;
-                "Relation": string;
-                "RelationName": string;
-                "Relations": string;
-                "RelativeHeight": string;
-                "RelativeWidth": string;
-                "RemoveUnusedDataBeforeStart": string;
-                "RenderTo": string;
-                "ReportAlias": string;
-                "ReportAuthor": string;
-                "ReportCacheMode": string;
-                "ReportDescription": string;
-                "ReportIcon": string;
-                "ReportImage": string;
-                "ReportName": string;
-                "ReportUnit": string;
-                "RequestFromUser": string;
-                "RequestParameters": string;
-                "ResetDataSource": string;
-                "ResetPageNumber": string;
-                "Resize": string;
-                "Resource": string;
-                "Resources": string;
-                "Restrictions": string;
-                "RetrieveOnlyUsedData": string;
-                "ReturnValue": string;
-                "ReverseHor": string;
-                "ReverseVert": string;
-                "Right": string;
-                "RightSide": string;
-                "RightToLeft": string;
-                "Rotation": string;
-                "RotationLabels": string;
-                "Round": string;
-                "RoundValues": string;
-                "RowCount": string;
-                "RowHeaderBackColor": string;
-                "RowHeaderForeColor": string;
-                "RowHeadersVisible": string;
-                "RowHeaderWidth": string;
-                "Rows": string;
-                "Scale": string;
-                "ScaleHor": string;
-                "ScriptLanguage": string;
-                "SegmentPerHeight": string;
-                "SegmentPerWidth": string;
-                "SelectedBackColor": string;
-                "SelectedCellBackColor": string;
-                "SelectedCellForeColor": string;
-                "SelectedDataColor": string;
-                "SelectedDataForeground": string;
-                "SelectedForeColor": string;
-                "SelectedGlyphColor": string;
-                "SelectedIndex": string;
-                "SelectedItem": string;
-                "SelectedKey": string;
-                "SelectedValue": string;
-                "Selection": string;
-                "SelectionBackColor": string;
-                "SelectionEnabled": string;
-                "SelectionForeColor": string;
-                "SelectionMode": string;
-                "SeparatorColor": string;
-                "SerialNumber": string;
-                "Series": string;
-                "SeriesColors": string;
-                "SeriesLabels": string;
-                "SeriesLabelsBorderColor": string;
-                "SeriesLabelsBrush": string;
-                "SeriesLabelsColor": string;
-                "SeriesLabelsLineColor": string;
-                "SeriesLighting": string;
-                "SeriesShowBorder": string;
-                "SeriesShowShadow": string;
-                "SeriesTitle": string;
-                "Shadow": string;
-                "ShadowBrush": string;
-                "ShadowColor": string;
-                "ShadowSize": string;
-                "ShapeType": string;
-                "Shift": string;
-                "ShiftMode": string;
-                "ShortName": string;
-                "ShortValue": string;
-                "ShowAllValue": string;
-                "ShowBehind": string;
-                "ShowDialog": string;
-                "ShowEdgeValues": string;
-                "ShowImageBehind": string;
-                "ShowInLegend": string;
-                "ShowInPercent": string;
-                "ShowLabels": string;
-                "ShowLabelText": string;
-                "ShowLegend": string;
-                "ShowMarker": string;
-                "ShowNulls": string;
-                "ShowOthers": string;
-                "ShowPercents": string;
-                "ShowQuietZoneIndicator": string;
-                "ShowQuietZones": string;
-                "ShowScrollBar": string;
-                "ShowSelectAll": string;
-                "ShowSeriesLabels": string;
-                "ShowShadow": string;
-                "ShowTotal": string;
-                "ShowUpDown": string;
-                "ShowValue": string;
-                "ShowXAxis": string;
-                "ShowYAxis": string;
-                "ShowZeros": string;
-                "ShowBubble": string;
-                "ShrinkFontToFit": string;
-                "ShrinkFontToFitMinimumSize": string;
-                "Side": string;
-                "Sides": string;
-                "Simple": string;
-                "Size": string;
-                "SizeMode": string;
-                "Skin": string;
-                "SkipFirst": string;
-                "SkipIndices": string;
-                "SkipIndicesObj": string;
-                "SkipMajorValues": string;
-                "SkipValues": string;
-                "SkipValuesObj": string;
-                "Smoothing": string;
-                "Sort": string;
-                "SortBy": string;
-                "SortDirection": string;
-                "Sorted": string;
-                "SortingColumn": string;
-                "SortingEnabled": string;
-                "SortType": string;
-                "Space": string;
-                "Spacing": string;
-                "SqlCommand": string;
-                "StartAngle": string;
-                "StartCap": string;
-                "StartColor": string;
-                "StartFromZero": string;
-                "StartMode": string;
-                "StartNewPage": string;
-                "StartNewPageIfLessThan": string;
-                "StartPosition": string;
-                "StartValue": string;
-                "StartWidth": string;
-                "Step": string;
-                "Stop": string;
-                "StopBeforePage": string;
-                "StopBeforePrint": string;
-                "StoreImagesInResources": string;
-                "Stretch": string;
-                "StretchToPrintArea": string;
-                "Strikeout": string;
-                "StripBrush": string;
-                "Strips": string;
-                "Stroke": string;
-                "StructuredAppendPosition": string;
-                "StructuredAppendTotal": string;
-                "Style": string;
-                "StyleColors": string;
-                "Styles": string;
-                "SubReportPage": string;
-                "Summaries": string;
-                "Summary": string;
-                "SummaryExpression": string;
-                "SummarySortDirection": string;
-                "SummaryType": string;
-                "SummaryValues": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-                "SweepAngle": string;
-                "SystemFonts": string;
-                "SystemVariable": string;
-                "SystemVariables": string;
-                "Table": string;
-                "Tag": string;
-                "TagDataColumn": string;
-                "TagValue": string;
-                "Target": string;
-                "TargetIcon": string;
-                "TargetMode": string;
-                "Tension": string;
-                "Text": string;
-                "TextAfter": string;
-                "TextAlign": string;
-                "TextAlignment": string;
-                "TextBefore": string;
-                "TextBrush": string;
-                "TextColor": string;
-                "TextFormat": string;
-                "TextOnly": string;
-                "TextOptions": string;
-                "TextQuality": string;
-                "TickLabelMajorFont": string;
-                "TickLabelMajorTextBrush": string;
-                "TickLabelMinorFont": string;
-                "TickLabelMinorTextBrush": string;
-                "TickMarkMajorBorder": string;
-                "TickMarkMajorBorderWidth": string;
-                "TickMarkMajorBrush": string;
-                "TickMarkMinorBorder": string;
-                "TickMarkMinorBorderWidth": string;
-                "TickMarkMinorBrush": string;
-                "Ticks": string;
-                "Title": string;
-                "TitleBeforeHeader": string;
-                "TitleColor": string;
-                "TitleDirection": string;
-                "TitleFont": string;
-                "TitleVisible": string;
-                "To": string;
-                "Today": string;
-                "ToolTip": string;
-                "ToolTipDataColumn": string;
-                "Top": string;
-                "Topmost": string;
-                "TopmostLine": string;
-                "TopN": string;
-                "TopSide": string;
-                "Total": string;
-                "Totals": string;
-                "TrackColor": string;
-                "TransparentColor": string;
-                "TrendLine": string;
-                "TrendLines": string;
-                "TrendLineColor": string;
-                "TrendLineShowShadow": string;
-                "TrimExcessData": string;
-                "Trimming": string;
-                "Type": string;
-                "TypeName": string;
-                "Types": string;
-                "Underline": string;
-                "UndoLimit": string;
-                "Unit": string;
-                "UnlimitedBreakable": string;
-                "UnlimitedHeight": string;
-                "UnlimitedWidth": string;
-                "UseAliases": string;
-                "UseExternalReport": string;
-                "UseParentStyles": string;
-                "UseRangeColor": string;
-                "UseRectangularSymbols": string;
-                "UseSeriesColor": string;
-                "UseStyleOfSummaryInColumnTotal": string;
-                "UseStyleOfSummaryInRowTotal": string;
-                "UseValuesFromTheSpecifiedRange": string;
-                "Value": string;
-                "ValueClose": string;
-                "ValueDataColumn": string;
-                "ValueDataColumnClose": string;
-                "ValueDataColumnEnd": string;
-                "ValueDataColumnHigh": string;
-                "ValueDataColumnLow": string;
-                "ValueDataColumnOpen": string;
-                "ValueEnd": string;
-                "ValueFormat": string;
-                "ValueHigh": string;
-                "ValueLow": string;
-                "ValueMeter": string;
-                "ValueOpen": string;
-                "Values": string;
-                "ValueType": string;
-                "ValueTypeSeparator": string;
-                "Variable": string;
-                "Variables": string;
-                "Variation": string;
-                "Version": string;
-                "VertAlignment": string;
-                "VertSpacing": string;
-                "ViewMode": string;
-                "Visible": string;
-                "Watermark": string;
-                "Weight": string;
-                "WeightDataColumn": string;
-                "Weights": string;
-                "Width": string;
-                "WindowState": string;
-                "WordWrap": string;
-                "Wrap": string;
-                "WrapGap": string;
-                "XAxis": string;
-                "XTopAxis": string;
-                "YAxis": string;
-                "YRightAxis": string;
-                "Zoom": string;
-            };
-            "PropertySystemColors": {
-                "ActiveBorder": string;
-                "ActiveCaption": string;
-                "ActiveCaptionText": string;
-                "AppWorkspace": string;
-                "Control": string;
-                "ControlDark": string;
-                "ControlDarkDark": string;
-                "ControlLight": string;
-                "ControlLightLight": string;
-                "ControlText": string;
-                "Desktop": string;
-                "GrayText": string;
-                "Highlight": string;
-                "HighlightText": string;
-                "HotTrack": string;
-                "InactiveBorder": string;
-                "InactiveCaption": string;
-                "InactiveCaptionText": string;
-                "Info": string;
-                "InfoText": string;
-                "Menu": string;
-                "MenuText": string;
-                "ScrollBar": string;
-                "Window": string;
-                "WindowFrame": string;
-                "WindowText": string;
-            };
-            "QueryBuilder": {
-                "AddObject": string;
-                "AddSubQuery": string;
-                "AllObjects": string;
-                "BadFromObjectExpression": string;
-                "BadObjectName": string;
-                "BadSelectStatement": string;
-                "Collections": string;
-                "CreateLinksFromForeignKeys": string;
-                "CriteriaAlias": string;
-                "CriteriaCriteria": string;
-                "CriteriaExpression": string;
-                "CriteriaGroupBy": string;
-                "CriteriaOr": string;
-                "CriteriaOutput": string;
-                "CriteriaSortOrder": string;
-                "CriteriaSortType": string;
-                "Database": string;
-                "DataSourceProperties": string;
-                "DialectDontSupportDatabases": string;
-                "DialectDontSupportSchemas": string;
-                "DialectDontSupportUnions": string;
-                "DialectDontSupportUnionsBrackets": string;
-                "DialectDontSupportUnionsBracketsInSubQuery": string;
-                "DialectDontSupportUnionsInSubQueries": string;
-                "Edit": string;
-                "EncloseWithBrackets": string;
-                "Expressions": string;
-                "InsertEmptyItem": string;
-                "JoinExpression": string;
-                "LabelAlias": string;
-                "LabelFilterObjectsBySchemaName": string;
-                "LabelJoinExpression": string;
-                "LabelLeftColumn": string;
-                "LabelLeftObject": string;
-                "LabelObject": string;
-                "LabelRightColumn": string;
-                "LabelRightObject": string;
-                "LinkProperties": string;
-                "MetadataProviderCantExecSQL": string;
-                "MetaProviderCantLoadMetadata": string;
-                "MetaProviderCantLoadMetadataForDatabase": string;
-                "MoveDown": string;
-                "MoveUp": string;
-                "NewUnionSubQuery": string;
-                "NoConnectionObject": string;
-                "NoTransactionObject": string;
-                "Objects": string;
-                "ProcedureParameters": string;
-                "Procedures": string;
-                "qnSaveChanges": string;
-                "Query": string;
-                "QueryBuilder": string;
-                "QueryParameters": string;
-                "QueryProperties": string;
-                "Remove": string;
-                "RemoveBrackets": string;
-                "RunQueryBuilder": string;
-                "SelectAllFromLeft": string;
-                "SelectAllFromRight": string;
-                "SwitchToDerivedTable": string;
-                "Tables": string;
-                "UnexpectedTokenAt": string;
-                "Unions": string;
-                "UnionSubMenu": string;
-                "ViewQuery": string;
-                "Views": string;
-            };
-            "Questions": {
-                "qnConfiguration": string;
-                "qnDictionaryNew": string;
-                "qnLanguageNew": string;
-                "qnPageDelete": string;
-                "qnRemove": string;
-                "qnRemoveService": string;
-                "qnRemoveServiceCategory": string;
-                "qnRemoveUnused": string;
-                "qnReplace": string;
-                "qnRestoreDefault": string;
-                "qnSaveChanges": string;
-                "qnSaveChangesToPreviewPage": string;
-                "qnSynchronize": string;
-                "qnSynchronizeServices": string;
-            };
-            "Report": {
-                "ActiveRelation": string;
-                "Address": string;
-                "Alphabetical": string;
-                "Bands": string;
-                "Basic": string;
-                "BasicConfiguration": string;
-                "BusinessObjects": string;
-                "Categorized": string;
-                "Charts": string;
-                "Checking": string;
-                "ClickForMoreDetails": string;
-                "CollapseAll": string;
-                "Collection": string;
-                "CompilingReport": string;
-                "Complete": string;
-                "Components": string;
-                "ConnectingToData": string;
-                "CopyOf": string;
-                "CreateNewReportPageForm": string;
-                "CreatingReport": string;
-                "CrossBands": string;
-                "Dialogs": string;
-                "EditStyles": string;
-                "Enhancements": string;
-                "Errors": string;
-                "EventsTab": string;
-                "ExpandAll": string;
-                "FilterAnd": string;
-                "FilterOr": string;
-                "FinishingReport": string;
-                "FirstPass": string;
-                "FixedBugs": string;
-                "Gallery": string;
-                "GenerateNewCode": string;
-                "History": string;
-                "Infographics": string;
-                "InfoMessage": string;
-                "InformationMessages": string;
-                "LabelAlias": string;
-                "LabelAuthor": string;
-                "LabelBackground": string;
-                "LabelCategory": string;
-                "LabelCentimeters": string;
-                "LabelCollectionName": string;
-                "LabelColor": string;
-                "LabelCountData": string;
-                "LabelDataBand": string;
-                "LabelDataColumn": string;
-                "LabelDefaultValue": string;
-                "LabelExpression": string;
-                "LabelFactorLevel": string;
-                "LabelFontName": string;
-                "LabelFunction": string;
-                "LabelHundredthsOfInch": string;
-                "LabelInches": string;
-                "LabelMillimeters": string;
-                "LabelName": string;
-                "LabelNameInSource": string;
-                "LabelNestedLevel": string;
-                "LabelPassword": string;
-                "LabelPixels": string;
-                "LabelQueryTimeout": string;
-                "LabelSystemVariable": string;
-                "LabelTotals": string;
-                "LabelType": string;
-                "LabelUserName": string;
-                "LabelValue": string;
-                "LoadingReport": string;
-                "nameAssembly": string;
-                "NewFeatures": string;
-                "No": string;
-                "NoFixes": string;
-                "NoIssues": string;
-                "NoNewVersions": string;
-                "NotAssigned": string;
-                "Null": string;
-                "Office2010Back": string;
-                "PageNofM": string;
-                "PreparingReport": string;
-                "Professional": string;
-                "ProfessionalConfiguration": string;
-                "PropertiesTab": string;
-                "RangeAll": string;
-                "RangeCurrentPage": string;
-                "RangeInfo": string;
-                "RangePage": string;
-                "RangePages": string;
-                "ReportChecker": string;
-                "ReportRenderingMessages": string;
-                "RestartDesigner": string;
-                "SaveReportPagesOrFormsFromReport": string;
-                "SavingReport": string;
-                "SecondPass": string;
-                "Shapes": string;
-                "Standard": string;
-                "StandardConfiguration": string;
-                "StiEmptyBrush": string;
-                "StiGlareBrush": string;
-                "StiGlassBrush": string;
-                "StiGradientBrush": string;
-                "StiHatchBrush": string;
-                "StiSolidBrush": string;
-                "StyleBad": string;
-                "StyleGood": string;
-                "StyleNeutral": string;
-                "StyleNormal": string;
-                "StyleNote": string;
-                "StyleWarning": string;
-                "Warnings": string;
-                "WhatsNewInVersion": string;
-                "When": string;
-                "WhenAnd": string;
-                "WhenValueIs": string;
-            };
-            "ReportInfo": {
-                "CheckIssuesAdditionalDescription": string;
-                "EncryptWithPassword": string;
-                "EncryptWithPasswordAdditionalDescription": string;
-                "EncryptWithPasswordDescription": string;
-                "Info": string;
-                "ReportOptions": string;
-                "ReportOptionsAdditionalDescription": string;
-            };
-            "ReportOpen": {
-                "Browse": string;
-                "Import": string;
-            };
-            "Services": {
-                "categoryContextTools": string;
-                "categoryDesigner": string;
-                "categoryDictionary": string;
-                "categoryExport": string;
-                "categoryLanguages": string;
-                "categoryPanels": string;
-                "categoryRender": string;
-                "categoryShapes": string;
-                "categorySL": string;
-                "categorySystem": string;
-                "categoryTextFormat": string;
-            };
-            "Shapes": {
-                "Arrow": string;
-                "BasicShapes": string;
-                "BentArrow": string;
-                "BlockArrows": string;
-                "Chevron": string;
-                "ComplexArrow": string;
-                "DiagonalDownLine": string;
-                "DiagonalUpLine": string;
-                "Division": string;
-                "Equal": string;
-                "EquationShapes": string;
-                "Flowchart": string;
-                "FlowchartCard": string;
-                "FlowchartCollate": string;
-                "FlowchartDecision": string;
-                "FlowchartManualInput": string;
-                "FlowchartOffPageConnector": string;
-                "FlowchartPreparation": string;
-                "FlowchartSort": string;
-                "Frame": string;
-                "HorizontalLine": string;
-                "InsertShapes": string;
-                "LeftAndRightLine": string;
-                "Lines": string;
-                "Minus": string;
-                "Multiply": string;
-                "Octagon": string;
-                "Oval": string;
-                "Parallelogram": string;
-                "Plus": string;
-                "Rectangle": string;
-                "Rectangles": string;
-                "RegularPentagon": string;
-                "RoundedRectangle": string;
-                "ServiceCategory": string;
-                "ShapeStyles": string;
-                "SnipDiagonalSideCornerRectangle": string;
-                "SnipSameSideCornerRectangle": string;
-                "TopAndBottomLine": string;
-                "Trapezoid": string;
-                "Triangle": string;
-                "VerticalLine": string;
-            };
-            "SystemVariables": {
-                "Column": string;
-                "GroupLine": string;
-                "IsFirstPage": string;
-                "IsFirstPageThrough": string;
-                "IsLastPage": string;
-                "IsLastPageThrough": string;
-                "Line": string;
-                "LineABC": string;
-                "LineRoman": string;
-                "LineThrough": string;
-                "PageCopyNumber": string;
-                "PageNofM": string;
-                "PageNofMThrough": string;
-                "PageNumber": string;
-                "PageNumberThrough": string;
-                "ReportAlias": string;
-                "ReportAuthor": string;
-                "ReportChanged": string;
-                "ReportCreated": string;
-                "ReportDescription": string;
-                "ReportName": string;
-                "Time": string;
-                "Today": string;
-                "TotalPageCount": string;
-                "TotalPageCountThrough": string;
-            };
-            "TableRibbon": {
-                "BuiltIn": string;
-                "Delete": string;
-                "DeleteColumns": string;
-                "DeleteRows": string;
-                "DeleteTable": string;
-                "DistributeColumns": string;
-                "DistributeRows": string;
-                "InsertAbove": string;
-                "InsertBelow": string;
-                "InsertLeft": string;
-                "InsertRight": string;
-                "PlainTables": string;
-                "ribbonBarRowsColumns": string;
-                "ribbonBarTable": string;
-                "ribbonBarTableStyles": string;
-                "Select": string;
-                "SelectColumn": string;
-                "SelectRow": string;
-                "SelectTable": string;
-            };
-            "Toolbars": {
-                "Align": string;
-                "AlignBottom": string;
-                "AlignCenter": string;
-                "AlignLeft": string;
-                "AlignMiddle": string;
-                "AlignRight": string;
-                "AlignToGrid": string;
-                "AlignTop": string;
-                "AlignWidth": string;
-                "BringToFront": string;
-                "CenterHorizontally": string;
-                "CenterVertically": string;
-                "Conditions": string;
-                "FontGrow": string;
-                "FontName": string;
-                "FontShrink": string;
-                "FontSize": string;
-                "FontStyleBold": string;
-                "FontStyleItalic": string;
-                "FontStyleUnderline": string;
-                "Link": string;
-                "Lock": string;
-                "MakeHorizontalSpacingEqual": string;
-                "MakeSameHeight": string;
-                "MakeSameSize": string;
-                "MakeSameWidth": string;
-                "MakeVerticalSpacingEqual": string;
-                "MoveBackward": string;
-                "MoveForward": string;
-                "Order": string;
-                "SendToBack": string;
-                "Size": string;
-                "StyleDesigner": string;
-                "Styles": string;
-                "TabHome": string;
-                "TabLayout": string;
-                "TabPage": string;
-                "TabView": string;
-                "TextBrush": string;
-                "ToolbarAlignment": string;
-                "ToolbarArrange": string;
-                "ToolbarBorders": string;
-                "ToolbarClipboard": string;
-                "ToolbarDockStyle": string;
-                "ToolbarFont": string;
-                "ToolbarFormatting": string;
-                "ToolbarLayout": string;
-                "ToolbarPageSetup": string;
-                "ToolbarStandard": string;
-                "ToolbarStyle": string;
-                "ToolbarTextFormat": string;
-                "ToolbarTools": string;
-                "ToolbarViewOptions": string;
-                "ToolbarWatermarkImage": string;
-                "ToolbarWatermarkText": string;
-            };
-            "Toolbox": {
-                "Create": string;
-                "Hand": string;
-                "Select": string;
-                "Style": string;
-                "TextEditor": string;
-                "title": string;
-            };
-            "WelcomeScreen": {
-                "AllDownloadsWillCanceled": string;
-                "Description": string;
-                "GetStarted": string;
-                "GetStartedWithDashboards": string;
-                "GetStartedWithReports": string;
-                "MoreReports": string;
-                "ShowNextTime": string;
-                "Title": string;
-            };
-            "Wizards": {
-                "BlankDashboard": string;
-                "BlankReport": string;
-                "ButtonBack": string;
-                "ButtonCancel": string;
-                "ButtonFinish": string;
-                "ButtonNext": string;
-                "ColumnsOrder": string;
-                "Company": string;
-                "Custom": string;
-                "DataRelation": string;
-                "DataSource": string;
-                "DataSources": string;
-                "DefaultThemes": string;
-                "Filters": string;
-                "FromReportTemplate": string;
-                "GetData": string;
-                "groupCreateNewDashboard": string;
-                "groupCreateNewPageOrForm": string;
-                "groupCreateNewReport": string;
-                "Groups": string;
-                "groupTemplates": string;
-                "groupWizards": string;
-                "infoColumnsOrder": string;
-                "infoCompanyInfo": string;
-                "infoDataSource": string;
-                "infoDataSources": string;
-                "infoFilters": string;
-                "infoGroups": string;
-                "infoLabelSettings": string;
-                "infoLanguages": string;
-                "infoLayout": string;
-                "infoRelation": string;
-                "infoSelectColumns": string;
-                "infoSelectTemplate": string;
-                "infoSort": string;
-                "infoThemes": string;
-                "infoTotals": string;
-                "LabelDirection": string;
-                "LabelHeight": string;
-                "LabelHorizontalGap": string;
-                "LabelLabelType": string;
-                "LabelLeftMargin": string;
-                "LabelNumberOfColumns": string;
-                "LabelNumberOfRows": string;
-                "LabelPageHeight": string;
-                "LabelPageWidth": string;
-                "LabelReport": string;
-                "LabelSettings": string;
-                "LabelSize": string;
-                "LabelTopMargin": string;
-                "LabelVerticalGap": string;
-                "LabelWidth": string;
-                "Layout": string;
-                "Mapping": string;
-                "MarkAll": string;
-                "MasterDetailReport": string;
-                "NoFunction": string;
-                "OpenExistingReport": string;
-                "OpenFrom": string;
-                "Preview": string;
-                "Reset": string;
-                "Results": string;
-                "RunWizard": string;
-                "SelectColumns": string;
-                "SelectTemplate": string;
-                "Sort": string;
-                "StandardReport": string;
-                "Themes": string;
-                "title": string;
-                "Totals": string;
-                "UseDemoData": string;
-                "UsingReportWizard": string;
-                "YouHaveNotOpenedAnyReportRecently": string;
-            };
-            "Zoom": {
-                "EmptyValue": string;
-                "MultiplePages": string;
-                "OnePage": string;
-                "PageHeight": string;
-                "PageWidth": string;
-                "TwoPages": string;
-                "ZoomTo100": string;
+            A_WebViewer: {
+                AbbreviatedDayFriday: string;
+                AbbreviatedDayMonday: string;
+                AbbreviatedDaySaturday: string;
+                AbbreviatedDaySunday: string;
+                AbbreviatedDayThursday: string;
+                AbbreviatedDayTuesday: string;
+                AbbreviatedDayWednesday: string;
+                Attachment: string;
+                ButtonNext: string;
+                ButtonPrev: string;
+                ButtonSend: string;
+                CategoryAlreadyExists: string;
+                DayFriday: string;
+                DayMonday: string;
+                DaySaturday: string;
+                DaySunday: string;
+                DayThursday: string;
+                DayTuesday: string;
+                DayWednesday: string;
+                Email: string;
+                EmailOptions: string;
+                FirstPage: string;
+                Hours: string;
+                LabelFrom: string;
+                LabelSelectExportFormat: string;
+                LabelTo: string;
+                LastPage: string;
+                Loading: string;
+                Message: string;
+                Minutes: string;
+                MonthApril: string;
+                MonthAugust: string;
+                MonthDecember: string;
+                MonthFebruary: string;
+                MonthJanuary: string;
+                MonthJuly: string;
+                MonthJune: string;
+                MonthMarch: string;
+                MonthMay: string;
+                MonthNovember: string;
+                MonthOctober: string;
+                MonthSeptember: string;
+                NextPage: string;
+                OnePage: string;
+                Page: string;
+                PageOf: string;
+                PreviousPage: string;
+                PrintContinue: string;
+                PrintReport: string;
+                PrintToPdf: string;
+                PrintToXps: string;
+                PrintWithoutPreview: string;
+                PrintWithPreview: string;
+                SaveReport: string;
+                Subject: string;
+                TabItemContacts: string;
+                TextComputer: string;
+                TextItemsRoot: string;
+                TodayDate: string;
+                WholeReport: string;
+            };
+            Adapters: {
+                AdapterBusinessObjects: string;
+                AdapterConnection: string;
+                AdapterCrossTabDataSource: string;
+                AdapterCsvFiles: string;
+                AdapterDataTables: string;
+                AdapterDataViews: string;
+                AdapterDB2Connection: string;
+                AdapterDBaseFiles: string;
+                AdapterFirebirdConnection: string;
+                AdapterInformixConnection: string;
+                AdapterMySQLConnection: string;
+                AdapterOdbcConnection: string;
+                AdapterOleDbConnection: string;
+                AdapterOracleConnection: string;
+                AdapterOracleODPConnection: string;
+                AdapterPostgreSQLConnection: string;
+                AdapterSqlCeConnection: string;
+                AdapterSqlConnection: string;
+                AdapterSQLiteConnection: string;
+                AdapterTeradataConnection: string;
+                AdapterUniDirectConnection: string;
+                AdapterUserSources: string;
+                AdapterVirtualSource: string;
+                AdapterVistaDBConnection: string;
+            };
+            BarCode: {
+                Post: string;
+                TwoDimensional: string;
+            };
+            Buttons: {
+                Add: string;
+                AddAllColumns: string;
+                Attach: string;
+                Build: string;
+                Buttons: string;
+                Cancel: string;
+                Check: string;
+                Close: string;
+                Delete: string;
+                Design: string;
+                Down: string;
+                Duplicate: string;
+                Export: string;
+                ForceDelete: string;
+                Help: string;
+                Install: string;
+                LessOptions: string;
+                LoadDataSet: string;
+                More: string;
+                MoreApps: string;
+                MoreOptions: string;
+                MoveLeft: string;
+                MoveRight: string;
+                MoveToResource: string;
+                No: string;
+                Ok: string;
+                Open: string;
+                Print: string;
+                Publish: string;
+                QuickPrint: string;
+                Remove: string;
+                RemoveAll: string;
+                Rename: string;
+                RestoreDefaults: string;
+                Reverse: string;
+                Save: string;
+                SaveCopy: string;
+                SetAll: string;
+                ShowLess: string;
+                ShowMore: string;
+                ShowSpecific: string;
+                Submit: string;
+                Test: string;
+                Up: string;
+                Upgrade: string;
+                UpgradeNow: string;
+                Upload: string;
+                Waiting: string;
+                Yes: string;
+            };
+            Chart: {
+                Histogram: string;
+                AddCondition: string;
+                AddConstantLine: string;
+                AddFilter: string;
+                AddSeries: string;
+                AddStrip: string;
+                Area: string;
+                Axes: string;
+                AxisReverse: string;
+                AxisX: string;
+                AxisY: string;
+                Bubble: string;
+                Candlestick: string;
+                ChartConditionsCollectionForm: string;
+                ChartEditorForm: string;
+                ChartFiltersCollectionForm: string;
+                ChartType: string;
+                CheckBoxAutoRotation: string;
+                ClusteredBar: string;
+                ClusteredColumn: string;
+                Common: string;
+                ConstantLine: string;
+                ConstantLinesEditorForm: string;
+                DataColumns: string;
+                Doughnut: string;
+                Financial: string;
+                FullStackedArea: string;
+                FullStackedBar: string;
+                FullStackedColumn: string;
+                FullStackedLine: string;
+                FullStackedSpline: string;
+                FullStackedSplineArea: string;
+                Funnel: string;
+                FunnelWeightedSlices: string;
+                Gantt: string;
+                GridInterlaced: string;
+                GridLines: string;
+                LabelAlignment: string;
+                LabelAlignmentHorizontal: string;
+                LabelAlignmentVertical: string;
+                LabelAngle: string;
+                LabelArgumentDataColumn: string;
+                LabelAutoRotation: string;
+                LabelCloseValueDataColumn: string;
+                LabelEndValueDataColumn: string;
+                LabelHighValueDataColumn: string;
+                LabelHorizontal: string;
+                LabelLowValueDataColumn: string;
+                LabelMinorCount: string;
+                LabelOpenValueDataColumn: string;
+                Labels: string;
+                LabelsCenter: string;
+                LabelSeriesName: string;
+                LabelsInside: string;
+                LabelsInsideBase: string;
+                LabelsInsideEnd: string;
+                LabelsNone: string;
+                LabelsOutside: string;
+                LabelsOutsideBase: string;
+                LabelsOutsideEnd: string;
+                LabelsStyleCategory: string;
+                LabelsStyleCategoryPercentOfTotal: string;
+                LabelsStyleCategoryValue: string;
+                LabelsStylePercentOfTotal: string;
+                LabelsStyleValue: string;
+                LabelsTwoColumns: string;
+                LabelTextAfter: string;
+                LabelTextBefore: string;
+                LabelTitleAlignment: string;
+                LabelValueDataColumn: string;
+                LabelValueType: string;
+                LabelVertical: string;
+                LabelVisible: string;
+                Legend: string;
+                LegendSpacing: string;
+                Line: string;
+                ListOfValues: string;
+                Marker: string;
+                MoveConstantLineDown: string;
+                MoveConstantLineUp: string;
+                MoveSeriesDown: string;
+                MoveSeriesUp: string;
+                MoveStripDown: string;
+                MoveStripUp: string;
+                NoConditions: string;
+                NoFilters: string;
+                Pareto: string;
+                Pictorial: string;
+                Pie: string;
+                Radar: string;
+                RadarArea: string;
+                RadarColumn: string;
+                RadarLine: string;
+                RadarPoint: string;
+                Range: string;
+                RangeBar: string;
+                RemoveCondition: string;
+                RemoveConstantLine: string;
+                RemoveFilter: string;
+                RemoveSeries: string;
+                RemoveStrip: string;
+                RunChartWizard: string;
+                Scatter: string;
+                ScatterLine: string;
+                ScatterSpline: string;
+                Series: string;
+                SeriesColorsCollectionForm: string;
+                SeriesEditorForm: string;
+                Serieses: string;
+                SparklinesArea: string;
+                SparklinesColumn: string;
+                SparklinesLine: string;
+                SparklinesWinLoss: string;
+                Spline: string;
+                SplineArea: string;
+                SplineRange: string;
+                StackedArea: string;
+                StackedBar: string;
+                StackedColumn: string;
+                StackedLine: string;
+                StackedSpline: string;
+                StackedSplineArea: string;
+                SteppedArea: string;
+                SteppedLine: string;
+                SteppedRange: string;
+                Stock: string;
+                Strip: string;
+                StripsEditorForm: string;
+                Style: string;
+                Sunburst: string;
+                Treemap: string;
+                TrendLinesEditorForm: string;
+                Waterfall: string;
+            };
+            CharterMapEditor: {
+                Characters: string;
+            };
+            ChartRibbon: {
+                Axes: string;
+                AxesArrowStyle: string;
+                AxesArrowStyleLines: string;
+                AxesArrowStyleNone: string;
+                AxesArrowStyleTriangle: string;
+                AxesLabel: string;
+                AxesLabelsNone: string;
+                AxesLabelsOneLine: string;
+                AxesLabelsTwoLines: string;
+                AxesReverseHorizontal: string;
+                AxesReverseVertical: string;
+                AxesTicks: string;
+                AxesTicksMajor: string;
+                AxesTicksMinor: string;
+                AxesTicksNone: string;
+                AxesVisible: string;
+                AxesXAxis: string;
+                AxesXTopAxis: string;
+                AxesYAxis: string;
+                AxesYRightAxis: string;
+                CenterLabels: string;
+                ChangeType: string;
+                GridLines: string;
+                GridLinesHorizontal: string;
+                GridLinesVertical: string;
+                HorAlCenter: string;
+                HorAlLeft: string;
+                HorAlLeftOutside: string;
+                HorAlRight: string;
+                HorAlRightOutside: string;
+                HorizontalMajor: string;
+                HorizontalMajorMinor: string;
+                HorizontalMinor: string;
+                HorizontalNone: string;
+                InsideBaseLabels: string;
+                InsideEndLabels: string;
+                Labels: string;
+                Legend: string;
+                LegendHorizontalAlignment: string;
+                LegendMarker: string;
+                LegendMarkerAlignmentLeft: string;
+                LegendMarkerAlignmentRight: string;
+                LegendMarkerVisible: string;
+                LegendVerticalAlignment: string;
+                LegendVisible: string;
+                NoneLabels: string;
+                OutsideBaseLabels: string;
+                OutsideEndLabels: string;
+                OutsideLabels: string;
+                ribbonBarAxis: string;
+                ribbonBarChartStyles: string;
+                ribbonBarChartType: string;
+                ribbonBarLabels: string;
+                ribbonBarLegend: string;
+                Style: string;
+                TwoColumnsPieLabels: string;
+                VertAlBottom: string;
+                VertAlBottomOutside: string;
+                VertAlCenter: string;
+                VertAlTop: string;
+                VertAlTopOutside: string;
+                VerticalMajor: string;
+                VerticalMajorMinor: string;
+                VerticalMinor: string;
+                VerticalNone: string;
+            };
+            Cloud: {
+                AcceptTermsAndPrivacyPolicy: string;
+                AccountSettings: string;
+                AddAPlace: string;
+                AreYouSureYouWantDeleteReport: string;
+                Authorize: string;
+                AuthorizeWithLicenseKey: string;
+                ButtonChangePassword: string;
+                ButtonDeleteAll: string;
+                ButtonDesign: string;
+                ButtonLater: string;
+                ButtonLogInWith: string;
+                ButtonLogout: string;
+                ButtonPublish: string;
+                ButtonPurchase: string;
+                ButtonRecover: string;
+                ButtonRenew: string;
+                ButtonResendEmail: string;
+                ButtonResetPassword: string;
+                ButtonRun: string;
+                ButtonShare: string;
+                ButtonSignUp: string;
+                ButtonSignUpWith: string;
+                ButtonSkip: string;
+                ButtonView: string;
+                ButtonWhereUsed: string;
+                Cancel: string;
+                CheckBoxMoveToRecycleBin: string;
+                CheckBoxRememberMe: string;
+                CheckForUpdate: string;
+                Cloud: string;
+                Collection: string;
+                Create: string;
+                CreateError: string;
+                CreateNewCollection: string;
+                CreatingReport: string;
+                DashboardWindowTitleNew: string;
+                DeleteFile: string;
+                DoNotAskMe: string;
+                ExecutionError: string;
+                ExpiredDate: string;
+                FileStorageWindowTitleEdit: string;
+                FileStorageWindowTitleNew: string;
+                FolderWindowTitleEdit: string;
+                FolderWindowTitleNew: string;
+                ForExample: string;
+                GroupBoxAttachedItems: string;
+                HyperlinkAgreeToTerms: string;
+                HyperlinkAlreadyHaveAccount: string;
+                HyperlinkForgotPassword: string;
+                HyperlinkHavePassword: string;
+                HyperlinkRegisterAccount: string;
+                InstallSamples: string;
+                LabelAddCloudFolder: string;
+                LabelAddFolder: string;
+                labelCollectionName: string;
+                LabelCreated: string;
+                LabelCreateFolder: string;
+                LabelCreateNewDashboard: string;
+                LabelCreateReportTemplate: string;
+                LabelCurrentPassword: string;
+                LabelDataFile: string;
+                LabelDataUrl: string;
+                LabelEndDate: string;
+                labelFileName: string;
+                LabelForeground: string;
+                LabelFromReport: string;
+                LabelFromReportCode: string;
+                LabelLastLogin: string;
+                LabelLastTime: string;
+                LabelModified: string;
+                LabelNewPassword: string;
+                LabelNextTime: string;
+                labelPassword: string;
+                LabelPermission: string;
+                LabelPicture: string;
+                LabelRenderedReport: string;
+                LabelResponseAsFile: string;
+                LabelResultType: string;
+                LabelSeparateReport: string;
+                LabelShowReport: string;
+                labelUserName: string;
+                License: string;
+                LicenseInformation: string;
+                LicenseKey: string;
+                Login: string;
+                NofM: string;
+                Open: string;
+                OpenFile: string;
+                OperationCreate: string;
+                OperationDelete: string;
+                OperationDownload: string;
+                OperationGetList: string;
+                OperationLogin: string;
+                OperationRename: string;
+                OperationUpload: string;
+                page: string;
+                Platforms: string;
+                Port: string;
+                PrivacyPolicy: string;
+                Products: string;
+                Proxy: string;
+                PublishMessage: string;
+                questionOpenThisFile: string;
+                questionOverrideItem: string;
+                questionRemoveItem: string;
+                RefreshList: string;
+                ReportDocumentFormatNotRecognized: string;
+                ReportTemplateFormatNotRecognized: string;
+                RequestChangesWhenSavingToCloud: string;
+                RibbonButtonAddRole: string;
+                RibbonButtonAddUser: string;
+                RibbonButtonAddWorkspace: string;
+                RibbonButtonFolder: string;
+                RibbonTabUsers: string;
+                Root: string;
+                RootFolder: string;
+                Save: string;
+                SaveAccountSettings: string;
+                SaveAsType: string;
+                SaveFile: string;
+                SavingToStimulsoftCloudPleaseWait: string;
+                SearchForOnlineTemplates: string;
+                ShareWindowTitleNew: string;
+                ShowAllFiles: string;
+                ShowNotificationMessages: string;
+                Subscriptions: string;
+                TabItemEmbedCode: string;
+                TabItemQRCode: string;
+                TabItemShare: string;
+                TermsOfUse: string;
+                TextActivated: string;
+                TextActivationDate: string;
+                TextDelete: string;
+                TextDeletingItems: string;
+                TextDescriptionChanges: string;
+                TextFirstName: string;
+                TextFromTo: string;
+                TextItemsWorkspace: string;
+                TextLastName: string;
+                TextModify: string;
+                TextNoFavoriteFiles: string;
+                TextNoFiles: string;
+                TextNoNotifications: string;
+                TextNoRecentFiles: string;
+                TextOwner: string;
+                TextProfile: string;
+                TextReports: string;
+                TextRestoringItems: string;
+                TextRole: string;
+                TextRun: string;
+                TextUser: string;
+                TextUserName: string;
+                TimeHoursAgoFive: string;
+                TimeHoursAgoFour: string;
+                TimeHoursAgoOne: string;
+                TimeHoursAgoThree: string;
+                TimeHoursAgoTwo: string;
+                TimeMinutesAgoFive: string;
+                TimeMinutesAgoFour: string;
+                TimeMinutesAgoLessOne: string;
+                TimeMinutesAgoN: string;
+                TimeMinutesAgoOne: string;
+                TimeMinutesAgoThree: string;
+                TimeMinutesAgoTwo: string;
+                TimeToday: string;
+                TimeYesterday: string;
+                ToolTipAddRole: string;
+                ToolTipAddUser: string;
+                ToolTipAspNet: string;
+                ToolTipAspNetMvc: string;
+                ToolTipAttach: string;
+                ToolTipCreate: string;
+                ToolTipDelete: string;
+                ToolTipDeleted: string;
+                ToolTipDownload: string;
+                ToolTipEdit: string;
+                ToolTipGridMode: string;
+                ToolTipInfo: string;
+                ToolTipJs: string;
+                ToolTipPublish: string;
+                ToolTipRecover: string;
+                ToolTipRunWithoutPreview: string;
+                ToolTipShare: string;
+                ToolTipSort: string;
+                ToolTipThumbnailMode: string;
+                ToolTipViewFile: string;
+                ToolTipViewReport: string;
+                WeDidntFindAnything: string;
+                WindowDescriptionDelete: string;
+                WindowDescriptionRecover: string;
+                WindowTitleDelete: string;
+                WindowTitleForgotPassword: string;
+                WindowTitleLogin: string;
+                WindowTitleRecover: string;
+                WindowTitleRoleEdit: string;
+                WindowTitleRoleNew: string;
+                WindowTitleSignUp: string;
+                WindowTitleUserEdit: string;
+                WindowTitleUserNew: string;
+                WindowTitleWorkspaceEdit: string;
+                WindowTitleWorkspaceNew: string;
+                WizardBlankReportDescription: string;
+                WizardExcelDescription: string;
+                WizardJsonDescription: string;
+                WizardPrivateShare: string;
+                WizardPrivateShareDescription: string;
+                WizardPublicShare: string;
+                WizardPublicShareDescription: string;
+                WizardRegisteredShare: string;
+                WizardRegisteredShareDescription: string;
+                WizardXmlDescription: string;
+            };
+            Components: {
+                StiBarCode: string;
+                StiChart: string;
+                StiCheckBox: string;
+                StiChildBand: string;
+                StiClone: string;
+                StiColumnFooterBand: string;
+                StiColumnHeaderBand: string;
+                StiComboBox: string;
+                StiComponent: string;
+                StiContainer: string;
+                StiContourText: string;
+                StiCrossColumn: string;
+                StiCrossColumnTotal: string;
+                StiCrossDataBand: string;
+                StiCrossFooterBand: string;
+                StiCrossGroupFooterBand: string;
+                StiCrossGroupHeaderBand: string;
+                StiCrossHeaderBand: string;
+                StiCrossRow: string;
+                StiCrossRowTotal: string;
+                StiCrossSummary: string;
+                StiCrossSummaryHeader: string;
+                StiCrossTab: string;
+                StiCrossTitle: string;
+                StiDashboard: string;
+                StiDataBand: string;
+                StiDatePicker: string;
+                StiEmptyBand: string;
+                StiFooterBand: string;
+                StiGauge: string;
+                StiGroupFooterBand: string;
+                StiGroupHeaderBand: string;
+                StiHeaderBand: string;
+                StiHierarchicalBand: string;
+                StiHorizontalLinePrimitive: string;
+                StiImage: string;
+                StiIndicator: string;
+                StiListBox: string;
+                StiMap: string;
+                StiOnlineMap: string;
+                StiOverlayBand: string;
+                StiPage: string;
+                StiPageFooterBand: string;
+                StiPageHeaderBand: string;
+                StiPanel: string;
+                StiPivotColumn: string;
+                StiPivotRow: string;
+                StiPivotSummary: string;
+                StiPivotTable: string;
+                StiProgress: string;
+                StiRectanglePrimitive: string;
+                StiRegionMap: string;
+                StiReport: string;
+                StiReportSummaryBand: string;
+                StiReportTitleBand: string;
+                StiRichText: string;
+                StiRoundedRectanglePrimitive: string;
+                StiShape: string;
+                StiSubReport: string;
+                StiSystemText: string;
+                StiTable: string;
+                StiText: string;
+                StiTextInCells: string;
+                StiTreeView: string;
+                StiTreeViewBox: string;
+                StiVerticalLinePrimitive: string;
+                StiWinControl: string;
+                StiZipCode: string;
+            };
+            Dashboard: {
+                DashboardsNotSupportedIntheWPFDesigner: string;
+                DataFilterGrouping: string;
+                ViewEditCompilationNotice: string;
+                AddRange: string;
+                AfterGroupingData: string;
+                AllowUserDrillDown: string;
+                AllowUserFiltering: string;
+                AllowUserSorting: string;
+                Blanks: string;
+                BooleanFilters: string;
+                CannotLoadDashboard: string;
+                ChangeChartType: string;
+                ChangeMapType: string;
+                ClearAllFormatting: string;
+                ClearFilterFrom: string;
+                ColorScale: string;
+                ColumnInteractions: string;
+                CustomFilter: string;
+                DataBars: string;
+                DataNotDefined: string;
+                DateFilters: string;
+                Dimension: string;
+                Dimensions: string;
+                DragDropData: string;
+                DragDropDataFromDictionary: string;
+                DrillDown: string;
+                DrillDownFiltered: string;
+                DrillDownSelected: string;
+                DrillUp: string;
+                DuplicateField: string;
+                EditExpression: string;
+                EditField: string;
+                EmptyDashboardFooter: string;
+                EmptyDashboardHeader: string;
+                FieldInteractions: string;
+                FieldTypeRestrictionHint: string;
+                FirstLastPoints: string;
+                FirstRowIndex: string;
+                FullRowSelect: string;
+                HighLowPoints: string;
+                ImageNotSpecified: string;
+                Indicator: string;
+                InitialValue: string;
+                LimitRows: string;
+                Measure: string;
+                Measures: string;
+                NewDimension: string;
+                NewField: string;
+                NewMeasure: string;
+                NoRanges: string;
+                NoResult: string;
+                NSelected: string;
+                Nulls: string;
+                NumberFilters: string;
+                ParentElement: string;
+                RangeMode: string;
+                RangeType: string;
+                RemoveActions: string;
+                RemoveAllFields: string;
+                RemoveField: string;
+                RemoveMobileSurface: string;
+                ReplaceValues: string;
+                ReportSnapshot: string;
+                RowsCount: string;
+                RunFieldsEditor: string;
+                RunFieldsEditorInfo: string;
+                SelectAll: string;
+                ShowAllValue: string;
+                ShowAsPercentages: string;
+                SkipFirstRows: string;
+                SortAZ: string;
+                SortLargestToSmallest: string;
+                SortNewestToOldest: string;
+                SortOldestToNewest: string;
+                SortSmallestToLargest: string;
+                SortZA: string;
+                Sparklines: string;
+                StringFilters: string;
+                TransformationHint: string;
+                Trend: string;
+                ViewModeDesktop: string;
+                ViewModeMobile: string;
+            };
+            Database: {
+                Connection: string;
+                Database: string;
+                DatabaseDB2: string;
+                DatabaseFirebird: string;
+                DatabaseInformix: string;
+                DatabaseJson: string;
+                DatabaseMySQL: string;
+                DatabaseOdbc: string;
+                DatabaseOleDb: string;
+                DatabaseOracle: string;
+                DatabaseOracleODP: string;
+                DatabasePostgreSQL: string;
+                DatabaseSql: string;
+                DatabaseSqlCe: string;
+                DatabaseSQLite: string;
+                DatabaseTeradata: string;
+                DatabaseUniDirect: string;
+                DatabaseVistaDB: string;
+                DatabaseXml: string;
+            };
+            DatePickerRanges: {
+                CurrentMonth: string;
+                CurrentQuarter: string;
+                CurrentWeek: string;
+                CurrentYear: string;
+                FirstQuarter: string;
+                FourthQuarter: string;
+                Index: string;
+                Last14Days: string;
+                Last30Days: string;
+                Last7Days: string;
+                MonthToDate: string;
+                NextMonth: string;
+                NextQuarter: string;
+                NextWeek: string;
+                NextYear: string;
+                PreviousMonth: string;
+                PreviousQuarter: string;
+                PreviousWeek: string;
+                PreviousYear: string;
+                Quarter: string;
+                QuarterToDate: string;
+                SecondQuarter: string;
+                ThirdQuarter: string;
+                Today: string;
+                Tomorrow: string;
+                WeekToDate: string;
+                Year: string;
+                YearToDate: string;
+                Yesterday: string;
+            };
+            DesignerFx: {
+                AlreadyExists: string;
+                CanNotLoadThisReportTemplate: string;
+                CloseDataSourceEditor: string;
+                CloseEditor: string;
+                CompilingReport: string;
+                Connecting: string;
+                ConnectionError: string;
+                ConnectionSuccessfull: string;
+                Continue: string;
+                DecryptionError: string;
+                EmailSuccessfullySent: string;
+                ErrorAtSaving: string;
+                ErrorCode: string;
+                ErrorServer: string;
+                ExportingReport: string;
+                LoadingCode: string;
+                LoadingConfiguration: string;
+                LoadingData: string;
+                LoadingDocument: string;
+                LoadingImages: string;
+                LoadingLanguage: string;
+                LoadingReport: string;
+                PreviewAs: string;
+                RenderingReport: string;
+                ReportSuccessfullySaved: string;
+                RetrieveError: string;
+                RetrievingColumns: string;
+                SavingConfiguration: string;
+                SavingReport: string;
+                TestConnection: string;
+                TextNotFound: string;
+            };
+            Desktop: {
+                Beginner: string;
+                ButtonAddCloud: string;
+                ButtonAddFolder: string;
+                ButtonCreateDashboard: string;
+                ButtonCreateReport: string;
+                Creator: string;
+                Developer: string;
+                DoYouWantToInstallReports: string;
+                InstallSamplesDesc: string;
+                PleaseAnswerWhoAreYou: string;
+                WhoAreYou: string;
+                WhoAreYouBeginnerDescription: string;
+                WhoAreYouCreatorDescription: string;
+                WhoAreYouDeveloperDescription: string;
+                SkillLevel: string;
+                ChooseYourSkillLevel: string;
+            };
+            Dialogs: {
+                StiButtonControl: string;
+                StiCheckBoxControl: string;
+                StiCheckedListBoxControl: string;
+                StiComboBoxControl: string;
+                StiDateTimePickerControl: string;
+                StiForm: string;
+                StiGridControl: string;
+                StiGroupBoxControl: string;
+                StiLabelControl: string;
+                StiListBoxControl: string;
+                StiListViewControl: string;
+                StiLookUpBoxControl: string;
+                StiNumericUpDownControl: string;
+                StiPanelControl: string;
+                StiPictureBoxControl: string;
+                StiRadioButtonControl: string;
+                StiReportControl: string;
+                StiRichTextBoxControl: string;
+                StiTextBoxControl: string;
+                StiTreeViewControl: string;
+            };
+            Editor: {
+                CantFind: string;
+                CollapseToDefinitions: string;
+                Column: string;
+                EntireScope: string;
+                Find: string;
+                FindNext: string;
+                FindWhat: string;
+                FromCursor: string;
+                GotoLine: string;
+                InsertLink: string;
+                InsertSymbol: string;
+                Line: string;
+                LineNumber: string;
+                LineNumberIndex: string;
+                MarkAll: string;
+                MatchCase: string;
+                MatchWholeWord: string;
+                Outlining: string;
+                PromptOnReplace: string;
+                Replace: string;
+                ReplaceAll: string;
+                ReplaceWith: string;
+                Search: string;
+                SearchHiddenText: string;
+                SearchUp: string;
+                SelectionOnly: string;
+                ShowAutoGeneratedCode: string;
+                ShowLineNumbers: string;
+                StopOutlining: string;
+                titleFind: string;
+                titleGotoLine: string;
+                titleReplace: string;
+                ToggleAllOutlining: string;
+                ToggleOutliningExpansion: string;
+                TypeToSearch: string;
+                UseRegularExpressions: string;
+            };
+            Errors: {
+                ComponentIsNotRelease: string;
+                ContainerIsNotValidForComponent: string;
+                DataNotFound: string;
+                DataNotLoaded: string;
+                Error: string;
+                ErrorsList: string;
+                FieldRequire: string;
+                FileNotFound: string;
+                IdentifierIsNotValid: string;
+                ImpossibleFindDataSource: string;
+                NameExists: string;
+                NoServices: string;
+                NotAssign: string;
+                NotCorrectFormat: string;
+                PrimaryColumnAction: string;
+                RelationsNotFound: string;
+                ReportCannotBeSaveDueToErrors: string;
+                ServiceNotFound: string;
+            };
+            Export: {
+                AddPageBreaks: string;
+                AllBands: string;
+                AllowAddOrModifyTextAnnotations: string;
+                AllowCopyTextAndGraphics: string;
+                AllowEditable: string;
+                AllowModifyContents: string;
+                AllowPrintDocument: string;
+                Auto: string;
+                BandsFilter: string;
+                CancelExport: string;
+                Color: string;
+                Compressed: string;
+                CompressToArchive: string;
+                ContinuousPages: string;
+                DataAndHeaders: string;
+                DataAndHeadersFooters: string;
+                DataOnly: string;
+                DigitalSignature: string;
+                DigitalSignatureCertificateNotSelected: string;
+                DigitalSignatureError: string;
+                DocumentSecurity: string;
+                DotMatrixMode: string;
+                EmbeddedFonts: string;
+                EmbeddedImageData: string;
+                Encoding: string;
+                EncryptionError: string;
+                EscapeCodes: string;
+                Exactly: string;
+                ExceptEditableFields: string;
+                ExportDataOnly: string;
+                ExportEachPageToSheet: string;
+                Exporting: string;
+                ExportingCalculatingCoordinates: string;
+                ExportingCreatingDocument: string;
+                ExportingFormatingObjects: string;
+                ExportingReport: string;
+                ExportMode: string;
+                ExportModeFrame: string;
+                ExportModeTable: string;
+                ExportObjectFormatting: string;
+                ExportPageBreaks: string;
+                ExportRtfTextAsImage: string;
+                ExportTypeBmpFile: string;
+                ExportTypeCalcFile: string;
+                ExportTypeCsvFile: string;
+                ExportTypeDataFile: string;
+                ExportTypeDbfFile: string;
+                ExportTypeDifFile: string;
+                ExportTypeExcel2007File: string;
+                ExportTypeExcelFile: string;
+                ExportTypeExcelXmlFile: string;
+                ExportTypeGifFile: string;
+                ExportTypeHtml5File: string;
+                ExportTypeHtmlFile: string;
+                ExportTypeImageFile: string;
+                ExportTypeJpegFile: string;
+                ExportTypeJsonFile: string;
+                ExportTypeMetafile: string;
+                ExportTypeMhtFile: string;
+                ExportTypePcxFile: string;
+                ExportTypePdfFile: string;
+                ExportTypePngFile: string;
+                ExportTypePpt2007File: string;
+                ExportTypeRtfFile: string;
+                ExportTypeSvgFile: string;
+                ExportTypeSvgzFile: string;
+                ExportTypeSylkFile: string;
+                ExportTypeTiffFile: string;
+                ExportTypeTxtFile: string;
+                ExportTypeWord2007File: string;
+                ExportTypeWriterFile: string;
+                ExportTypeXmlFile: string;
+                ExportTypeXpsFile: string;
+                GetCertificateFromCryptoUI: string;
+                ImageCompressionMethod: string;
+                ImageCutEdges: string;
+                ImageFormat: string;
+                ImageGrayscale: string;
+                ImageMonochrome: string;
+                ImageQuality: string;
+                ImageResolution: string;
+                ImageResolutionMode: string;
+                ImageType: string;
+                labelEncryptionKeyLength: string;
+                labelOwnerPassword: string;
+                labelSubjectNameString: string;
+                labelUserPassword: string;
+                MonochromeDitheringType: string;
+                MoreSettings: string;
+                MultipleFiles: string;
+                NoMoreThan: string;
+                OpenAfterExport: string;
+                PdfACompliance: string;
+                PrintingReport: string;
+                RemoveEmptySpaceAtBottom: string;
+                RestrictEditing: string;
+                Scale: string;
+                Separator: string;
+                Settings: string;
+                SkipColumnHeaders: string;
+                StandardPDFFonts: string;
+                TiffCompressionScheme: string;
+                title: string;
+                TxtBorderType: string;
+                TxtBorderTypeDouble: string;
+                TxtBorderTypeSimple: string;
+                TxtBorderTypeSingle: string;
+                TxtCutLongLines: string;
+                TxtDrawBorder: string;
+                TxtKillSpaceGraphLines: string;
+                TxtKillSpaceLines: string;
+                TxtPutFeedPageCode: string;
+                Type: string;
+                UseDefaultSystemEncoding: string;
+                UseDigitalSignature: string;
+                UseEscapeCodes: string;
+                UseOnePageHeaderAndFooter: string;
+                UsePageHeadersAndFooters: string;
+                UseUnicode: string;
+                X: string;
+                Y: string;
+                Zoom: string;
+            };
+            FileFilters: {
+                AllFiles: string;
+                AllImageFiles: string;
+                BitmapFiles: string;
+                BmpFiles: string;
+                CalcFiles: string;
+                CsvFiles: string;
+                DashboardTemplates: string;
+                DataSetXmlData: string;
+                DataSetXmlSchema: string;
+                DbfFiles: string;
+                DictionaryFiles: string;
+                DifFiles: string;
+                DllFiles: string;
+                DocumentFiles: string;
+                EmfFiles: string;
+                EncryptedDocumentFiles: string;
+                EncryptedReportFiles: string;
+                Excel2007Files: string;
+                ExcelAllFiles: string;
+                ExcelFiles: string;
+                ExcelXmlFiles: string;
+                ExeFiles: string;
+                GifFiles: string;
+                HtmlFiles: string;
+                InheritedLanguageFiles: string;
+                JpegFiles: string;
+                JsonDocumentFiles: string;
+                JsonFiles: string;
+                JsonReportFiles: string;
+                LanguageFiles: string;
+                LanguageForSilverlightFiles: string;
+                MetaFiles: string;
+                MhtFiles: string;
+                PackedDocumentFiles: string;
+                PackedReportFiles: string;
+                PageFiles: string;
+                PcxFiles: string;
+                PdfFiles: string;
+                PngFiles: string;
+                Ppt2007Files: string;
+                ReportEmbededDataFiles: string;
+                ReportFiles: string;
+                RtfFiles: string;
+                StandaloneReportFiles: string;
+                StylesFiles: string;
+                SvgFiles: string;
+                SvgzFiles: string;
+                SylkFiles: string;
+                TiffFiles: string;
+                TxtFiles: string;
+                Word2007Files: string;
+                WordFiles: string;
+                WriterFiles: string;
+                XmlFiles: string;
+                XpsFiles: string;
+                ZipArchives: string;
+            };
+            Formats: {
+                custom01: string;
+                custom02: string;
+                custom03: string;
+                custom04: string;
+                custom05: string;
+                custom06: string;
+                custom07: string;
+                custom08: string;
+                custom09: string;
+                custom10: string;
+                custom11: string;
+                custom12: string;
+                custom13: string;
+                custom14: string;
+                custom15: string;
+                custom16: string;
+                custom17: string;
+                custom18: string;
+                date01: string;
+                date02: string;
+                date03: string;
+                date04: string;
+                date05: string;
+                date06: string;
+                date07: string;
+                date08: string;
+                date09: string;
+                date10: string;
+                date11: string;
+                date12: string;
+                date13: string;
+                date14: string;
+                date15: string;
+                date16: string;
+                date17: string;
+                date18: string;
+                date19: string;
+                date20: string;
+                date21: string;
+                date22: string;
+                time01: string;
+                time02: string;
+                time03: string;
+                time04: string;
+                time06: string;
+            };
+            FormBand: {
+                AddFilter: string;
+                AddGroup: string;
+                AddResult: string;
+                AddSort: string;
+                And: string;
+                Ascending: string;
+                Descending: string;
+                NoFilters: string;
+                NoSort: string;
+                RemoveFilter: string;
+                RemoveGroup: string;
+                RemoveResult: string;
+                RemoveSort: string;
+                SortBy: string;
+                ThenBy: string;
+                title: string;
+            };
+            FormColorBoxPopup: {
+                Color: string;
+                Custom: string;
+                NoColor: string;
+                Others: string;
+                System: string;
+                Web: string;
+            };
+            FormConditions: {
+                AaBbCcYyZz: string;
+                AddCondition: string;
+                AddLevel: string;
+                AssignExpression: string;
+                BreakIfTrue: string;
+                BreakIfTrueToolTip: string;
+                ChangeFont: string;
+                ComponentIsEnabled: string;
+                NoConditions: string;
+                RemoveCondition: string;
+                SelectStyle: string;
+                title: string;
+            };
+            FormCrossTabDesigner: {
+                Columns: string;
+                DataSource: string;
+                Properties: string;
+                Rows: string;
+                Summary: string;
+                Swap: string;
+                title: string;
+            };
+            FormDatabaseEdit: {
+                ClientId: string;
+                ClientSecret: string;
+                ConnectionString: string;
+                DashboardConnections: string;
+                DB2Edit: string;
+                DB2New: string;
+                EditConnection: string;
+                Favorites: string;
+                FirebirdEdit: string;
+                FirebirdNew: string;
+                FirstRowIsHeader: string;
+                ImportData: string;
+                InformixEdit: string;
+                InformixNew: string;
+                InitialCatalog: string;
+                JsonEdit: string;
+                JsonNew: string;
+                MySQLEdit: string;
+                MySQLNew: string;
+                NewConnection: string;
+                OdbcEdit: string;
+                OdbcNew: string;
+                OleDbEdit: string;
+                OleDbNew: string;
+                OracleEdit: string;
+                OracleNew: string;
+                OracleODPEdit: string;
+                OracleODPNew: string;
+                PathData: string;
+                PathJsonData: string;
+                PathSchema: string;
+                PathToData: string;
+                Pin: string;
+                PostgreSQLEdit: string;
+                PostgreSQLNew: string;
+                PromptUserNameAndPassword: string;
+                RecentConnections: string;
+                RelationDirection: string;
+                ReportConnections: string;
+                SelectData: string;
+                SpreadsheetId: string;
+                SqlCeEdit: string;
+                SqlCeNew: string;
+                SqlEdit: string;
+                SQLiteEdit: string;
+                SQLiteNew: string;
+                SqlNew: string;
+                TeradataEdit: string;
+                TeradataNew: string;
+                Token: string;
+                UniDirectEdit: string;
+                UniDirectNew: string;
+                Unpin: string;
+                UseBearerAuthentication: string;
+                VistaDBEdit: string;
+                VistaDBNew: string;
+                XmlEdit: string;
+                XmlNew: string;
+                XmlType: string;
+            };
+            FormDesigner: {
+                Code: string;
+                ColumnsOne: string;
+                ColumnsThree: string;
+                ColumnsTwo: string;
+                CompilingReport: string;
+                DockingPanels: string;
+                HtmlPreview: string;
+                JsPreview: string;
+                labelPleaseSelectTypeOfInterface: string;
+                LoadImage: string;
+                LocalizePropertyGrid: string;
+                MarginsNarrow: string;
+                MarginsNormal: string;
+                MarginsWide: string;
+                OrderToolbars: string;
+                Others: string;
+                Pages: string;
+                Preview: string;
+                PropertyChange: string;
+                RTPreview: string;
+                SetupToolbox: string;
+                ShowDescription: string;
+                SLPreview: string;
+                title: string;
+                WebPreview: string;
+            };
+            FormDictionaryDesigner: {
+                Actions: string;
+                AutoSort: string;
+                BusinessObjectEdit: string;
+                CalcColumnEdit: string;
+                CalcColumnNew: string;
+                CategoryEdit: string;
+                CategoryNew: string;
+                Child: string;
+                ChildOfBusinessObject: string;
+                ChildSource: string;
+                ClickHere: string;
+                ColumnEdit: string;
+                ColumnNew: string;
+                CreateNewDataSource: string;
+                CreateNewReport: string;
+                CsvSeparatorComma: string;
+                CsvSeparatorOther: string;
+                CsvSeparatorSemicolon: string;
+                CsvSeparatorSpace: string;
+                CsvSeparatorSystem: string;
+                CsvSeparatorTab: string;
+                DatabaseEdit: string;
+                DatabaseNew: string;
+                DataParameterEdit: string;
+                DataParameterNew: string;
+                DataSetToBusinessObjects: string;
+                DataSourceEdit: string;
+                DataSourceNew: string;
+                DataSourcesNew: string;
+                DataTransformationEdit: string;
+                DataTransformationNew: string;
+                Delete: string;
+                DesignTimeQueryText: string;
+                DictionaryMerge: string;
+                DictionaryNew: string;
+                DictionaryOpen: string;
+                DictionarySaveAs: string;
+                DragNewDataSource: string;
+                DragNewReport: string;
+                EditQuery: string;
+                ExecutedSQLStatementSuccessfully: string;
+                ExpressionNew: string;
+                GetColumnsFromAssembly: string;
+                ImportRelations: string;
+                LabelSeparator: string;
+                MarkUsedItems: string;
+                NewBusinessObject: string;
+                NewItem: string;
+                OpenAssembly: string;
+                Parent: string;
+                ParentSource: string;
+                Queries: string;
+                QueryNew: string;
+                QueryText: string;
+                QueryTimeout: string;
+                RelationEdit: string;
+                RelationNew: string;
+                ResourceEdit: string;
+                ResourceNew: string;
+                RetrieveColumns: string;
+                RetrieveColumnsAllowRun: string;
+                RetrieveColumnsAndParameters: string;
+                RetrieveParameters: string;
+                RetrievingDatabaseInformation: string;
+                Run: string;
+                SelectTypeOfBusinessObject: string;
+                SkipSchemaWizard: string;
+                SortItems: string;
+                Synchronize: string;
+                SynchronizeHint: string;
+                TextDropDataFileHere: string;
+                TextDropFileHere: string;
+                TextDropImageHere: string;
+                title: string;
+                ValueNew: string;
+                VariableEdit: string;
+                VariableNew: string;
+                ViewData: string;
+                ViewQuery: string;
+            };
+            FormFormatEditor: {
+                Boolean: string;
+                BooleanDisplay: string;
+                BooleanValue: string;
+                Currency: string;
+                CurrencySymbol: string;
+                Custom: string;
+                Date: string;
+                DateTimeFormat: string;
+                DecimalDigits: string;
+                DecimalSeparator: string;
+                FormatMask: string;
+                Formats: string;
+                General: string;
+                GroupSeparator: string;
+                GroupSize: string;
+                nameFalse: string;
+                nameNo: string;
+                nameOff: string;
+                nameOn: string;
+                nameTrue: string;
+                nameYes: string;
+                NegativeInRed: string;
+                NegativePattern: string;
+                Number: string;
+                Percentage: string;
+                PercentageSymbol: string;
+                PositivePattern: string;
+                Properties: string;
+                Sample: string;
+                SampleText: string;
+                TextFormat: string;
+                Time: string;
+                title: string;
+                UseAbbreviation: string;
+                UseGroupSeparator: string;
+                UseLocalSetting: string;
+            };
+            FormGlobalizationEditor: {
+                AddCulture: string;
+                AutoLocalizeReportOnRun: string;
+                CreateNewCulture: string;
+                GetCulture: string;
+                qnGetCulture: string;
+                qnSetCulture: string;
+                RemoveCulture: string;
+                SetCulture: string;
+                title: string;
+            };
+            FormInteraction: {
+                HyperlinkExternalDocuments: string;
+                HyperlinkUsingInteractionBookmark: string;
+                HyperlinkUsingInteractionTag: string;
+            };
+            FormOptions: {
+                AutoSave: string;
+                AutoSaveReportToReportClass: string;
+                BlankDashboard: string;
+                BlankReport: string;
+                Default: string;
+                Drawing: string;
+                DrawMarkersWhenMoving: string;
+                EditAfterInsert: string;
+                EnableAutoSaveMode: string;
+                FillBands: string;
+                FillComponents: string;
+                FillContainers: string;
+                FillCrossBands: string;
+                GenerateLocalizedName: string;
+                Grid: string;
+                GridDots: string;
+                GridLines: string;
+                GridMode: string;
+                GridSize: string;
+                groupAutoSaveOptions: string;
+                groupColorScheme: string;
+                groupGridDrawingOptions: string;
+                groupGridOptions: string;
+                groupGridSize: string;
+                groupMainOptions: string;
+                groupMarkersStyle: string;
+                groupOptionsOfQuickInfo: string;
+                groupPleaseSelectTypeOfGui: string;
+                groupReportDisplayOptions: string;
+                labelColorScheme: string;
+                labelInfoAutoSave: string;
+                labelInfoDrawing: string;
+                labelInfoGrid: string;
+                labelInfoGui: string;
+                labelInfoMain: string;
+                labelInfoQuickInfo: string;
+                Main: string;
+                MarkersStyle: string;
+                MarkersStyleCorners: string;
+                MarkersStyleDashedRectangle: string;
+                MarkersStyleNone: string;
+                MessageLeftRightNotValid: string;
+                MessageTopBottomNotValid: string;
+                Minutes: string;
+                SaveReportEvery: string;
+                ScaleMode: string;
+                SelectUILanguage: string;
+                ShowDialogForms: string;
+                ShowDimensionLines: string;
+                ShowOldGaugeEditor: string;
+                StartScreen: string;
+                title: string;
+                UseComponentColor: string;
+                UseLastFormat: string;
+                Welcome: string;
+            };
+            FormPageSetup: {
+                ApplyTo: string;
+                Bottom: string;
+                Columns: string;
+                groupColumns: string;
+                groupImage: string;
+                groupMargins: string;
+                groupOrientation: string;
+                groupPaper: string;
+                groupPaperSource: string;
+                groupText: string;
+                Height: string;
+                labelAngle: string;
+                labelColumnGaps: string;
+                labelColumnWidth: string;
+                labelImageAlignment: string;
+                labelImageTransparency: string;
+                labelInfoColumns: string;
+                labelInfoPaper: string;
+                labelInfoUnit: string;
+                labelInfoWatermark: string;
+                labelMultipleFactor: string;
+                labelPaperSourceOfFirstPage: string;
+                labelPaperSourceOfOtherPages: string;
+                labelSelectBrush: string;
+                labelSelectColor: string;
+                labelSelectFont: string;
+                labelSelectImage: string;
+                labelText: string;
+                Left: string;
+                Margins: string;
+                NumberOfColumns: string;
+                Orientation: string;
+                PageOrientationLandscape: string;
+                PageOrientationPortrait: string;
+                Paper: string;
+                RebuildReport: string;
+                Right: string;
+                ScaleContent: string;
+                Size: string;
+                title: string;
+                Top: string;
+                Width: string;
+            };
+            FormReportSetup: {
+                groupDates: string;
+                groupDescription: string;
+                groupMainParameters: string;
+                groupNames: string;
+                groupScript: string;
+                groupUnits: string;
+                labelInfoDescription: string;
+                labelInfoMain: string;
+                labelNumberOfPass: string;
+                labelReportCacheMode: string;
+                ReportChanged: string;
+                ReportCreated: string;
+                title: string;
+            };
+            FormRichTextEditor: {
+                Bullets: string;
+                FontName: string;
+                FontSize: string;
+                Insert: string;
+                title: string;
+            };
+            FormStyleDesigner: {
+                Add: string;
+                AddCollectionName: string;
+                ApplyStyleCollectionToReportComponents: string;
+                ApplyStyles: string;
+                ColorCollectionEditor: string;
+                CreateNewComponentStyle: string;
+                CreateStyleCollection: string;
+                Duplicate: string;
+                EditColors: string;
+                FromStyle: string;
+                GetStyle: string;
+                MoreStyles: string;
+                NotSpecified: string;
+                Open: string;
+                Predefined: string;
+                qnApplyStyleCollection: string;
+                Remove: string;
+                RemoveExistingStyles: string;
+                Save: string;
+                Style: string;
+                StyleCollectionsNotFound: string;
+                title: string;
+            };
+            FormSystemTextEditor: {
+                Condition: string;
+                LabelDataBand: string;
+                LabelDataColumn: string;
+                LabelShowInsteadNullValues: string;
+                LabelSummaryFunction: string;
+                pageExpression: string;
+                pageSummary: string;
+                pageSystemVariable: string;
+                RunningTotal: string;
+                SummaryRunning: string;
+                SummaryRunningByColumn: string;
+                SummaryRunningByPage: string;
+                SummaryRunningByReport: string;
+            };
+            FormTitles: {
+                ChartWizardForm: string;
+                ConditionEditorForm: string;
+                ConnectionSelectForm: string;
+                ContainerSelectForm: string;
+                DataAdapterServiceSelectForm: string;
+                DataRelationSelectForm: string;
+                DataSetName: string;
+                DataSourceSelectForm: string;
+                DataSourcesNewForm: string;
+                DataStoreViewerForm: string;
+                DesignerApplication: string;
+                EventEditorForm: string;
+                ExpressionEditorForm: string;
+                GroupConditionForm: string;
+                InteractionDrillDownPageSelectForm: string;
+                MasterComponentSelectForm: string;
+                PageAddForm: string;
+                PageSizeForm: string;
+                PagesManagerForm: string;
+                PromptForm: string;
+                ReportWizard: string;
+                ServiceSelectForm: string;
+                SqlExpressionsForm: string;
+                SubReportPageSelectForm: string;
+                TextEditorForm: string;
+                ViewDataForm: string;
+                ViewerApplication: string;
+            };
+            FormViewer: {
+                Bookmarks: string;
+                Close: string;
+                CollapseAll: string;
+                CompressedDocumentFile: string;
+                ContextMenu: string;
+                DocumentFile: string;
+                Editor: string;
+                EncryptedDocumentFile: string;
+                ExpandAll: string;
+                Export: string;
+                Find: string;
+                FirstPage: string;
+                FullScreen: string;
+                GoToPage: string;
+                HorScrollBar: string;
+                LabelPageN: string;
+                LastPage: string;
+                NextPage: string;
+                Open: string;
+                PageControl: string;
+                PageDelete: string;
+                PageDesign: string;
+                PageNew: string;
+                PageNofM: string;
+                PageofM: string;
+                PageSize: string;
+                PageViewModeContinuous: string;
+                PageViewModeMultiplePages: string;
+                PageViewModeSinglePage: string;
+                Parameters: string;
+                PrevPage: string;
+                Print: string;
+                qnPageDelete: string;
+                Save: string;
+                SendEMail: string;
+                StatusBar: string;
+                Thumbnails: string;
+                title: string;
+                titlePageSettings: string;
+                Toolbar: string;
+                VerScrollBar: string;
+                ViewMode: string;
+                Zoom: string;
+                ZoomMultiplePages: string;
+                ZoomOnePage: string;
+                ZoomPageWidth: string;
+                ZoomTwoPages: string;
+                ZoomXXPages: string;
+                ZoomXXPagesCancel: string;
+            };
+            FormViewerFind: {
+                Close: string;
+                FindNext: string;
+                FindPrevious: string;
+                FindWhat: string;
+            };
+            Gauge: {
+                AddNewItem: string;
+                BarRangeList: string;
+                GaugeEditorForm: string;
+                Kind: string;
+                LinearBar: string;
+                LinearMarker: string;
+                LinearRange: string;
+                LinearRangeList: string;
+                LinearScale: string;
+                LinearTickLabelCustom: string;
+                LinearTickLabelMajor: string;
+                LinearTickLabelMinor: string;
+                LinearTickMarkCustom: string;
+                LinearTickMarkMajor: string;
+                LinearTickMarkMinor: string;
+                Needle: string;
+                RadialBar: string;
+                RadialMarker: string;
+                RadialRange: string;
+                RadialRangeList: string;
+                RadialScale: string;
+                RadialTickLabelCustom: string;
+                RadialTickLabelMajor: string;
+                RadialTickLabelMinor: string;
+                RadialTickMarkCustom: string;
+                RadialTickMarkMajor: string;
+                RadialTickMarkMinor: string;
+                StateIndicator: string;
+                StateIndicatorFilter: string;
+                TickCustomValue: string;
+            };
+            Gui: {
+                barname_cancel: string;
+                barname_caption: string;
+                barname_msginvalidname: string;
+                barname_name: string;
+                barname_ok: string;
+                barrename_caption: string;
+                barsys_autohide_tooltip: string;
+                barsys_close_tooltip: string;
+                barsys_customize_tooltip: string;
+                colorpicker_morecolors: string;
+                colorpicker_nofill: string;
+                colorpicker_standardcolorslabel: string;
+                colorpicker_themecolorslabel: string;
+                colorpickerdialog_bluelabel: string;
+                colorpickerdialog_cancelbutton: string;
+                colorpickerdialog_caption: string;
+                colorpickerdialog_colormodellabel: string;
+                colorpickerdialog_currentcolorlabel: string;
+                colorpickerdialog_customcolorslabel: string;
+                colorpickerdialog_greenlabel: string;
+                colorpickerdialog_newcolorlabel: string;
+                colorpickerdialog_okbutton: string;
+                colorpickerdialog_redlabel: string;
+                colorpickerdialog_rgblabel: string;
+                colorpickerdialog_standardcolorslabel: string;
+                colorpickerdialog_tabcustom: string;
+                colorpickerdialog_tabstandard: string;
+                cust_btn_close: string;
+                cust_btn_delete: string;
+                cust_btn_keyboard: string;
+                cust_btn_new: string;
+                cust_btn_rename: string;
+                cust_btn_reset: string;
+                cust_btn_resetusage: string;
+                cust_caption: string;
+                cust_cbo_fade: string;
+                cust_cbo_none: string;
+                cust_cbo_random: string;
+                cust_cbo_slide: string;
+                cust_cbo_system: string;
+                cust_cbo_unfold: string;
+                cust_chk_delay: string;
+                cust_chk_fullmenus: string;
+                cust_chk_showsk: string;
+                cust_chk_showst: string;
+                cust_lbl_cats: string;
+                cust_lbl_cmds: string;
+                cust_lbl_cmdsins: string;
+                cust_lbl_menuan: string;
+                cust_lbl_other: string;
+                cust_lbl_pmt: string;
+                cust_lbl_tlbs: string;
+                cust_mnu_addremove: string;
+                cust_mnu_cust: string;
+                cust_mnu_reset: string;
+                cust_mnu_tooltip: string;
+                cust_msg_delete: string;
+                cust_pm_begingroup: string;
+                cust_pm_delete: string;
+                cust_pm_name: string;
+                cust_pm_reset: string;
+                cust_pm_stydef: string;
+                cust_pm_styimagetext: string;
+                cust_pm_stytextonly: string;
+                cust_tab_commands: string;
+                cust_tab_options: string;
+                cust_tab_toolbars: string;
+                mdisysmenu_close: string;
+                mdisysmenu_maximize: string;
+                mdisysmenu_minimize: string;
+                mdisysmenu_move: string;
+                mdisysmenu_next: string;
+                mdisysmenu_restore: string;
+                mdisysmenu_size: string;
+                mdisystt_close: string;
+                mdisystt_minimize: string;
+                mdisystt_restore: string;
+                monthcalendar_clearbutton: string;
+                monthcalendar_todaybutton: string;
+                navbar_navpaneoptions: string;
+                navbar_showfewerbuttons: string;
+                navbar_showmorebuttons: string;
+                navPaneCollapseTooltip: string;
+                navPaneExpandTooltip: string;
+                sys_custombar: string;
+                sys_morebuttons: string;
+            };
+            HelpComponents: {
+                StiBarCode: string;
+                StiChart: string;
+                StiChartElement: string;
+                StiCheckBox: string;
+                StiChildBand: string;
+                StiClone: string;
+                StiColumnFooterBand: string;
+                StiColumnHeaderBand: string;
+                StiComboBoxElement: string;
+                StiContainer: string;
+                StiCrossDataBand: string;
+                StiCrossFooterBand: string;
+                StiCrossGroupFooterBand: string;
+                StiCrossGroupHeaderBand: string;
+                StiCrossHeaderBand: string;
+                StiCrossTab: string;
+                StiDataBand: string;
+                StiDatePickerElement: string;
+                StiEmptyBand: string;
+                StiFilterCategory: string;
+                StiFooterBand: string;
+                StiGauge: string;
+                StiGaugeElement: string;
+                StiGroupFooterBand: string;
+                StiGroupHeaderBand: string;
+                StiHeaderBand: string;
+                StiHierarchicalBand: string;
+                StiHorizontalLinePrimitive: string;
+                StiImage: string;
+                StiImageElement: string;
+                StiIndicatorElement: string;
+                StiListBoxElement: string;
+                StiMap: string;
+                StiMapCategory: string;
+                StiMapElement: string;
+                StiOnlineMapElement: string;
+                StiOverlayBand: string;
+                StiPageFooterBand: string;
+                StiPageHeaderBand: string;
+                StiPanel: string;
+                StiPanelElement: string;
+                StiPivotTableElement: string;
+                StiProgressElement: string;
+                StiRectanglePrimitive: string;
+                StiRegionMapElement: string;
+                StiReportSummaryBand: string;
+                StiReportTitleBand: string;
+                StiRichText: string;
+                StiRoundedRectanglePrimitive: string;
+                StiShape: string;
+                StiShapeElement: string;
+                StiSubReport: string;
+                StiTable: string;
+                StiTableElement: string;
+                StiText: string;
+                StiTextElement: string;
+                StiTextInCells: string;
+                StiTreeViewBoxElement: string;
+                StiTreeViewElement: string;
+                StiVerticalLinePrimitive: string;
+                StiWinControl: string;
+                StiZipCode: string;
+            };
+            HelpDesigner: {
+                ActiveRelation: string;
+                Align: string;
+                AlignBottom: string;
+                AlignCenter: string;
+                AlignComponentBottom: string;
+                AlignComponentCenter: string;
+                AlignComponentLeft: string;
+                AlignComponentMiddle: string;
+                AlignComponentRight: string;
+                AlignComponentTop: string;
+                AlignLeft: string;
+                AlignMiddle: string;
+                AlignRight: string;
+                AlignToGrid: string;
+                AlignTop: string;
+                AlignWidth: string;
+                Angle: string;
+                AngleWatermark: string;
+                Background: string;
+                biConditions: string;
+                BorderColor: string;
+                BorderSidesAll: string;
+                BorderSidesBottom: string;
+                BorderSidesLeft: string;
+                BorderSidesNone: string;
+                BorderSidesRight: string;
+                BorderSidesTop: string;
+                BorderStyle: string;
+                BringToFront: string;
+                CenterHorizontally: string;
+                CenterVertically: string;
+                Close: string;
+                Columns: string;
+                ComponentSize: string;
+                CopyStyle: string;
+                CopyToClipboard: string;
+                CurrencySymbol: string;
+                DashboardNew: string;
+                DataStore: string;
+                DateTimeFormat: string;
+                DockingPanels: string;
+                DockStyleBottom: string;
+                DockStyleFill: string;
+                DockStyleLeft: string;
+                DockStyleNone: string;
+                DockStyleRight: string;
+                DockStyleTop: string;
+                FontGrow: string;
+                FontName: string;
+                FontNameWatermark: string;
+                FontShrink: string;
+                FontSize: string;
+                FontSizeWatermark: string;
+                FontStyleBold: string;
+                FontStyleBoldWatermark: string;
+                FontStyleItalic: string;
+                FontStyleItalicWatermark: string;
+                FontStyleUnderline: string;
+                FontStyleUnderlineWatermark: string;
+                FormatBoolean: string;
+                FormatCurrency: string;
+                FormatCustom: string;
+                FormatDate: string;
+                FormatGeneral: string;
+                FormatNumber: string;
+                FormatPercentage: string;
+                FormatTime: string;
+                FormNew: string;
+                GridMode: string;
+                ImageAlignment: string;
+                ImageTransparency: string;
+                Interaction: string;
+                LineSpacing: string;
+                Link: string;
+                LoadImage: string;
+                Lock: string;
+                MainMenu: string;
+                MakeHorizontalSpacingEqual: string;
+                MakeVerticalSpacingEqual: string;
+                Margins: string;
+                menuCheckIssues: string;
+                menuDesignerOptions: string;
+                menuEditClearContents: string;
+                menuEditCopy: string;
+                menuEditCut: string;
+                menuEditDelete: string;
+                menuEditPaste: string;
+                menuFAQPage: string;
+                menuGlobalizationStrings: string;
+                menuHelpAboutProgramm: string;
+                menuHomePage: string;
+                menuPageOptions: string;
+                menuPagesManager: string;
+                menuPreviewSettings: string;
+                menuPrint: string;
+                menuPrintPreview: string;
+                menuPrintQuick: string;
+                menuReportOptions: string;
+                menuStyleDesigner: string;
+                menuSupport: string;
+                menuViewAlignToGrid: string;
+                menuViewNormal: string;
+                menuViewPageBreakPreview: string;
+                menuViewQuickInfo: string;
+                menuViewShowGrid: string;
+                menuViewShowHeaders: string;
+                menuViewShowOrder: string;
+                menuViewShowRulers: string;
+                MoveBackward: string;
+                MoveForward: string;
+                Orientation: string;
+                PageDelete: string;
+                PageNew: string;
+                PageSetup: string;
+                PageSize: string;
+                PagesManager: string;
+                PressF1: string;
+                Redo: string;
+                ReportNew: string;
+                ReportOpen: string;
+                ReportPreview: string;
+                ReportSave: string;
+                SelectAll: string;
+                SelectUILanguage: string;
+                SendToBack: string;
+                ServicesConfigurator: string;
+                Shadow: string;
+                ShowBehind: string;
+                ShowImageBehind: string;
+                ShowToolbox: string;
+                StimulsoftHelp: string;
+                StyleDesigner: string;
+                TellMeMore: string;
+                Text: string;
+                TextBrush: string;
+                TextBrushWatermark: string;
+                TextColor: string;
+                TextFormat: string;
+                ToolbarStyle: string;
+                Undo: string;
+                WordWrap: string;
+                Zoom: string;
+            };
+            HelpDialogs: {
+                StiButtonControl: string;
+                StiCheckBoxControl: string;
+                StiCheckedListBoxControl: string;
+                StiComboBoxControl: string;
+                StiDateTimePickerControl: string;
+                StiGridControl: string;
+                StiGroupBoxControl: string;
+                StiLabelControl: string;
+                StiListBoxControl: string;
+                StiListViewControl: string;
+                StiLookUpBoxControl: string;
+                StiNumericUpDownControl: string;
+                StiPanelControl: string;
+                StiPictureBoxControl: string;
+                StiRadioButtonControl: string;
+                StiRichTextBoxControl: string;
+                StiTextBoxControl: string;
+                StiTreeViewControl: string;
+            };
+            HelpViewer: {
+                AddPageBreaks: string;
+                AllowAddOrModifyTextAnnotations: string;
+                AllowCopyTextAndGraphics: string;
+                AllowEditable: string;
+                AllowModifyContents: string;
+                AllowPrintDocument: string;
+                Bookmarks: string;
+                BorderType: string;
+                Close: string;
+                CloseDotMatrix: string;
+                Compressed: string;
+                CompressToArchive: string;
+                ContinuousPages: string;
+                CurrentPage: string;
+                CutEdges: string;
+                CutLongLines: string;
+                DigitalSignature: string;
+                DitheringType: string;
+                DotMatrixMode: string;
+                DrawBorder: string;
+                Edit: string;
+                EmbeddedFonts: string;
+                EmbeddedImageData: string;
+                Encoding: string;
+                EncodingData: string;
+                EncryptionKeyLength: string;
+                ExportDataOnly: string;
+                ExportEachPageToSheet: string;
+                ExportMode: string;
+                ExportModeHtml: string;
+                ExportModeRtf: string;
+                ExportObjectFormatting: string;
+                ExportPageBreaks: string;
+                ExportRtfTextAsImage: string;
+                Find: string;
+                FullScreen: string;
+                GetCertificateFromCryptoUI: string;
+                ImageCompressionMethod: string;
+                ImageFormat: string;
+                ImageQuality: string;
+                ImageQualityPdf: string;
+                ImageResolution: string;
+                ImageType: string;
+                KillSpaceLines: string;
+                MultipleFiles: string;
+                Open: string;
+                OpenAfterExport: string;
+                OwnerPassword: string;
+                PageAll: string;
+                PageDelete: string;
+                PageDesign: string;
+                PageFirst: string;
+                PageGoTo: string;
+                PageLast: string;
+                PageNew: string;
+                PageNext: string;
+                PagePrevious: string;
+                PageSize: string;
+                Parameters: string;
+                PdfACompliance: string;
+                Print: string;
+                PutFeedPageCode: string;
+                RangePages: string;
+                RemoveEmptySpaceAtBottom: string;
+                Resources: string;
+                RestrictEditing: string;
+                Save: string;
+                ScaleHtml: string;
+                ScaleImage: string;
+                SendEMail: string;
+                Separator: string;
+                SkipColumnHeaders: string;
+                StandardPdfFonts: string;
+                SubjectNameString: string;
+                Thumbnails: string;
+                TiffCompressionScheme: string;
+                ToolEditor: string;
+                TypeExport: string;
+                UseDefaultSystemEncoding: string;
+                UseOnePageHeaderAndFooter: string;
+                UsePageHeadersAndFooters: string;
+                UserPassword: string;
+                UseUnicode: string;
+                ViewModeContinuous: string;
+                ViewModeMultiplePages: string;
+                ViewModeSinglePage: string;
+                ZoomMultiplePages: string;
+                ZoomOnePage: string;
+                ZoomPageWidth: string;
+                ZoomTwoPages: string;
+                ZoomTxt: string;
+            };
+            Interface: {
+                Mouse: string;
+                MouseDescription: string;
+                Touch: string;
+                TouchDescription: string;
+            };
+            MainMenu: {
+                menuCheckIssues: string;
+                menuContextClone: string;
+                menuContextDesign: string;
+                menuContextTextFormat: string;
+                menuConvertToCheckBox: string;
+                menuConvertToImage: string;
+                MenuConvertToRichText: string;
+                menuConvertToText: string;
+                menuDeleteColumn: string;
+                menuDeleteRow: string;
+                menuEdit: string;
+                menuEditBusinessObjectFromDataSetNew: string;
+                menuEditBusinessObjectNew: string;
+                menuEditCalcColumnNew: string;
+                menuEditCantRedo: string;
+                menuEditCantUndo: string;
+                menuEditCategoryNew: string;
+                menuEditClearContents: string;
+                menuEditColumnNew: string;
+                menuEditConnectionNew: string;
+                menuEditCopy: string;
+                menuEditCut: string;
+                menuEditDataParameterNew: string;
+                menuEditDataSourceNew: string;
+                menuEditDataSourcesNew: string;
+                menuEditDataTransformationNew: string;
+                menuEditDelete: string;
+                menuEditEdit: string;
+                menuEditImportRelations: string;
+                menuEditPaste: string;
+                menuEditRedo: string;
+                menuEditRedoText: string;
+                menuEditRelationNew: string;
+                menuEditRemoveUnused: string;
+                menuEditResourceNew: string;
+                menuEditSelectAll: string;
+                menuEditSynchronize: string;
+                menuEditUndo: string;
+                menuEditUndoText: string;
+                menuEditVariableNew: string;
+                menuEditViewData: string;
+                menuEmbedAllDataToResources: string;
+                menuFile: string;
+                menuFileClose: string;
+                menuFileDashboardDelete: string;
+                menuFileDashboardNew: string;
+                menuFileDashboardOpen: string;
+                menuFileDashboardSaveAs: string;
+                menuFileExit: string;
+                menuFileExportXMLSchema: string;
+                menuFileFormNew: string;
+                menuFileImportXMLSchema: string;
+                menuFileMerge: string;
+                menuFileMergeXMLSchema: string;
+                menuFileNew: string;
+                menuFileOpen: string;
+                menuFilePageDelete: string;
+                menuFilePageNew: string;
+                menuFilePageOpen: string;
+                menuFilePageSaveAs: string;
+                menuFilePageSetup: string;
+                menuFileRecentDocuments: string;
+                menuFileRecentLocations: string;
+                menuFileReportNew: string;
+                menuFileReportOpen: string;
+                menuFileReportOpenFromGoogleDocs: string;
+                menuFileReportPreview: string;
+                menuFileReportSave: string;
+                menuFileReportSaveAs: string;
+                menuFileReportSaveAsToGoogleDocs: string;
+                menuFileReportSetup: string;
+                menuFileReportWizardNew: string;
+                menuFileSave: string;
+                menuFileSaveAs: string;
+                menuHelp: string;
+                menuHelpAboutProgramm: string;
+                menuHelpContents: string;
+                menuHelpDemos: string;
+                menuHelpDocumentation: string;
+                menuHelpFAQPage: string;
+                menuHelpForum: string;
+                menuHelpHowToRegister: string;
+                menuHelpProductHomePage: string;
+                menuHelpSamples: string;
+                menuHelpSupport: string;
+                menuHelpTrainingCourses: string;
+                menuHelpVideos: string;
+                menuInsertColumnToLeft: string;
+                menuInsertColumnToRight: string;
+                menuInsertRowAbove: string;
+                menuInsertRowBelow: string;
+                menuJoinCells: string;
+                menuMakeThisRelationActive: string;
+                menuSelectColumn: string;
+                menuSelectRow: string;
+                menuTable: string;
+                menuTools: string;
+                menuToolsDataStore: string;
+                menuToolsDictionary: string;
+                menuToolsOptions: string;
+                menuToolsPagesManager: string;
+                menuToolsServicesConfigurator: string;
+                menuToolsStyleDesigner: string;
+                menuView: string;
+                menuViewAlignToGrid: string;
+                menuViewNormal: string;
+                menuViewOptions: string;
+                menuViewPageBreakPreview: string;
+                menuViewQuickInfo: string;
+                menuViewQuickInfoNone: string;
+                menuViewQuickInfoOverlay: string;
+                menuViewQuickInfoShowAliases: string;
+                menuViewQuickInfoShowComponentsNames: string;
+                menuViewQuickInfoShowContent: string;
+                menuViewQuickInfoShowEvents: string;
+                menuViewQuickInfoShowFields: string;
+                menuViewQuickInfoShowFieldsOnly: string;
+                menuViewShowGrid: string;
+                menuViewShowHeaders: string;
+                menuViewShowInsertTab: string;
+                menuViewShowOrder: string;
+                menuViewShowRulers: string;
+                menuViewShowToolbox: string;
+                menuViewToolbars: string;
+            };
+            Map: {
+                LinkDataForm: string;
+                MapEditorForm: string;
+            };
+            Messages: {
+                ChangeRequestTimeout: string;
+                DoNotShowAgain: string;
+                MessageTimeOutExpired: string;
+                RenderingWillOccurInTheInterpretationMode: string;
+                ResourceCannotBeDeleted: string;
+                ShareURLOfTheItemHasBeenUpdated: string;
+                ShareYourReportYouShouldSave: string;
+                TextRegistrationSuccessfully: string;
+                ThisFieldIsNotSpecified: string;
+                ThisFunctionEmbedsAllReportDataToTheReport: string;
+                YouNeedToLoginFirstToStartUsingTheSoftware: string;
+            };
+            Notices: {
+                AccessDenied: string;
+                AccountLocked: string;
+                ActivationExpiriedBeforeFirstRelease: string;
+                ActivationLicenseIsNotCorrect: string;
+                ActivationLockedAccount: string;
+                ActivationLockedAccountExt: string;
+                ActivationMaxActivationsReached: string;
+                ActivationMaxComputersReached: string;
+                ActivationServerIsNotAvailableNow: string;
+                ActivationServerVersionNotAllowed: string;
+                ActivationSomeTroublesOccurred: string;
+                ActivationTrialExpired: string;
+                ActivationUserNameOrPasswordIsWrong: string;
+                ActivationWrongAccountType: string;
+                Alert: string;
+                AuthAccountCantBeUsedNow: string;
+                AuthAccountIsNotActivated: string;
+                AuthCantChangeRoleBecauseLastAdministratorUser: string;
+                AuthCantChangeRoleBecauseLastSupervisorUser: string;
+                AuthCantChangeSystemRole: string;
+                AuthCantDeleteHimselfUser: string;
+                AuthCantDeleteLastAdministratorUser: string;
+                AuthCantDeleteLastSupervisorUser: string;
+                AuthCantDeleteSystemRole: string;
+                AuthCantDisableUserBecauseLastAdministratorUser: string;
+                AuthCantDisableUserBecauseLastSupervisorUser: string;
+                AuthFirstNameIsNotSpecified: string;
+                AuthLastNameIsNotSpecified: string;
+                AuthOAuthIdNotSpecified: string;
+                AuthPasswordIsNotCorrect: string;
+                AuthPasswordIsNotSpecified: string;
+                AuthPasswordIsTooShort: string;
+                AuthRoleCantBeDeletedBecauseUsedByUsers: string;
+                AuthRoleNameAlreadyExists: string;
+                AuthRoleNameIsSystemRole: string;
+                AuthSendMessageWithInstructions: string;
+                AuthTokenIsNotCorrect: string;
+                AuthUserHasLoggedOut: string;
+                AuthUserNameAlreadyExists: string;
+                AuthUserNameIsNotSpecified: string;
+                AuthUserNameNotAssociatedWithYourAccount: string;
+                AuthUserNameOrPasswordIsNotCorrect: string;
+                AuthUserNameShouldLookLikeAnEmailAddress: string;
+                AuthWorkspaceNameAlreadyInUse: string;
+                CommandTimeOut: string;
+                Congratulations: string;
+                EndDateShouldBeGreaterThanCurrentDate: string;
+                EndDateShouldBeGreaterThanStartDate: string;
+                ExecutionError: string;
+                IsIdentical: string;
+                IsNotAuthorized: string;
+                IsNotCorrect: string;
+                IsNotDeleted: string;
+                IsNotEqual: string;
+                IsNotFound: string;
+                IsNotRecognized: string;
+                IsNotSpecified: string;
+                IsRequiredFile: string;
+                ItemCantBeAttachedToItself: string;
+                ItemCantBeDeletedBecauseItemIsAttachedToOtherItems: string;
+                ItemCantBeMovedToSpecifiedPlace: string;
+                ItemDoesNotSupport: string;
+                KeyAndToKeyAreEqual: string;
+                MaximumComputers: string;
+                MessageMaximumFileSizeExceeded: string;
+                NewDesignerAvailable: string;
+                NewProduct: string;
+                NewVersionsAvailable: string;
+                NotificationFailed: string;
+                NotificationFailedAddFollowingFiles: string;
+                NotificationFilesUploadingComplete: string;
+                NotificationFileUploading: string;
+                NotificationItemDelete: string;
+                NotificationItemDeleteComplete: string;
+                NotificationItemRestore: string;
+                NotificationItemRestoreComplete: string;
+                NotificationItemTransfer: string;
+                NotificationItemTransferComplete: string;
+                NotificationItemWaitingProcessing: string;
+                NotificationMailing: string;
+                NotificationMailingComplete: string;
+                NotificationMailingWaitingProcessing: string;
+                NotificationOperationAborted: string;
+                NotificationRecycleBinCleaning: string;
+                NotificationRecycleBinCleaningComplete: string;
+                NotificationRecycleBinWaitingProcessing: string;
+                NotificationReportExporting: string;
+                NotificationReportExportingComplete: string;
+                NotificationReportRendering: string;
+                NotificationReportRenderingComplete: string;
+                NotificationReportWaitingProcessing: string;
+                NotificationSchedulerRunning: string;
+                NotificationSchedulerRunningComplete: string;
+                NotificationSchedulerWaitingProcessing: string;
+                NotificationTitleFilesUploading: string;
+                NotificationTitleItemRefreshing: string;
+                NotificationTitleItemTransferring: string;
+                NotificationTitleMailing: string;
+                NotificationTitleReportExporting: string;
+                NotificationTitleReportRendering: string;
+                NotificationTitleSchedulerRunning: string;
+                NotificationTransferring: string;
+                NotificationTransferringComplete: string;
+                NotificationValueIsNotCorrect: string;
+                OutOfRange: string;
+                ParsingCommandException: string;
+                PleaseLogin: string;
+                QuotaMaximumComputingCyclesCountExceeded: string;
+                QuotaMaximumDataRowsCountExceeded: string;
+                QuotaMaximumFileSizeExceeded: string;
+                QuotaMaximumItemsCountExceeded: string;
+                QuotaMaximumRefreshCountExceeded: string;
+                QuotaMaximumReportPagesCountExceeded: string;
+                QuotaMaximumResourcesCountExceeded: string;
+                QuotaMaximumResourceSizeExceeded: string;
+                QuotaMaximumUsersCountExceeded: string;
+                QuotaMaximumWorkspacesCountExceeded: string;
+                SchedulerCantRunItSelf: string;
+                SessionTimeOut: string;
+                SnapshotAlreadyProcessed: string;
+                SpecifiedItemIsNot: string;
+                SubscriptionExpired: string;
+                SubscriptionExpiredDate: string;
+                SubscriptionExpiredExt: string;
+                SubscriptionsOut10: string;
+                SubscriptionsOut20: string;
+                SuccessfullyRenewed: string;
+                TrialToLicense: string;
+                VersionCopyFromItem: string;
+                VersionCreatedFromFile: string;
+                VersionCreatedFromItem: string;
+                VersionLoadedFromFile: string;
+                VersionNewItemCreation: string;
+                Warning: string;
+                WindowClosePreventWhileUploading: string;
+                WithSpecifiedKeyIsNotFound: string;
+                WouldYouLikeToUpdateNow: string;
+                YourTimeSessionHasExpired: string;
+                YourTrialHasExpired: string;
+                YourTrialWillExpire: string;
+                YouUsingTrialVersion: string;
+            };
+            NuGet: {
+                AlreadyDownloaded: string;
+                AssemblyLoadedSuccessfully: string;
+                AssemblyNotFound: string;
+                Author: string;
+                Dependencies: string;
+                Download: string;
+                DownloadAll: string;
+                DownloadAndInstall: string;
+                DownloadDataAdapter: string;
+                Downloads: string;
+                IAccept: string;
+                IDecline: string;
+                LicenceFormDesc: string;
+                LicenceFormDesc1: string;
+                LicenceFormTitle: string;
+                License: string;
+                ProjectUrl: string;
+                ReportAbuse: string;
+                RetrievingInformation: string;
+                Tags: string;
+                Title: string;
+                ViewLicense: string;
+            };
+            Panels: {
+                Dictionary: string;
+                Messages: string;
+                Properties: string;
+                ReportTree: string;
+            };
+            Password: {
+                gbPassword: string;
+                lbPasswordLoad: string;
+                lbPasswordSave: string;
+                PasswordNotEntered: string;
+                StiLoadPasswordForm: string;
+                StiSavePasswordForm: string;
+            };
+            Permissions: {
+                AdminAPI: string;
+                AdminBackgroundTasks: string;
+                AdminPermissions: string;
+                AdminRecycleBin: string;
+                AdminShare: string;
+                AdminTransfers: string;
+                ItemCalendars: string;
+                ItemCloudStorages: string;
+                ItemContactLists: string;
+                ItemDashboards: string;
+                ItemDataSources: string;
+                ItemFiles: string;
+                ItemFolders: string;
+                ItemReportSnapshots: string;
+                ItemReportTemplates: string;
+                ItemSchedulers: string;
+                ReportDesignerBusinessObjects: string;
+                ReportDesignerDataColumns: string;
+                ReportDesignerDataConnections: string;
+                ReportDesignerDataRelations: string;
+                ReportDesignerDataSources: string;
+                ReportDesignerDictionaryActions: string;
+                ReportDesignerRestrictions: string;
+                ReportDesignerVariables: string;
+                SystemBackupRestore: string;
+                SystemEmailTemplates: string;
+                SystemLicensing: string;
+                SystemMonitoring: string;
+                SystemUpdate: string;
+                SystemWorkspaces: string;
+                TextAdministration: string;
+                TextItems: string;
+                TextReportDesigner: string;
+                TextSystem: string;
+                TextUsers: string;
+                UserHimself: string;
+                UserRoles: string;
+                Users: string;
+                UserWorkspace: string;
+            };
+            PlacementComponent: {
+                MoveLeftFreeSpace: string;
+                MoveRightFreeSpace: string;
+            };
+            PropertyCategory: {
+                AppearanceCategory: string;
+                AreaCategory: string;
+                ArgumentCategory: string;
+                AxisCategory: string;
+                BarCodeAdditionalCategory: string;
+                BarCodeCategory: string;
+                BehaviorCategory: string;
+                CapNeedle: string;
+                CellCategory: string;
+                ChartAdditionalCategory: string;
+                ChartCategory: string;
+                ChartMap: string;
+                CommonCategory: string;
+                CheckCategory: string;
+                ColorsCategory: string;
+                ColumnsCategory: string;
+                ComboBoxCategory: string;
+                ControlCategory: string;
+                ControlsEventsCategory: string;
+                CrossTabCategory: string;
+                DashboardCategory: string;
+                DataCategory: string;
+                DatePickerCategory: string;
+                DescriptionCategory: string;
+                DesignCategory: string;
+                DisplayCategory: string;
+                EngineCategory: string;
+                ExportCategory: string;
+                ExportEventsCategory: string;
+                FooterTableCategory: string;
+                GaugeCategory: string;
+                GlobalizationCategory: string;
+                GridLinesCategory: string;
+                HeaderTableCategory: string;
+                HierarchicalCategory: string;
+                ImageAdditionalCategory: string;
+                ImageCategory: string;
+                IndicatorCategory: string;
+                InterlacingCategory: string;
+                LabelsCategory: string;
+                LegendCategory: string;
+                ListBoxCategory: string;
+                MainCategory: string;
+                MarkerCategory: string;
+                MiscCategory: string;
+                MouseEventsCategory: string;
+                NavigationCategory: string;
+                NavigationEventsCategory: string;
+                Needle: string;
+                OnlineMapCategory: string;
+                OptionsCategory: string;
+                PageAdditionalCategory: string;
+                PageCategory: string;
+                PageColumnBreakCategory: string;
+                ParametersCategory: string;
+                PivotTableCategory: string;
+                PositionCategory: string;
+                PrimitiveCategory: string;
+                PrintEventsCategory: string;
+                ProgressCategory: string;
+                RegionMapCategory: string;
+                RenderEventsCategory: string;
+                SeriesCategory: string;
+                SeriesLabelsCategory: string;
+                ShapeCategory: string;
+                Size: string;
+                SubReportCategory: string;
+                TableCategory: string;
+                TextAdditionalCategory: string;
+                TextCategory: string;
+                TitleCategory: string;
+                TreeViewBoxCategory: string;
+                TreeViewCategory: string;
+                TrendLineCategory: string;
+                ValueCategory: string;
+                ValueCloseCategory: string;
+                ValueEndCategory: string;
+                ValueEventsCategory: string;
+                ValueHighCategory: string;
+                ValueLowCategory: string;
+                ValueOpenCategory: string;
+                ViewCategory: string;
+                WeightCategory: string;
+                WinControlCategory: string;
+                ZipCodeCategory: string;
+            };
+            PropertyColor: {
+                AliceBlue: string;
+                AntiqueWhite: string;
+                Aqua: string;
+                Aquamarine: string;
+                Azure: string;
+                Beige: string;
+                Bisque: string;
+                Black: string;
+                BlanchedAlmond: string;
+                Blue: string;
+                BlueViolet: string;
+                Brown: string;
+                BurlyWood: string;
+                CadetBlue: string;
+                Carmine: string;
+                Chartreuse: string;
+                Chocolate: string;
+                Coral: string;
+                CornflowerBlue: string;
+                Cornsilk: string;
+                Crimson: string;
+                Cyan: string;
+                DarkBlue: string;
+                DarkCyan: string;
+                DarkGoldenrod: string;
+                DarkGray: string;
+                DarkGreen: string;
+                DarkKhaki: string;
+                DarkMagenta: string;
+                DarkOliveGreen: string;
+                DarkOrange: string;
+                DarkOrchid: string;
+                DarkRed: string;
+                DarkSalmon: string;
+                DarkSeaGreen: string;
+                DarkSlateBlue: string;
+                DarkSlateGray: string;
+                DarkTurquoise: string;
+                DarkViolet: string;
+                DeepPink: string;
+                DeepSkyBlue: string;
+                DimGray: string;
+                DodgerBlue: string;
+                Firebrick: string;
+                FloralWhite: string;
+                ForestGreen: string;
+                Fuchsia: string;
+                Gainsboro: string;
+                GhostWhite: string;
+                Gold: string;
+                Goldenrod: string;
+                Gray: string;
+                Green: string;
+                GreenYellow: string;
+                Honeydew: string;
+                HotPink: string;
+                IndianRed: string;
+                Indigo: string;
+                Ivory: string;
+                Khaki: string;
+                Lavender: string;
+                LavenderBlush: string;
+                LawnGreen: string;
+                LemonChiffon: string;
+                LightBlue: string;
+                LightCoral: string;
+                LightCyan: string;
+                LightGoldenrodYellow: string;
+                LightGray: string;
+                LightGreen: string;
+                LightPink: string;
+                LightSalmon: string;
+                LightSeaGreen: string;
+                LightSkyBlue: string;
+                LightSlateGray: string;
+                LightSteelBlue: string;
+                LightYellow: string;
+                Lime: string;
+                LimeGreen: string;
+                Linen: string;
+                Magenta: string;
+                Maroon: string;
+                MediumAquamarine: string;
+                MediumBlue: string;
+                MediumOrchid: string;
+                MediumPurple: string;
+                MediumSeaGreen: string;
+                MediumSlateBlue: string;
+                MediumSpringGreen: string;
+                MediumTurquoise: string;
+                MediumVioletRed: string;
+                MidnightBlue: string;
+                MintCream: string;
+                MistyRose: string;
+                Moccasin: string;
+                NavajoWhite: string;
+                Navy: string;
+                OldLace: string;
+                Olive: string;
+                OliveDrab: string;
+                Orange: string;
+                OrangeRed: string;
+                Orchid: string;
+                PaleGoldenrod: string;
+                PaleGreen: string;
+                PaleTurquoise: string;
+                PaleVioletRed: string;
+                PapayaWhip: string;
+                PeachPuff: string;
+                Peru: string;
+                Pink: string;
+                Plum: string;
+                PowderBlue: string;
+                Purple: string;
+                Red: string;
+                RosyBrown: string;
+                RoyalBlue: string;
+                SaddleBrown: string;
+                Salmon: string;
+                SandyBrown: string;
+                SeaGreen: string;
+                SeaShell: string;
+                Sienna: string;
+                Silver: string;
+                SkyBlue: string;
+                SlateBlue: string;
+                SlateGray: string;
+                Snow: string;
+                SpringGreen: string;
+                SteelBlue: string;
+                Tan: string;
+                Teal: string;
+                Thistle: string;
+                Tomato: string;
+                Transparent: string;
+                Turquoise: string;
+                VeryDarkGray: string;
+                Violet: string;
+                Wheat: string;
+                White: string;
+                WhiteSmoke: string;
+                Yellow: string;
+                YellowGreen: string;
+            };
+            PropertyEnum: {
+                StiEmptyCellsAsGap: string;
+                StiEmptyCellsAsZero: string;
+                StiEmptyCellsAsConnectPointsWithLine: string;
+                boolFalse: string;
+                boolTrue: string;
+                BorderStyleFixed3D: string;
+                BorderStyleFixedSingle: string;
+                BorderStyleNone: string;
+                ChartAxesTicksAll: string;
+                ChartAxesTicksMajor: string;
+                ChartAxesTicksNone: string;
+                ChartGridLinesAll: string;
+                ChartGridLinesMajor: string;
+                ChartGridLinesNone: string;
+                ComboBoxStyleDropDown: string;
+                ComboBoxStyleDropDownList: string;
+                ComboBoxStyleSimple: string;
+                ContentAlignmentBottomCenter: string;
+                ContentAlignmentBottomLeft: string;
+                ContentAlignmentBottomRight: string;
+                ContentAlignmentMiddleCenter: string;
+                ContentAlignmentMiddleLeft: string;
+                ContentAlignmentMiddleRight: string;
+                ContentAlignmentTopCenter: string;
+                ContentAlignmentTopLeft: string;
+                ContentAlignmentTopRight: string;
+                DataGridLineStyleNone: string;
+                DataGridLineStyleSolid: string;
+                DateTimePickerFormatCustom: string;
+                DateTimePickerFormatLong: string;
+                DateTimePickerFormatShort: string;
+                DateTimePickerFormatTime: string;
+                DialogResultAbort: string;
+                DialogResultCancel: string;
+                DialogResultIgnore: string;
+                DialogResultNo: string;
+                DialogResultNone: string;
+                DialogResultOK: string;
+                DialogResultRetry: string;
+                DialogResultYes: string;
+                DuplexDefault: string;
+                DuplexHorizontal: string;
+                DuplexSimplex: string;
+                DuplexVertical: string;
+                FormStartPositionCenterParent: string;
+                FormStartPositionCenterScreen: string;
+                FormStartPositionManual: string;
+                FormStartPositionWindowsDefaultBounds: string;
+                FormStartPositionWindowsDefaultLocation: string;
+                FormWindowStateMaximized: string;
+                FormWindowStateMinimized: string;
+                FormWindowStateNormal: string;
+                HorizontalAlignmentCenter: string;
+                HorizontalAlignmentLeft: string;
+                HorizontalAlignmentRight: string;
+                HotkeyPrefixHide: string;
+                HotkeyPrefixNone: string;
+                HotkeyPrefixShow: string;
+                LeftRightAlignmentLeft: string;
+                LeftRightAlignmentRight: string;
+                PictureBoxSizeModeAutoSize: string;
+                PictureBoxSizeModeCenterImage: string;
+                PictureBoxSizeModeNormal: string;
+                PictureBoxSizeModeStretchImage: string;
+                RelationDirectionChildToParent: string;
+                RelationDirectionParentToChild: string;
+                RightToLeftInherit: string;
+                RightToLeftNo: string;
+                RightToLeftYes: string;
+                SelectionModeMultiExtended: string;
+                SelectionModeMultiSimple: string;
+                SelectionModeNone: string;
+                SelectionModeOne: string;
+                StiAnchorModeBottom: string;
+                StiAnchorModeLeft: string;
+                StiAnchorModeRight: string;
+                StiAnchorModeTop: string;
+                StiAngleAngle0: string;
+                StiAngleAngle180: string;
+                StiAngleAngle270: string;
+                StiAngleAngle45: string;
+                StiAngleAngle90: string;
+                StiArrowStyleArc: string;
+                StiArrowStyleArcAndCircle: string;
+                StiArrowStyleCircle: string;
+                StiArrowStyleLines: string;
+                StiArrowStyleNone: string;
+                StiArrowStyleTriangle: string;
+                StiBorderSidesAll: string;
+                StiBorderSidesBottom: string;
+                StiBorderSidesLeft: string;
+                StiBorderSidesNone: string;
+                StiBorderSidesRight: string;
+                StiBorderSidesTop: string;
+                StiBorderStyleBump: string;
+                StiBorderStyleEtched: string;
+                StiBorderStyleFlat: string;
+                StiBorderStyleNone: string;
+                StiBorderStyleRaised: string;
+                StiBorderStyleRaisedInner: string;
+                StiBorderStyleRaisedOuter: string;
+                StiBorderStyleSunken: string;
+                StiBorderStyleSunkenInner: string;
+                StiBorderStyleSunkenOuter: string;
+                StiBrushTypeGlare: string;
+                StiBrushTypeGradient0: string;
+                StiBrushTypeGradient180: string;
+                StiBrushTypeGradient270: string;
+                StiBrushTypeGradient45: string;
+                StiBrushTypeGradient90: string;
+                StiBrushTypeSolid: string;
+                StiCalculationModeCompilation: string;
+                StiCalculationModeInterpretation: string;
+                StiCapStyleArrow: string;
+                StiCapStyleDiamond: string;
+                StiCapStyleNone: string;
+                StiCapStyleOpen: string;
+                StiCapStyleOval: string;
+                StiCapStyleSquare: string;
+                StiCapStyleStealth: string;
+                StiChartLabelsStyleCategory: string;
+                StiChartLabelsStyleCategoryPercentOfTotal: string;
+                StiChartLabelsStyleCategoryValue: string;
+                StiChartLabelsStylePercentOfTotal: string;
+                StiChartLabelsStyleValue: string;
+                StiChartTitleDockBottom: string;
+                StiChartTitleDockLeft: string;
+                StiChartTitleDockRight: string;
+                StiChartTitleDockTop: string;
+                StiChartTrendLineTypeExponential: string;
+                StiChartTrendLineTypeLinear: string;
+                StiChartTrendLineTypeLogarithmic: string;
+                StiChartTrendLineTypeNone: string;
+                StiCheckStyleCheck: string;
+                StiCheckStyleCheckRectangle: string;
+                StiCheckStyleCross: string;
+                StiCheckStyleCrossCircle: string;
+                StiCheckStyleCrossRectangle: string;
+                StiCheckStyleDotCircle: string;
+                StiCheckStyleDotRectangle: string;
+                StiCheckStyleNone: string;
+                StiCheckStyleNoneCircle: string;
+                StiCheckStyleNoneRectangle: string;
+                StiCheckSumNo: string;
+                StiCheckSumYes: string;
+                StiCode11CheckSumAuto: string;
+                StiCode11CheckSumNone: string;
+                StiCode11CheckSumOneDigit: string;
+                StiCode11CheckSumTwoDigits: string;
+                StiColorScaleTypeColor2: string;
+                StiColorScaleTypeColor3: string;
+                StiColumnDirectionAcrossThenDown: string;
+                StiColumnDirectionDownThenAcross: string;
+                StiCrossHorAlignmentCenter: string;
+                StiCrossHorAlignmentLeft: string;
+                StiCrossHorAlignmentNone: string;
+                StiCrossHorAlignmentRight: string;
+                StiDateSelectionModeAutoRange: string;
+                StiDateSelectionModeRange: string;
+                StiDateSelectionModeSingle: string;
+                StiDateTimeTypeDate: string;
+                StiDateTimeTypeDateAndTime: string;
+                StiDateTimeTypeTime: string;
+                StiDesignerScaleModeAutomaticScaling: string;
+                StiDesignerScaleModeScaling100: string;
+                StiDesignerSpecificationAuto: string;
+                StiDesignerSpecificationBeginner: string;
+                StiDesignerSpecificationBICreator: string;
+                StiDesignerSpecificationDeveloper: string;
+                StiDisplayNameTypeFull: string;
+                StiDisplayNameTypeNone: string;
+                StiDisplayNameTypeShort: string;
+                StiDockStyleBottom: string;
+                StiDockStyleFill: string;
+                StiDockStyleLeft: string;
+                StiDockStyleNone: string;
+                StiDockStyleRight: string;
+                StiDockStyleTop: string;
+                StiDrillDownModeMultiPage: string;
+                StiDrillDownModeSinglePage: string;
+                StiEanSupplementTypeFiveDigit: string;
+                StiEanSupplementTypeNone: string;
+                StiEanSupplementTypeTwoDigit: string;
+                StiEmptySizeModeAlignFooterToBottom: string;
+                StiEmptySizeModeAlignFooterToTop: string;
+                StiEmptySizeModeDecreaseLastRow: string;
+                StiEmptySizeModeIncreaseLastRow: string;
+                StiEnumeratorTypeABC: string;
+                StiEnumeratorTypeArabic: string;
+                StiEnumeratorTypeNone: string;
+                StiEnumeratorTypeRoman: string;
+                StiExtendedStyleBoolFalse: string;
+                StiExtendedStyleBoolFromStyle: string;
+                StiExtendedStyleBoolTrue: string;
+                StiFilterConditionBeginningWith: string;
+                StiFilterConditionBetween: string;
+                StiFilterConditionContaining: string;
+                StiFilterConditionEndingWith: string;
+                StiFilterConditionEqualTo: string;
+                StiFilterConditionGreaterThan: string;
+                StiFilterConditionGreaterThanOrEqualTo: string;
+                StiFilterConditionIsBlank: string;
+                StiFilterConditionIsNotBlank: string;
+                StiFilterConditionIsNotNull: string;
+                StiFilterConditionIsNull: string;
+                StiFilterConditionLessThan: string;
+                StiFilterConditionLessThanOrEqualTo: string;
+                StiFilterConditionNotBetween: string;
+                StiFilterConditionNotContaining: string;
+                StiFilterConditionNotEqualTo: string;
+                StiFilterDataTypeBoolean: string;
+                StiFilterDataTypeDateTime: string;
+                StiFilterDataTypeExpression: string;
+                StiFilterDataTypeNumeric: string;
+                StiFilterDataTypeString: string;
+                StiFilterEngineReportEngine: string;
+                StiFilterEngineSQLQuery: string;
+                StiFilterItemArgument: string;
+                StiFilterItemExpression: string;
+                StiFilterItemValue: string;
+                StiFilterItemValueClose: string;
+                StiFilterItemValueEnd: string;
+                StiFilterItemValueHigh: string;
+                StiFilterItemValueLow: string;
+                StiFilterItemValueOpen: string;
+                StiFilterModeAnd: string;
+                StiFilterModeOr: string;
+                StiFontIconGroupAccessibilityIcons: string;
+                StiFontIconGroupBrandIcons: string;
+                StiFontIconGroupDirectionalIcons: string;
+                StiFontIconGroupGenderIcons: string;
+                StiFontIconGroupMedicalIcons: string;
+                StiFontIconGroupPaymentIcons: string;
+                StiFontIconGroupSpinnerIcons: string;
+                StiFontIconGroupTransportationIcons: string;
+                StiFontIconGroupVideoPlayerIcons: string;
+                StiFontIconGroupWebApplicationIcons: string;
+                StiFontSizeModeAuto: string;
+                StiFontSizeModeTarget: string;
+                StiFontSizeModeValue: string;
+                StiFormStartModeOnEnd: string;
+                StiFormStartModeOnPreview: string;
+                StiFormStartModeOnStart: string;
+                StiGaugeCalculationModeAuto: string;
+                StiGaugeCalculationModeCustom: string;
+                StiGaugeRangeModePercentage: string;
+                StiGaugeRangeModeValue: string;
+                StiGaugeRangeTypeColor: string;
+                StiGaugeRangeTypeNone: string;
+                StiGaugeTypeBullet: string;
+                StiGaugeTypeFullCircular: string;
+                StiGaugeTypeHalfCircular: string;
+                StiGaugeTypeHorizontalLinear: string;
+                StiGaugeTypeLinear: string;
+                StiGroupSortDirectionAscending: string;
+                StiGroupSortDirectionDescending: string;
+                StiGroupSortDirectionNone: string;
+                StiHorAlignmentCenter: string;
+                StiHorAlignmentLeft: string;
+                StiHorAlignmentRight: string;
+                StiIconAlignmentBottom: string;
+                StiIconAlignmentLeft: string;
+                StiIconAlignmentNone: string;
+                StiIconAlignmentRight: string;
+                StiIconAlignmentTop: string;
+                StiImageProcessingDuplicatesTypeGlobalHide: string;
+                StiImageProcessingDuplicatesTypeGlobalMerge: string;
+                StiImageProcessingDuplicatesTypeGlobalRemoveImage: string;
+                StiImageProcessingDuplicatesTypeHide: string;
+                StiImageProcessingDuplicatesTypeMerge: string;
+                StiImageProcessingDuplicatesTypeNone: string;
+                StiImageProcessingDuplicatesTypeRemoveImage: string;
+                StiImageRotationFlipHorizontal: string;
+                StiImageRotationFlipVertical: string;
+                StiImageRotationNone: string;
+                StiImageRotationRotate180: string;
+                StiImageRotationRotate90CCW: string;
+                StiImageRotationRotate90CW: string;
+                StiInteractionOnClick: string;
+                StiInteractionOnClickApplyFilter: string;
+                StiInteractionOnClickDrillDown: string;
+                StiInteractionOnClickOpenHyperlink: string;
+                StiInteractionOnClickShowDashboard: string;
+                StiInteractionOnHoverNone: string;
+                StiInteractionOnHoverShowHyperlink: string;
+                StiInteractionOnHoverShowToolTip: string;
+                StiInteractionOpenHyperlinkDestinationCurrentTab: string;
+                StiInteractionOpenHyperlinkDestinationNewTab: string;
+                StiItemSelectionModeMulti: string;
+                StiItemSelectionModeOne: string;
+                StiKeepDetailsKeepDetailsTogether: string;
+                StiKeepDetailsKeepFirstDetailTogether: string;
+                StiKeepDetailsKeepFirstRowTogether: string;
+                StiKeepDetailsNone: string;
+                StiLabelsPlacementAutoRotation: string;
+                StiLabelsPlacementNone: string;
+                StiLabelsPlacementOneLine: string;
+                StiLabelsPlacementTwoLines: string;
+                StiLegendDirectionBottomToTop: string;
+                StiLegendDirectionLeftToRight: string;
+                StiLegendDirectionRightToLeft: string;
+                StiLegendDirectionTopToBottom: string;
+                StiLegendHorAlignmentCenter: string;
+                StiLegendHorAlignmentLeft: string;
+                StiLegendHorAlignmentLeftOutside: string;
+                StiLegendHorAlignmentRight: string;
+                StiLegendHorAlignmentRightOutside: string;
+                StiLegendVertAlignmentBottom: string;
+                StiLegendVertAlignmentBottomOutside: string;
+                StiLegendVertAlignmentCenter: string;
+                StiLegendVertAlignmentTop: string;
+                StiLegendVertAlignmentTopOutside: string;
+                StiMapModeChoropleth: string;
+                StiMapModeOnline: string;
+                StiMapTypeGroup: string;
+                StiMapTypeHeatmap: string;
+                StiMapTypeHeatmapWithGroup: string;
+                StiMapTypeIndividual: string;
+                StiMapTypeNone: string;
+                StiMapTypePoints: string;
+                StiMarkerAlignmentCenter: string;
+                StiMarkerAlignmentLeft: string;
+                StiMarkerAlignmentRight: string;
+                StiMarkerTypeCircle: string;
+                StiMarkerTypeHalfCircle: string;
+                StiMarkerTypeHexagon: string;
+                StiMarkerTypeRectangle: string;
+                StiMarkerTypeStar5: string;
+                StiMarkerTypeStar6: string;
+                StiMarkerTypeStar7: string;
+                StiMarkerTypeStar8: string;
+                StiMarkerTypeTriangle: string;
+                StiNestedFactorHigh: string;
+                StiNestedFactorLow: string;
+                StiNestedFactorNormal: string;
+                StiNumberOfPassDoublePass: string;
+                StiNumberOfPassSinglePass: string;
+                StiOnlineMapHeatmapColorGradientTypeBlackAquaWhite: string;
+                StiOnlineMapHeatmapColorGradientTypeBlueRed: string;
+                StiOnlineMapHeatmapColorGradientTypeColorSpectrum: string;
+                StiOnlineMapHeatmapColorGradientTypeDeepSea: string;
+                StiOnlineMapHeatmapColorGradientTypeHeatedMetal: string;
+                StiOnlineMapHeatmapColorGradientTypeIncandescent: string;
+                StiOnlineMapHeatmapColorGradientTypeSteppedColors: string;
+                StiOnlineMapHeatmapColorGradientTypeSunrise: string;
+                StiOnlineMapHeatmapColorGradientTypeVisibleSpectrum: string;
+                StiOnlineMapLocationTypeAdminDivision1: string;
+                StiOnlineMapLocationTypeAdminDivision2: string;
+                StiOnlineMapLocationTypeAuto: string;
+                StiOnlineMapLocationTypeCountryRegion: string;
+                StiOnlineMapLocationTypeNeighborhood: string;
+                StiOnlineMapLocationTypePopulatedPlace: string;
+                StiOnlineMapLocationTypePostcode1: string;
+                StiOnlineMapLocationTypePostcode2: string;
+                StiOnlineMapLocationTypePostcode3: string;
+                StiOnlineMapLocationTypePostcode4: string;
+                StiOrientationHorizontal: string;
+                StiOrientationHorizontalRight: string;
+                StiOrientationVertical: string;
+                StiPageOrientationLandscape: string;
+                StiPageOrientationPortrait: string;
+                StiPenStyleDash: string;
+                StiPenStyleDashDot: string;
+                StiPenStyleDashDotDot: string;
+                StiPenStyleDot: string;
+                StiPenStyleDouble: string;
+                StiPenStyleNone: string;
+                StiPenStyleSolid: string;
+                StiPlesseyCheckSumModulo10: string;
+                StiPlesseyCheckSumModulo11: string;
+                StiPlesseyCheckSumNone: string;
+                StiPreviewModeDotMatrix: string;
+                StiPreviewModeStandard: string;
+                StiPreviewModeStandardAndDotMatrix: string;
+                StiPrintOnEvenOddPagesTypeIgnore: string;
+                StiPrintOnEvenOddPagesTypePrintOnEvenPages: string;
+                StiPrintOnEvenOddPagesTypePrintOnOddPages: string;
+                StiPrintOnTypeAllPages: string;
+                StiPrintOnTypeExceptFirstAndLastPage: string;
+                StiPrintOnTypeExceptFirstPage: string;
+                StiPrintOnTypeExceptLastPage: string;
+                StiPrintOnTypeOnlyFirstAndLastPage: string;
+                StiPrintOnTypeOnlyFirstPage: string;
+                StiPrintOnTypeOnlyLastPage: string;
+                StiProcessAtEndOfPage: string;
+                StiProcessAtEndOfReport: string;
+                StiProcessAtNone: string;
+                StiProcessingDuplicatesTypeBasedOnTagHide: string;
+                StiProcessingDuplicatesTypeBasedOnTagMerge: string;
+                StiProcessingDuplicatesTypeBasedOnTagRemoveText: string;
+                StiProcessingDuplicatesTypeBasedOnValueAndTagHide: string;
+                StiProcessingDuplicatesTypeBasedOnValueAndTagMerge: string;
+                StiProcessingDuplicatesTypeBasedOnValueRemoveText: string;
+                StiProcessingDuplicatesTypeGlobalBasedOnValueAndTagHide: string;
+                StiProcessingDuplicatesTypeGlobalBasedOnValueAndTagMerge: string;
+                StiProcessingDuplicatesTypeGlobalBasedOnValueRemoveText: string;
+                StiProcessingDuplicatesTypeGlobalHide: string;
+                StiProcessingDuplicatesTypeGlobalMerge: string;
+                StiProcessingDuplicatesTypeGlobalRemoveText: string;
+                StiProcessingDuplicatesTypeHide: string;
+                StiProcessingDuplicatesTypeMerge: string;
+                StiProcessingDuplicatesTypeNone: string;
+                StiProcessingDuplicatesTypeRemoveText: string;
+                StiProgressElementModeCircle: string;
+                StiProgressElementModeDataBars: string;
+                StiProgressElementModePie: string;
+                StiRadarStyleXFCircle: string;
+                StiRadarStyleXFPolygon: string;
+                StiReportCacheModeAuto: string;
+                StiReportCacheModeOff: string;
+                StiReportCacheModeOn: string;
+                StiReportUnitTypeCentimeters: string;
+                StiReportUnitTypeHundredthsOfInch: string;
+                StiReportUnitTypeInches: string;
+                StiReportUnitTypeMillimeters: string;
+                StiReportUnitTypePixels: string;
+                StiRestrictionsAll: string;
+                StiRestrictionsAllowChange: string;
+                StiRestrictionsAllowDelete: string;
+                StiRestrictionsAllowMove: string;
+                StiRestrictionsAllowResize: string;
+                StiRestrictionsAllowSelect: string;
+                StiRestrictionsNone: string;
+                StiSelectionModeFirst: string;
+                StiSelectionModeFromVariable: string;
+                StiSelectionModeNothing: string;
+                StiSeriesLabelsValueTypeArgument: string;
+                StiSeriesLabelsValueTypeArgumentValue: string;
+                StiSeriesLabelsValueTypeSeriesTitle: string;
+                StiSeriesLabelsValueTypeSeriesTitleArgument: string;
+                StiSeriesLabelsValueTypeSeriesTitleValue: string;
+                StiSeriesLabelsValueTypeTag: string;
+                StiSeriesLabelsValueTypeValue: string;
+                StiSeriesLabelsValueTypeValueArgument: string;
+                StiSeriesLabelsValueTypeWeight: string;
+                StiSeriesSortDirectionAscending: string;
+                StiSeriesSortDirectionDescending: string;
+                StiSeriesSortTypeArgument: string;
+                StiSeriesSortTypeNone: string;
+                StiSeriesSortTypeValue: string;
+                StiSeriesXAxisBottomXAxis: string;
+                StiSeriesXAxisTopXAxis: string;
+                StiSeriesYAxisLeftYAxis: string;
+                StiSeriesYAxisRightYAxis: string;
+                StiShapeDirectionDown: string;
+                StiShapeDirectionLeft: string;
+                StiShapeDirectionRight: string;
+                StiShapeDirectionUp: string;
+                StiShiftModeDecreasingSize: string;
+                StiShiftModeIncreasingSize: string;
+                StiShiftModeNone: string;
+                StiShiftModeOnlyInWidthOfComponent: string;
+                StiShowSeriesLabelsFromChart: string;
+                StiShowSeriesLabelsFromSeries: string;
+                StiShowSeriesLabelsNone: string;
+                StiShowXAxisBoth: string;
+                StiShowXAxisBottom: string;
+                StiShowXAxisCenter: string;
+                StiShowYAxisBoth: string;
+                StiShowYAxisCenter: string;
+                StiShowYAxisLeft: string;
+                StiSizeModeAutoSize: string;
+                StiSizeModeFit: string;
+                StiSortDirectionAsc: string;
+                StiSortDirectionDesc: string;
+                StiSortDirectionNone: string;
+                StiSortTypeByDisplayValue: string;
+                StiSortTypeByValue: string;
+                StiSqlSourceTypeStoredProcedure: string;
+                StiSqlSourceTypeTable: string;
+                StiStyleComponentTypeChart: string;
+                StiStyleComponentTypeCheckBox: string;
+                StiStyleComponentTypeCrossTab: string;
+                StiStyleComponentTypeImage: string;
+                StiStyleComponentTypePrimitive: string;
+                StiStyleComponentTypeText: string;
+                StiStyleConditionTypeComponentName: string;
+                StiStyleConditionTypeComponentType: string;
+                StiStyleConditionTypeLocation: string;
+                StiStyleConditionTypePlacement: string;
+                StiSummaryValuesAllValues: string;
+                StiSummaryValuesSkipNulls: string;
+                StiSummaryValuesSkipZerosAndNulls: string;
+                StiTablceCellTypeCheckBox: string;
+                StiTablceCellTypeImage: string;
+                StiTablceCellTypeRichText: string;
+                StiTablceCellTypeText: string;
+                StiTableAutoWidthNone: string;
+                StiTableAutoWidthPage: string;
+                StiTableAutoWidthTable: string;
+                StiTableAutoWidthTypeFullTable: string;
+                StiTableAutoWidthTypeLastColumns: string;
+                StiTableAutoWidthTypeNone: string;
+                StiTargetModePercentage: string;
+                StiTargetModeVariation: string;
+                StiTextHorAlignmentCenter: string;
+                StiTextHorAlignmentLeft: string;
+                StiTextHorAlignmentRight: string;
+                StiTextHorAlignmentWidth: string;
+                StiTextPositionCenterBottom: string;
+                StiTextPositionCenterTop: string;
+                StiTextPositionLeftBottom: string;
+                StiTextPositionLeftTop: string;
+                StiTextPositionRightBottom: string;
+                StiTextPositionRightTop: string;
+                StiTextQualityStandard: string;
+                StiTextQualityTypographic: string;
+                StiTextQualityWysiwyg: string;
+                StiTitlePositionInside: string;
+                StiTitlePositionOutside: string;
+                StiTypeModeList: string;
+                StiTypeModeNullableValue: string;
+                StiTypeModeRange: string;
+                StiTypeModeValue: string;
+                StiVertAlignmentBottom: string;
+                StiVertAlignmentCenter: string;
+                StiVertAlignmentTop: string;
+                StiViewModeNormal: string;
+                StiViewModePageBreakPreview: string;
+                StiXmlTypeAdoNetXml: string;
+                StiXmlTypeXml: string;
+                StringAlignmentCenter: string;
+                StringAlignmentFar: string;
+                StringAlignmentNear: string;
+                StringTrimmingCharacter: string;
+                StringTrimmingEllipsisCharacter: string;
+                StringTrimmingEllipsisPath: string;
+                StringTrimmingEllipsisWord: string;
+                StringTrimmingNone: string;
+                StringTrimmingWord: string;
+            };
+            PropertyEvents: {
+                AfterPrintEvent: string;
+                AfterSelectEvent: string;
+                BeforePrintEvent: string;
+                BeginRenderEvent: string;
+                CheckedChangedEvent: string;
+                ClickEvent: string;
+                ClosedFormEvent: string;
+                ClosingFormEvent: string;
+                ColumnBeginRenderEvent: string;
+                ColumnEndRenderEvent: string;
+                ConnectedEvent: string;
+                ConnectingEvent: string;
+                DisconnectedEvent: string;
+                DisconnectingEvent: string;
+                DoubleClickEvent: string;
+                EndRenderEvent: string;
+                EnterEvent: string;
+                ExportedEvent: string;
+                ExportingEvent: string;
+                GetArgumentEvent: string;
+                GetBookmarkEvent: string;
+                GetCollapsedEvent: string;
+                GetCrossValueEvent: string;
+                GetCutPieListEvent: string;
+                GetDataUrlEvent: string;
+                GetDisplayCrossValueEvent: string;
+                GetDrillDownReportEvent: string;
+                GetExcelSheetEvent: string;
+                GetExcelValueEvent: string;
+                GetHyperlinkEvent: string;
+                GetImageDataEvent: string;
+                GetImageURLEvent: string;
+                GetListOfArgumentsEvent: string;
+                GetListOfHyperlinksEvent: string;
+                GetListOfTagsEvent: string;
+                GetListOfToolTipsEvent: string;
+                GetListOfValuesEndEvent: string;
+                GetListOfValuesEvent: string;
+                GetListOfWeights: string;
+                GetListOfWeightsEvent: string;
+                GetSummaryExpressionEvent: string;
+                GetTagEvent: string;
+                GetTitleEvent: string;
+                GetToolTipEvent: string;
+                GetValueEndEvent: string;
+                GetValueEvent: string;
+                GetWeightEvent: string;
+                LeaveEvent: string;
+                LoadFormEvent: string;
+                MouseDownEvent: string;
+                MouseEnterEvent: string;
+                MouseLeaveEvent: string;
+                MouseMoveEvent: string;
+                MouseUpEvent: string;
+                NewAutoSeriesEvent: string;
+                PositionChangedEvent: string;
+                PrintedEvent: string;
+                PrintingEvent: string;
+                ProcessCellEvent: string;
+                ProcessChartEvent: string;
+                RenderingEvent: string;
+                ReportCacheProcessingEvent: string;
+                SelectedIndexChangedEvent: string;
+                StateRestoreEvent: string;
+                StateSaveEvent: string;
+                ValueChangedEvent: string;
+            };
+            PropertyHatchStyle: {
+                BackwardDiagonal: string;
+                Cross: string;
+                DarkDownwardDiagonal: string;
+                DarkHorizontal: string;
+                DarkUpwardDiagonal: string;
+                DarkVertical: string;
+                DashedDownwardDiagonal: string;
+                DashedHorizontal: string;
+                DashedUpwardDiagonal: string;
+                DashedVertical: string;
+                DiagonalBrick: string;
+                DiagonalCross: string;
+                Divot: string;
+                DottedDiamond: string;
+                DottedGrid: string;
+                ForwardDiagonal: string;
+                Horizontal: string;
+                HorizontalBrick: string;
+                LargeCheckerBoard: string;
+                LargeConfetti: string;
+                LargeGrid: string;
+                LightDownwardDiagonal: string;
+                LightHorizontal: string;
+                LightUpwardDiagonal: string;
+                LightVertical: string;
+                NarrowHorizontal: string;
+                NarrowVertical: string;
+                OutlinedDiamond: string;
+                Percent05: string;
+                Percent10: string;
+                Percent20: string;
+                Percent25: string;
+                Percent30: string;
+                Percent40: string;
+                Percent50: string;
+                Percent60: string;
+                Percent70: string;
+                Percent75: string;
+                Percent80: string;
+                Percent90: string;
+                Plaid: string;
+                Shingle: string;
+                SmallCheckerBoard: string;
+                SmallConfetti: string;
+                SmallGrid: string;
+                SolidDiamond: string;
+                Sphere: string;
+                Trellis: string;
+                Vertical: string;
+                Wave: string;
+                Weave: string;
+                WideDownwardDiagonal: string;
+                WideUpwardDiagonal: string;
+                ZigZag: string;
+            };
+            PropertyMain: {
+                AcceptsReturn: string;
+                AcceptsTab: string;
+                Actual: string;
+                AddClearZone: string;
+                Advanced: string;
+                AggregateFunction: string;
+                AggregateFunctions: string;
+                Alias: string;
+                Alignment: string;
+                AllowApplyBorderColor: string;
+                AllowApplyBrush: string;
+                AllowApplyBrushNegative: string;
+                AllowApplyColorNegative: string;
+                AllowApplyLineColor: string;
+                AllowApplyStyle: string;
+                AllowExpressions: string;
+                AllowHtmlTags: string;
+                AllowSeries: string;
+                AllowSeriesElements: string;
+                AllowSorting: string;
+                AllowUseBackColor: string;
+                AllowUseBorder: string;
+                AllowUseBorderFormatting: string;
+                AllowUseBorderSides: string;
+                AllowUseBorderSidesFromLocation: string;
+                AllowUseBrush: string;
+                AllowUseFont: string;
+                AllowUseForeColor: string;
+                AllowUseHorAlignment: string;
+                AllowUseImage: string;
+                AllowUseNegativeTextBrush: string;
+                AllowUserValues: string;
+                AllowUseTextBrush: string;
+                AllowUseTextFormat: string;
+                AllowUseTextOptions: string;
+                AllowUseVertAlignment: string;
+                AllowUsingAsSqlParameter: string;
+                AlternatingBackColor: string;
+                AlternatingCellBackColor: string;
+                AlternatingCellForeColor: string;
+                AlternatingDataColor: string;
+                AlternatingDataForeground: string;
+                Anchor: string;
+                Angle: string;
+                Antialiasing: string;
+                Area: string;
+                Argument: string;
+                ArgumentDataColumn: string;
+                ArgumentFormat: string;
+                Arguments: string;
+                ArrowHeight: string;
+                ArrowStyle: string;
+                ArrowWidth: string;
+                AspectRatio: string;
+                Author: string;
+                Auto: string;
+                AutoCalculateCenterPoint: string;
+                AutoDataColumns: string;
+                AutoDataRows: string;
+                AutoLocalizeReportOnRun: string;
+                AutoRefresh: string;
+                AutoRotate: string;
+                AutoScale: string;
+                AutoSeriesColorDataColumn: string;
+                AutoSeriesKeyDataColumn: string;
+                AutoSeriesTitleDataColumn: string;
+                AutoWidth: string;
+                AutoWidthType: string;
+                AvailableInTheViewer: string;
+                AxisLabelsColor: string;
+                AxisLineColor: string;
+                AxisTitleColor: string;
+                AxisValue: string;
+                BackColor: string;
+                Background: string;
+                BackgroundColor: string;
+                BandColor: string;
+                BarCodeType: string;
+                BasicStyleColor: string;
+                Blend: string;
+                Bold: string;
+                Bookmark: string;
+                Border: string;
+                BorderBrush: string;
+                BorderColor: string;
+                BorderColorNegative: string;
+                Borders: string;
+                BorderSize: string;
+                BorderStyle: string;
+                BorderWidth: string;
+                Bottom: string;
+                BottomSide: string;
+                BreakIfLessThan: string;
+                Brush: string;
+                BrushNegative: string;
+                BrushType: string;
+                BubbleBackColor: string;
+                BubbleBorderColor: string;
+                BusinessObject: string;
+                CacheAllData: string;
+                CacheTotals: string;
+                CalcInvisible: string;
+                CalculatedDataColumn: string;
+                CalculationMode: string;
+                CanBreak: string;
+                Cancel: string;
+                CanGrow: string;
+                CanShrink: string;
+                Categories: string;
+                Category: string;
+                CategoryConnections: string;
+                CellBackColor: string;
+                CellDockStyle: string;
+                CellForeColor: string;
+                CellHeight: string;
+                CellType: string;
+                CellWidth: string;
+                Center: string;
+                CenterPoint: string;
+                ChartAreaBorderColor: string;
+                ChartAreaBrush: string;
+                ChartAreaShowShadow: string;
+                ChartType: string;
+                Checked: string;
+                CheckOnClick: string;
+                CheckStyle: string;
+                CheckStyleForFalse: string;
+                CheckStyleForTrue: string;
+                Checksum: string;
+                CheckSum: string;
+                CheckSum1: string;
+                CheckSum2: string;
+                Child: string;
+                ChildColumns: string;
+                ChildSource: string;
+                ClearFormat: string;
+                CloneContainer: string;
+                CloseValues: string;
+                Code: string;
+                CodePage: string;
+                Collapsed: string;
+                CollapseGroupFooter: string;
+                CollapsingEnabled: string;
+                Collate: string;
+                CollectionName: string;
+                Color: string;
+                ColorDataColumn: string;
+                ColorEach: string;
+                ColorMeter: string;
+                Colors: string;
+                ColorScaleCondition: string;
+                ColorScaleType: string;
+                Column: string;
+                ColumnCount: string;
+                ColumnDirection: string;
+                ColumnGaps: string;
+                ColumnHeaderBackColor: string;
+                ColumnHeaderForeColor: string;
+                ColumnHeadersVisible: string;
+                Columns: string;
+                ColumnWidth: string;
+                CommandTimeout: string;
+                CompanyPrefix: string;
+                ComponentStyle: string;
+                Condition: string;
+                ConditionOptions: string;
+                Conditions: string;
+                ConnectionString: string;
+                ConnectOnStart: string;
+                ConstantLines: string;
+                Container: string;
+                ContinuousText: string;
+                ContourColor: string;
+                Converting: string;
+                ConvertNulls: string;
+                Copies: string;
+                Count: string;
+                CountData: string;
+                Create: string;
+                CreateFieldOnDoubleClick: string;
+                CreateLabel: string;
+                Culture: string;
+                CustomFonts: string;
+                CustomFormat: string;
+                CutPieList: string;
+                Data: string;
+                DataAdapter: string;
+                DataAdapters: string;
+                DataBarCondition: string;
+                DataBindings: string;
+                DataColor: string;
+                DataColumn: string;
+                DataColumns: string;
+                DataField: string;
+                DataForeground: string;
+                DataRelation: string;
+                DataRows: string;
+                DataSource: string;
+                DataSources: string;
+                DataTextField: string;
+                DataTransformation: string;
+                DataType: string;
+                DataUrl: string;
+                DateInfo: string;
+                DateTimeStep: string;
+                Default: string;
+                DefaultColor: string;
+                DefaultHeightCell: string;
+                DefaultNamespace: string;
+                DependentColumn: string;
+                DependentValue: string;
+                Description: string;
+                Destination: string;
+                DetectUrls: string;
+                DeviceWidth: string;
+                DialogResult: string;
+                Diameter: string;
+                Direction: string;
+                Disabled: string;
+                DisplayNameType: string;
+                DisplayValue: string;
+                Distance: string;
+                DistanceBetweenTabs: string;
+                Dock: string;
+                DockableTable: string;
+                DockStyle: string;
+                DrawBorder: string;
+                DrawHatch: string;
+                DrawLine: string;
+                DrillDown: string;
+                DrillDownEnabled: string;
+                DrillDownMode: string;
+                DrillDownPage: string;
+                DrillDownParameter1: string;
+                DrillDownParameter2: string;
+                DrillDownParameter3: string;
+                DrillDownParameter4: string;
+                DrillDownParameter5: string;
+                DrillDownParameters: string;
+                DrillDownReport: string;
+                DropDownAlign: string;
+                DropDownStyle: string;
+                DropDownWidth: string;
+                DropShadow: string;
+                Duplex: string;
+                Editable: string;
+                Effects: string;
+                EmptyBorderBrush: string;
+                EmptyBorderWidth: string;
+                EmptyBrush: string;
+                EmptyValue: string;
+                Enabled: string;
+                EnableLog: string;
+                EncodingMode: string;
+                EncodingType: string;
+                EndCap: string;
+                EndColor: string;
+                EndValue: string;
+                EndValues: string;
+                EndWidth: string;
+                EngineVersion: string;
+                EnumeratorSeparator: string;
+                EnumeratorType: string;
+                ErrorCorrectionLevel: string;
+                ErrorsCorrectionLevel: string;
+                EvenStyle: string;
+                ExcelSheet: string;
+                ExcelValue: string;
+                Exponential: string;
+                ExportAsImage: string;
+                Expression: string;
+                ExtensionDigit: string;
+                FaqPage: string;
+                Field: string;
+                FieldIs: string;
+                File: string;
+                Fill: string;
+                FillColor: string;
+                Filter: string;
+                FilterElements: string;
+                FilterEngine: string;
+                FilterMode: string;
+                FilterOn: string;
+                Filters: string;
+                FirstTabOffset: string;
+                FixedWidth: string;
+                Flat: string;
+                FlatMode: string;
+                Focus: string;
+                Font: string;
+                FontBold: string;
+                FontItalic: string;
+                FontName: string;
+                FontSize: string;
+                FontSizeMode: string;
+                FontStrikeout: string;
+                FontSubscript: string;
+                FontSuperscript: string;
+                FontUnderline: string;
+                FontUnit: string;
+                FooterCanBreak: string;
+                FooterCanGrow: string;
+                FooterCanShrink: string;
+                FooterColor: string;
+                FooterFont: string;
+                FooterForeColor: string;
+                FooterForeground: string;
+                FooterPrintAtBottom: string;
+                FooterPrintIfEmpty: string;
+                FooterPrintOn: string;
+                FooterPrintOnAllPages: string;
+                FooterPrintOnEvenOddPages: string;
+                FooterRowsCount: string;
+                Footers: string;
+                ForeColor: string;
+                Format: string;
+                From: string;
+                FullConvertExpression: string;
+                Function: string;
+                Functions: string;
+                GlobalizationStrings: string;
+                GlobalizedName: string;
+                GlyphColor: string;
+                GridColor: string;
+                GridLineColor: string;
+                GridLinesHor: string;
+                GridLinesHorColor: string;
+                GridLinesHorRight: string;
+                GridLineStyle: string;
+                GridLinesVert: string;
+                GridLinesVertColor: string;
+                GridOutline: string;
+                Group: string;
+                GroupDataColumn: string;
+                GroupMeter: string;
+                GrowToHeight: string;
+                HeaderBackColor: string;
+                HeaderCanBreak: string;
+                HeaderCanGrow: string;
+                HeaderCanShrink: string;
+                HeaderColor: string;
+                HeaderFont: string;
+                HeaderForeColor: string;
+                HeaderForeground: string;
+                HeaderPrintAtBottom: string;
+                HeaderPrintIfEmpty: string;
+                HeaderPrintOn: string;
+                HeaderPrintOnAllPages: string;
+                HeaderPrintOnEvenOddPages: string;
+                HeaderRowsCount: string;
+                Headers: string;
+                HeaderText: string;
+                HeatmapColors: string;
+                Height: string;
+                HideSeriesWithEmptyTitle: string;
+                HideZeros: string;
+                High: string;
+                HighlightCondition: string;
+                HighValues: string;
+                HorAlignment: string;
+                HorSpacing: string;
+                HotBackColor: string;
+                HotColumnHeaderBackColor: string;
+                HotForeColor: string;
+                HotGlyphColor: string;
+                HotHeaderColor: string;
+                HotkeyPrefix: string;
+                HotRowHeaderBackColor: string;
+                HotSelectedBackColor: string;
+                HotSelectedForeColor: string;
+                HotSelectedGlyphColor: string;
+                HtmlTags: string;
+                Hyperlink: string;
+                HyperlinkDataColumn: string;
+                Icon: string;
+                IconAlignment: string;
+                IconSet: string;
+                IconSetCondition: string;
+                Idents: string;
+                Image: string;
+                ImageAlign: string;
+                ImageAlignment: string;
+                ImageData: string;
+                ImageHorAlignment: string;
+                ImageMultipleFactor: string;
+                ImageRotation: string;
+                ImageStretch: string;
+                ImageTiling: string;
+                ImageTransparency: string;
+                ImageURL: string;
+                ImageVertAlignment: string;
+                ImportRelations: string;
+                Increment: string;
+                Indent: string;
+                IndividualColor: string;
+                InitBy: string;
+                InitialSelection: string;
+                InitialSelectionSource: string;
+                Insert: string;
+                Interaction: string;
+                InterlacedBrush: string;
+                InterlacingHor: string;
+                InterlacingHorBrush: string;
+                InterlacingVert: string;
+                InterlacingVertBrush: string;
+                Interpolation: string;
+                IsReversed: string;
+                Italic: string;
+                Item: string;
+                ItemHeight: string;
+                Items: string;
+                KeepChildTogether: string;
+                KeepCrossTabTogether: string;
+                KeepDetails: string;
+                KeepDetailsTogether: string;
+                KeepFooterTogether: string;
+                KeepGroupFooterTogether: string;
+                KeepGroupHeaderTogether: string;
+                KeepGroupTogether: string;
+                KeepHeaderTogether: string;
+                KeepMergedCellsTogether: string;
+                KeepReportSummaryTogether: string;
+                KeepSubReportTogether: string;
+                Key: string;
+                KeyDataColumn: string;
+                KeyMeter: string;
+                KeyMeters: string;
+                Keys: string;
+                Label: string;
+                LabelColor: string;
+                LabelForeground: string;
+                LabelRotationMode: string;
+                Labels: string;
+                LabelsColor: string;
+                LabelShadowForeground: string;
+                LabelsOffset: string;
+                Language: string;
+                LargeHeight: string;
+                LargeHeightFactor: string;
+                Latitude: string;
+                Layout: string;
+                Left: string;
+                LeftSide: string;
+                Legend: string;
+                LegendBorderColor: string;
+                LegendBrush: string;
+                LegendLabelsColor: string;
+                LegendTitleColor: string;
+                LegendValueType: string;
+                Length: string;
+                LengthUnderLabels: string;
+                Lighting: string;
+                LimitRows: string;
+                Linear: string;
+                LinearBarBorderBrush: string;
+                LinearBarBrush: string;
+                LinearBarEmptyBorderBrush: string;
+                LinearBarEmptyBrush: string;
+                LineColor: string;
+                LineColorNegative: string;
+                LineLimit: string;
+                LineMarker: string;
+                LinesOfUnderline: string;
+                LineSpacing: string;
+                LineStyle: string;
+                LineWidth: string;
+                Linked: string;
+                ListOfArguments: string;
+                ListOfHyperlinks: string;
+                ListOfTags: string;
+                ListOfToolTips: string;
+                ListOfValues: string;
+                ListOfValuesClose: string;
+                ListOfValuesEnd: string;
+                ListOfValuesHigh: string;
+                ListOfValuesLow: string;
+                ListOfValuesOpen: string;
+                ListOfWeights: string;
+                Localizable: string;
+                Location: string;
+                Locked: string;
+                Logarithmic: string;
+                LogarithmicScale: string;
+                Longitude: string;
+                Low: string;
+                LowValues: string;
+                MajorInterval: string;
+                MapID: string;
+                Maps: string;
+                MapStyle: string;
+                MapType: string;
+                Margin: string;
+                Margins: string;
+                Marker: string;
+                MarkerAlignment: string;
+                MarkerAngle: string;
+                MarkerBorder: string;
+                MarkerBrush: string;
+                MarkerColor: string;
+                MarkerSize: string;
+                MarkerType: string;
+                MarkerVisible: string;
+                MasterComponent: string;
+                MasterKeyDataColumn: string;
+                MatrixSize: string;
+                MaxDate: string;
+                MaxDropDownItems: string;
+                MaxHeight: string;
+                Maximum: string;
+                MaximumValue: string;
+                MaxLength: string;
+                MaxNumberOfLines: string;
+                MaxSize: string;
+                MaxValue: string;
+                MaxWidth: string;
+                MergeDuplicates: string;
+                MergeHeaders: string;
+                Mid: string;
+                MinDate: string;
+                MinHeight: string;
+                Minimum: string;
+                MinimumFontSize: string;
+                MinimumValue: string;
+                MinorColor: string;
+                MinorCount: string;
+                MinorInterval: string;
+                MinorLength: string;
+                MinorStyle: string;
+                MinorVisible: string;
+                MinRowsInColumn: string;
+                MinSize: string;
+                MinValue: string;
+                MinWidth: string;
+                MirrorMargins: string;
+                Mode: string;
+                Module: string;
+                Move: string;
+                Multiline: string;
+                MultipleFactor: string;
+                Name: string;
+                NameDataColumn: string;
+                NameInSource: string;
+                NameMeter: string;
+                NameParent: string;
+                Namespaces: string;
+                NeedleBorderBrush: string;
+                NeedleBorderWidth: string;
+                NeedleBrush: string;
+                NeedleCapBorderBrush: string;
+                NeedleCapBrush: string;
+                Negative: string;
+                NegativeColor: string;
+                NegativeSeriesColors: string;
+                NegativeTextBrush: string;
+                NestedLevel: string;
+                NewColumnAfter: string;
+                NewColumnBefore: string;
+                NewPageAfter: string;
+                NewPageBefore: string;
+                NextPage: string;
+                NoIcon: string;
+                NullText: string;
+                NumberOfColumns: string;
+                NumberOfCopies: string;
+                NumberOfPass: string;
+                NumberOfValues: string;
+                OddStyle: string;
+                Offset: string;
+                OffsetAngle: string;
+                OnClick: string;
+                OnDataManipulation: string;
+                OnHover: string;
+                OnlyText: string;
+                OpenValues: string;
+                Operation: string;
+                Options: string;
+                Orientation: string;
+                OthersText: string;
+                Padding: string;
+                PageHeight: string;
+                PageNumbers: string;
+                PageWidth: string;
+                Paper: string;
+                PaperSize: string;
+                PaperSourceOfFirstPage: string;
+                PaperSourceOfOtherPages: string;
+                Parameter: string;
+                Parameters: string;
+                ParametersDateFormat: string;
+                ParametersOrientation: string;
+                ParentColumns: string;
+                ParentSource: string;
+                ParentValue: string;
+                ParetoSeriesColors: string;
+                PasswordChar: string;
+                Path: string;
+                PathData: string;
+                PathSchema: string;
+                Pattern: string;
+                Placement: string;
+                PlaceOnToolbox: string;
+                PointAtCenter: string;
+                Position: string;
+                Positive: string;
+                PositiveColor: string;
+                PreferredColumnWidth: string;
+                PreferredRowHeight: string;
+                PreventIntersection: string;
+                PreviewMode: string;
+                PreviewSettings: string;
+                Printable: string;
+                PrintAtBottom: string;
+                PrinterName: string;
+                PrinterSettings: string;
+                PrintHeadersFootersFromPreviousPage: string;
+                PrintIfDetailEmpty: string;
+                PrintIfEmpty: string;
+                PrintIfParentDisabled: string;
+                PrintOn: string;
+                PrintOnAllPages: string;
+                PrintOnEvenOddPages: string;
+                PrintOnPreviousPage: string;
+                PrintTitleOnAllPages: string;
+                PrintVerticalBars: string;
+                ProcessAt: string;
+                ProcessAtEnd: string;
+                ProcessingDuplicates: string;
+                ProcessTilde: string;
+                ProductHomePage: string;
+                RadarStyle: string;
+                RadialBarBorderBrush: string;
+                RadialBarBrush: string;
+                RadialBarEmptyBorderBrush: string;
+                RadialBarEmptyBrush: string;
+                Radius: string;
+                RadiusMode: string;
+                Range: string;
+                RangeColorMode: string;
+                RangeFrom: string;
+                RangeMode: string;
+                RangeScrollEnabled: string;
+                RangeTo: string;
+                RangeType: string;
+                Ratio: string;
+                RatioY: string;
+                ReadOnly: string;
+                RecentFonts: string;
+                ReconnectOnEachRow: string;
+                ReferencedAssemblies: string;
+                Refresh: string;
+                RefreshTime: string;
+                Regular: string;
+                Relation: string;
+                RelationName: string;
+                Relations: string;
+                RelativeHeight: string;
+                RelativeWidth: string;
+                RemoveUnusedDataBeforeStart: string;
+                RenderTo: string;
+                ReportAlias: string;
+                ReportAuthor: string;
+                ReportCacheMode: string;
+                ReportDescription: string;
+                ReportIcon: string;
+                ReportImage: string;
+                ReportName: string;
+                ReportUnit: string;
+                RequestFromUser: string;
+                RequestParameters: string;
+                ResetDataSource: string;
+                ResetPageNumber: string;
+                Resize: string;
+                Resource: string;
+                Resources: string;
+                Restrictions: string;
+                RetrieveOnlyUsedData: string;
+                ReturnValue: string;
+                ReverseHor: string;
+                ReverseVert: string;
+                Right: string;
+                RightSide: string;
+                RightToLeft: string;
+                Rotation: string;
+                RotationLabels: string;
+                Round: string;
+                RoundValues: string;
+                RowCount: string;
+                RowHeaderBackColor: string;
+                RowHeaderForeColor: string;
+                RowHeadersVisible: string;
+                RowHeaderWidth: string;
+                Rows: string;
+                Scale: string;
+                ScaleHor: string;
+                ScriptLanguage: string;
+                SegmentPerHeight: string;
+                SegmentPerWidth: string;
+                SelectedBackColor: string;
+                SelectedCellBackColor: string;
+                SelectedCellForeColor: string;
+                SelectedDataColor: string;
+                SelectedDataForeground: string;
+                SelectedForeColor: string;
+                SelectedGlyphColor: string;
+                SelectedIndex: string;
+                SelectedItem: string;
+                SelectedKey: string;
+                SelectedValue: string;
+                Selection: string;
+                SelectionBackColor: string;
+                SelectionEnabled: string;
+                SelectionForeColor: string;
+                SelectionMode: string;
+                SeparatorColor: string;
+                SerialNumber: string;
+                Series: string;
+                SeriesColors: string;
+                SeriesLabels: string;
+                SeriesLabelsBorderColor: string;
+                SeriesLabelsBrush: string;
+                SeriesLabelsColor: string;
+                SeriesLabelsLineColor: string;
+                SeriesLighting: string;
+                SeriesShowBorder: string;
+                SeriesShowShadow: string;
+                SeriesTitle: string;
+                Shadow: string;
+                ShadowBrush: string;
+                ShadowColor: string;
+                ShadowSize: string;
+                ShapeType: string;
+                Shift: string;
+                ShiftMode: string;
+                ShortName: string;
+                ShortValue: string;
+                ShowAllValue: string;
+                ShowBehind: string;
+                ShowBubble: string;
+                ShowDialog: string;
+                ShowEdgeValues: string;
+                ShowImageBehind: string;
+                ShowInLegend: string;
+                ShowInPercent: string;
+                ShowLabels: string;
+                ShowLabelText: string;
+                ShowLegend: string;
+                ShowMarker: string;
+                ShowNulls: string;
+                ShowOthers: string;
+                ShowPercents: string;
+                ShowQuietZoneIndicator: string;
+                ShowQuietZones: string;
+                ShowScrollBar: string;
+                ShowSelectAll: string;
+                ShowSeriesLabels: string;
+                ShowShadow: string;
+                ShowTotal: string;
+                ShowUpDown: string;
+                ShowValue: string;
+                ShowXAxis: string;
+                ShowYAxis: string;
+                ShowZeros: string;
+                ShrinkFontToFit: string;
+                ShrinkFontToFitMinimumSize: string;
+                Side: string;
+                Sides: string;
+                Simple: string;
+                Size: string;
+                SizeMode: string;
+                Skin: string;
+                SkipFirst: string;
+                SkipIndices: string;
+                SkipIndicesObj: string;
+                SkipMajorValues: string;
+                SkipValues: string;
+                SkipValuesObj: string;
+                Smoothing: string;
+                Sort: string;
+                SortBy: string;
+                SortDirection: string;
+                Sorted: string;
+                SortingColumn: string;
+                SortingEnabled: string;
+                SortType: string;
+                Space: string;
+                Spacing: string;
+                SqlCommand: string;
+                StartAngle: string;
+                StartCap: string;
+                StartColor: string;
+                StartFromZero: string;
+                StartMode: string;
+                StartNewPage: string;
+                StartNewPageIfLessThan: string;
+                StartPosition: string;
+                StartValue: string;
+                StartWidth: string;
+                Step: string;
+                Stop: string;
+                StopBeforePage: string;
+                StopBeforePrint: string;
+                StoreImagesInResources: string;
+                Stretch: string;
+                StretchToPrintArea: string;
+                Strikeout: string;
+                StripBrush: string;
+                Strips: string;
+                Stroke: string;
+                StructuredAppendPosition: string;
+                StructuredAppendTotal: string;
+                Style: string;
+                StyleColors: string;
+                Styles: string;
+                SubReportPage: string;
+                Summaries: string;
+                Summary: string;
+                SummaryExpression: string;
+                SummarySortDirection: string;
+                SummaryType: string;
+                SummaryValues: string;
+                SupplementCode: string;
+                SupplementType: string;
+                SweepAngle: string;
+                SystemFonts: string;
+                SystemVariable: string;
+                SystemVariables: string;
+                Table: string;
+                Tag: string;
+                TagDataColumn: string;
+                TagValue: string;
+                Target: string;
+                TargetIcon: string;
+                TargetMode: string;
+                Tension: string;
+                Text: string;
+                TextAfter: string;
+                TextAlign: string;
+                TextAlignment: string;
+                TextBefore: string;
+                TextBrush: string;
+                TextColor: string;
+                TextFormat: string;
+                TextOnly: string;
+                TextOptions: string;
+                TextQuality: string;
+                TickLabelMajorFont: string;
+                TickLabelMajorTextBrush: string;
+                TickLabelMinorFont: string;
+                TickLabelMinorTextBrush: string;
+                TickMarkMajorBorder: string;
+                TickMarkMajorBorderWidth: string;
+                TickMarkMajorBrush: string;
+                TickMarkMinorBorder: string;
+                TickMarkMinorBorderWidth: string;
+                TickMarkMinorBrush: string;
+                Ticks: string;
+                Title: string;
+                TitleBeforeHeader: string;
+                TitleColor: string;
+                TitleDirection: string;
+                TitleFont: string;
+                TitleVisible: string;
+                To: string;
+                Today: string;
+                ToolTip: string;
+                ToolTipDataColumn: string;
+                Top: string;
+                Topmost: string;
+                TopmostLine: string;
+                TopN: string;
+                TopSide: string;
+                Total: string;
+                Totals: string;
+                TrackColor: string;
+                TransparentColor: string;
+                TrendLine: string;
+                TrendLineColor: string;
+                TrendLines: string;
+                TrendLineShowShadow: string;
+                TrimExcessData: string;
+                Trimming: string;
+                Type: string;
+                TypeName: string;
+                Types: string;
+                Underline: string;
+                UndoLimit: string;
+                Unit: string;
+                UnlimitedBreakable: string;
+                UnlimitedHeight: string;
+                UnlimitedWidth: string;
+                UseAliases: string;
+                UseExternalReport: string;
+                UseParentStyles: string;
+                UseRangeColor: string;
+                UseRectangularSymbols: string;
+                UseSeriesColor: string;
+                UseStyleOfSummaryInColumnTotal: string;
+                UseStyleOfSummaryInRowTotal: string;
+                UseValuesFromTheSpecifiedRange: string;
+                Value: string;
+                ValueClose: string;
+                ValueDataColumn: string;
+                ValueDataColumnClose: string;
+                ValueDataColumnEnd: string;
+                ValueDataColumnHigh: string;
+                ValueDataColumnLow: string;
+                ValueDataColumnOpen: string;
+                ValueEnd: string;
+                ValueFormat: string;
+                ValueHigh: string;
+                ValueLow: string;
+                ValueMeter: string;
+                ValueOpen: string;
+                Values: string;
+                ValueType: string;
+                ValueTypeSeparator: string;
+                Variable: string;
+                Variables: string;
+                Variation: string;
+                Version: string;
+                VertAlignment: string;
+                VertSpacing: string;
+                ViewMode: string;
+                Visible: string;
+                Watermark: string;
+                Weight: string;
+                WeightDataColumn: string;
+                Weights: string;
+                Width: string;
+                WindowState: string;
+                WordWrap: string;
+                Wrap: string;
+                WrapGap: string;
+                XAxis: string;
+                XTopAxis: string;
+                YAxis: string;
+                YRightAxis: string;
+                Zoom: string;
+            };
+            PropertySystemColors: {
+                ActiveBorder: string;
+                ActiveCaption: string;
+                ActiveCaptionText: string;
+                AppWorkspace: string;
+                Control: string;
+                ControlDark: string;
+                ControlDarkDark: string;
+                ControlLight: string;
+                ControlLightLight: string;
+                ControlText: string;
+                Desktop: string;
+                GrayText: string;
+                Highlight: string;
+                HighlightText: string;
+                HotTrack: string;
+                InactiveBorder: string;
+                InactiveCaption: string;
+                InactiveCaptionText: string;
+                Info: string;
+                InfoText: string;
+                Menu: string;
+                MenuText: string;
+                ScrollBar: string;
+                Window: string;
+                WindowFrame: string;
+                WindowText: string;
+            };
+            QueryBuilder: {
+                AddObject: string;
+                AddSubQuery: string;
+                AllObjects: string;
+                BadFromObjectExpression: string;
+                BadObjectName: string;
+                BadSelectStatement: string;
+                Collections: string;
+                CreateLinksFromForeignKeys: string;
+                CriteriaAlias: string;
+                CriteriaCriteria: string;
+                CriteriaExpression: string;
+                CriteriaGroupBy: string;
+                CriteriaOr: string;
+                CriteriaOutput: string;
+                CriteriaSortOrder: string;
+                CriteriaSortType: string;
+                Database: string;
+                DataSourceProperties: string;
+                DialectDontSupportDatabases: string;
+                DialectDontSupportSchemas: string;
+                DialectDontSupportUnions: string;
+                DialectDontSupportUnionsBrackets: string;
+                DialectDontSupportUnionsBracketsInSubQuery: string;
+                DialectDontSupportUnionsInSubQueries: string;
+                Edit: string;
+                EncloseWithBrackets: string;
+                Expressions: string;
+                InsertEmptyItem: string;
+                JoinExpression: string;
+                LabelAlias: string;
+                LabelFilterObjectsBySchemaName: string;
+                LabelJoinExpression: string;
+                LabelLeftColumn: string;
+                LabelLeftObject: string;
+                LabelObject: string;
+                LabelRightColumn: string;
+                LabelRightObject: string;
+                LinkProperties: string;
+                MetadataProviderCantExecSQL: string;
+                MetaProviderCantLoadMetadata: string;
+                MetaProviderCantLoadMetadataForDatabase: string;
+                MoveDown: string;
+                MoveUp: string;
+                NewUnionSubQuery: string;
+                NoConnectionObject: string;
+                NoTransactionObject: string;
+                Objects: string;
+                ProcedureParameters: string;
+                Procedures: string;
+                qnSaveChanges: string;
+                Query: string;
+                QueryBuilder: string;
+                QueryParameters: string;
+                QueryProperties: string;
+                Remove: string;
+                RemoveBrackets: string;
+                RunQueryBuilder: string;
+                SelectAllFromLeft: string;
+                SelectAllFromRight: string;
+                SwitchToDerivedTable: string;
+                Tables: string;
+                UnexpectedTokenAt: string;
+                Unions: string;
+                UnionSubMenu: string;
+                ViewQuery: string;
+                Views: string;
+            };
+            Questions: {
+                qnConfiguration: string;
+                qnDictionaryNew: string;
+                qnLanguageNew: string;
+                qnPageDelete: string;
+                qnRemove: string;
+                qnRemoveService: string;
+                qnRemoveServiceCategory: string;
+                qnRemoveUnused: string;
+                qnReplace: string;
+                qnRestoreDefault: string;
+                qnSaveChanges: string;
+                qnSaveChangesToPreviewPage: string;
+                qnSynchronize: string;
+                qnSynchronizeServices: string;
+            };
+            Report: {
+                ActiveRelation: string;
+                Address: string;
+                Alphabetical: string;
+                Bands: string;
+                Basic: string;
+                BasicConfiguration: string;
+                BusinessObjects: string;
+                Categorized: string;
+                Charts: string;
+                Checking: string;
+                ClickForMoreDetails: string;
+                CollapseAll: string;
+                Collection: string;
+                CompilingReport: string;
+                Complete: string;
+                Components: string;
+                ConnectingToData: string;
+                CopyOf: string;
+                CreateNewReportPageForm: string;
+                CreatingReport: string;
+                CrossBands: string;
+                Dialogs: string;
+                EditStyles: string;
+                Enhancements: string;
+                Errors: string;
+                EventsTab: string;
+                ExpandAll: string;
+                FilterAnd: string;
+                FilterOr: string;
+                FinishingReport: string;
+                FirstPass: string;
+                FixedBugs: string;
+                Gallery: string;
+                GenerateNewCode: string;
+                History: string;
+                Infographics: string;
+                InfoMessage: string;
+                InformationMessages: string;
+                LabelAlias: string;
+                LabelAuthor: string;
+                LabelBackground: string;
+                LabelCategory: string;
+                LabelCentimeters: string;
+                LabelCollectionName: string;
+                LabelColor: string;
+                LabelCountData: string;
+                LabelDataBand: string;
+                LabelDataColumn: string;
+                LabelDefaultValue: string;
+                LabelExpression: string;
+                LabelFactorLevel: string;
+                LabelFontName: string;
+                LabelFunction: string;
+                LabelHundredthsOfInch: string;
+                LabelInches: string;
+                LabelMillimeters: string;
+                LabelName: string;
+                LabelNameInSource: string;
+                LabelNestedLevel: string;
+                LabelPassword: string;
+                LabelPixels: string;
+                LabelQueryTimeout: string;
+                LabelSystemVariable: string;
+                LabelTotals: string;
+                LabelType: string;
+                LabelUserName: string;
+                LabelValue: string;
+                LoadingReport: string;
+                nameAssembly: string;
+                NewFeatures: string;
+                No: string;
+                NoFixes: string;
+                NoIssues: string;
+                NoNewVersions: string;
+                NotAssigned: string;
+                Null: string;
+                Office2010Back: string;
+                PageNofM: string;
+                PreparingReport: string;
+                Professional: string;
+                ProfessionalConfiguration: string;
+                PropertiesTab: string;
+                RangeAll: string;
+                RangeCurrentPage: string;
+                RangeInfo: string;
+                RangePage: string;
+                RangePages: string;
+                ReportChecker: string;
+                ReportRenderingMessages: string;
+                RestartDesigner: string;
+                SaveReportPagesOrFormsFromReport: string;
+                SavingReport: string;
+                SecondPass: string;
+                Shapes: string;
+                Standard: string;
+                StandardConfiguration: string;
+                StiEmptyBrush: string;
+                StiGlareBrush: string;
+                StiGlassBrush: string;
+                StiGradientBrush: string;
+                StiHatchBrush: string;
+                StiSolidBrush: string;
+                StyleBad: string;
+                StyleGood: string;
+                StyleNeutral: string;
+                StyleNormal: string;
+                StyleNote: string;
+                StyleWarning: string;
+                Warnings: string;
+                WhatsNewInVersion: string;
+                When: string;
+                WhenAnd: string;
+                WhenValueIs: string;
+            };
+            ReportInfo: {
+                CheckIssuesAdditionalDescription: string;
+                EncryptWithPassword: string;
+                EncryptWithPasswordAdditionalDescription: string;
+                EncryptWithPasswordDescription: string;
+                Info: string;
+                ReportOptions: string;
+                ReportOptionsAdditionalDescription: string;
+            };
+            ReportOpen: {
+                Browse: string;
+                Import: string;
+            };
+            Services: {
+                categoryContextTools: string;
+                categoryDesigner: string;
+                categoryDictionary: string;
+                categoryExport: string;
+                categoryLanguages: string;
+                categoryPanels: string;
+                categoryRender: string;
+                categoryShapes: string;
+                categorySL: string;
+                categorySystem: string;
+                categoryTextFormat: string;
+            };
+            Shapes: {
+                Arrow: string;
+                BasicShapes: string;
+                BentArrow: string;
+                BlockArrows: string;
+                Chevron: string;
+                ComplexArrow: string;
+                DiagonalDownLine: string;
+                DiagonalUpLine: string;
+                Division: string;
+                Equal: string;
+                EquationShapes: string;
+                Flowchart: string;
+                FlowchartCard: string;
+                FlowchartCollate: string;
+                FlowchartDecision: string;
+                FlowchartManualInput: string;
+                FlowchartOffPageConnector: string;
+                FlowchartPreparation: string;
+                FlowchartSort: string;
+                Frame: string;
+                HorizontalLine: string;
+                InsertShapes: string;
+                LeftAndRightLine: string;
+                Lines: string;
+                Minus: string;
+                Multiply: string;
+                Octagon: string;
+                Oval: string;
+                Parallelogram: string;
+                Plus: string;
+                Rectangle: string;
+                Rectangles: string;
+                RegularPentagon: string;
+                RoundedRectangle: string;
+                ServiceCategory: string;
+                ShapeStyles: string;
+                SnipDiagonalSideCornerRectangle: string;
+                SnipSameSideCornerRectangle: string;
+                TopAndBottomLine: string;
+                Trapezoid: string;
+                Triangle: string;
+                VerticalLine: string;
+            };
+            SystemVariables: {
+                Column: string;
+                GroupLine: string;
+                IsFirstPage: string;
+                IsFirstPageThrough: string;
+                IsLastPage: string;
+                IsLastPageThrough: string;
+                Line: string;
+                LineABC: string;
+                LineRoman: string;
+                LineThrough: string;
+                PageCopyNumber: string;
+                PageNofM: string;
+                PageNofMThrough: string;
+                PageNumber: string;
+                PageNumberThrough: string;
+                ReportAlias: string;
+                ReportAuthor: string;
+                ReportChanged: string;
+                ReportCreated: string;
+                ReportDescription: string;
+                ReportName: string;
+                Time: string;
+                Today: string;
+                TotalPageCount: string;
+                TotalPageCountThrough: string;
+            };
+            TableRibbon: {
+                BuiltIn: string;
+                Delete: string;
+                DeleteColumns: string;
+                DeleteRows: string;
+                DeleteTable: string;
+                DistributeColumns: string;
+                DistributeRows: string;
+                InsertAbove: string;
+                InsertBelow: string;
+                InsertLeft: string;
+                InsertRight: string;
+                PlainTables: string;
+                ribbonBarRowsColumns: string;
+                ribbonBarTable: string;
+                ribbonBarTableStyles: string;
+                Select: string;
+                SelectColumn: string;
+                SelectRow: string;
+                SelectTable: string;
+            };
+            Toolbars: {
+                Align: string;
+                AlignBottom: string;
+                AlignCenter: string;
+                AlignLeft: string;
+                AlignMiddle: string;
+                AlignRight: string;
+                AlignToGrid: string;
+                AlignTop: string;
+                AlignWidth: string;
+                BringToFront: string;
+                CenterHorizontally: string;
+                CenterVertically: string;
+                Conditions: string;
+                FontGrow: string;
+                FontName: string;
+                FontShrink: string;
+                FontSize: string;
+                FontStyleBold: string;
+                FontStyleItalic: string;
+                FontStyleUnderline: string;
+                Link: string;
+                Lock: string;
+                MakeHorizontalSpacingEqual: string;
+                MakeSameHeight: string;
+                MakeSameSize: string;
+                MakeSameWidth: string;
+                MakeVerticalSpacingEqual: string;
+                MoveBackward: string;
+                MoveForward: string;
+                Order: string;
+                SendToBack: string;
+                Size: string;
+                StyleDesigner: string;
+                Styles: string;
+                TabHome: string;
+                TabLayout: string;
+                TabPage: string;
+                TabView: string;
+                TextBrush: string;
+                ToolbarAlignment: string;
+                ToolbarArrange: string;
+                ToolbarBorders: string;
+                ToolbarClipboard: string;
+                ToolbarDockStyle: string;
+                ToolbarFont: string;
+                ToolbarFormatting: string;
+                ToolbarLayout: string;
+                ToolbarPageSetup: string;
+                ToolbarStandard: string;
+                ToolbarStyle: string;
+                ToolbarTextFormat: string;
+                ToolbarTools: string;
+                ToolbarViewOptions: string;
+                ToolbarWatermarkImage: string;
+                ToolbarWatermarkText: string;
+            };
+            Toolbox: {
+                Create: string;
+                Hand: string;
+                Select: string;
+                Style: string;
+                TextEditor: string;
+                title: string;
+            };
+            WelcomeScreen: {
+                AllDownloadsWillCanceled: string;
+                Description: string;
+                GetStarted: string;
+                GetStartedWithDashboards: string;
+                GetStartedWithReports: string;
+                MoreReports: string;
+                ShowNextTime: string;
+                Title: string;
+            };
+            Wizards: {
+                BlankDashboard: string;
+                BlankReport: string;
+                ButtonBack: string;
+                ButtonCancel: string;
+                ButtonFinish: string;
+                ButtonNext: string;
+                ColumnsOrder: string;
+                Company: string;
+                Custom: string;
+                DataRelation: string;
+                DataSource: string;
+                DataSources: string;
+                DefaultThemes: string;
+                Filters: string;
+                FromReportTemplate: string;
+                GetData: string;
+                groupCreateNewDashboard: string;
+                groupCreateNewPageOrForm: string;
+                groupCreateNewReport: string;
+                Groups: string;
+                groupTemplates: string;
+                groupWizards: string;
+                infoColumnsOrder: string;
+                infoCompanyInfo: string;
+                infoDataSource: string;
+                infoDataSources: string;
+                infoFilters: string;
+                infoGroups: string;
+                infoLabelSettings: string;
+                infoLanguages: string;
+                infoLayout: string;
+                infoRelation: string;
+                infoSelectColumns: string;
+                infoSelectTemplate: string;
+                infoSort: string;
+                infoThemes: string;
+                infoTotals: string;
+                LabelDirection: string;
+                LabelHeight: string;
+                LabelHorizontalGap: string;
+                LabelLabelType: string;
+                LabelLeftMargin: string;
+                LabelNumberOfColumns: string;
+                LabelNumberOfRows: string;
+                LabelPageHeight: string;
+                LabelPageWidth: string;
+                LabelReport: string;
+                LabelSettings: string;
+                LabelSize: string;
+                LabelTopMargin: string;
+                LabelVerticalGap: string;
+                LabelWidth: string;
+                Layout: string;
+                Mapping: string;
+                MarkAll: string;
+                MasterDetailReport: string;
+                NoFunction: string;
+                OpenExistingReport: string;
+                OpenFrom: string;
+                Preview: string;
+                Reset: string;
+                Results: string;
+                RunWizard: string;
+                SelectColumns: string;
+                SelectTemplate: string;
+                Sort: string;
+                StandardReport: string;
+                Themes: string;
+                title: string;
+                Totals: string;
+                UseDemoData: string;
+                UsingReportWizard: string;
+                YouHaveNotOpenedAnyReportRecently: string;
+            };
+            Zoom: {
+                EmptyValue: string;
+                MultiplePages: string;
+                OnePage: string;
+                PageHeight: string;
+                PageWidth: string;
+                TwoPages: string;
+                ZoomTo100: string;
             };
         };
         static setLocalization(localizationXml: string, onlyThis?: boolean): void;
@@ -10117,8 +10222,11 @@ declare namespace Stimulsoft.Base.Meters {
     }
 }
 declare namespace Stimulsoft.Base.Meters {
+    import Color = Stimulsoft.System.Drawing.Color;
     let IStiColorScaleColumn: string;
     interface IStiColorScaleColumn {
+        minimumColor: Color;
+        maximumColor: Color;
     }
 }
 declare namespace Stimulsoft.Base.Meters {
@@ -10548,6 +10656,11 @@ declare namespace Stimulsoft.Base {
         Basic = 0,
         Standard = 1,
         Professional = 2
+    }
+    enum StiAutoBool {
+        Auto = 0,
+        True = 1,
+        False = 2
     }
     enum StiSummaryColumnType {
         Sum = 0,
@@ -11400,9 +11513,11 @@ declare namespace Stimulsoft.Data.Functions {
         static all(value: any): any;
         static isAggregationFunction(functionn: string): boolean;
         static avg(value: any): number;
+        static avgNulls(value: any): number;
         static avgDate(value: any): DateTime | null;
         static avgTime(value: any): TimeSpan | null;
         static max(value: any): number;
+        static maxNulls(value: number): number;
         static maxD(value: any): number;
         static maxI(value: any): number;
         static maxDate(value: any): DateTime | null;
@@ -11410,12 +11525,14 @@ declare namespace Stimulsoft.Data.Functions {
         static maxStr(value: any): string;
         static median(value: any): number;
         static min(value: any): number;
+        static minNulls(value: any): number;
         static minDate(value: any): DateTime | null;
         static minTime(value: any): TimeSpan | null;
         static minMaxDateString(value: any): string;
         static minStr(value: any): string;
         static mode(value: any): number;
         static sum(value: any): number;
+        static sumNulls(value: any): number;
         static sumD(value: any): number;
         static sumI(value: any): number;
         static sumTime(value: any): TimeSpan;
@@ -11583,12 +11700,65 @@ declare namespace Stimulsoft.Data.Functions {
         static trimEndObject(value: any): any;
         static substring(str: string, startIndex: number, length?: number): string;
         static substringObject(value: any, startIndex: number, length?: number): any;
+        static getSystemVariable(variable: StiSystemVariableObject, line: number): any;
         static existsCustomFunction(funcName: string): boolean;
         static getCustomFunctions(funcName: string): List<IStiAppFunction>;
         static getCustomFunction(funcName: string, argumentTypes: List<Type>): IStiAppFunction;
         static invokeCustomFunction(funcName: string, argumentss: List<any>): any;
         static skipNulls(values: List<any>): List<any>;
         static optionalSkipNulls(values: List<object>): List<object>;
+        private static arabics;
+        private static romans;
+        private static subs;
+        private static abc;
+        private static abcRu;
+        static toRoman(value: number): string;
+        static toABC(value: number): string;
+        static toABCNumeric(value: number): string;
+        static toABCRu(value: number): string;
+        static toArabic(value: string | number, useEasternDigits: boolean): string;
+    }
+}
+declare namespace Stimulsoft.Data.Functions {
+    import Enum = Stimulsoft.System.Enum;
+    enum StiQuarter {
+        Q1 = 1,
+        Q2 = 2,
+        Q3 = 3,
+        Q4 = 4
+    }
+    class StiMonth extends Enum {
+        static January: StiMonth;
+        static February: StiMonth;
+        static March: StiMonth;
+        static April: StiMonth;
+        static May: StiMonth;
+        static June: StiMonth;
+        static July: StiMonth;
+        static August: StiMonth;
+        static September: StiMonth;
+        static October: StiMonth;
+        static November: StiMonth;
+        static December: StiMonth;
+        static 1: StiMonth;
+        static 2: StiMonth;
+        static 3: StiMonth;
+        static 4: StiMonth;
+        static 5: StiMonth;
+        static 6: StiMonth;
+        static 7: StiMonth;
+        static 8: StiMonth;
+        static 9: StiMonth;
+        static 10: StiMonth;
+        static 11: StiMonth;
+        static 12: StiMonth;
+    }
+    class StiSystemVariableObject {
+        static Line: StiSystemVariableObject;
+        static LineABC: StiSystemVariableObject;
+        static LineRoman: StiSystemVariableObject;
+        private value;
+        constructor(value: string);
     }
 }
 declare namespace Stimulsoft.Data.Parsers {
@@ -11981,7 +12151,7 @@ declare namespace Stimulsoft.Data.Engine {
         showOthers: boolean;
         othersText: string;
         measureField: string;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         toString(): string;
         getUniqueCode(): number;
         constructor(mode?: StiDataTopNMode, count?: number, showOthers?: boolean, othersText?: string, measureField?: string);
@@ -14083,28 +14253,6 @@ declare namespace Stimulsoft.Data.Extensions {
     }
 }
 declare namespace Stimulsoft.Data.Functions {
-    enum StiQuarter {
-        Q1 = 1,
-        Q2 = 2,
-        Q3 = 3,
-        Q4 = 4
-    }
-    enum StiMonth {
-        January = 1,
-        February = 2,
-        March = 3,
-        April = 4,
-        May = 5,
-        June = 6,
-        July = 7,
-        August = 8,
-        September = 9,
-        October = 10,
-        November = 11,
-        December = 12
-    }
-}
-declare namespace Stimulsoft.Data.Functions {
     import DateTime = Stimulsoft.System.DateTime;
     class StiDayOfWeekToStrHelper {
         private static days;
@@ -15202,6 +15350,10 @@ declare namespace Stimulsoft.Report.Components {
         FlipHorizontal = 4,
         FlipVertical = 5
     }
+    enum StiDashboardViewMode {
+        Desktop = 0,
+        Mobile = 1
+    }
 }
 declare namespace Stimulsoft.Report.BarCodes {
     import StringFormat = Stimulsoft.System.Drawing.StringFormat;
@@ -15756,7 +15908,7 @@ declare namespace Stimulsoft.Report.Components {
         private static eventBeforePrint;
         protected onBeforePrint(e: EventArgs): void;
         invokeBeforePrint(sender: any, e: EventArgs): void;
-        applyConditions(sender: any, conditions: any[]): void;
+        applyConditions(sender: any, conditions: any[], e: EventArgs): void;
         get beforePrintEvent(): StiBeforePrintEvent;
         set beforePrintEvent(value: StiBeforePrintEvent);
         private static eventAfterPrint;
@@ -18147,7 +18299,7 @@ declare namespace Stimulsoft.Report.Chart {
     import StiPenStyle = Stimulsoft.Base.Drawing.StiPenStyle;
     import Color = Stimulsoft.System.Drawing.Color;
     let IStiBaseLineSeries: string;
-    interface IStiBaseLineSeries extends IStiSeries, IStiAllowApplyColorNegative {
+    interface IStiBaseLineSeries extends IStiSeries, IStiAllowApplyColorNegative, IStiShowNullsSeries, IStiShowZerosSeries {
         marker: IStiMarker;
         lineMarker: IStiLineMarker;
         lineColor: Color;
@@ -18155,21 +18307,26 @@ declare namespace Stimulsoft.Report.Chart {
         lighting: boolean;
         lineWidth: number;
         labelsOffset: number;
-        showNulls: boolean;
-        showZeros: boolean;
         lineColorNegative: Color;
+        showNullsAs: StiShowEmptyCellsAs;
+        showZerosAs: StiShowEmptyCellsAs;
     }
 }
 declare namespace Stimulsoft.Report.Chart {
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Color = Stimulsoft.System.Drawing.Color;
     let IStiClusteredColumnSeries: string;
-    interface IStiClusteredColumnSeries extends IStiSeries, IStiAllowApplyBrushNegative {
+    interface IStiClusteredColumnSeries extends IStiSeries, IStiAllowApplyBrushNegative, IStiShowZerosSeries {
         width: number;
         borderColor: Color;
         brush: StiBrush;
         brushNegative: StiBrush;
         showZeros: boolean;
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
+    let IStiHistogramSeries: string;
+    interface IStiHistogramSeries extends IStiClusteredColumnSeries {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -18292,7 +18449,7 @@ declare namespace Stimulsoft.Report.Chart {
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Color = Stimulsoft.System.Drawing.Color;
     let IStiFunnelSeries: string;
-    interface IStiFunnelSeries extends IStiSeries {
+    interface IStiFunnelSeries extends IStiSeries, IStiShowZerosSeries {
         showZeros: boolean;
         allowApplyBrush: boolean;
         allowApplyBorderColor: boolean;
@@ -18358,7 +18515,7 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     let IStiRadarSeries: string;
-    interface IStiRadarSeries extends IStiSeries {
+    interface IStiRadarSeries extends IStiSeries, IStiShowNullsSeries {
         marker: IStiMarker;
         showNulls: boolean;
     }
@@ -18418,7 +18575,7 @@ declare namespace Stimulsoft.Report.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     let IStiStackedBarSeries: string;
-    interface IStiStackedBarSeries extends IStiSeries, IStiAllowApplyBrushNegative {
+    interface IStiStackedBarSeries extends IStiSeries, IStiAllowApplyBrushNegative, IStiShowZerosSeries {
         width: number;
         borderColor: Color;
         brush: StiBrush;
@@ -18439,7 +18596,7 @@ declare namespace Stimulsoft.Report.Chart {
     import StiPenStyle = Stimulsoft.Base.Drawing.StiPenStyle;
     import Color = Stimulsoft.System.Drawing.Color;
     let IStiStackedBaseLineSeries: string;
-    interface IStiStackedBaseLineSeries extends IStiSeries {
+    interface IStiStackedBaseLineSeries extends IStiSeries, IStiShowNullsSeries {
         marker: IStiMarker;
         lineMarker: IStiLineMarker;
         lighting: boolean;
@@ -18453,7 +18610,7 @@ declare namespace Stimulsoft.Report.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     let IStiStackedColumnSeries: string;
-    interface IStiStackedColumnSeries extends IStiSeries, IStiAllowApplyBrushNegative {
+    interface IStiStackedColumnSeries extends IStiSeries, IStiAllowApplyBrushNegative, IStiShowZerosSeries {
         width: number;
         borderColor: Color;
         brush: StiBrush;
@@ -18730,6 +18887,18 @@ declare namespace Stimulsoft.Report.Chart {
         pointIndex: number;
         point: Point;
         fill(area: IStiArea, series: IStiSeries, pointIndex: number): any;
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
+    let IStiShowNullsSeries: string;
+    interface IStiShowNullsSeries {
+        showNulls: boolean;
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
+    let IStiShowZerosSeries: string;
+    interface IStiShowZerosSeries {
+        showZeros: boolean;
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -19332,6 +19501,7 @@ declare namespace Stimulsoft.Report.Chart {
         FullStackedColumn = 2,
         Pareto = 3,
         Waterfall = 4,
+        Histogram = 5,
         ClusteredBar = 10,
         StackedBar = 11,
         FullStackedBar = 12,
@@ -19569,6 +19739,10 @@ declare namespace Stimulsoft.Report.Chart {
         Argument = 1,
         Series = 2
     }
+    enum StiShowEmptyCellsAs {
+        Gap = 0,
+        ConnectPointsWithLine = 1
+    }
 }
 declare namespace Stimulsoft.Report.CodeDom {
     import StiRichText = Stimulsoft.Report.Components.StiRichText;
@@ -19587,6 +19761,9 @@ declare namespace Stimulsoft.Report.CodeDom {
     class StiCodeGenerator {
         private static keywordsHashtable;
         private static keywords;
+        private static reservedWordsHashtable;
+        private static reservedWords;
+        static isReservedWordExist(value: string): boolean;
         static isKeywordExist(value: string): boolean;
         quoteSnippetString(value: string): string;
         static init(): void;
@@ -19872,369 +20049,373 @@ declare namespace Stimulsoft.Report {
         StiSunburstSeries = 146,
         StiWaterfallSeries = 147,
         StiPictorialSeries = 148,
-        StiFullStackedBarSeries = 149,
-        StiPieSeries = 150,
-        StiDoughnutSeries = 151,
-        StiGanttSeries = 152,
-        StiScatterSeries = 153,
-        StiScatterLineSeries = 154,
-        StiScatterSplineSeries = 155,
-        StiRadarAreaSeries = 156,
-        StiRadarLineSeries = 157,
-        StiRadarPointSeries = 158,
-        StiRangeSeries = 159,
-        StiSteppedRangeSeries = 160,
-        StiFunnelSeries = 161,
-        StiFunnelWeightedSlicesSeries = 162,
-        StiRangeBarSeries = 163,
-        StiSplineRangeSeries = 164,
-        StiCandlestickSeries = 165,
-        StiStockSeries = 166,
-        StiChartTitle = 167,
-        StiLineMarker = 168,
-        StiMarker = 169,
-        StiChartTable = 170,
-        StiSeriesTopN = 171,
-        StiSeriesInteraction = 172,
-        StiTrendLine = 173,
-        StiSeriesLabels = 174,
-        StiNoneLabels = 175,
-        StiInsideEndAxisLabels = 176,
-        StiInsideBaseAxisLabels = 177,
-        StiCenterTreemapLabels = 178,
-        StiCenterAxisLabels = 179,
-        StiOutsideEndAxisLabels = 180,
-        StiOutsideBaseAxisLabels = 181,
-        StiOutsideAxisLabels = 182,
-        StiLeftAxisLabels = 183,
-        StiValueAxisLabels = 184,
-        StiRightAxisLabels = 185,
-        StiCenterFunnelLabels = 186,
-        StiCenterPieLabels = 187,
-        StiOutsidePieLabels = 188,
-        StiTwoColumnsPieLabels = 189,
-        StiOutsideLeftFunnelLabels = 190,
-        StiOutsideRightFunnelLabels = 191,
-        StiLegend = 192,
-        StiClusteredColumnArea = 193,
-        StiPieArea = 194,
-        StiTreemapArea = 195,
-        StiSunburstArea = 196,
-        StiWaterfallArea = 197,
-        StiFunnelArea = 198,
-        StiFunnelWeightedSlicesArea = 199,
-        StiPictorialArea = 200,
-        StiRadarAreaArea = 201,
-        StiRadarLineArea = 202,
-        StiRadarPointArea = 203,
-        StiStackedColumnArea = 204,
-        StiGridLines = 205,
-        StiInterlacing = 206,
-        StiXAxis = 207,
-        StiXTopAxis = 208,
-        StiYAxis = 209,
-        StiYRightAxis = 210,
-        StiRadarGridLines = 211,
-        StiXRadarAxis = 212,
-        StiYRadarAxis = 213,
-        StiDialogInfoItem = 214,
-        StiStringDialogInfoItem = 215,
-        StiGuidDialogInfoItem = 216,
-        StiCharDialogInfoItem = 217,
-        StiBoolDialogInfoItem = 218,
-        StiImageDialogInfoItem = 219,
-        StiDateTimeDialogInfoItem = 220,
-        StiTimeSpanDialogInfoItem = 221,
-        StiDoubleDialogInfoItem = 222,
-        StiDecimalDialogInfoItem = 223,
-        StiLongDialogInfoItem = 224,
-        StiExpressionDialogInfoItem = 225,
-        StiStringRangeDialogInfoItem = 226,
-        StiGuidRangeDialogInfoItem = 227,
-        StiByteArrayRangeDialogInfoItem = 228,
-        StiCharRangeDialogInfoItem = 229,
-        StiDateTimeRangeDialogInfoItem = 230,
-        StiTimeSpanRangeDialogInfoItem = 231,
-        StiDoubleRangeDialogInfoItem = 232,
-        StiDecimalRangeDialogInfoItem = 233,
-        StiLongRangeDialogInfoItem = 234,
-        StiExpressionRangeDialogInfoItem = 235,
-        OracleConnectionStringBuilder = 236,
-        StiStrips = 237,
-        StiConstantLines = 238,
-        StiShapeTypeService = 239,
-        StiDiagonalDownLineShapeType = 240,
-        StiRoundedRectangleShapeType = 241,
-        StiTriangleShapeType = 242,
-        StiComplexArrowShapeType = 243,
-        StiBentArrowShapeType = 244,
-        StiChevronShapeType = 245,
-        StiEqualShapeType = 246,
-        StiFlowchartCollateShapeType = 247,
-        StiFlowchartOffPageConnectorShapeType = 248,
-        StiArrowShapeType = 249,
-        StiOctagonShapeType = 250,
-        StiAustraliaPost4StateBarCodeType = 251,
-        StiCode11BarCodeType = 252,
-        StiCode128aBarCodeType = 253,
-        StiCode128bBarCodeType = 254,
-        StiCode128cBarCodeType = 255,
-        StiCode128AutoBarCodeType = 256,
-        StiCode39BarCodeType = 257,
-        StiCode39ExtBarCodeType = 258,
-        StiCode93BarCodeType = 259,
-        StiCode93ExtBarCodeType = 260,
-        StiCodabarBarCodeType = 261,
-        StiEAN128aBarCodeType = 262,
-        StiEAN128bBarCodeType = 263,
-        StiEAN128cBarCodeType = 264,
-        StiEAN128AutoBarCodeType = 265,
-        StiGS1_128BarCodeType = 266,
-        StiEAN13BarCodeType = 267,
-        StiEAN8BarCodeType = 268,
-        StiFIMBarCodeType = 269,
-        StiIsbn10BarCodeType = 270,
-        StiIsbn13BarCodeType = 271,
-        StiITF14BarCodeType = 272,
-        StiJan13BarCodeType = 273,
-        StiJan8BarCodeType = 274,
-        StiMsiBarCodeType = 275,
-        StiPdf417BarCodeType = 276,
-        StiPharmacodeBarCodeType = 277,
-        StiPlesseyBarCodeType = 278,
-        StiPostnetBarCodeType = 279,
-        StiQRCodeBarCodeType = 280,
-        StiRoyalMail4StateBarCodeType = 281,
-        StiDutchKIXBarCodeType = 282,
-        StiSSCC18BarCodeType = 283,
-        StiUpcABarCodeType = 284,
-        StiUpcEBarCodeType = 285,
-        StiUpcSup2BarCodeType = 286,
-        StiUpcSup5BarCodeType = 287,
-        StiInterleaved2of5BarCodeType = 288,
-        StiStandard2of5BarCodeType = 289,
-        StiDataMatrixBarCodeType = 290,
-        StiMaxicodeBarCodeType = 291,
-        StiDatabase = 292,
-        StiFileDatabase = 293,
-        StiCsvDatabase = 294,
-        StiDBaseDatabase = 295,
-        StiExcelDatabase = 296,
-        StiJsonDatabase = 297,
-        StiXmlDatabase = 298,
-        StiSqlDatabase = 299,
-        StiGauge = 300,
-        StiMap = 301,
-        StiFullStackedColumnArea = 302,
-        StiClusteredBarArea = 303,
-        StiStackedBarArea = 304,
-        StiFullStackedBarArea = 305,
-        StiDoughnutArea = 306,
-        StiLineArea = 307,
-        StiParetoArea = 308,
-        StiSteppedLineArea = 309,
-        StiStackedLineArea = 310,
-        StiFullStackedLineArea = 311,
-        StiSplineArea = 312,
-        StiStackedSplineArea = 313,
-        StiFullStackedSplineArea = 314,
-        StiAreaArea = 315,
-        StiSteppedAreaArea = 316,
-        StiStackedAreaArea = 317,
-        StiFullStackedAreaArea = 318,
-        StiSplineAreaArea = 319,
-        StiStackedSplineAreaArea = 320,
-        StiFullStackedSplineAreaArea = 321,
-        StiGanttArea = 322,
-        StiScatterArea = 323,
-        StiBubbleArea = 324,
-        StiRangeArea = 325,
-        StiSteppedRangeArea = 326,
-        StiRangeBarArea = 327,
-        StiSplineRangeArea = 328,
-        StiCandlestickArea = 329,
-        StiStockArea = 330,
-        StiInsideEndPieLabels = 331,
-        StiTrendLineNone = 332,
-        StiTrendLineLinear = 333,
-        StiTrendLineExponential = 334,
-        StiTrendLineLogarithmic = 335,
-        StiDB2Database = 336,
-        StiDotConnectUniversalDatabase = 337,
-        StiFirebirdDatabase = 338,
-        StiInformixDatabase = 339,
-        StiMongoDbDatabase = 340,
-        StiAzureTableStorageDatabase = 341,
-        StiMySqlDatabase = 342,
-        StiMSAccessDatabase = 343,
-        StiOdbcDatabase = 344,
-        StiOleDbDatabase = 345,
-        StiOracleDatabase = 346,
-        StiPostgreSQLDatabase = 347,
-        StiSQLiteDatabase = 348,
-        StiSqlCeDatabase = 349,
-        StiSybaseDatabase = 350,
-        StiTeradataDatabase = 351,
-        StiVistaDBDatabase = 352,
-        StiODataDatabase = 353,
-        StiDataTableSource = 354,
-        StiDataViewSource = 355,
-        StiUndefinedDataSource = 356,
-        StiCsvSource = 357,
-        StiDBaseSource = 358,
-        StiBusinessObjectSource = 359,
-        StiCrossTabDataSource = 360,
-        StiEnumerableSource = 361,
-        StiUserSource = 362,
-        StiVirtualSource = 363,
-        StiDataTransformation = 364,
-        StiOracleODPSource = 365,
-        StiFirebirdSource = 366,
-        StiInformixSource = 367,
-        StiMongoDbSource = 368,
-        StiAzureTableStorageSource = 369,
-        StiMSAccessSource = 370,
-        StiMySqlSource = 371,
-        StiDataWorldSource = 372,
-        StiOdbcSource = 373,
-        StiOleDbSource = 374,
-        StiOracleSource = 375,
-        StiPostgreSQLSource = 376,
-        StiSqlCeSource = 377,
-        StiSQLiteSource = 378,
-        StiSqlSource = 379,
-        StiNoSqlSource = 380,
-        StiSybaseSource = 381,
-        StiTeradataSource = 382,
-        StiVistaDBSource = 383,
-        StiDB2Source = 384,
-        StiDiagonalUpLineShapeType = 385,
-        StiHorizontalLineShapeType = 386,
-        StiLeftAndRightLineShapeType = 387,
-        StiOvalShapeType = 388,
-        StiRectangleShapeType = 389,
-        StiTopAndBottomLineShapeType = 390,
-        StiVerticalLineShapeType = 391,
-        StiDivisionShapeType = 392,
-        StiFlowchartCardShapeType = 393,
-        StiFlowchartDecisionShapeType = 394,
-        StiFlowchartManualInputShapeType = 395,
-        StiFlowchartSortShapeType = 396,
-        StiFrameShapeType = 397,
-        StiMinusShapeType = 398,
-        StiMultiplyShapeType = 399,
-        StiParallelogramShapeType = 400,
-        StiPlusShapeType = 401,
-        StiRegularPentagonShapeType = 402,
-        StiTrapezoidShapeType = 403,
-        StiSnipSameSideCornerRectangleShapeType = 404,
-        StiSnipDiagonalSideCornerRectangleShapeType = 405,
-        StiFlowchartPreparationShapeType = 406,
-        StiRadialScale = 407,
-        StiLinearScale = 408,
-        StiLinearBar = 409,
-        StiRadialBar = 410,
-        StiNeedle = 411,
-        StiRadialMarker = 412,
-        StiScaleRangeList = 413,
-        StiRadialRange = 414,
-        StiStateIndicator = 415,
-        StiStateIndicatorFilter = 416,
-        StiRadialRangeList = 417,
-        StiLinearRangeList = 418,
-        StiLinearRange = 419,
-        StiLinearTickMarkMajor = 420,
-        StiLinearTickMarkMinor = 421,
-        StiLinearTickMarkCustomValue = 422,
-        StiLinearTickLabelMajor = 423,
-        StiLinearTickLabelMinor = 424,
-        StiLinearTickLabelCustom = 425,
-        StiLinearTickLabelCustomValue = 426,
-        StiRadialTickMarkMajor = 427,
-        StiRadialTickMarkMinor = 428,
-        StiRadialTickMarkCustom = 429,
-        StiRadialTickMarkCustomValue = 430,
-        StiRadialTickLabelMajor = 431,
-        StiRadialTickLabelMinor = 432,
-        StiRadialTickLabelCustom = 433,
-        StiRadialTickLabelCustomValue = 434,
-        StiLinearMarker = 435,
-        StiLinearTickMarkCustom = 436,
-        StiLinearIndicatorRangeInfo = 437,
-        StiRadialIndicatorRangeInfo = 438,
-        StiBlueDashboardControlStyle = 439,
-        StiBlueDashboardIndicatorStyle = 440,
-        StiBlueDashboardPageStyle = 441,
-        StiBlueDashboardPivotStyle = 442,
-        StiBlueDashboardProgressStyle = 443,
-        StiBlueDashboardTableStyle = 444,
-        StiOrangeDashboardControlStyle = 445,
-        StiOrangeDashboardIndicatorStyle = 446,
-        StiOrangeDashboardPageStyle = 447,
-        StiOrangeDashboardPivotStyle = 448,
-        StiOrangeDashboardProgressStyle = 449,
-        StiOrangeDashboardTableStyle = 450,
-        StiGreenDashboardControlStyle = 451,
-        StiGreenDashboardIndicatorStyle = 452,
-        StiGreenDashboardPageStyle = 453,
-        StiGreenDashboardProgressStyle = 454,
-        StiGreenDashboardPivotStyle = 455,
-        StiGreenDashboardTableStyle = 456,
-        StiTurquoiseDashboardControlStyle = 457,
-        StiTurquoiseDashboardIndicatorStyle = 458,
-        StiTurquoiseDashboardPageStyle = 459,
-        StiTurquoiseDashboardProgressStyle = 460,
-        StiTurquoiseDashboardPivotStyle = 461,
-        StiTurquoiseDashboardTableStyle = 462,
-        StiSlateGrayDashboardControlStyle = 463,
-        StiSlateGrayDashboardIndicatorStyle = 464,
-        StiSlateGrayDashboardPageStyle = 465,
-        StiSlateGrayDashboardProgressStyle = 466,
-        StiSlateGrayDashboardPivotStyle = 467,
-        StiSlateGrayDashboardTableStyle = 468,
-        StiDarkBlueDashboardControlStyle = 469,
-        StiDarkBlueDashboardIndicatorStyle = 470,
-        StiDarkBlueDashboardPageStyle = 471,
-        StiDarkBlueDashboardProgressStyle = 472,
-        StiDarkBlueDashboardPivotStyle = 473,
-        StiDarkBlueDashboardTableStyle = 474,
-        StiYellowDashboardPageStyle = 475,
-        StiDarkGrayDashboardControlStyle = 476,
-        StiDarkGrayDashboardIndicatorStyle = 477,
-        StiDarkGrayDashboardPageStyle = 478,
-        StiDarkGrayDashboardProgressStyle = 479,
-        StiDarkGrayDashboardPivotStyle = 480,
-        StiDarkGrayDashboardTableStyle = 481,
-        StiDarkTurquoiseDashboardControlStyle = 482,
-        StiDarkTurquoiseDashboardIndicatorStyle = 483,
-        StiDarkTurquoiseDashboardPageStyle = 484,
-        StiDarkTurquoiseDashboardProgressStyle = 485,
-        StiDarkTurquoiseDashboardPivotStyle = 486,
-        StiDarkTurquoiseDashboardTableStyle = 487,
-        StiSilverDashboardControlStyle = 488,
-        StiSilverDashboardIndicatorStyle = 489,
-        StiSilverDashboardPageStyle = 490,
-        StiSilverDashboardPivotStyle = 491,
-        StiSilverDashboardProgressStyle = 492,
-        StiSilverDashboardTableStyle = 493,
-        StiAliceBlueDashboardControlStyle = 494,
-        StiAliceBlueDashboardIndicatorStyle = 495,
-        StiAliceBlueDashboardPageStyle = 496,
-        StiAliceBlueDashboardPivotStyle = 497,
-        StiAliceBlueDashboardProgressStyle = 498,
-        StiAliceBlueDashboardTableStyle = 499,
-        StiDarkGreenDashboardControlStyle = 500,
-        StiDarkGreenDashboardIndicatorStyle = 501,
-        StiDarkGreenDashboardPageStyle = 502,
-        StiDarkGreenDashboardProgressStyle = 503,
-        StiDarkGreenDashboardPivotStyle = 504,
-        StiDarkGreenDashboardTableStyle = 505,
-        StiCustomDashboardControlStyle = 506,
-        StiCustomDashboardPivotStyle = 507,
-        StiCustomDashboardIndicatorStyle = 508,
-        StiCustomDashboardProgressStyle = 509,
-        StiCustomDashboardTableStyle = 510,
-        StiDataWorldDatabase = 511
+        StiHistogramSeries = 149,
+        StiFullStackedBarSeries = 150,
+        StiPieSeries = 151,
+        StiDoughnutSeries = 152,
+        StiGanttSeries = 153,
+        StiScatterSeries = 154,
+        StiScatterLineSeries = 155,
+        StiScatterSplineSeries = 156,
+        StiRadarAreaSeries = 157,
+        StiRadarLineSeries = 158,
+        StiRadarPointSeries = 159,
+        StiRangeSeries = 160,
+        StiSteppedRangeSeries = 161,
+        StiFunnelSeries = 162,
+        StiFunnelWeightedSlicesSeries = 163,
+        StiRangeBarSeries = 164,
+        StiSplineRangeSeries = 165,
+        StiCandlestickSeries = 166,
+        StiStockSeries = 167,
+        StiChartTitle = 168,
+        StiLineMarker = 169,
+        StiMarker = 170,
+        StiChartTable = 171,
+        StiSeriesTopN = 172,
+        StiSeriesInteraction = 173,
+        StiTrendLine = 174,
+        StiSeriesLabels = 175,
+        StiNoneLabels = 176,
+        StiInsideEndAxisLabels = 177,
+        StiInsideBaseAxisLabels = 178,
+        StiCenterTreemapLabels = 179,
+        StiCenterAxisLabels = 180,
+        StiOutsideEndAxisLabels = 181,
+        StiOutsideBaseAxisLabels = 182,
+        StiOutsideAxisLabels = 183,
+        StiLeftAxisLabels = 184,
+        StiValueAxisLabels = 185,
+        StiRightAxisLabels = 186,
+        StiCenterFunnelLabels = 187,
+        StiCenterPieLabels = 188,
+        StiOutsidePieLabels = 189,
+        StiTwoColumnsPieLabels = 190,
+        StiOutsideLeftFunnelLabels = 191,
+        StiOutsideRightFunnelLabels = 192,
+        StiLegend = 193,
+        StiClusteredColumnArea = 194,
+        StiPieArea = 195,
+        StiTreemapArea = 196,
+        StiSunburstArea = 197,
+        StiWaterfallArea = 198,
+        StiHistorgamArea = 199,
+        StiFunnelArea = 200,
+        StiFunnelWeightedSlicesArea = 201,
+        StiPictorialArea = 202,
+        StiRadarAreaArea = 203,
+        StiRadarLineArea = 204,
+        StiRadarPointArea = 205,
+        StiStackedColumnArea = 206,
+        StiGridLines = 207,
+        StiInterlacing = 208,
+        StiXAxis = 209,
+        StiXTopAxis = 210,
+        StiYAxis = 211,
+        StiYRightAxis = 212,
+        StiRadarGridLines = 213,
+        StiXRadarAxis = 214,
+        StiYRadarAxis = 215,
+        StiDialogInfoItem = 216,
+        StiStringDialogInfoItem = 217,
+        StiGuidDialogInfoItem = 218,
+        StiCharDialogInfoItem = 219,
+        StiBoolDialogInfoItem = 220,
+        StiImageDialogInfoItem = 221,
+        StiDateTimeDialogInfoItem = 222,
+        StiTimeSpanDialogInfoItem = 223,
+        StiDoubleDialogInfoItem = 224,
+        StiDecimalDialogInfoItem = 225,
+        StiLongDialogInfoItem = 226,
+        StiExpressionDialogInfoItem = 227,
+        StiStringRangeDialogInfoItem = 228,
+        StiGuidRangeDialogInfoItem = 229,
+        StiByteArrayRangeDialogInfoItem = 230,
+        StiCharRangeDialogInfoItem = 231,
+        StiDateTimeRangeDialogInfoItem = 232,
+        StiTimeSpanRangeDialogInfoItem = 233,
+        StiDoubleRangeDialogInfoItem = 234,
+        StiDecimalRangeDialogInfoItem = 235,
+        StiLongRangeDialogInfoItem = 236,
+        StiExpressionRangeDialogInfoItem = 237,
+        OracleConnectionStringBuilder = 238,
+        StiStrips = 239,
+        StiConstantLines = 240,
+        StiShapeTypeService = 241,
+        StiDiagonalDownLineShapeType = 242,
+        StiRoundedRectangleShapeType = 243,
+        StiTriangleShapeType = 244,
+        StiComplexArrowShapeType = 245,
+        StiBentArrowShapeType = 246,
+        StiChevronShapeType = 247,
+        StiEqualShapeType = 248,
+        StiFlowchartCollateShapeType = 249,
+        StiFlowchartOffPageConnectorShapeType = 250,
+        StiArrowShapeType = 251,
+        StiOctagonShapeType = 252,
+        StiAustraliaPost4StateBarCodeType = 253,
+        StiCode11BarCodeType = 254,
+        StiCode128aBarCodeType = 255,
+        StiCode128bBarCodeType = 256,
+        StiCode128cBarCodeType = 257,
+        StiCode128AutoBarCodeType = 258,
+        StiCode39BarCodeType = 259,
+        StiCode39ExtBarCodeType = 260,
+        StiCode93BarCodeType = 261,
+        StiCode93ExtBarCodeType = 262,
+        StiCodabarBarCodeType = 263,
+        StiEAN128aBarCodeType = 264,
+        StiEAN128bBarCodeType = 265,
+        StiEAN128cBarCodeType = 266,
+        StiEAN128AutoBarCodeType = 267,
+        StiGS1_128BarCodeType = 268,
+        StiEAN13BarCodeType = 269,
+        StiEAN8BarCodeType = 270,
+        StiFIMBarCodeType = 271,
+        StiIsbn10BarCodeType = 272,
+        StiIsbn13BarCodeType = 273,
+        StiITF14BarCodeType = 274,
+        StiJan13BarCodeType = 275,
+        StiJan8BarCodeType = 276,
+        StiMsiBarCodeType = 277,
+        StiPdf417BarCodeType = 278,
+        StiPharmacodeBarCodeType = 279,
+        StiPlesseyBarCodeType = 280,
+        StiPostnetBarCodeType = 281,
+        StiQRCodeBarCodeType = 282,
+        StiRoyalMail4StateBarCodeType = 283,
+        StiDutchKIXBarCodeType = 284,
+        StiSSCC18BarCodeType = 285,
+        StiUpcABarCodeType = 286,
+        StiUpcEBarCodeType = 287,
+        StiUpcSup2BarCodeType = 288,
+        StiUpcSup5BarCodeType = 289,
+        StiInterleaved2of5BarCodeType = 290,
+        StiStandard2of5BarCodeType = 291,
+        StiDataMatrixBarCodeType = 292,
+        StiMaxicodeBarCodeType = 293,
+        StiDatabase = 294,
+        StiFileDatabase = 295,
+        StiCsvDatabase = 296,
+        StiDBaseDatabase = 297,
+        StiExcelDatabase = 298,
+        StiJsonDatabase = 299,
+        StiXmlDatabase = 300,
+        StiSqlDatabase = 301,
+        StiGauge = 302,
+        StiMap = 303,
+        StiFullStackedColumnArea = 304,
+        StiClusteredBarArea = 305,
+        StiStackedBarArea = 306,
+        StiFullStackedBarArea = 307,
+        StiDoughnutArea = 308,
+        StiLineArea = 309,
+        StiParetoArea = 310,
+        StiSteppedLineArea = 311,
+        StiStackedLineArea = 312,
+        StiFullStackedLineArea = 313,
+        StiSplineArea = 314,
+        StiStackedSplineArea = 315,
+        StiFullStackedSplineArea = 316,
+        StiAreaArea = 317,
+        StiSteppedAreaArea = 318,
+        StiStackedAreaArea = 319,
+        StiFullStackedAreaArea = 320,
+        StiSplineAreaArea = 321,
+        StiStackedSplineAreaArea = 322,
+        StiFullStackedSplineAreaArea = 323,
+        StiGanttArea = 324,
+        StiScatterArea = 325,
+        StiBubbleArea = 326,
+        StiRangeArea = 327,
+        StiSteppedRangeArea = 328,
+        StiRangeBarArea = 329,
+        StiSplineRangeArea = 330,
+        StiCandlestickArea = 331,
+        StiStockArea = 332,
+        StiInsideEndPieLabels = 333,
+        StiTrendLineNone = 334,
+        StiTrendLineLinear = 335,
+        StiTrendLineExponential = 336,
+        StiTrendLineLogarithmic = 337,
+        StiDB2Database = 338,
+        StiDotConnectUniversalDatabase = 339,
+        StiFirebirdDatabase = 340,
+        StiInformixDatabase = 341,
+        StiMongoDbDatabase = 342,
+        StiAzureTableStorageDatabase = 343,
+        StiMySqlDatabase = 344,
+        StiMSAccessDatabase = 345,
+        StiOdbcDatabase = 346,
+        StiOleDbDatabase = 347,
+        StiOracleDatabase = 348,
+        StiPostgreSQLDatabase = 349,
+        StiSQLiteDatabase = 350,
+        StiSqlCeDatabase = 351,
+        StiSybaseDatabase = 352,
+        StiTeradataDatabase = 353,
+        StiVistaDBDatabase = 354,
+        StiODataDatabase = 355,
+        StiDataTableSource = 356,
+        StiDataViewSource = 357,
+        StiUndefinedDataSource = 358,
+        StiCsvSource = 359,
+        StiDBaseSource = 360,
+        StiBusinessObjectSource = 361,
+        StiCrossTabDataSource = 362,
+        StiEnumerableSource = 363,
+        StiUserSource = 364,
+        StiVirtualSource = 365,
+        StiDataTransformation = 366,
+        StiOracleODPSource = 367,
+        StiFirebirdSource = 368,
+        StiInformixSource = 369,
+        StiMongoDbSource = 370,
+        StiAzureTableStorageSource = 371,
+        StiMSAccessSource = 372,
+        StiMySqlSource = 373,
+        StiDataWorldSource = 374,
+        StiQuickBooksSource = 375,
+        StiOdbcSource = 376,
+        StiOleDbSource = 377,
+        StiOracleSource = 378,
+        StiPostgreSQLSource = 379,
+        StiSqlCeSource = 380,
+        StiSQLiteSource = 381,
+        StiSqlSource = 382,
+        StiNoSqlSource = 383,
+        StiSybaseSource = 384,
+        StiTeradataSource = 385,
+        StiVistaDBSource = 386,
+        StiDB2Source = 387,
+        StiDiagonalUpLineShapeType = 388,
+        StiHorizontalLineShapeType = 389,
+        StiLeftAndRightLineShapeType = 390,
+        StiOvalShapeType = 391,
+        StiRectangleShapeType = 392,
+        StiTopAndBottomLineShapeType = 393,
+        StiVerticalLineShapeType = 394,
+        StiDivisionShapeType = 395,
+        StiFlowchartCardShapeType = 396,
+        StiFlowchartDecisionShapeType = 397,
+        StiFlowchartManualInputShapeType = 398,
+        StiFlowchartSortShapeType = 399,
+        StiFrameShapeType = 400,
+        StiMinusShapeType = 401,
+        StiMultiplyShapeType = 402,
+        StiParallelogramShapeType = 403,
+        StiPlusShapeType = 404,
+        StiRegularPentagonShapeType = 405,
+        StiTrapezoidShapeType = 406,
+        StiSnipSameSideCornerRectangleShapeType = 407,
+        StiSnipDiagonalSideCornerRectangleShapeType = 408,
+        StiFlowchartPreparationShapeType = 409,
+        StiRadialScale = 410,
+        StiLinearScale = 411,
+        StiLinearBar = 412,
+        StiRadialBar = 413,
+        StiNeedle = 414,
+        StiRadialMarker = 415,
+        StiScaleRangeList = 416,
+        StiRadialRange = 417,
+        StiStateIndicator = 418,
+        StiStateIndicatorFilter = 419,
+        StiRadialRangeList = 420,
+        StiLinearRangeList = 421,
+        StiLinearRange = 422,
+        StiLinearTickMarkMajor = 423,
+        StiLinearTickMarkMinor = 424,
+        StiLinearTickMarkCustomValue = 425,
+        StiLinearTickLabelMajor = 426,
+        StiLinearTickLabelMinor = 427,
+        StiLinearTickLabelCustom = 428,
+        StiLinearTickLabelCustomValue = 429,
+        StiRadialTickMarkMajor = 430,
+        StiRadialTickMarkMinor = 431,
+        StiRadialTickMarkCustom = 432,
+        StiRadialTickMarkCustomValue = 433,
+        StiRadialTickLabelMajor = 434,
+        StiRadialTickLabelMinor = 435,
+        StiRadialTickLabelCustom = 436,
+        StiRadialTickLabelCustomValue = 437,
+        StiLinearMarker = 438,
+        StiLinearTickMarkCustom = 439,
+        StiLinearIndicatorRangeInfo = 440,
+        StiRadialIndicatorRangeInfo = 441,
+        StiBlueDashboardControlStyle = 442,
+        StiBlueDashboardIndicatorStyle = 443,
+        StiBlueDashboardPageStyle = 444,
+        StiBlueDashboardPivotStyle = 445,
+        StiBlueDashboardProgressStyle = 446,
+        StiBlueDashboardTableStyle = 447,
+        StiOrangeDashboardControlStyle = 448,
+        StiOrangeDashboardIndicatorStyle = 449,
+        StiOrangeDashboardPageStyle = 450,
+        StiOrangeDashboardPivotStyle = 451,
+        StiOrangeDashboardProgressStyle = 452,
+        StiOrangeDashboardTableStyle = 453,
+        StiGreenDashboardControlStyle = 454,
+        StiGreenDashboardIndicatorStyle = 455,
+        StiGreenDashboardPageStyle = 456,
+        StiGreenDashboardProgressStyle = 457,
+        StiGreenDashboardPivotStyle = 458,
+        StiGreenDashboardTableStyle = 459,
+        StiTurquoiseDashboardControlStyle = 460,
+        StiTurquoiseDashboardIndicatorStyle = 461,
+        StiTurquoiseDashboardPageStyle = 462,
+        StiTurquoiseDashboardProgressStyle = 463,
+        StiTurquoiseDashboardPivotStyle = 464,
+        StiTurquoiseDashboardTableStyle = 465,
+        StiSlateGrayDashboardControlStyle = 466,
+        StiSlateGrayDashboardIndicatorStyle = 467,
+        StiSlateGrayDashboardPageStyle = 468,
+        StiSlateGrayDashboardProgressStyle = 469,
+        StiSlateGrayDashboardPivotStyle = 470,
+        StiSlateGrayDashboardTableStyle = 471,
+        StiDarkBlueDashboardControlStyle = 472,
+        StiDarkBlueDashboardIndicatorStyle = 473,
+        StiDarkBlueDashboardPageStyle = 474,
+        StiDarkBlueDashboardProgressStyle = 475,
+        StiDarkBlueDashboardPivotStyle = 476,
+        StiDarkBlueDashboardTableStyle = 477,
+        StiYellowDashboardPageStyle = 478,
+        StiDarkGrayDashboardControlStyle = 479,
+        StiDarkGrayDashboardIndicatorStyle = 480,
+        StiDarkGrayDashboardPageStyle = 481,
+        StiDarkGrayDashboardProgressStyle = 482,
+        StiDarkGrayDashboardPivotStyle = 483,
+        StiDarkGrayDashboardTableStyle = 484,
+        StiDarkTurquoiseDashboardControlStyle = 485,
+        StiDarkTurquoiseDashboardIndicatorStyle = 486,
+        StiDarkTurquoiseDashboardPageStyle = 487,
+        StiDarkTurquoiseDashboardProgressStyle = 488,
+        StiDarkTurquoiseDashboardPivotStyle = 489,
+        StiDarkTurquoiseDashboardTableStyle = 490,
+        StiSilverDashboardControlStyle = 491,
+        StiSilverDashboardIndicatorStyle = 492,
+        StiSilverDashboardPageStyle = 493,
+        StiSilverDashboardPivotStyle = 494,
+        StiSilverDashboardProgressStyle = 495,
+        StiSilverDashboardTableStyle = 496,
+        StiAliceBlueDashboardControlStyle = 497,
+        StiAliceBlueDashboardIndicatorStyle = 498,
+        StiAliceBlueDashboardPageStyle = 499,
+        StiAliceBlueDashboardPivotStyle = 500,
+        StiAliceBlueDashboardProgressStyle = 501,
+        StiAliceBlueDashboardTableStyle = 502,
+        StiDarkGreenDashboardControlStyle = 503,
+        StiDarkGreenDashboardIndicatorStyle = 504,
+        StiDarkGreenDashboardPageStyle = 505,
+        StiDarkGreenDashboardProgressStyle = 506,
+        StiDarkGreenDashboardPivotStyle = 507,
+        StiDarkGreenDashboardTableStyle = 508,
+        StiCustomDashboardControlStyle = 509,
+        StiCustomDashboardPivotStyle = 510,
+        StiCustomDashboardIndicatorStyle = 511,
+        StiCustomDashboardProgressStyle = 512,
+        StiCustomDashboardTableStyle = 513,
+        StiDataWorldDatabase = 514,
+        StiQuickBooksDatabase = 515
     }
     enum StiRenderedWith {
         Unknown = 0,
@@ -22080,14 +22261,14 @@ declare namespace Stimulsoft.Report.Components {
     }
 }
 declare namespace Stimulsoft.Report.Components {
+    import Image = Stimulsoft.System.Drawing.Image;
     import StiIcon = Stimulsoft.Report.Components.StiIcon;
     class StiIconSetHelper {
         static getIconSet(iconSet: StiIconSet): StiIcon[];
-        static getIcons(iconSet: StiIconSet): string[];
-        static imageToBase64(image: number[]): string;
-        static getIcon(icon: StiIcon): string;
-        static getIcon3(indicator: StiIconSetIndicator): string;
-        private static getIcon2;
+        static getIcons(iconSet: StiIconSet): Image[];
+        static getIcon2(icon: StiIcon): Image;
+        static getIcon(indicator: StiIconSetIndicator): Image;
+        private static icons;
     }
 }
 declare namespace Stimulsoft.Report.Components {
@@ -26047,7 +26228,7 @@ declare namespace Stimulsoft.Report.Components {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         private _name;
         get name(): string;
         set name(value: string);
@@ -28849,6 +29030,16 @@ declare namespace Stimulsoft.Report.Dashboard {
         Linear = 2,
         Logarithmic = 3
     }
+    enum StiEmptyCellsAs {
+        Gap = 0,
+        Zero = 1,
+        ConnectPointsWithLine = 2
+    }
+    enum StiFontSizeMode {
+        Auto = 0,
+        Value = 1,
+        Target = 2
+    }
 }
 declare namespace Stimulsoft.Report.Maps {
     import StiElementStyleIdent = Stimulsoft.Report.Dashboard.StiElementStyleIdent;
@@ -29067,6 +29258,8 @@ declare namespace Stimulsoft.Report.Maps {
         set defaultColor(value: Color);
         get backColor(): Color;
         set backColor(value: Color);
+        get borderColor(): Color;
+        set borderColor(value: Color);
     }
 }
 declare namespace Stimulsoft.Report.Styles {
@@ -29295,6 +29488,15 @@ declare namespace Stimulsoft.Report.Dashboard {
     let IStiAllowUserSortingDashboardInteraction: string;
     interface IStiAllowUserSortingDashboardInteraction {
         allowUserSorting: boolean;
+    }
+}
+declare namespace Stimulsoft.Report.Dashboard {
+    import RectangleD = Stimulsoft.System.Drawing.Rectangle;
+    let IStiAltProperties: string;
+    let ImplementsIStiAltProperties: any[];
+    interface IStiAltProperties {
+        altTitleVisible: boolean;
+        altClientRectangle: RectangleD;
     }
 }
 declare namespace Stimulsoft.Report.Dashboard {
@@ -29593,10 +29795,17 @@ declare namespace Stimulsoft.Report.Dashboard {
     import IStiDashboardElementStyle = Stimulsoft.Report.Dashboard.IStiDashboardElementStyle;
     import IStiQueryObject = Stimulsoft.Data.Engine.IStiQueryObject;
     import StiDataFilterRule = Stimulsoft.Data.Engine.StiDataFilterRule;
+    import StiDashboardViewMode = Stimulsoft.Report.Components.StiDashboardViewMode;
     let IStiDashboard: string;
     let ImplementsIStiDashboard: any[];
     interface IStiDashboard extends IStiPanel, IStiQueryObject, IStiDashboardElementStyle {
         getUserFilters(element: IStiElement): List<StiDataFilterRule>;
+        dashboardViewMode: StiDashboardViewMode;
+        getUnplacedElements(): List<IStiElement>;
+        switchDashboardViewMode(value: StiDashboardViewMode): any;
+        removeMobileSurface(): any;
+        deviceWidth: number;
+        isMobileSurfacePresent: boolean;
     }
 }
 declare namespace Stimulsoft.Report.Dashboard {
@@ -29796,6 +30005,8 @@ declare namespace Stimulsoft.Report.Dashboard {
         glyphColor: Color;
         customIcon: number[];
         targetMode: StiTargetMode;
+        fontSizeMode: StiFontSizeMode;
+        font: Font;
     }
 }
 import Font = Stimulsoft.System.Drawing.Font;
@@ -31228,6 +31439,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         set parameters(value: StiDataParametersCollection);
         getDataTable(table?: DataTable): DataTable;
         getByName(columnName: string): any;
+        GetData(columnName: string, index?: number): any;
         getData(columnName: string, index?: number): any;
         getDataAsync(columnName: string, index?: number): StiPromise<any>;
         getColumnIndex(columnName: string): number;
@@ -31901,7 +32113,7 @@ declare namespace Stimulsoft.Report.Dashboard {
         static createFromJsonObject(jObject: StiJson): StiElementLayout;
         static createFromXml(xmlNode: XmlNode): StiElementLayout;
         clone(): StiElementLayout;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         fullScreenButton: boolean;
         saveButton: boolean;
         StiElementLayout(): void;
@@ -32321,6 +32533,18 @@ declare namespace Stimulsoft.Report.Dictionary {
         connectDataSourceToData(dictionary: StiDictionary, dataSource: StiDataSource, loadData: boolean): void;
         testConnectionAsync(report: StiReport, connectionString: string): StiPromise<string>;
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
+    }
+}
+declare namespace Stimulsoft.Report.Dictionary {
+    import StiQuickBooksConnector = Stimulsoft.Base.StiQuickBooksConnector;
+    import Type = Stimulsoft.System.Type;
+    class StiQuickBooksAdapterService extends StiSqlAdapterService {
+        getDataSourceType(): Type;
+        createConnector(connectionString?: string): StiQuickBooksConnector;
+        getColumnsFromData(data: StiData, dataSource: StiDataSource): StiDataColumnsCollection;
+        getParametersFromData(data: StiData, dataSource: StiDataSource): StiDataParametersCollection;
+        connectDataSourceToData(dictionary: StiDictionary, dataSource: StiDataSource, loadData: boolean): void;
+        createConnectionInDataStore(dictionary: StiDictionary, database: StiSqlDatabase): void;
     }
 }
 declare namespace Stimulsoft.Report.Dictionary {
@@ -32865,6 +33089,15 @@ declare namespace Stimulsoft.Report.Dictionary {
     class StiODataSource extends StiSqlSource {
         getDataAdapterType(): Stimulsoft.System.Type;
         createNew(): StiDataSource;
+        constructor(nameInSource?: string, name?: string, alias?: string, sqlCommand?: string, connectOnStart?: boolean, reconnectOnEachRow?: boolean, commandTimeout?: number, key?: string);
+    }
+}
+declare namespace Stimulsoft.Report.Dictionary {
+    import Type = Stimulsoft.System.Type;
+    class StiQuickBooksSource extends StiSqlSource {
+        getDataAdapterType(): Type;
+        createNew(): StiDataSource;
+        get componentId(): StiComponentId;
         constructor(nameInSource?: string, name?: string, alias?: string, sqlCommand?: string, connectOnStart?: boolean, reconnectOnEachRow?: boolean, commandTimeout?: number, key?: string);
     }
 }
@@ -33425,7 +33658,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         private _valuesBinding;
         get valuesBinding(): any[];
         set valuesBinding(value: any[]);
-        get isDefault(): boolean;
+        isDefault(): boolean;
         static convert(value: any): string;
         getDialogInfoItems(type: Stimulsoft.System.Type): StiDialogInfoItem[];
         setDialogInfoItems(items: StiDialogInfoItem[], type: Stimulsoft.System.Type): void;
@@ -33724,7 +33957,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
         createDataSources(dictionary: StiDictionary): void;
-        parsePathExpression(dictionary: StiDictionary, path: string): string;
+        static parsePathExpression(dictionary: StiDictionary, path: string): string;
         pathData: string;
         constructor(name?: string, pathData?: string, key?: string);
     }
@@ -33922,6 +34155,18 @@ declare namespace Stimulsoft.Report.Dictionary {
         mapUserNameAndPassword(userName: string, password: string): string;
         get connectionType(): StiConnectionType;
         getSampleConnectionString(): string;
+        constructor(name?: string, alias?: string, connectionString?: string, promptUserNameAndpassword?: boolean, key?: string);
+    }
+}
+declare namespace Stimulsoft.Report.Dictionary {
+    import Type = Stimulsoft.System.Type;
+    class StiQuickBooksDatabase extends StiSqlDatabase {
+        get connectionType(): StiConnectionType;
+        createNew(): StiDatabase;
+        get componentId(): StiComponentId;
+        getDataAdapterType(): Type;
+        createDataSource(nameInSource: string, name: string): StiSqlSource;
+        regData(dictionary: StiDictionary, loadData: boolean): void;
         constructor(name?: string, alias?: string, connectionString?: string, promptUserNameAndpassword?: boolean, key?: string);
     }
 }
@@ -37468,7 +37713,7 @@ declare namespace Stimulsoft.Report.Export {
         private renderEndDoc;
         private renderBookmarkTree;
         private addBookmarkNode;
-        prepareTextForHtml(text: string): string;
+        prepareTextForHtml(text: string, processWhiteSpaces?: boolean): string;
         static convertTextWithHtmlTagsToHtmlText(stiText: StiText, text: string, zoom: number): string;
         private static getParagraphString;
         renderWatermarkText(sWriter: StiHtmlTextWriter, page: StiPage, topPos?: number): void;
@@ -37842,7 +38087,7 @@ declare namespace Stimulsoft.Report.Export {
         getBorderSideIndex(side: StiBorderSide): number;
         static GCCollect(): void;
         clear(): void;
-        constructor(pages: StiPagesCollection, checkForExcel: boolean, service: StiExportService, styles?: StiCellStyle[], dataMode?: StiDataExportMode);
+        constructor(pages: StiPagesCollection, checkForExcel: boolean, service: StiExportService, styles?: StiCellStyle[], dataMode?: StiDataExportMode, hasDividedPages?: boolean);
     }
     class DataField {
         name: string;
@@ -37954,6 +38199,26 @@ declare namespace Stimulsoft.Report.Export {
         get Top(): number;
         constructor(service: StiPdfExportService);
     }
+    class StiImageData {
+        Width: number;
+        Height: number;
+        Name: string;
+        ImageFormat: StiImageFormat;
+    }
+    class StiShadingData {
+        X: number;
+        Y: number;
+        Width: number;
+        Height: number;
+        Page: number;
+        Angle: number;
+        FunctionIndex: number;
+    }
+    class StiShadingFunctionData {
+        Color1: Color;
+        Color2: Color;
+        IsGlare: boolean;
+    }
     class StiEditableObject {
         X: number;
         Y: number;
@@ -37981,13 +38246,13 @@ declare namespace Stimulsoft.Report.Export {
         private imageResolutionMode;
         private sw;
         pageStream: MemoryStream;
-        private imageList;
+        imageList: StiImageData[];
         private imageCache;
         private imageInterpolationTable;
         private imageCacheIndexToList;
         private imageInfoList;
         private imageInfoCounter;
-        private imagesCurrent;
+        imagesCurrent: number;
         private fontsCounter;
         private bookmarksCounter;
         private linksCounter;
@@ -38017,6 +38282,7 @@ declare namespace Stimulsoft.Report.Export {
         private imageFormat;
         private monochromeDitheringType;
         private allowEditable;
+        private useTransparency;
         private fontGlyphsReduceNotNeed;
         private xref;
         private bookmarksTree;
@@ -38027,8 +38293,9 @@ declare namespace Stimulsoft.Report.Export {
         annotsArray: StiEditableObject[];
         private annots2Array;
         private unsignedSignaturesArray;
-        private shadingArray;
+        shadingArray: StiShadingData[];
         private hatchArray;
+        private shadingFunctionArray;
         private haveBookmarks;
         private haveLinks;
         haveAnnots: boolean;
@@ -38059,6 +38326,7 @@ declare namespace Stimulsoft.Report.Export {
         private static regexEscape;
         stringReplace(st: string, oldValue: string, newValue: string): string;
         getHatchNumber(brush: StiHatchBrush): number;
+        getShadingFunctionNumber(color1: Color, color2: Color, isGlare: boolean): number;
         private addXref;
         convertToString(value: number, precision?: number): string;
         static convertToEscapeSequence(value: string): string;
@@ -38071,6 +38339,7 @@ declare namespace Stimulsoft.Report.Export {
         get gsTable(): string[][];
         pushColorToStack(): void;
         popColorFromStack(): void;
+        fillRectBrush(brush: StiBrush, rect: Rectangle): void;
         private storeStringLine;
         private storeString;
         private convertToHexString;
@@ -38087,13 +38356,15 @@ declare namespace Stimulsoft.Report.Export {
         private renderPatternTable;
         private writeHatchPattern;
         private writeShadingPattern;
+        private writeShadingFunction;
         private renderLinkTable;
         private renderAnnotTable;
         private renderTooltipTable;
         private renderEncodeRecord;
         private renderExtGStateRecord;
-        storeImageData(image: Image, imageResolution: number, isImageComponent: boolean, needSmoothing: boolean): number;
+        storeImageData(image: Image, imageResolution: number, isImageComponent: boolean, needSmoothing: boolean, maxQuality?: boolean): number;
         private writeImageInfo;
+        writeImageInfo2(pp: StiPdfData, imageResolutionX: number, imageResolutionY: number): void;
         renderImage(pp: StiPdfData, imageResolution: number): void;
         private renderWatermark;
         storeShadingData1(brush: StiBrush, pageNumber: number): void;
@@ -38352,6 +38623,11 @@ declare namespace Stimulsoft.Report.Export {
     }
 }
 declare namespace Stimulsoft.Report.Export {
+    class StiPdfRenderIndicators {
+        static renderIndicators(pp: StiPdfData): StiPdfData;
+    }
+}
+declare namespace Stimulsoft.Report.Export {
     import StiPenStyle = Stimulsoft.Base.Drawing.StiPenStyle;
     import StiShape = Stimulsoft.Report.Components.StiShape;
     import StiCheckBox = Stimulsoft.Report.Components.StiCheckBox;
@@ -38451,14 +38727,12 @@ declare namespace Stimulsoft.Report.Export {
     class StiPdfOutlinesObjInfo extends StiPdfObjInfo {
         items: StiPdfObjInfo[];
     }
-    class StiPdfShadingObjInfo extends StiPdfObjInfo {
-        function: StiPdfObjInfo;
-    }
     class StiPdfPatternsObjInfo extends StiPdfObjInfo {
         resources: StiPdfObjInfo;
         first: StiPdfObjInfo;
         hatchItems: StiPdfObjInfo[];
-        shadingItems: StiPdfShadingObjInfo[];
+        shadingItems: StiPdfObjInfo[];
+        shadingFunctionItems: StiPdfObjInfo[];
     }
     class StiPdfAnnotObjInfo extends StiPdfObjInfo {
         aP: StiPdfObjInfo;
@@ -38505,7 +38779,6 @@ declare namespace Stimulsoft.Report.Export {
         createFontObject(addRef?: boolean, useUnicodeMode?: boolean, standardPdfFonts?: boolean, embeddedFonts?: boolean, annotFont?: boolean): StiPdfFontObjInfo;
         createOutlinesObject(addRef?: boolean): StiPdfOutlinesObjInfo;
         createPatternsObject(addRef?: boolean): StiPdfPatternsObjInfo;
-        createShadingObject(addRef?: boolean): StiPdfShadingObjInfo;
         createAcroFormObject(addRef?: boolean): StiPdfAcroFormObjInfo;
         createAnnotObject(addRef?: boolean, createAP?: boolean, numberAA?: number): StiPdfAnnotObjInfo;
         constructor();
@@ -39287,16 +39560,11 @@ declare namespace Stimulsoft.Report.Func {
         static get TooLongError(): string;
     }
     class Convert {
-        private static arabics;
-        private static romans;
-        private static subs;
-        private static abc;
-        private static abcRu;
         static toRoman(value: number): string;
         static toABC(value: number): string;
         static toABCNumeric(value: number): string;
         static toABCRu(value: number): string;
-        static toArabic(val: number | string, useEasternDigits: boolean): string;
+        static toArabic(value: number | string, useEasternDigits: boolean): string;
     }
     class EngineHelper {
         static joinColumnContent(source: StiBusinessObject | StiDataSource, columnName: string, delimiter: string, distinct?: boolean): string;
@@ -39954,7 +40222,9 @@ declare namespace Stimulsoft.Report.Gauge {
     enum StiGaugeType {
         FullCircular = 0,
         HalfCircular = 1,
-        Linear = 2
+        Linear = 2,
+        HorizontalLinear = 3,
+        Bullet = 4
     }
     enum StiPlacement {
         Outside = 0,
@@ -40828,6 +41098,9 @@ declare namespace Stimulsoft.Report.Styles {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode): void;
+        load(param: string | number[] | XmlNode | any): void;
+        loadFile(filePath: string): void;
+        saveToJsonString(): string;
         add(style: StiBaseStyle): void;
         clear(): void;
         addRange(styles: StiBaseStyle[] | StiStylesCollection | any): void;
@@ -41059,6 +41332,18 @@ declare namespace Stimulsoft.Report {
         addImageIntRaw(image: Image, imageFormat: Stimulsoft.System.Drawing.Imaging.ImageFormat): number;
         addImageInt(image: Image, imageFormat?: ImageFormat): number;
         constructor(useImageComparer: boolean, useImageCompression?: boolean, imageFormat?: ImageFormat, imageQuality?: number, useImageTransparency?: boolean);
+    }
+}
+declare namespace Stimulsoft.Report {
+    import Type = Stimulsoft.System.Type;
+    class StiLogService {
+        clearLogOnStart: boolean;
+        writeLogString(s: string): void;
+        static write1(message: string): void;
+        static write(type: Type, e: any): void;
+        private closeWriter;
+        private openWriter;
+        private first;
     }
 }
 declare namespace Stimulsoft.Report {
@@ -41655,6 +41940,8 @@ declare namespace StiOptions {
         static allowConvertingInFormatting: boolean;
         static negativeColor: Color;
         static barcodeQRCodeAllowUnicodeBOM: boolean;
+        static retrieveSchemaNamePostgreSql: string;
+        static hideExceptions: boolean;
     }
     class Print {
         static customPaperSizes: PaperSizeCollection;
@@ -41779,6 +42066,7 @@ declare namespace StiOptions {
         allowImageComparer: boolean;
         forceWysiwygWordwrap: boolean;
         replaceSpecialCharacters: boolean;
+        preserveWhiteSpaces: boolean;
         useImageResolution: boolean;
         useWordWrapBreakWordMode: boolean;
         useStrictTableCellSize: boolean;
@@ -42101,6 +42389,13 @@ declare namespace Stimulsoft.Report {
     }
 }
 
+declare namespace Stimulsoft.Report.Chart {
+    class StiHistogramHelper {
+        static checkValuesAndArguments(series: IStiSeries): void;
+        private static roundToSignificantDigits;
+        private static getStandardDeviation;
+    }
+}
 declare namespace Stimulsoft.Report.Chart {
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     import StiJson = Stimulsoft.Base.StiJson;
@@ -42438,7 +42733,8 @@ declare namespace Stimulsoft.Report.Chart {
     import ICloneable = Stimulsoft.System.ICloneable;
     import StiPenStyle = Stimulsoft.Base.Drawing.StiPenStyle;
     import Color = Stimulsoft.System.Drawing.Color;
-    class StiBaseLineSeries extends StiSeries implements IStiJsonReportObject, IStiBaseLineSeries, ICloneable, IStiSeries, IStiAllowApplyColorNegative {
+    import StiShowEmptyCellsAs = Stimulsoft.Report.Chart.StiShowEmptyCellsAs;
+    class StiBaseLineSeries extends StiSeries implements IStiJsonReportObject, IStiBaseLineSeries, ICloneable, IStiSeries, IStiAllowApplyColorNegative, IStiShowNullsSeries, IStiShowZerosSeries {
         private static implementsStiBaseLineSeries;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -42488,6 +42784,8 @@ declare namespace Stimulsoft.Report.Chart {
         private _allowApplyColorNegative;
         get allowApplyColorNegative(): boolean;
         set allowApplyColorNegative(value: boolean);
+        showNullsAs: StiShowEmptyCellsAs;
+        showZerosAs: StiShowEmptyCellsAs;
         constructor();
     }
 }
@@ -42568,6 +42866,7 @@ declare namespace Stimulsoft.Report.Chart {
         private swap;
         protected prepareRange(specXAxis: IStiAxis, specXTopAxis: IStiAxis, specYAxis: IStiAxis, specYRightAxis: IStiAxis): void;
         protected createStripLinesXAxis(axis: IStiAxis): void;
+        protected checkShowEdgeValues(axis: IStiAxis): void;
         protected createStripLinesYAxis(axis: IStiAxis, isDateTimeValues: boolean): void;
         protected checkStripLinesAndMaximumMinimumXAxis(axis: IStiAxis): void;
         protected checkStripLinesAndMaximumMinimumYAxis(axis: IStiAxis): void;
@@ -42662,6 +42961,13 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     class StiAreaAreaCoreXF extends StiClusteredColumnAreaCoreXF {
+        get localizedName(): string;
+        get position(): number;
+        constructor(area: IStiArea);
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
+    class StiHistogramAreaCoreXF extends StiClusteredColumnAreaCoreXF {
         get localizedName(): string;
         get position(): number;
         constructor(area: IStiArea);
@@ -42983,9 +43289,11 @@ declare namespace Stimulsoft.Report.Chart {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
-    class StiStripLineXF implements IStiStripLineXF {
+    import ICloneable = Stimulsoft.System.ICloneable;
+    class StiStripLineXF implements ICloneable, IStiStripLineXF {
         private static implementsStiStripLineXF;
         implements(): string[];
+        clone(): StiStripLineXF;
         private _valueObject;
         get valueObject(): any;
         set valueObject(value: any);
@@ -42996,10 +43304,12 @@ declare namespace Stimulsoft.Report.Chart {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
+    import ICloneable = Stimulsoft.System.ICloneable;
     import CollectionBase = Stimulsoft.System.Collections.CollectionBase;
-    class StiStripLinesXF extends CollectionBase<StiStripLineXF> implements IStiStripLinesXF {
+    class StiStripLinesXF extends CollectionBase<StiStripLineXF> implements ICloneable, IStiStripLinesXF {
         private static implementsStiStripLinesXF;
         implements(): string[];
+        clone(): StiStripLinesXF;
         add2(valueObject: any, value: number): void;
     }
 }
@@ -44903,9 +45213,13 @@ declare namespace Stimulsoft.Report.Chart {
         protected clipLinePoints(context: StiContext, geom: StiAreaGeom, points: PointD[], REFstartIndex: any, REFendIndex: any): PointD[];
         renderMarkers(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
         getInteractions(context: StiContext, geom: StiAreaGeom, points: PointD[]): StiSeriesInteractionData[];
-        renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
+        renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         renderAreas(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, series: IStiSeries[]): void;
+        private getPointsZeroConnect;
+        private getPointsNullConnect;
+        private getPointConnect;
+        private getPointValue2;
         private getPointValue;
         private getPointValue1;
         private isTopmostLine;
@@ -44918,11 +45232,10 @@ declare namespace Stimulsoft.Report.Chart {
 declare namespace Stimulsoft.Report.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
     import StiContext = Stimulsoft.Base.Context.StiContext;
-    import PointD = Stimulsoft.System.Drawing.Point;
     import RectangleD = Stimulsoft.System.Drawing.Rectangle;
     class StiScatterSeriesCoreXF extends StiBaseLineSeriesCoreXF {
         applyStyle(style: IStiChartStyle, color: Color): void;
-        renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
+        renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, seriesArray: IStiSeries[]): void;
         get localizedName(): string;
         constructor(series: IStiSeries);
@@ -44935,7 +45248,7 @@ declare namespace Stimulsoft.Report.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiBubbleSeriesCoreXF extends StiScatterSeriesCoreXF {
         applyStyle(style: IStiChartStyle, color: Color): void;
-        renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
+        renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         renderBubbles(context: StiContext, geom: StiAreaGeom, series: IStiBubbleSeries, points: PointD[], weights: number[]): void;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, seriesArray: IStiSeries[]): void;
         get localizedName(): string;
@@ -44976,9 +45289,8 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
-    import PointD = Stimulsoft.System.Drawing.Point;
     class StiLineSeriesCoreXF extends StiBaseLineSeriesCoreXF {
-        renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
+        renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         get localizedName(): string;
         constructor(series: IStiSeries);
     }
@@ -44992,6 +45304,12 @@ declare namespace Stimulsoft.Report.Chart {
         applyStyle(style: IStiChartStyle, color: Color): void;
         renderAreas(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
         getSeriesBrush(colorIndex: number, colorCount: number): StiBrush;
+        get localizedName(): string;
+        constructor(series: IStiSeries);
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
+    class StiHistogramSeriesCoreXF extends StiClusteredColumnSeriesCoreXF {
         get localizedName(): string;
         constructor(series: IStiSeries);
     }
@@ -45019,9 +45337,8 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
-    import PointD = Stimulsoft.System.Drawing.Point;
     class StiSplineSeriesCoreXF extends StiBaseLineSeriesCoreXF {
-        renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
+        renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         get localizedName(): string;
         constructor(series: IStiSeries);
     }
@@ -45041,9 +45358,8 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
-    import PointD = Stimulsoft.System.Drawing.Point;
     class StiSteppedLineSeriesCoreXF extends StiBaseLineSeriesCoreXF {
-        renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
+        renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         get localizedName(): string;
         constructor(series: IStiSeries);
     }
@@ -45466,18 +45782,16 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
-    import PointD = Stimulsoft.System.Drawing.Point;
     class StiScatterLineSeriesCoreXF extends StiScatterSeriesCoreXF {
-        renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
+        renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         get localizedName(): string;
         constructor(series: IStiSeries);
     }
 }
 declare namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
-    import PointD = Stimulsoft.System.Drawing.Point;
     class StiScatterSplineSeriesCoreXF extends StiScatterSeriesCoreXF {
-        renderLines(context: StiContext, geom: StiAreaGeom, points: PointD[]): void;
+        renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         get localizedName(): string;
         constructor(series: IStiSeries);
     }
@@ -46211,11 +46525,15 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
+    import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     class StiStyleCoreXF24 extends StiStyleCoreXF22 {
         get localizedName(): string;
         protected _styleColor: Color[];
         get styleColors(): Color[];
         get styleId(): StiChartStyleId;
+        get legendBorderColor(): Color;
+        get seriesLabelsBorderColor(): Color;
+        get seriesLabelsBrush(): StiBrush;
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -46229,9 +46547,9 @@ declare namespace Stimulsoft.Report.Chart {
         get styleId(): StiChartStyleId;
         get legendShowShadow(): boolean;
         get legendBorderColor(): Color;
+        get seriesLabelsBorderColor(): Color;
         get seriesLabelsBrush(): StiBrush;
         get seriesLabelsColor(): Color;
-        get seriesLabelsBorderColor(): Color;
         get seriesLabelsFont(): Font;
         get seriesLighting(): boolean;
         get seriesShowShadow(): boolean;
@@ -46248,9 +46566,9 @@ declare namespace Stimulsoft.Report.Chart {
         get chartAreaBrush(): StiBrush;
         get legendShowShadow(): boolean;
         get legendBorderColor(): Color;
-        get seriesLabelsBrush(): StiBrush;
         get seriesLabelsColor(): Color;
         get seriesLabelsBorderColor(): Color;
+        get seriesLabelsBrush(): StiBrush;
         get seriesLabelsFont(): Font;
         get seriesLighting(): boolean;
         get seriesShowShadow(): boolean;
@@ -46269,9 +46587,9 @@ declare namespace Stimulsoft.Report.Chart {
         get styleColors(): Color[];
         get chartBrush(): StiBrush;
         get chartAreaBrush(): StiBrush;
+        get seriesLabelsBorderColor(): Color;
         get seriesLabelsBrush(): StiBrush;
         get seriesLabelsColor(): Color;
-        get seriesLabelsBorderColor(): Color;
         get seriesLabelsFont(): Font;
         get legendBrush(): StiBrush;
         get legendLabelsColor(): Color;
@@ -46298,7 +46616,8 @@ declare namespace Stimulsoft.Report.Chart {
         get axisLabelsColor(): Color;
         get seriesLabelsColor(): Color;
         get legendBrush(): StiBrush;
-        get legendLabelsColor(): Color;
+        get seriesLabelsBorderColor(): Color;
+        get seriesLabelsBrush(): StiBrush;
         get legendBorderColor(): Color;
         get legendTitleColor(): Color;
         get legendShowShadow(): boolean;
@@ -46308,6 +46627,7 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
+    import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     class StiStyleCoreXF29 extends StiStyleCoreXF26 {
         get localizedName(): string;
         _styleColor: Color[];
@@ -46316,6 +46636,8 @@ declare namespace Stimulsoft.Report.Chart {
         get legendShowShadow(): boolean;
         get legendBorderColor(): Color;
         get seriesLabelsColor(): Color;
+        get seriesLabelsBorderColor(): Color;
+        get seriesLabelsBrush(): StiBrush;
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -46328,9 +46650,9 @@ declare namespace Stimulsoft.Report.Chart {
         get styleColors(): Color[];
         get chartBrush(): StiBrush;
         get chartAreaBrush(): StiBrush;
+        get seriesLabelsBorderColor(): Color;
         get seriesLabelsBrush(): StiBrush;
         get seriesLabelsColor(): Color;
-        get seriesLabelsBorderColor(): Color;
         get seriesLabelsFont(): Font;
         get legendBrush(): StiBrush;
         get legendLabelsColor(): Color;
@@ -46353,9 +46675,9 @@ declare namespace Stimulsoft.Report.Chart {
         get styleColors(): Color[];
         get chartBrush(): StiBrush;
         get chartAreaBrush(): StiBrush;
+        get seriesLabelsBorderColor(): Color;
         get seriesLabelsBrush(): StiBrush;
         get seriesLabelsColor(): Color;
-        get seriesLabelsBorderColor(): Color;
         get seriesLabelsFont(): Font;
         get legendBrush(): StiBrush;
         get legendLabelsColor(): Color;
@@ -46385,9 +46707,9 @@ declare namespace Stimulsoft.Report.Chart {
         get legendTitleColor(): Color;
         get legendShowShadow(): boolean;
         get legendFont(): Font;
+        get seriesLabelsBorderColor(): Color;
         get seriesLabelsBrush(): StiBrush;
         get seriesLabelsColor(): Color;
-        get seriesLabelsBorderColor(): Color;
         get seriesLabelsLineColor(): Color;
         get seriesLabelsFont(): Font;
         get axisTitleColor(): Color;
@@ -46418,9 +46740,9 @@ declare namespace Stimulsoft.Report.Chart {
         get legendTitleColor(): Color;
         get legendShowShadow(): boolean;
         get legendFont(): Font;
+        get seriesLabelsBorderColor(): Color;
         get seriesLabelsBrush(): StiBrush;
         get seriesLabelsColor(): Color;
-        get seriesLabelsBorderColor(): Color;
         get seriesLabelsLineColor(): Color;
         get seriesLabelsFont(): Font;
         get axisTitleColor(): Color;
@@ -46450,9 +46772,9 @@ declare namespace Stimulsoft.Report.Chart {
         get legendTitleColor(): Color;
         get legendShowShadow(): boolean;
         get legendFont(): Font;
+        get seriesLabelsBorderColor(): Color;
         get seriesLabelsBrush(): StiBrush;
         get seriesLabelsColor(): Color;
-        get seriesLabelsBorderColor(): Color;
         get seriesLabelsFont(): Font;
         get seriesLighting(): boolean;
         get styleId(): StiChartStyleId;
@@ -47340,11 +47662,13 @@ declare namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import PointD = Stimulsoft.System.Drawing.Point;
     class StiLineSeriesGeom extends StiBaseLineSeriesGeom {
+        pointsZeroConnect: PointD[];
+        pointsNullConnect: PointD[];
         contains(x: number, y: number): boolean;
         draw(context: StiContext): void;
         private getPointCross;
         private drawLine;
-        constructor(areaGeom: StiAreaGeom, points: PointD[], series: IStiSeries);
+        constructor(areaGeom: StiAreaGeom, points: PointD[], series: IStiSeries, pointsZeroConnect?: PointD[], pointsNullConnect?: PointD[]);
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -47380,9 +47704,11 @@ declare namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import PointD = Stimulsoft.System.Drawing.Point;
     class StiSplineSeriesGeom extends StiBaseLineSeriesGeom {
+        pointsZeroConnect: PointD[];
+        pointsNullConnect: PointD[];
         contains(x: number, y: number): boolean;
         draw(context: StiContext): void;
-        constructor(areaGeom: StiAreaGeom, points: PointD[], series: IStiSeries);
+        constructor(areaGeom: StiAreaGeom, points: PointD[], series: IStiSeries, pointsZeroConnect?: PointD[], pointsNullConnect?: PointD[]);
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -48373,6 +48699,15 @@ declare namespace Stimulsoft.Report.Chart {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
+    class StiHistogramArea extends StiAxisArea {
+        get componentId(): StiComponentId;
+        getDefaultSeriesType(): Stimulsoft.System.Type;
+        getSeriesTypes(): Stimulsoft.System.Type[];
+        createNew(): StiArea;
+        constructor();
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import ICloneable = Stimulsoft.System.ICloneable;
     class StiLineArea extends StiClusteredColumnArea implements IStiArea, IStiLineArea, IStiClusteredColumnArea, IStiAxisArea, IStiJsonReportObject, ICloneable {
@@ -49340,7 +49675,7 @@ declare namespace Stimulsoft.Report.Chart {
     import ICloneable = Stimulsoft.System.ICloneable;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Color = Stimulsoft.System.Drawing.Color;
-    class StiClusteredColumnSeries extends StiSeries implements IStiJsonReportObject, IStiClusteredColumnSeries, ICloneable, IStiSeries, IStiAllowApplyBrushNegative {
+    class StiClusteredColumnSeries extends StiSeries implements IStiJsonReportObject, IStiClusteredColumnSeries, ICloneable, IStiSeries, IStiAllowApplyBrushNegative, IStiShowZerosSeries {
         private static implementsStiClusteredColumnSeries;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -49430,6 +49765,19 @@ declare namespace Stimulsoft.Report.Chart {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
+    class StiHistogramSeries extends StiClusteredColumnSeries implements IStiHistogramSeries {
+        private static implementsStiHistogramSeries;
+        implements(): string[];
+        get componentId(): StiComponentId;
+        getDefaultAreaType(): Stimulsoft.System.Type;
+        createNew(): StiSeries;
+        private _width1;
+        get width(): number;
+        set width(value: number);
+        constructor();
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     import StiJson = Stimulsoft.Base.StiJson;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
@@ -49438,7 +49786,7 @@ declare namespace Stimulsoft.Report.Chart {
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Color = Stimulsoft.System.Drawing.Color;
     import StiPenStyle = Stimulsoft.Base.Drawing.StiPenStyle;
-    class StiParetoSeries extends StiSeries implements IStiJsonReportObject, IStiParetoSeries, IStiBaseLineSeries, IStiClusteredColumnSeries, ICloneable, IStiSeries, IStiAllowApplyBrushNegative {
+    class StiParetoSeries extends StiSeries implements IStiJsonReportObject, IStiParetoSeries, IStiBaseLineSeries, IStiClusteredColumnSeries, ICloneable, IStiSeries, IStiAllowApplyBrushNegative, IStiShowNullsSeries, IStiShowZerosSeries {
         private static implementsStiParetoSeries;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -49509,6 +49857,8 @@ declare namespace Stimulsoft.Report.Chart {
         private _allowApplyLineColor;
         get allowApplyLineColor(): boolean;
         set allowApplyLineColor(value: boolean);
+        showNullsAs: StiShowEmptyCellsAs;
+        showZerosAs: StiShowEmptyCellsAs;
         constructor();
     }
 }
@@ -49882,7 +50232,7 @@ declare namespace Stimulsoft.Report.Chart {
     import ICloneable = Stimulsoft.System.ICloneable;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Color = Stimulsoft.System.Drawing.Color;
-    class StiStackedBarSeries extends StiSeries implements IStiJsonReportObject, IStiStackedBarSeries, ICloneable, IStiSeries, IStiAllowApplyBrushNegative {
+    class StiStackedBarSeries extends StiSeries implements IStiJsonReportObject, IStiStackedBarSeries, ICloneable, IStiSeries, IStiAllowApplyBrushNegative, IStiShowZerosSeries {
         private static implementsStiStackedBarSeries;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -49983,7 +50333,7 @@ declare namespace Stimulsoft.Report.Chart {
 declare namespace Stimulsoft.Report.Chart {
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import ICloneable = Stimulsoft.System.ICloneable;
-    class StiStackedLineSeries extends StiStackedBaseLineSeries implements IStiJsonReportObject, IStiStackedBaseLineSeries, IStiStackedLineSeries, IStiSeries, ICloneable {
+    class StiStackedLineSeries extends StiStackedBaseLineSeries implements IStiJsonReportObject, IStiStackedBaseLineSeries, IStiStackedLineSeries, IStiSeries, ICloneable, IStiShowNullsSeries {
         private static implementsStiStackedLineSeries;
         implements(): string[];
         get componentId(): StiComponentId;
@@ -50043,7 +50393,7 @@ declare namespace Stimulsoft.Report.Chart {
     import ICloneable = Stimulsoft.System.ICloneable;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Color = Stimulsoft.System.Drawing.Color;
-    class StiStackedColumnSeries extends StiSeries implements IStiJsonReportObject, IStiStackedColumnSeries, ICloneable, IStiSeries, IStiAllowApplyBrushNegative {
+    class StiStackedColumnSeries extends StiSeries implements IStiJsonReportObject, IStiStackedColumnSeries, ICloneable, IStiSeries, IStiAllowApplyBrushNegative, IStiShowZerosSeries {
         private static implementsStiStackedColumnSeries;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -50180,7 +50530,7 @@ declare namespace Stimulsoft.Report.Chart {
     import ICloneable = Stimulsoft.System.ICloneable;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Color = Stimulsoft.System.Drawing.Color;
-    class StiFunnelSeries extends StiSeries implements IStiJsonReportObject, IStiFunnelSeries, IStiSeries, ICloneable {
+    class StiFunnelSeries extends StiSeries implements IStiJsonReportObject, IStiFunnelSeries, IStiSeries, ICloneable, IStiShowZerosSeries {
         private static implementsStiFunnelSeries;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -50295,7 +50645,7 @@ declare namespace Stimulsoft.Report.Chart {
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import ICloneable = Stimulsoft.System.ICloneable;
-    class StiRadarSeries extends StiSeries implements IStiJsonReportObject, ICloneable, IStiSeries, IStiRadarSeries {
+    class StiRadarSeries extends StiSeries implements IStiJsonReportObject, ICloneable, IStiSeries, IStiRadarSeries, IStiShowNullsSeries {
         private static implementsStiRadarSeries;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -50906,7 +51256,7 @@ declare namespace Stimulsoft.Report.Chart {
         get propName(): string;
         getReport(): any;
         clone(): StiSeriesInteraction;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         get hyperlink(): string;
         set hyperlink(value: string);
         get tag(): string;
@@ -50955,6 +51305,16 @@ declare namespace Stimulsoft.Report.Chart {
         pointIndex: number;
         point: Point;
         fill(area: IStiArea, series: IStiSeries, pointIndex: number): void;
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
+    import PointD = Stimulsoft.System.Drawing.Point;
+    class StiSeriesPointsInfo {
+        pointsFrom: PointD[];
+        points: PointD[];
+        pointsZeroConnect: PointD[];
+        pointsNullConnect: PointD[];
+        constructor(pointsFrom?: PointD[], points?: PointD[], pointsZeroConnect?: PointD[], pointsNullConnect?: PointD[]);
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -51901,6 +52261,7 @@ declare namespace Stimulsoft.Report.Components.Gauge.Primitives {
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Font = Stimulsoft.System.Drawing.Font;
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     class StiTickLabelBase extends StiTickBase implements IStiJsonReportObject {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -51908,6 +52269,9 @@ declare namespace Stimulsoft.Report.Components.Gauge.Primitives {
         private _textFormat;
         get textFormat(): string;
         set textFormat(value: string);
+        private _formatService;
+        get formatService(): StiFormatService;
+        set formatService(value: StiFormatService);
         private _textBrush;
         get textBrush(): StiBrush;
         set textBrush(value: StiBrush);
@@ -53536,6 +53900,17 @@ declare namespace Stimulsoft.Report.Gauge.Helpers {
         static darkSpeedometer(gauge: StiGauge, report: StiReport): void;
     }
 }
+declare namespace Stimulsoft.Report.Gauge.Helpers {
+    import StiGauge = Stimulsoft.Report.Components.StiGauge;
+    class StiGaugeInitHelper {
+        static init(gauge: StiGauge, type: StiGaugeType, skipText?: boolean): any;
+        private static createFullCircularScale;
+        private static createHalfCircularScale;
+        private static createLinearScale;
+        private static createBullet;
+        private static addLinearRanges;
+    }
+}
 declare namespace Stimulsoft.Report.Gauge.Primitives {
     import StiGraphicsPathLinesGaugeGeom = Stimulsoft.Report.Gauge.GaugeGeoms.StiGraphicsPathLinesGaugeGeom;
     import Size = Stimulsoft.System.Drawing.Size;
@@ -54357,6 +54732,7 @@ declare namespace Stimulsoft.Report.Components {
     import IStiGauge = Stimulsoft.Report.Components.Gauge.IStiGauge;
     import IStiGaugeStyle = Stimulsoft.Report.Gauge.IStiGaugeStyle;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     class StiGauge extends StiComponent implements IStiExportImageExtended, IStiBorder, IStiBrush, IStiGauge, IStiJsonReportObject {
         private static implementsStiGauge;
         implements(): string[];
@@ -54373,6 +54749,10 @@ declare namespace Stimulsoft.Report.Components {
         private _brush;
         get brush(): StiBrush;
         set brush(value: StiBrush);
+        private valueFormat_;
+        get valueFormat(): StiFormatService;
+        set valueFormat(value: StiFormatService);
+        private static getValueFormatDefault;
         get localizedCategory(): string;
         get localizedName(): string;
         get defaultClientRectangle(): Rectangle;
@@ -54963,45 +55343,46 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         StackedColumn = 2,
         FullStackedColumn = 3,
         Pareto = 4,
-        Line = 5,
-        StackedLine = 6,
-        FullStackedLine = 7,
-        Spline = 8,
-        StackedSpline = 9,
-        FullStackedSpline = 10,
-        SteppedLine = 11,
-        Area = 12,
-        StackedArea = 13,
-        FullStackedArea = 14,
-        SplineArea = 15,
-        StackedSplineArea = 16,
-        FullStackedSplineArea = 17,
-        SteppedArea = 18,
-        Range = 19,
-        SplineRange = 20,
-        SteppedRange = 21,
-        RangeBar = 22,
-        ClusteredBar = 23,
-        StackedBar = 24,
-        FullStackedBar = 25,
-        Scatter = 26,
-        ScatterLine = 27,
-        ScatterSpline = 28,
-        Pie = 29,
-        RadarPoint = 30,
-        RadarLine = 31,
-        RadarArea = 32,
-        Funnel = 33,
-        FunnelWeightedSlices = 34,
-        Candlestick = 35,
-        Stock = 36,
-        Treemap = 37,
-        Gantt = 38,
-        Doughnut = 39,
-        Bubble = 40,
-        Pictorial = 41,
-        Sunburst = 42,
-        Waterfall = 43
+        Histogram = 5,
+        Line = 6,
+        StackedLine = 7,
+        FullStackedLine = 8,
+        Spline = 9,
+        StackedSpline = 10,
+        FullStackedSpline = 11,
+        SteppedLine = 12,
+        Area = 13,
+        StackedArea = 14,
+        FullStackedArea = 15,
+        SplineArea = 16,
+        StackedSplineArea = 17,
+        FullStackedSplineArea = 18,
+        SteppedArea = 19,
+        Range = 20,
+        SplineRange = 21,
+        SteppedRange = 22,
+        RangeBar = 23,
+        ClusteredBar = 24,
+        StackedBar = 25,
+        FullStackedBar = 26,
+        Scatter = 27,
+        ScatterLine = 28,
+        ScatterSpline = 29,
+        Pie = 30,
+        RadarPoint = 31,
+        RadarLine = 32,
+        RadarArea = 33,
+        Funnel = 34,
+        FunnelWeightedSlices = 35,
+        Candlestick = 36,
+        Stock = 37,
+        Treemap = 38,
+        Gantt = 39,
+        Doughnut = 40,
+        Bubble = 41,
+        Pictorial = 42,
+        Sunburst = 43,
+        Waterfall = 44
     }
     enum StiChartLabelsStyle {
         Value = 0,
@@ -55034,7 +55415,8 @@ declare namespace Stimulsoft.Dashboard.Components {
         localizedName: string;
         ident: StiMeterIdent;
         key: string;
-        get isDefault(): boolean;
+        isDefault(): boolean;
+        getIsDefault(): boolean;
         toString(): string;
         constructor(key?: string, expression?: string, label?: string);
     }
@@ -55077,7 +55459,15 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         interlacingVert: StiVertChartInterlacing;
         gridLinesHor: StiHorChartGridLines;
         gridLinesVert: StiVertChartGridLines;
-        constructor(colorEach?: boolean, reverseHor?: boolean, reverseVert?: boolean, gridLinesHor?: StiHorChartGridLines, gridLinesVert?: StiVertChartGridLines, interlacingHor?: StiHorChartInterlacing, interlacingVert?: StiVertChartInterlacing);
+        xAxis: StiXChartAxis;
+        private shouldSerializeXAxis;
+        xTopAxis: StiXTopChartAxis;
+        private shouldSerializeXTopAxis;
+        yAxis: StiYChartAxis;
+        private shouldSerializeYAxis;
+        yRightAxis: StiYRightChartAxis;
+        private shouldSerializeYRightAxis;
+        constructor(colorEach?: boolean, reverseHor?: boolean, reverseVert?: boolean, gridLinesHor?: StiHorChartGridLines, gridLinesVert?: StiVertChartGridLines, interlacingHor?: StiHorChartInterlacing, interlacingVert?: StiVertChartInterlacing, xAxis?: StiXChartAxis, yAxis?: StiYChartAxis, xTopAxis?: StiXTopChartAxis, yRightAxis?: StiYRightChartAxis);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
@@ -55108,7 +55498,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         textAfter: string;
         textBefore: string;
         step: number;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(textBefore?: string, textAfter?: string, angle?: number, font?: Font, placement?: StiLabelsPlacement, color?: Color, textAlignment?: StiHorAlignment);
     }
 }
@@ -55128,10 +55518,34 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
         labels: StiChartAxisLabels;
-        visible: boolean;
         shouldSerializeLabels(): boolean;
-        get isDefault(): boolean;
-        constructor(labels?: StiChartAxisLabels);
+        range: StiChartAxisRange;
+        shouldSerializeRange(): boolean;
+        visible: boolean;
+        isDefault(): boolean;
+        constructor(labels?: StiChartAxisLabels, range?: StiChartAxisRange, visible?: boolean);
+    }
+}
+declare namespace Stimulsoft.Dashboard.Components.Chart {
+    import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import StiJson = Stimulsoft.Base.StiJson;
+    import ICloneable = Stimulsoft.System.ICloneable;
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    class StiChartAxisRange implements IStiJsonReportObject, ICloneable {
+        private static ImplementsStiChartAxisRange;
+        implements(): string[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(jObject: StiJson): void;
+        loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
+        clone(): any;
+        _minimum: number;
+        get minimum(): number;
+        set minimum(value: number);
+        maximum: number;
+        auto: boolean;
+        isDefault(): boolean;
+        consturctor(auto?: boolean, minimum?: number, maximum?: number): void;
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
@@ -55169,7 +55583,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         private shouldSerializeFont;
         position: StiTitlePosition;
         text: string;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(font?: Font, text?: string, color?: Color, alignment?: StringAlignment, position?: StiTitlePosition, visible?: boolean);
     }
 }
@@ -55274,7 +55688,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         getDrillDownParameters(): List<IStiDashboardDrillDownParameter>;
         setDrillDownParameters(drillDownParameters: any[]): void;
         ident: StiInteractionIdent;
@@ -55303,7 +55717,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         availableOnClick: StiAvailableInteractionOnClick;
         onHover: StiInteractionOnHover;
         onClick: StiInteractionOnClick;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>);
     }
 }
@@ -55338,7 +55752,7 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
         private shouldSerializeForeColor;
         dashboardInteraction: IStiDashboardInteraction;
         private shouldSerializeDashboardInteraction;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         getUniqueCode(): number;
         visible: boolean;
         showTotalSummary: boolean;
@@ -55374,16 +55788,30 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Table {
+    import StiJson = Stimulsoft.Base.StiJson;
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiReport = Stimulsoft.Report.StiReport;
+    import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import Color = Stimulsoft.System.Drawing.Color;
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiHorAlignment = Stimulsoft.Base.Drawing.StiHorAlignment;
     import IStiColorScaleColumn = Stimulsoft.Base.Meters.IStiColorScaleColumn;
-    class StiColorScaleColumn extends StiMeasureColumn implements IStiColorScaleColumn {
+    class StiColorScaleColumn extends StiMeasureColumn implements IStiColorScaleColumn, IStiJsonReportObject {
         private static ImplementsStiColorScaleColumn;
         implements(): string[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(jObject: StiJson): void;
+        loadFromXml(xmlNode: XmlNode, isDocument: boolean, report?: StiReport): void;
+        getUniqueCode(): number;
+        isDefault(): boolean;
         ident: StiMeterIdent;
+        minimumColor: Color;
+        private shouldSerializeMinimumColor;
+        maximumColor: Color;
+        private shouldSerializeMaximumColor;
         get localizedName(): string;
-        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color);
+        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color, minimumColor?: Color, maximumColor?: Color);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Table {
@@ -55495,7 +55923,7 @@ declare namespace Stimulsoft.Dashboard.Components.Table {
         get localizedName(): string;
         showHyperlink: boolean;
         hyperlinkPattern: string;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visible?: boolean, foreColor?: Color, showHyperlink?: boolean, hyperlinkPattern?: string);
     }
 }
@@ -55802,6 +56230,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
+    import StiEmptyCellsAs = Stimulsoft.Report.Dashboard.StiEmptyCellsAs;
     import StiSeriesYAxis = Stimulsoft.Report.Chart.StiSeriesYAxis;
     import IStiValueMeter = Stimulsoft.Base.Meters.IStiValueMeter;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
@@ -55818,10 +56247,12 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         yAxis: StiSeriesYAxis;
         lineStyle: StiPenStyle;
         lineWidth: number;
+        showZeros: StiEmptyCellsAs;
+        showNulls: StiEmptyCellsAs;
         ident: StiMeterIdent;
         getUniqueCode(): number;
         get localizedName(): string;
-        constructor(key?: string, expression?: string, label?: string, seriesType?: StiChartSeriesType, yAxis?: StiSeriesYAxis, lineStyle?: StiPenStyle, lineWidth?: number);
+        constructor(key?: string, expression?: string, label?: string, seriesType?: StiChartSeriesType, yAxis?: StiSeriesYAxis, lineStyle?: StiPenStyle, lineWidth?: number, showZeros?: StiEmptyCellsAs, showNulls?: StiEmptyCellsAs);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
@@ -56123,7 +56554,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         font: Font;
         private shouldSerializeFont;
         text: string;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(font?: Font, text?: string, color?: Color);
     }
 }
@@ -56149,7 +56580,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         font: Font;
         valueType: StiSeriesLabelsValueType;
         private shouldSerializeFont;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(font?: Font, color?: Color, valueType?: StiSeriesLabelsValueType);
     }
 }
@@ -56183,7 +56614,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         columns: number;
         labels: StiChartLegendLabels;
         title: StiChartLegendTitle;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(title?: StiChartLegendTitle, labels?: StiChartLegendLabels, horAlignment?: StiLegendHorAlignment, vertAlignment?: StiLegendVertAlignment, visible?: boolean, direction?: StiLegendDirection, columns?: number);
     }
 }
@@ -56202,7 +56633,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
         direction: StiDirection;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(font?: Font, text?: string, color?: Color, alignment?: StringAlignment, direction?: StiDirection, position?: StiTitlePosition, visible?: boolean);
     }
 }
@@ -56219,8 +56650,10 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
         title: StiYChartAxisTitle;
         shouldSerializeTitle(): boolean;
-        get isDefault(): boolean;
-        constructor(labels?: StiChartAxisLabels, title?: StiYChartAxisTitle, visible?: boolean);
+        startFromZero: boolean;
+        shouldSerializeStartFromZero(): boolean;
+        isDefault(): boolean;
+        constructor(labels?: StiChartAxisLabels, title?: StiYChartAxisTitle, visible?: boolean, startFromZero?: boolean);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
@@ -56228,6 +56661,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import StiJson = Stimulsoft.Base.StiJson;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiAutoBool = Stimulsoft.Base.StiAutoBool;
     class StiXChartAxis extends StiChartAxis implements IStiJsonReportObject {
         clone(): any;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -56235,8 +56669,12 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
         title: StiXChartAxisTitle;
         shouldSerializeTitle(): boolean;
-        get isDefault(): boolean;
-        constructor(labels?: StiChartAxisLabels, title?: StiXChartAxisTitle, visible?: boolean);
+        showEdgeValues: StiAutoBool;
+        shouldSerializeShowEdgeValues(): boolean;
+        startFromZero: StiAutoBool;
+        shouldSerializeStartFromZero(): boolean;
+        isDefault(): boolean;
+        constructor(labels?: StiChartAxisLabels, title?: StiXChartAxisTitle, visible?: boolean, startFromZero?: StiAutoBool, showEdgeValues?: StiAutoBool);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
@@ -56303,7 +56741,9 @@ declare namespace Stimulsoft.Dashboard.Components.Panel {
     import IStiPanel = Stimulsoft.Report.Dashboard.IStiPanel;
     import IStiSimpleBorder = Stimulsoft.Report.Components.IStiSimpleBorder;
     import StiPanel = Stimulsoft.Report.Components.StiPanel;
-    class StiPanelElement extends StiPanel implements IStiSimpleBorder, IStiPanel, IStiPadding, IStiMargin, IStiJsonReportObject {
+    import IStiAltProperties = Stimulsoft.Report.Dashboard.IStiAltProperties;
+    import RectangleD = Stimulsoft.System.Drawing.Rectangle;
+    class StiPanelElement extends StiPanel implements IStiSimpleBorder, IStiPanel, IStiPadding, IStiMargin, IStiAltProperties, IStiJsonReportObject {
         private static ImplementsStiPanelElement;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -56331,6 +56771,8 @@ declare namespace Stimulsoft.Dashboard.Components.Panel {
         private shouldSerializeBorder;
         backColor: Color;
         private shouldSerializeBackColor;
+        altTitleVisible: boolean;
+        altClientRectangle: RectangleD;
         get toolboxPosition(): number;
         get localizedName(): string;
         defaultClientRectangle: Rectangle;
@@ -56370,7 +56812,9 @@ declare namespace Stimulsoft.Dashboard.Components {
     import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
-    class StiElement extends StiComponent implements IStiElement, IStiSimpleBorder, IStiBackColor, IStiPadding, IStiMargin, IStiJsonReportObject {
+    import IStiAltProperties = Stimulsoft.Report.Dashboard.IStiAltProperties;
+    import RectangleD = Stimulsoft.System.Drawing.Rectangle;
+    class StiElement extends StiComponent implements IStiElement, IStiSimpleBorder, IStiBackColor, IStiPadding, IStiMargin, IStiAltProperties, IStiJsonReportObject {
         private static ImplementsStiElement;
         implements(): string[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -56396,6 +56840,8 @@ declare namespace Stimulsoft.Dashboard.Components {
         private shouldSerializeMargin;
         padding: StiPadding;
         shouldSerializePadding(): boolean;
+        altTitleVisible: boolean;
+        altClientRectangle: RectangleD;
         serviceCategory: string;
         canContainIn(component: StiComponent): boolean;
         toolboxCategory: StiToolboxCategory;
@@ -56451,7 +56897,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         headerText: string;
         footerText: string;
         get isDefaultLayout(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>, allowUserDrillDown?: boolean, fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean);
     }
 }
@@ -56686,14 +57132,14 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         private shouldSerializeWeights;
         series: StiSeriesChartMeter;
         private shouldSerializeSeries;
-        xAxis: StiXChartAxis;
-        private shouldSerializeXAxis;
-        xTopAxis: StiXTopChartAxis;
-        private shouldSerializeXTopAxis;
-        yAxis: StiYChartAxis;
-        private shouldSerializeYAxis;
-        yRightAxis: StiYRightChartAxis;
-        private shouldSerializeYRightAxis;
+        get xAxis(): StiXChartAxis;
+        set xAxis(value: StiXChartAxis);
+        get xTopAxis(): StiXTopChartAxis;
+        set xTopAxis(value: StiXTopChartAxis);
+        get yAxis(): StiYChartAxis;
+        set yAxis(value: StiYChartAxis);
+        get yRightAxis(): StiYRightChartAxis;
+        set yRightAxis(value: StiYRightChartAxis);
         legend: StiChartLegend;
         private shouldSerializeLegend;
         area: StiChartArea;
@@ -56792,7 +57238,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         clone(): StiChartGridLines;
         color: Color;
         visible: boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
@@ -56809,7 +57255,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         clone(): StiChartInterlacing;
         color: Color;
         visible: boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(color?: Color, visible?: boolean);
     }
 }
@@ -56844,7 +57290,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         textAfter: string;
         textBefore: string;
         element: StiChartElement;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(axisPosition?: StiChartLabelsPosition, piePosition?: StiChartLabelsPosition, doughnutPosition?: StiChartLabelsPosition, funnelPosition?: StiChartLabelsPosition, treemapPosition?: StiChartLabelsPosition, style?: StiChartLabelsStyle, font?: Font, foreColor?: Color, textBefore?: string, textAfter?: string, autoRotate?: boolean);
     }
 }
@@ -56856,7 +57302,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     class StiChartYRightAxisLabels extends StiChartAxisLabels {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         textAlignment: StiHorAlignment;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(textBefore?: string, textAfter?: string, angle?: number, font?: Font, placement?: StiLabelsPlacement, color?: Color, textAlignment?: StiHorAlignment);
     }
 }
@@ -56864,7 +57310,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiHorChartGridLines extends StiChartGridLines {
         visible: boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(color?: Color, visible?: boolean);
     }
 }
@@ -56878,7 +57324,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiVertChartGridLines extends StiChartGridLines {
         visible: boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(color?: Color, visible?: boolean);
     }
 }
@@ -56903,7 +57349,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         loadFromJsonObject(jObject: StiJson): void;
         loadFromXml(xmlNode: XmlNode, isDocument: boolean): void;
         direction: StiDirection;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(font?: Font, text?: string, color?: Color, alignment?: StringAlignment, direction?: StiDirection, position?: StiTitlePosition, visible?: boolean);
     }
 }
@@ -56915,15 +57361,21 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import StiJson = Stimulsoft.Base.StiJson;
     class StiXTopChartAxis extends StiXChartAxis {
-        get isDefault(): boolean;
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        isDefault(): boolean;
         visible: boolean;
         constructor(labels?: StiChartAxisLabels, title?: StiXChartAxisTitle, visible?: boolean);
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Chart {
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import StiJson = Stimulsoft.Base.StiJson;
     class StiYRightChartAxis extends StiYChartAxis {
-        get isDefault(): boolean;
+        isDefault(): boolean;
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         visible: boolean;
         labels: StiChartYRightAxisLabels;
         shouldSerializeLabels(): boolean;
@@ -57209,11 +57661,13 @@ declare namespace Stimulsoft.Dashboard.Render {
         private static setStyle;
         private createScale;
         private getSummary;
+        private static calculateMinorInterval;
         private createFullCircularScale;
-        createHalfCircularScale(element: StiGaugeElement, minValue: number, maxValue: number): StiScaleBase;
-        createLinearScale(element: StiGaugeElement, minValue: number, maxValue: number): StiScaleBase;
+        createHalfCircularScale(element: StiGaugeElement, minValue: number, maxValue: number, target?: number): StiScaleBase;
+        createLinearScale(element: StiGaugeElement, minValue: number, maxValue: number, isHorizontal: boolean, target: number): StiScaleBase;
         private static addRadialRanges;
         private static addLinearRanges;
+        createBullet(element: StiGaugeElement, minValue: number, maxValue: number, target?: number): StiScaleBase;
         private getMinValue;
         private getMaxValue;
         private getValueMeterIndex;
@@ -57280,7 +57734,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         headerText: string;
         footerText: string;
         get isDefaultLayout(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean, allowUserSorting?: boolean);
     }
 }
@@ -57317,6 +57771,7 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
     import IStiTitleElement = Stimulsoft.Report.Dashboard.IStiTitleElement;
     import IStiGaugeElement = Stimulsoft.Report.Dashboard.IStiGaugeElement;
     import IStiGlobalizationProvider = Stimulsoft.Report.IStiGlobalizationProvider;
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     class StiGaugeElement extends StiElement implements IStiGaugeElement, IStiTitleElement, IStiFont, IStiForeColor, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider {
         private static ImplementsStiGaugeElement;
         implements(): string[];
@@ -57374,6 +57829,9 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
         get shouldSerializeDashboardInteraction(): boolean;
+        valueFormat: StiFormatService;
+        private static getValueFormatDefault;
+        private shouldSerializeValueFormat;
         shortValue: boolean;
         value: StiValueGaugeMeter;
         series: StiSeriesGaugeMeter;
@@ -57414,7 +57872,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         ident: StiInteractionIdent;
         availableOnClick: StiAvailableInteractionOnClick;
         onClick: StiInteractionOnClick;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>);
     }
 }
@@ -57508,7 +57966,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         headerText: string;
         footerText: string;
         get isDefaultLayout(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean, allowUserSorting?: boolean);
     }
 }
@@ -57550,6 +58008,7 @@ declare namespace Stimulsoft.Dashboard.Components.Indicator {
     import IStiIndicatorElement = Stimulsoft.Report.Dashboard.IStiIndicatorElement;
     import IStiTextFormat = Stimulsoft.Report.Components.IStiTextFormat;
     import IStiGlobalizationProvider = Stimulsoft.Report.IStiGlobalizationProvider;
+    import StiFontSizeMode = Stimulsoft.Report.Dashboard.StiFontSizeMode;
     class StiIndicatorElement extends StiElement implements IStiTextFormat, IStiIndicatorElement, IStiTitleElement, IStiFont, IStiForeColor, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider {
         private static ImplementsStiIndicatorElement;
         implements(): string[];
@@ -57804,7 +58263,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         headerText: string;
         footerText: string;
         get isDefaultLayout(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean);
     }
 }
@@ -57966,7 +58425,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         headerText: string;
         footerText: string;
         get isDefaultLayout(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean);
     }
 }
@@ -58083,7 +58542,9 @@ declare namespace Stimulsoft.Dashboard {
         PositivePattern = 16,
         NegativePattern = 32,
         CurrencySymbol = 64,
-        PercentageSymbol = 128
+        PercentageSymbol = 128,
+        Abbreviation = 256,
+        NegativeInRed = 512
     }
     enum StiFilterCondition {
         EqualTo = 0,
@@ -58117,11 +58578,6 @@ declare namespace Stimulsoft.Dashboard {
         DateTime = 2,
         Boolean = 3,
         Expression = 4
-    }
-    enum StiFontSizeMode {
-        Auto = 0,
-        Value = 1,
-        Target = 2
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.PivotTable {
@@ -58197,7 +58653,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         headerText: string;
         footerText: string;
         get isDefaultLayout(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean, allowUserSorting?: boolean);
     }
 }
@@ -58334,7 +58790,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         headerText: string;
         footerText: string;
         get isDefaultLayout(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>, fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean);
     }
 }
@@ -58577,7 +59033,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         headerText: string;
         footerText: string;
         get isDefaultLayout(): boolean;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>, allowFiltering?: boolean, allowSorting?: boolean, drillDownFiltered?: boolean, fullRowSelect?: boolean, fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean);
     }
 }
@@ -58694,7 +59150,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         ident: StiInteractionIdent;
         availableOnClick: StiAvailableInteractionOnClick;
         onClick: StiInteractionOnClick;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>);
     }
 }
@@ -59020,6 +59476,8 @@ declare namespace Stimulsoft.Dashboard.Components {
     import IStiDashboard = Stimulsoft.Report.Dashboard.IStiDashboard;
     import StiPage = Stimulsoft.Report.Components.StiPage;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import SizeD = System.Drawing.Size;
+    import StiDashboardViewMode = Stimulsoft.Report.Components.StiDashboardViewMode;
     class StiDashboard extends StiPage implements IStiDashboard, IStiJsonReportObject {
         private static ImplementsStiDashboard;
         implements(): string[];
@@ -59030,6 +59488,9 @@ declare namespace Stimulsoft.Dashboard.Components {
         getElements(nested?: boolean, group?: string): List<IStiElement>;
         getUserFilters(element: IStiElement): List<StiDataFilterRule>;
         private getUserFilters3;
+        getUnplacedElements(): List<IStiElement>;
+        switchDashboardViewMode(value: StiDashboardViewMode): void;
+        removeMobileSurface(): void;
         fetchAllMeters(): List<IStiMeter>;
         getNestedPages(): List<StiPage>;
         get isDefined(): boolean;
@@ -59064,6 +59525,16 @@ declare namespace Stimulsoft.Dashboard.Components {
         private _height2;
         get height(): number;
         set height(value: number);
+        private _altSize;
+        get altSize(): SizeD;
+        set altSize(value: SizeD);
+        private _dashboardViewMode;
+        get dashboardViewMode(): StiDashboardViewMode;
+        set dashboardViewMode(value: StiDashboardViewMode);
+        private _deviceWidth;
+        get deviceWidth(): number;
+        set deviceWidth(value: number);
+        get isMobileSurfacePresent(): boolean;
         constructor(report?: StiReport);
     }
 }
@@ -59476,7 +59947,7 @@ declare namespace Stimulsoft.Dashboard.Interactions {
         static loadFromXml(xmlNode: XmlNode): StiDashboardDrillDownParameter;
         saveToString(): string;
         getStringRepresentation(): string;
-        get isDefault(): boolean;
+        isDefault(): boolean;
         name: string;
         expression: string;
         constructor();
@@ -59514,8 +59985,14 @@ declare namespace Stimulsoft.Dashboard.Render {
         private static checkWaterfallTotal;
         static processTopNElements(element: StiChartElement, series: StiSeries): void;
         private static setStyle;
-        private static getDetailRows;
+        protected static getDetailRows(rows: List<any[]>, argument: any, argumentIndexes: List<number>): List<any[]>;
         protected renderSeries(element: StiChartElement, value: StiMeter, seriesKey: string, chart: StiChart): StiSeries;
+        private static renderSeriesYAxis;
+        private static renderSeriesLine;
+        private static renderSeriesShowZeros;
+        private static renderSeriesShowNulls;
+        private static renderSeriesLighting;
+        private static renderSeriesPictorialIcon;
         private renderMarker;
         private renderSeriesNegativeColor;
         private renderSeriesParetoColor;
@@ -59534,19 +60011,23 @@ declare namespace Stimulsoft.Dashboard.Render {
         private static renderYAxisTitleText;
         private static renderAxisLineColor;
         private static renderAxis;
+        private static renderAxisStartFromZero;
+        private static renderAxisShowEdgeValues;
+        private static renderAxisRange;
         private static renderAxisLabelsTitleColor;
         private static renderAxisLabelsColor;
         private static getTitleAxisChart;
         private renderLegend;
+        private static renderLegendTitleColor;
         private static renderSeriesLabelsLegendValueType;
         private static renderLegendLabelsColor;
-        private static renderConditions;
+        protected static renderConditions(seriesKey: string, series: StiSeries, element: StiChartElement, valueMeter: StiMeter): void;
         private static renderValueConditions;
         private static renderArgumentConditions;
         private static renderSeriesConditions;
         private static getConditionResult;
         private static renderConstantLines;
-        private static renderTrendLines;
+        protected static renderTrendLines(series: StiSeries, element: StiChartElement, valueMeter: StiMeter): void;
         private static getTrendLine;
         private renderSeriesLabels;
         private static applyPropertiesToSeriesLabels;
@@ -59639,6 +60120,8 @@ declare namespace Stimulsoft.Dashboard.Render {
         protected renderElements(element: StiChartElement, chart: StiChart, dataTable: StiDataTable): void;
         protected renderSeries(element: StiChartElement, value: StiMeter, groupKey: string, chart: StiChart): StiSeries;
         protected renderSeriesInteraction(series: StiSeries, element: StiChartElement, count: number, seriesKey: string): void;
+        private getToolTip2;
+        private getHyperlink2;
         protected getEndValueIndex(table: StiDataTable, index: number): number;
         protected getEndValueMeterIndexes(table: StiDataTable): List<number>;
         protected getEndValueMeters(table: StiDataTable): List<StiEndValueChartMeter>;
@@ -59649,6 +60132,20 @@ declare namespace Stimulsoft.Dashboard.Render {
     import StiShapeElement = Stimulsoft.Dashboard.Components.Shape.StiShapeElement;
     class StiShapeElementBuilder {
         render(element: StiShapeElement): StiShape;
+    }
+}
+declare namespace Stimulsoft.Dashboard.Render {
+    import StiChartElement = Stimulsoft.Dashboard.Components.Chart.StiChartElement;
+    import StiChart = Stimulsoft.Report.Components.StiChart;
+    import StiDataTable = Stimulsoft.Data.Engine.StiDataTable;
+    class StiStackedChartElementBuilder extends StiChartElementBuilder {
+        protected renderElements(element: StiChartElement, chart: StiChart, dataTable: StiDataTable): void;
+        private static getDataTable;
+        private static getCountRow;
+        private static getArguments;
+        private static getValues;
+        private static processTopNStackedChart;
+        private static getListByColumnName;
     }
 }
 declare namespace Stimulsoft.Dashboard.Render {
@@ -59890,7 +60387,7 @@ declare namespace Stimulsoft.Dashboard.Export.Painters.Table {
     import Color = Stimulsoft.System.Drawing.Color;
     import StiTableElementStyle = Stimulsoft.Report.Dashboard.Styles.StiTableElementStyle;
     class StiColorScaleCellPainter {
-        static getScaleColor(value: number, min: number, max: number, style: StiTableElementStyle): Color;
+        static getScaleColor(value: number, min: number, max: number, style: StiTableElementStyle, minimumColor: Color, maximumColor: Color): Color;
     }
 }
 declare namespace Stimulsoft.Dashboard.Export.Painters.Table {
@@ -60446,6 +60943,7 @@ declare namespace Stimulsoft.Viewer.Helpers.Dashboards {
     import IStiTableElement = Stimulsoft.Report.Dashboard.IStiTableElement;
     class StiTableElementViewHelper {
         static getTableData(tableElement: IStiTableElement): Promise<KeyObjectType[][]>;
+        static getTableHiddenData(tableElement: IStiTableElement): Promise<KeyObjectType[][]>;
         static getTableSettings(tableElement: IStiTableElement): KeyObjectType;
         private static getCellForeColor;
         private static getHeaderForeColor;
@@ -60570,6 +61068,7 @@ declare namespace Stimulsoft.Viewer {
         private static getVariableAlias;
         private static getItems;
         private static getDateTimeObject;
+        private static getTimeSpanStringValue;
         private static getBasicType;
         private static getStiType;
         static applyReportParameters(report: StiReport, values: any): void;
@@ -60635,6 +61134,7 @@ declare namespace Stimulsoft.Viewer {
         showExportToOpenDocumentWriter: boolean;
         showExportToOpenDocumentCalc: boolean;
         showExportToPowerPoint: boolean;
+        showExportToImageSvg: boolean;
     }
 }
 declare namespace Stimulsoft.Viewer {
@@ -61962,2000 +62462,2000 @@ declare namespace Stimulsoft.Report.Check {
             "@language": string;
             "@description": string;
             "@cultureName": string;
-            "CheckActions": {
-                "ApplyEngineV2Long": string;
-                "Change": string;
-                "ChangeReportToInterpretationMode": string;
-                "Code": string;
-                "Convert": string;
-                "Delete": string;
-                "Edit": string;
-                "Fix": string;
-                "GotoCodeLong": string;
-                "Hide": string;
-                "NewName": string;
-                "Off": string;
-                "On": string;
-                "SetGrowToHeightToFalse": string;
-                "SetGrowToHeightToTrue": string;
-                "StiAllowHtmlTagsInTextActionLong": string;
-                "StiAllowOnDoublePassActionLong": string;
-                "StiApplyGeneralTextFormatLong": string;
-                "StiApplyGeneralTextFormatShort": string;
-                "StiCanBreakComponentInContainerActionLong": string;
-                "StiCanGrowComponentInContainerActionLong": string;
-                "StiCanGrowGrowToHeightComponentInContainerLong": string;
-                "StiCanGrowWordWrapTextAndWysiwygActionLong": string;
-                "StiColumnsWidthGreaterContainerWidthActionLong": string;
-                "StiComponentStyleIsNotFoundOnComponentActionLong": string;
-                "StiDeleteComponentActionLong": string;
-                "StiDeleteConnectionActionLong": string;
-                "StiDeleteDataRelationActionLong": string;
-                "StiDeleteDataSourceActionLong": string;
-                "StiDeleteLostPointsActionLong": string;
-                "StiDeletePageActionLong": string;
-                "StiFixCrossLinePrimitiveActionLong": string;
-                "StiGenerateNewNameComponentActionLong": string;
-                "StiGenerateNewNameDataSourceActionLong": string;
-                "StiGenerateNewNamePageActionLong": string;
-                "StiGenerateNewNameRelationActionLong": string;
-                "StiGrowToHeightOverlappingLong": string;
-                "StiLargeHeightAtPageActionLong": string;
-                "StiMinRowsInColumnsActionLong": string;
-                "StiMoveComponentToPageAreaActionLong": string;
-                "StiMoveComponentToPageAreaActionShort": string;
-                "StiMoveComponentToPrintablePageAreaActionLong": string;
-                "StiMoveComponentToPrintablePageAreaActionShort": string;
-                "StiNegativeSizesOfComponentsActionLong": string;
-                "StiOrientationPageToLandscapeActionLong": string;
-                "StiOrientationPageToLandscapeActionShort": string;
-                "StiOrientationPageToPortraitActionLong": string;
-                "StiOrientationPageToPortraitActionShort": string;
-                "StiPrintHeadersFootersFromPreviousPageLong": string;
-                "StiPrintOnPreviousPageLong": string;
-                "StiPropertiesOnlyEngineV1ActionLong": string;
-                "StiPropertiesOnlyEngineV2ActionLong": string;
-                "StiResetPageNumberActionLong": string;
-                "StiSwitchWidthAndHeightOfPageActionLong": string;
-                "StiVerySmallSizesOfComponentsLong": string;
-                "StiVerySmallSizesOfComponentsShort": string;
-                "StiWordWrapCanGrowTextDoesNotFitActionLong": string;
-                "Zero": string;
-            };
-            "CheckComponent": {
-                "StiAllowHtmlTagsInTextCheckLong": string;
-                "StiAllowHtmlTagsInTextCheckShort": string;
-                "StiCanBreakComponentInContainerCheckLong": string;
-                "StiCanBreakComponentInContainerCheckShort": string;
-                "StiCanGrowComponentInContainerCheckLong": string;
-                "StiCanGrowComponentInContainerCheckShort": string;
-                "StiCanGrowGrowToHeightComponentInContainerLong": string;
-                "StiCanGrowGrowToHeightComponentInContainerShort": string;
-                "StiCanGrowWordWrapTextAndWysiwygCheckLong": string;
-                "StiCanGrowWordWrapTextAndWysiwygCheckShort": string;
-                "StiColumnsWidthGreaterContainerWidthCheckLong": string;
-                "StiColumnsWidthGreaterContainerWidthCheckShort": string;
-                "StiColumnsWidthGreaterPageWidthCheckLong": string;
-                "StiColumnsWidthGreaterPageWidthCheckShort": string;
-                "StiComponentBoundsAreOutOfBandLong": string;
-                "StiComponentBoundsAreOutOfBandShort": string;
-                "StiComponentExpressionCheckLong": string;
-                "StiComponentExpressionCheckShort": string;
-                "StiComponentResourceCheckLong": string;
-                "StiComponentResourceCheckShort": string;
-                "StiComponentStyleIsNotFoundCheckAtPageLong": string;
-                "StiComponentStyleIsNotFoundCheckLong": string;
-                "StiComponentStyleIsNotFoundCheckShort": string;
-                "StiContainerInEngineV2CheckLong": string;
-                "StiContainerInEngineV2CheckShort": string;
-                "StiContourTextObsoleteCheckLong": string;
-                "StiContourTextObsoleteCheckShort": string;
-                "StiCorruptedCrossLinePrimitiveCheckLong": string;
-                "StiCorruptedCrossLinePrimitiveCheckShort": string;
-                "StiCountDataDataSourceAtDataBandLong": string;
-                "StiCountDataDataSourceAtDataBandShort": string;
-                "StiCrossGroupHeaderNotEqualToCrossGroupFooterOnPageLong": string;
-                "StiCrossGroupHeaderNotEqualToGroupCrossFooterOnContainerLong": string;
-                "StiDataSourcesForImageCheckLong": string;
-                "StiDataSourcesForImageCheckShort": string;
-                "StiEventsAtInterpretationCheckLong": string;
-                "StiEventsAtInterpretationCheckShort": string;
-                "StiFilterCircularDependencyElementCheckLong": string;
-                "StiFilterCircularDependencyElementCheckShort": string;
-                "StiExpressionElementCheckLong": string;
-                "StiExpressionElementCheckShort": string;
-                "StiFilterValueCheckLong": string;
-                "StiFilterValueCheckShort": string;
-                "StiFontMissingCheckLong": string;
-                "StiFontMissingCheckShort": string;
-                "StiFunctionsOnlyForEngineV2CheckLong": string;
-                "StiFunctionsOnlyForEngineV2CheckShort": string;
-                "StiGroupHeaderNotEqualToGroupFooterOnContainerLong": string;
-                "StiGroupHeaderNotEqualToGroupFooterOnPageLong": string;
-                "StiGroupHeaderNotEqualToGroupFooterShort": string;
-                "StiGrowToHeightOverlappingLong": string;
-                "StiGrowToHeightOverlappingShort": string;
-                "StiIsFirstPageIsLastPageDoublePassCheckLong": string;
-                "StiIsFirstPageIsLastPageDoublePassCheckShort": string;
-                "StiIsFirstPassIsSecondPassCheckLong": string;
-                "StiIsFirstPassIsSecondPassCheckShort": string;
-                "StiLargeHeightAtPageCheckLong": string;
-                "StiLargeHeightAtPageCheckShort": string;
-                "StiLocationOutsidePageCheckLong": string;
-                "StiLocationOutsidePageCheckShort": string;
-                "StiLocationOutsidePrintableAreaCheckLong": string;
-                "StiLocationOutsidePrintableAreaCheckShort": string;
-                "StiMinRowsInColumnsCheckLong": string;
-                "StiMinRowsInColumnsCheckShort": string;
-                "StiNegativeSizesOfComponentsCheckLong": string;
-                "StiNegativeSizesOfComponentsCheckShort": string;
-                "StiNoConditionAtGroupCheckLong": string;
-                "StiNoConditionAtGroupCheckShort": string;
-                "StiNoNameComponentCheckLong": string;
-                "StiNoNameComponentCheckShort": string;
-                "StiNoNamePageCheckLong": string;
-                "StiNoNamePageCheckShort": string;
-                "StiPanelInEngineV1CheckLong": string;
-                "StiPanelInEngineV1CheckShort": string;
-                "StiPrintHeadersAndFootersFromPreviousPageLong": string;
-                "StiPrintHeadersAndFootersFromPreviousPageShort": string;
-                "StiPrintOnDoublePassCheckLong": string;
-                "StiPrintOnDoublePassCheckShort": string;
-                "StiPrintOnPreviousPageCheck2Long": string;
-                "StiPrintOnPreviousPageCheck2Short": string;
-                "StiPrintOnPreviousPageCheckLong": string;
-                "StiPrintOnPreviousPageCheckShort": string;
-                "StiPropertiesOnlyEngineV1CheckLong": string;
-                "StiPropertiesOnlyEngineV1CheckShort": string;
-                "StiPropertiesOnlyEngineV2CheckLong": string;
-                "StiPropertiesOnlyEngineV2CheckShort": string;
-                "StiResetPageNumberCheckLong": string;
-                "StiResetPageNumberCheckShort": string;
-                "StiShowInsteadNullValuesCheckLong": string;
-                "StiShowInsteadNullValuesCheckShort": string;
-                "StiSubReportPageZeroCheckLong": string;
-                "StiSubReportPageZeroCheckShort": string;
-                "StiSystemTextObsoleteCheckLong": string;
-                "StiSystemTextObsoleteCheckShort": string;
-                "StiTextColorEqualToBackColorCheckLong": string;
-                "StiTextColorEqualToBackColorCheckShort": string;
-                "StiTextTextFormatCheckLong": string;
-                "StiTextTextFormatCheckShort": string;
-                "StiTotalPageCountDoublePassCheckLong": string;
-                "StiUndefinedComponentCheckLong": string;
-                "StiUndefinedComponentCheckShort": string;
-                "StiVerySmallSizesOfComponentsCheckLong": string;
-                "StiVerySmallSizesOfComponentsCheckShort": string;
-                "StiWidthHeightZeroComponentCheckLongHeight": string;
-                "StiWidthHeightZeroComponentCheckLongWidth": string;
-                "StiWidthHeightZeroComponentCheckLongWidthHeight": string;
-                "StiWidthHeightZeroComponentCheckShortHeight": string;
-                "StiWidthHeightZeroComponentCheckShortWidth": string;
-                "StiWidthHeightZeroComponentCheckShortWidthHeight": string;
-                "StiWordWrapCanGrowTextDoesNotFitLong": string;
-                "StiWordWrapCanGrowTextDoesNotFitShort": string;
-            };
-            "CheckConnection": {
-                "StiUndefinedConnectionCheckLong": string;
-                "StiUndefinedConnectionCheckShort": string;
-                "StiUnsupportedConnectionCheckLong": string;
-                "StiUnsupportedConnectionCheckShort": string;
-            };
-            "CheckDataRelation": {
-                "StiDifferentAmountOfKeysInDataRelationCheckLong": string;
-                "StiDifferentAmountOfKeysInDataRelationCheckShort": string;
-                "StiKeysInAbsentDataRelationCheckLong": string;
-                "StiKeysInAbsentDataRelationCheckShort": string;
-                "StiKeysNotFoundRelationCheckLong": string;
-                "StiKeysNotFoundRelationCheckShort": string;
-                "StiKeysTypesMismatchDataRelationCheckLong": string;
-                "StiKeysTypesMismatchDataRelationCheckShort": string;
-                "StiNoNameDataRelationCheckLong": string;
-                "StiNoNameDataRelationCheckShort": string;
-                "StiNoNameInSourceDataRelationCheckLong": string;
-                "StiNoNameInSourceDataRelationCheckShort": string;
-                "StiSourcesInAbsentDataRelationCheckLong": string;
-                "StiSourcesInAbsentDataRelationCheckShort": string;
-            };
-            "CheckDataSource": {
-                "StiCalculatedColumnRecursionCheckLong": string;
-                "StiCalculatedColumnRecursionCheckShort": string;
-                "StiNoNameDataSourceCheckLong": string;
-                "StiNoNameDataSourceCheckShort": string;
-                "StiNoNameInSourceDataSourceCheckLong": string;
-                "StiNoNameInSourceDataSourceCheckShort": string;
-                "StiUndefinedDataSourceCheckLong": string;
-                "StiUndefinedDataSourceCheckShort": string;
-            };
-            "CheckGlobal": {
-                "Error": string;
-                "Information": string;
-                "RenderingMessage": string;
-                "Warning": string;
-            };
-            "CheckLicense": {
-                "StiLicenseTrialCheckLong": string;
-            };
-            "CheckPage": {
-                "StiLostPointsOnPageCheckLong": string;
-                "StiLostPointsOnPageCheckShort": string;
-                "StiOrientationPageCheckLongLandscape": string;
-                "StiOrientationPageCheckLongPortrait": string;
-                "StiOrientationPageCheckShort": string;
-            };
-            "CheckReport": {
-                "StiCloudCompilationModeCheckLong": string;
-                "StiCloudCompilationModeCheckShort": string;
-                "StiCompilationErrorAssemblyCheckLong": string;
-                "StiCompilationErrorCheck2Long": string;
-                "StiCompilationErrorCheck3Long": string;
-                "StiCompilationErrorCheckLong": string;
-                "StiCompilationErrorCheckShort": string;
-                "StiDuplicatedName2CheckLong": string;
-                "StiDuplicatedNameCheckLong": string;
-                "StiDuplicatedNameCheckShort": string;
-                "StiDuplicatedNameInSourceInDataRelationReportCheckLong": string;
-                "StiDuplicatedNameInSourceInDataRelationReportCheckShort": string;
-                "StiNetCoreCompilationModeCheckLong": string;
-                "StiNetCoreCompilationModeCheckShort": string;
-            };
-            "CheckVariable": {
-                "StiVariableInitializationCheckLong": string;
-                "StiVariableInitializationCheckShort": string;
-                "StiVariableRecursionCheckLong": string;
-                "StiVariableRecursionCheckShort": string;
-                "StiVariableTypeCheckLong": string;
-                "StiVariableTypeCheckShort": string;
-            };
-            "Font": {
-                "Bold": string;
-                "Italic": string;
-                "Name": string;
-                "Size": string;
-                "Strikeout": string;
-                "Underline": string;
-            };
-            "Publish": {
-                "ActionDesign": string;
-                "ActionExport": string;
-                "ActionShow": string;
-                "AddNewConnection": string;
-                "Cancel": string;
-                "Close": string;
-                "ConnectionsFromReport": string;
-                "ConnectionsRegData": string;
-                "ConnectionsReplace": string;
-                "Copy": string;
-                "CopyingLibraries": string;
-                "DeployReportPlatform": string;
-                "DownloadingLibraries": string;
-                "ExportFormat": string;
-                "ExportFormatData": string;
-                "ExportFormatDataType": string;
-                "ExportFormatImage": string;
-                "ExportFormatImageType": string;
-                "FullScreenViewer": string;
-                "GetLibrariesFrom": string;
-                "GroupAddons": string;
-                "GroupConnections": string;
-                "GroupParameters": string;
-                "HideOptions": string;
-                "IncludeFonts": string;
-                "IncludeLibrariesToStandalone": string;
-                "IncludeLicenseKey": string;
-                "IncludeLocalization": string;
-                "IncludeReportPackedStringToCode": string;
-                "IncludeUITheme": string;
-                "JavaScriptFramework": string;
-                "LicenseKeyTypeFile": string;
-                "LicenseKeyTypeString": string;
-                "LoadReport": string;
-                "LoadReportAssembly": string;
-                "LoadReportByteArray": string;
-                "LoadReportClass": string;
-                "LoadReportFile": string;
-                "LoadReportHyperlink": string;
-                "LoadReportResource": string;
-                "LoadReportStream": string;
-                "LoadReportString": string;
-                "ParametersFromReport": string;
-                "ParametersReplace": string;
-                "ParametersReplacePhpInfo": string;
-                "ParametersRequestFromUser": string;
-                "Publish": string;
-                "PublishType": string;
-                "PublishTypeProject": string;
-                "PublishTypeStandalone": string;
-                "ReadMore": string;
-                "RegDataOnlyForPreview": string;
-                "RegDataSynchronize": string;
-                "ReplaceConnectionString": string;
-                "ReplacePathToData": string;
-                "ReportAction": string;
-                "ReportErrors": string;
-                "SaveProjectPackage": string;
-                "SaveStandalone": string;
-                "SaveStandalonePackage": string;
-                "SearchLibraries": string;
-                "ShowMore": string;
-                "ShowOptions": string;
-                "ThemeBackground": string;
-                "ThemeStyle": string;
-                "TrialVersion": string;
-                "Use": string;
-                "UseCompilationCache": string;
-                "UseCompressedScripts": string;
-                "UseLatestVersion": string;
-                "UseWpfDesignerV2": string;
-            };
-            "ReportComparer": {
-                "Change": string;
-                "Copy": string;
-                "CopyAll": string;
-                "Delete": string;
-                "SaveChangesInReports": string;
-                "StiBusinessObjectDifferentColumnCompareComment": string;
-                "StiBusinessObjectDifferentColumnCompareLong": string;
-                "StiBusinessObjectDifferentColumnCompareShort": string;
-                "StiBusinessObjectPropertiesCompareComment": string;
-                "StiBusinessObjectPropertiesCompareLong": string;
-                "StiBusinessObjectPropertiesCompareShort": string;
-                "StiChangeInReportPropertyActionDescription": string;
-                "StiComponentPropertiesCompareComment": string;
-                "StiComponentPropertiesCompareLong": string;
-                "StiComponentPropertiesCompareShort": string;
-                "StiCopyAllActionDescription": string;
-                "StiCopyBusinessDataColumnActionsDescription": string;
-                "StiCopyBusinessObjectActionDescription": string;
-                "StiCopyComponentActionDescription": string;
-                "StiCopyDataColumnActionDescription": string;
-                "StiCopyDataRelationActionDescription": string;
-                "StiCopyDataSourceActionDescription": string;
-                "StiCopyStyleActionDescription": string;
-                "StiCopyVariableActionDescription": string;
-                "StiDataRelationPropertiesCompareComment": string;
-                "StiDataRelationPropertiesCompareLong": string;
-                "StiDataRelationPropertiesCompareShort": string;
-                "StiDataSourceDifferentColumnCompareComment": string;
-                "StiDataSourceDifferentColumnCompareLong": string;
-                "StiDataSourceDifferentColumnCompareShort": string;
-                "StiDataSourcePropertiesCompareComment": string;
-                "StiDataSourcePropertiesCompareLong": string;
-                "StiDataSourcePropertiesCompareShort": string;
-                "StiDeleteBusinessDataColumnActionsDescription": string;
-                "StiDeleteBusinessObjectActionDescription": string;
-                "StiDeleteComponentActionDescription": string;
-                "StiDeleteDataColumnActionDescription": string;
-                "StiDeleteDataRelationActionDescription": string;
-                "StiDeleteDataSourceActionDescription": string;
-                "StiDeleteStyleActionDescription": string;
-                "StiDeleteVariableActionDescription": string;
-                "StiReportDifferentBusinessObjectCompareComment": string;
-                "StiReportDifferentBusinessObjectCompareLong": string;
-                "StiReportDifferentBusinessObjectCompareShort": string;
-                "StiReportDifferentComponentsCompareComment": string;
-                "StiReportDifferentComponentsCompareLong": string;
-                "StiReportDifferentComponentsCompareMessag1": string;
-                "StiReportDifferentComponentsCompareMessag2": string;
-                "StiReportDifferentComponentsCompareShort": string;
-                "StiReportDifferentDataRelationCompareComment": string;
-                "StiReportDifferentDataRelationCompareLong": string;
-                "StiReportDifferentDataRelationCompareShort": string;
-                "StiReportDifferentDataSourceCompareComment": string;
-                "StiReportDifferentDataSourceCompareLong": string;
-                "StiReportDifferentDataSourceCompareShort": string;
-                "StiReportDifferentStyleCompareComment": string;
-                "StiReportDifferentStyleCompareLong": string;
-                "StiReportDifferentStyleCompareShort": string;
-                "StiReportDifferentVariableCompareComment": string;
-                "StiReportDifferentVariableCompareLong": string;
-                "StiReportDifferentVariableCompareShort": string;
-                "StiReportPropertiesCompareComment": string;
-                "StiReportPropertiesCompareLong": string;
-                "StiReportPropertiesCompareShort": string;
-                "StiStylePropertiesCompareComment": string;
-                "StiStylePropertiesCompareLong": string;
-                "StiStylePropertiesCompareShort": string;
-                "StiVariablePropertiesCompareComment": string;
-                "StiVariablePropertiesCompareLong": string;
-                "StiVariablePropertiesCompareShort": string;
-            };
-            "ReportComparerViewer": {
-                "Browse": string;
-                "BusinessObjects": string;
-                "BusinessObjectsDataColumns": string;
-                "Cancel": string;
-                "Compare": string;
-                "CompareList": string;
-                "CompareReports": string;
-                "Compares": string;
-                "Components": string;
-                "DataRelations": string;
-                "DataSources": string;
-                "DataSourcesDataColumns": string;
-                "EnterPassword": string;
-                "FirstReport": string;
-                "LongMessage": string;
-                "Next": string;
-                "OK": string;
-                "OpenReports": string;
-                "Previous": string;
-                "Report": string;
-                "ReportToCompare": string;
-                "SaveReports": string;
-                "SecondReport": string;
-                "SelectReports": string;
-                "StatusHigh": string;
-                "StatusLow": string;
-                "StatusMiddle": string;
-                "Styles": string;
-                "Variables": string;
-                "WarningFile1EqualFile2": string;
-                "WarningFirstAndSecondReportNotFound": string;
-                "WarningFirstReportNotFound": string;
-                "WarningSecondReportNotFound": string;
-            };
-            "StiAdvancedBorder": {
-                "BottomSide": string;
-                "LeftSide": string;
-                "RightSide": string;
-                "TopSide": string;
-            };
-            "StiArea": {
-                "BorderColor": string;
-                "Brush": string;
-                "ColorEach": string;
-                "GridLinesHor": string;
-                "GridLinesHorRight": string;
-                "GridLinesVert": string;
-                "InterlacingHor": string;
-                "InterlacingVert": string;
-                "RadarStyle": string;
-                "ReverseHor": string;
-                "ReverseVert": string;
-                "ShowShadow": string;
-                "XAxis": string;
-                "XTopAxis": string;
-                "YAxis": string;
-                "YRightAxis": string;
-            };
-            "StiAreaSeries": {
-                "Brush": string;
-            };
-            "StiArrowShapeType": {
-                "ArrowHeight": string;
-                "ArrowWidth": string;
-            };
-            "StiAustraliaPost4StateBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiAxis": {
-                "ArrowStyle": string;
-                "Interaction": string;
-                "Labels": string;
-                "LineColor": string;
-                "LineStyle": string;
-                "LineWidth": string;
-                "LogarithmicScale": string;
-                "Range": string;
-                "RangeScrollEnabled": string;
-                "ShowEdgeValues": string;
-                "ShowScrollBar": string;
-                "ShowXAxis": string;
-                "ShowYAxis": string;
-                "StartFromZero": string;
-                "Step": string;
-                "Ticks": string;
-                "Title": string;
-                "Visible": string;
-            };
-            "StiAxisDateTimeStep": {
-                "Interpolation": string;
-                "NumberOfValues": string;
-                "Step": string;
-            };
-            "StiAxisInteraction": {
-                "RangeScrollEnabled": string;
-            };
-            "StiAxisLabels": {
-                "Angle": string;
-                "Antialiasing": string;
-                "Color": string;
-                "Font": string;
-                "Format": string;
-                "Placement": string;
-                "Step": string;
-                "TextAfter": string;
-                "TextAlignment": string;
-                "TextBefore": string;
-                "Width": string;
-                "WordWrap": string;
-            };
-            "StiAxisRange": {
-                "Auto": string;
-                "Maximum": string;
-                "Minimum": string;
-            };
-            "StiAxisTicks": {
-                "Length": string;
-                "LengthUnderLabels": string;
-                "MinorCount": string;
-                "MinorLength": string;
-                "MinorVisible": string;
-                "Step": string;
-                "Visible": string;
-            };
-            "StiAxisTitle": {
-                "Alignment": string;
-                "Antialiasing": string;
-                "Color": string;
-                "Direction": string;
-                "Font": string;
-                "Position": string;
-                "Text": string;
-            };
-            "StiBand": {
-                "MaxHeight": string;
-                "MinHeight": string;
-                "PrintOnEvenOddPages": string;
-                "ResetPageNumber": string;
-                "StartNewPage": string;
-                "StartNewPageIfLessThan": string;
-            };
-            "StiBandInteraction": {
-                "Collapsed": string;
-                "CollapseGroupFooter": string;
-                "CollapsingEnabled": string;
-                "SelectionEnabled": string;
-            };
-            "StiBarCode": {
-                "Angle": string;
-                "AutoScale": string;
-                "BackColor": string;
-                "BarCodeType": string;
-                "Code": string;
-                "Font": string;
-                "ForeColor": string;
-                "GetBarCodeEvent": string;
-                "ShowLabelText": string;
-                "ShowQuietZones": string;
-                "Zoom": string;
-            };
-            "StiBarCodeTypeService": {
-                "AddClearZone": string;
-                "AspectRatio": string;
-                "AutoDataColumns": string;
-                "AutoDataRows": string;
-                "Checksum": string;
-                "CheckSum": string;
-                "CheckSum1": string;
-                "CheckSum2": string;
-                "DataColumns": string;
-                "DataRows": string;
-                "EncodingMode": string;
-                "EncodingType": string;
-                "ErrorsCorrectionLevel": string;
-                "Height": string;
-                "MatrixSize": string;
-                "Module": string;
-                "PrintVerticalBars": string;
-                "Ratio": string;
-                "RatioY": string;
-                "ShowQuietZoneIndicator": string;
-                "Space": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-                "UseRectangularSymbols": string;
-            };
-            "StiBaseStyle": {
-                "AllowUseBackColor": string;
-                "AllowUseBorderFormatting": string;
-                "AllowUseBorderSides": string;
-                "AllowUseBorderSidesFromLocation": string;
-                "AllowUseBrush": string;
-                "AllowUseFont": string;
-                "AllowUseForeColor": string;
-                "AllowUseHorAlignment": string;
-                "AllowUseImage": string;
-                "AllowUseTextBrush": string;
-                "AllowUseTextOptions": string;
-                "AllowUseVertAlignment": string;
-                "AxisLabelsColor": string;
-                "AxisLineColor": string;
-                "AxisTitleColor": string;
-                "BackColor": string;
-                "BasicStyleColor": string;
-                "Border": string;
-                "Brush": string;
-                "BrushType": string;
-                "ChartAreaBorderColor": string;
-                "ChartAreaBrush": string;
-                "CollectionName": string;
-                "Color": string;
-                "Conditions": string;
-                "Description": string;
-                "Font": string;
-                "ForeColor": string;
-                "GridLinesHorColor": string;
-                "GridLinesVertColor": string;
-                "HorAlignment": string;
-                "Image": string;
-                "InterlacingHorBrush": string;
-                "InterlacingVertBrush": string;
-                "LegendBorderColor": string;
-                "LegendBrush": string;
-                "LegendLabelsColor": string;
-                "LegendTitleColor": string;
-                "Name": string;
-                "SeriesLabelsBorderColor": string;
-                "SeriesLabelsBrush": string;
-                "SeriesLabelsColor": string;
-                "StyleColors": string;
-                "TextBrush": string;
-                "VertAlignment": string;
-            };
-            "StiBorder": {
-                "Color": string;
-                "DropShadow": string;
-                "ShadowBrush": string;
-                "ShadowSize": string;
-                "Side": string;
-                "Size": string;
-                "Style": string;
-                "Topmost": string;
-            };
-            "StiBorderSide": {
-                "Color": string;
-                "Size": string;
-                "Style": string;
-            };
-            "StiBusinessObject": {
-                "Alias": string;
-                "Category": string;
-                "Columns": string;
-                "Name": string;
-            };
-            "StiButtonControl": {
-                "Cancel": string;
-                "Default": string;
-                "DialogResult": string;
-                "Image": string;
-                "ImageAlign": string;
-                "Text": string;
-                "TextAlign": string;
-            };
-            "StiCandlestickSeries": {
-                "ListOfValuesClose": string;
-                "ListOfValuesHigh": string;
-                "ListOfValuesLow": string;
-                "ListOfValuesOpen": string;
-                "ValueClose": string;
-                "ValueDataColumnClose": string;
-                "ValueDataColumnHigh": string;
-                "ValueDataColumnLow": string;
-                "ValueDataColumnOpen": string;
-                "ValueHigh": string;
-                "ValueLow": string;
-                "ValueOpen": string;
-            };
-            "StiCap": {
-                "Color": string;
-                "Fill": string;
-                "Height": string;
-                "Style": string;
-                "Width": string;
-            };
-            "StiChart": {
-                "Area": string;
-                "ChartType": string;
-                "ConstantLines": string;
-                "HorSpacing": string;
-                "Legend": string;
-                "ProcessAtEnd": string;
-                "ProcessChartEvent": string;
-                "Rotation": string;
-                "Series": string;
-                "SeriesLabels": string;
-                "Strips": string;
-                "Style": string;
-                "Table": string;
-                "Title": string;
-                "VertSpacing": string;
-            };
-            "StiChartElement": {
-                "Arguments": string;
-                "CloseValues": string;
-                "ColorEach": string;
-                "EndValues": string;
-                "Group": string;
-                "HighValues": string;
-                "LowValues": string;
-                "Series": string;
-                "Style": string;
-                "TextFormat": string;
-                "Title": string;
-                "Values": string;
-                "Weights": string;
-            };
-            "StiChartTable": {
-                "Font": string;
-                "GridLineColor": string;
-                "GridLinesHor": string;
-                "GridLinesVert": string;
-                "GridOutline": string;
-                "MarkerVisible": string;
-                "Visible": string;
-            };
-            "StiChartTitle": {
-                "Alignment": string;
-                "Antialiasing": string;
-                "Brush": string;
-                "Dock": string;
-                "Font": string;
-                "Spacing": string;
-                "Text": string;
-                "Visible": string;
-            };
-            "StiCheckBox": {
-                "Checked": string;
-                "CheckStyleForFalse": string;
-                "CheckStyleForTrue": string;
-                "ContourColor": string;
-                "ExcelValue": string;
-                "GetCheckedEvent": string;
-                "Size": string;
-                "Values": string;
-            };
-            "StiCheckBoxControl": {
-                "Checked": string;
-                "CheckedBinding": string;
-                "CheckedChangedEvent": string;
-                "Text": string;
-                "TextBinding": string;
-            };
-            "StiCheckedListBoxControl": {
-                "CheckOnClick": string;
-                "ItemHeight": string;
-                "Items": string;
-                "ItemsBinding": string;
-                "SelectedIndexBinding": string;
-                "SelectedIndexChangedEvent": string;
-                "SelectedItemBinding": string;
-                "SelectedValueBinding": string;
-                "SelectionMode": string;
-                "Sorted": string;
-            };
-            "StiChildBand": {
-                "KeepChildTogether": string;
-                "PrintIfParentDisabled": string;
-            };
-            "StiClone": {
-                "Container": string;
-                "ScaleHor": string;
-            };
-            "StiClusteredColumnSeries": {
-                "Width": string;
-            };
-            "StiCodabarBarCodeType": {
-                "Height": string;
-                "Module": string;
-                "Ratio": string;
-            };
-            "StiCode11BarCodeType": {
-                "Checksum": string;
-                "Height": string;
-                "Module": string;
-            };
-            "StiCode128aBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiCode128AutoBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiCode128BarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiCode128bBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiCode128cBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiCode39BarCodeType": {
-                "CheckSum": string;
-                "Height": string;
-                "Module": string;
-                "Ratio": string;
-            };
-            "StiCode39ExtBarCodeType": {
-                "CheckSum": string;
-                "Height": string;
-                "Module": string;
-                "Ratio": string;
-            };
-            "StiCode93BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "Ratio": string;
-            };
-            "StiCode93ExtBarCodeType": {
-                "Height": string;
-                "Module": string;
-                "Ratio": string;
-            };
-            "StiComboBoxControl": {
-                "DropDownStyle": string;
-                "DropDownWidth": string;
-                "ItemHeight": string;
-                "Items": string;
-                "ItemsBinding": string;
-                "MaxDropDownItems": string;
-                "MaxLength": string;
-                "SelectedIndexChangedEvent": string;
-                "SelectedItemBinding": string;
-                "SelectedValueBinding": string;
-                "Sorted": string;
-                "Text": string;
-                "TextBinding": string;
-            };
-            "StiComponent": {
-                "AfterPrintEvent": string;
-                "Alias": string;
-                "Anchor": string;
-                "BeforePrintEvent": string;
-                "Bookmark": string;
-                "Border": string;
-                "Brush": string;
-                "BusinessObject": string;
-                "CanBreak": string;
-                "CanGrow": string;
-                "CanShrink": string;
-                "CellDockStyle": string;
-                "CellType": string;
-                "ClickEvent": string;
-                "ComponentStyle": string;
-                "Conditions": string;
-                "CountData": string;
-                "DataRelation": string;
-                "DataSource": string;
-                "DockStyle": string;
-                "DoubleClickEvent": string;
-                "Editable": string;
-                "Enabled": string;
-                "FilterMode": string;
-                "FilterOn": string;
-                "Filters": string;
-                "FixedWidth": string;
-                "GetBookmarkEvent": string;
-                "GetDrillDownReportEvent": string;
-                "GetHyperlinkEvent": string;
-                "GetTagEvent": string;
-                "GetToolTipEvent": string;
-                "GrowToHeight": string;
-                "Height": string;
-                "HorAlignment": string;
-                "Hyperlink": string;
-                "Interaction": string;
-                "Left": string;
-                "Linked": string;
-                "Locked": string;
-                "MasterComponent": string;
-                "MaxSize": string;
-                "MinSize": string;
-                "MouseEnterEvent": string;
-                "MouseLeaveEvent": string;
-                "Name": string;
-                "Printable": string;
-                "PrintOn": string;
-                "Restrictions": string;
-                "ShiftMode": string;
-                "Sort": string;
-                "Tag": string;
-                "TextBrush": string;
-                "ToolTip": string;
-                "Top": string;
-                "UseParentStyles": string;
-                "VertAlignment": string;
-                "Width": string;
-            };
-            "StiConstantLines": {
-                "Antialiasing": string;
-                "AxisValue": string;
-                "Font": string;
-                "LineColor": string;
-                "LineStyle": string;
-                "LineWidth": string;
-                "Orientation": string;
-                "Position": string;
-                "ShowBehind": string;
-                "ShowInLegend": string;
-                "Text": string;
-                "TitleVisible": string;
-                "Visible": string;
-            };
-            "StiCrossDataBand": {
-                "MaxWidth": string;
-                "MinWidth": string;
-            };
-            "StiCrossField": {
-                "DisplayValue": string;
-                "EnumeratorSeparator": string;
-                "EnumeratorType": string;
-                "GetCrossValueEvent": string;
-                "GetDisplayCrossValueEvent": string;
-                "HideZeros": string;
-                "KeepMergedCellsTogether": string;
-                "MergeHeaders": string;
-                "PrintOnAllPages": string;
-                "ShowPercents": string;
-                "ShowTotal": string;
-                "SortDirection": string;
-                "SortType": string;
-                "Summary": string;
-                "SummaryValues": string;
-                "UseStyleOfSummaryInColumnTotal": string;
-                "UseStyleOfSummaryInRowTotal": string;
-                "Value": string;
-            };
-            "StiCrossFooterBand": {
-                "MaxWidth": string;
-                "MinWidth": string;
-            };
-            "StiCrossGroupFooterBand": {
-                "MaxWidth": string;
-                "MinWidth": string;
-            };
-            "StiCrossGroupHeaderBand": {
-                "MaxWidth": string;
-                "MinWidth": string;
-            };
-            "StiCrossHeaderBand": {
-                "MaxWidth": string;
-                "MinWidth": string;
-            };
-            "StiCrossTab": {
-                "EmptyValue": string;
-                "HorAlignment": string;
-                "KeepCrossTabTogether": string;
-                "PrintIfEmpty": string;
-                "RightToLeft": string;
-                "Wrap": string;
-                "WrapGap": string;
-            };
-            "StiDataBand": {
-                "BeginRenderEvent": string;
-                "CalcInvisible": string;
-                "ColumnDirection": string;
-                "ColumnGaps": string;
-                "Columns": string;
-                "ColumnWidth": string;
-                "EndRenderEvent": string;
-                "EvenStyle": string;
-                "FilterEngine": string;
-                "FilterMode": string;
-                "GetCollapsedEvent": string;
-                "KeepChildTogether": string;
-                "KeepDetailsTogether": string;
-                "KeepFooterTogether": string;
-                "KeepGroupTogether": string;
-                "KeepHeaderTogether": string;
-                "MinRowsInColumn": string;
-                "OddStyle": string;
-                "PrintIfDetailEmpty": string;
-                "PrintOnAllPages": string;
-                "RenderingEvent": string;
-                "ResetDataSource": string;
-                "RightToLeft": string;
-            };
-            "StiDatabase": {
-                "Alias": string;
-                "ConnectedEvent": string;
-                "ConnectingEvent": string;
-                "ConnectionString": string;
-                "DisconnectedEvent": string;
-                "DisconnectingEvent": string;
-                "Name": string;
-                "PathData": string;
-                "PathSchema": string;
-                "PromptUserNameAndPassword": string;
-            };
-            "StiDataColumn": {
-                "Alias": string;
-                "Expression": string;
-                "Name": string;
-                "NameInSource": string;
-                "Type": string;
-            };
-            "StiDataMatrixBarCodeType": {
-                "EncodingType": string;
-                "Height": string;
-                "MatrixSize": string;
-                "Module": string;
-                "UseRectangularSymbols": string;
-            };
-            "StiDataParameter": {
-                "Alias": string;
-                "Expression": string;
-                "Name": string;
-                "Size": string;
-                "Type": string;
-            };
-            "StiDataRelation": {
-                "Alias": string;
-                "ChildColumns": string;
-                "ChildSource": string;
-                "Name": string;
-                "NameInSource": string;
-                "ParentColumns": string;
-                "ParentSource": string;
-            };
-            "StiDataSource": {
-                "Alias": string;
-                "AllowExpressions": string;
-                "CodePage": string;
-                "Columns": string;
-                "CommandTimeout": string;
-                "ConnectionOrder": string;
-                "ConnectOnStart": string;
-                "Name": string;
-                "NameInSource": string;
-                "Parameters": string;
-                "Path": string;
-                "ReconnectOnEachRow": string;
-                "SqlCommand": string;
-                "Type": string;
-            };
-            "StiDateTimePickerControl": {
-                "CustomFormat": string;
-                "DropDownAlign": string;
-                "Format": string;
-                "MaxDate": string;
-                "MaxDateBinding": string;
-                "MinDate": string;
-                "MinDateBinding": string;
-                "ShowUpDown": string;
-                "Today": string;
-                "Value": string;
-                "ValueBinding": string;
-                "ValueChangedEvent": string;
-            };
-            "StiDialogStyle": {
-                "GlyphColor": string;
-                "HotBackColor": string;
-                "HotForeColor": string;
-                "HotGlyphColor": string;
-                "HotSelectedBackColor": string;
-                "HotSelectedForeColor": string;
-                "HotSelectedGlyphColor": string;
-                "SelectedBackColor": string;
-                "SelectedForeColor": string;
-                "SelectedGlyphColor": string;
-                "SeparatorColor": string;
-            };
-            "StiDoughnutSeries": {
-                "Diameter": string;
-            };
-            "StiDrillDownParameter": {
-                "Expression": string;
-                "Name": string;
-            };
-            "StiDutchKIXBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiDynamicBand": {
-                "BreakIfLessThan": string;
-                "NewColumnAfter": string;
-                "NewColumnBefore": string;
-                "NewPageAfter": string;
-                "NewPageBefore": string;
-                "PrintAtBottom": string;
-                "SkipFirst": string;
-            };
-            "StiEAN128aBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiEAN128AutoBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiEAN128bBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiEAN128cBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiEAN13BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-            };
-            "StiEAN8BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-            };
-            "StiElement": {
-                "BackColor": string;
-                "Margin": string;
-                "Padding": string;
-            };
-            "StiEmptyBand": {
-                "BeginRenderEvent": string;
-                "EndRenderEvent": string;
-                "EvenStyle": string;
-                "OddStyle": string;
-                "RenderingEvent": string;
-                "SizeMode": string;
-            };
-            "StiFIMBarCodeType": {
-                "AddClearZone": string;
-                "Height": string;
-                "Module": string;
-            };
-            "StiFooterBand": {
-                "KeepFooterTogether": string;
-                "PrintIfEmpty": string;
-                "PrintOnAllPages": string;
-            };
-            "StiForm": {
-                "BackColor": string;
-                "ClickEvent": string;
-                "ClosedFormEvent": string;
-                "ClosingFormEvent": string;
-                "Font": string;
-                "LoadFormEvent": string;
-                "Location": string;
-                "RightToLeft": string;
-                "Size": string;
-                "StartMode": string;
-                "StartPosition": string;
-                "Text": string;
-                "Visible": string;
-                "WindowState": string;
-            };
-            "StiGanttSeries": {
-                "GetListOfValuesEndEvent": string;
-                "GetValueEndEvent": string;
-                "ListOfValues": string;
-                "ListOfValuesEnd": string;
-                "Value": string;
-                "ValueDataColumn": string;
-                "ValueDataColumnEnd": string;
-                "ValueEnd": string;
-            };
-            "StiGlareBrush": {
-                "Angle": string;
-                "EndColor": string;
-                "Focus": string;
-                "Scale": string;
-                "StartColor": string;
-            };
-            "StiGlassBrush": {
-                "Blend": string;
-                "Color": string;
-                "DrawHatch": string;
-            };
-            "StiGradientBrush": {
-                "Angle": string;
-                "EndColor": string;
-                "StartColor": string;
-            };
-            "StiGridColumn": {
-                "Alignment": string;
-                "DataTextField": string;
-                "HeaderText": string;
-                "NullText": string;
-                "Visible": string;
-                "Width": string;
-            };
-            "StiGridControl": {
-                "AlternatingBackColor": string;
-                "BackColor": string;
-                "BackgroundColor": string;
-                "ColumnHeadersVisible": string;
-                "Columns": string;
-                "Filter": string;
-                "ForeColor": string;
-                "GridLineColor": string;
-                "GridLineStyle": string;
-                "HeaderBackColor": string;
-                "HeaderFont": string;
-                "HeaderForeColor": string;
-                "PositionChangedEvent": string;
-                "PreferredColumnWidth": string;
-                "PreferredRowHeight": string;
-                "RowHeadersVisible": string;
-                "RowHeaderWidth": string;
-                "SelectionBackColor": string;
-                "SelectionForeColor": string;
-            };
-            "StiGridLines": {
-                "Color": string;
-                "MinorColor": string;
-                "MinorCount": string;
-                "MinorStyle": string;
-                "MinorVisible": string;
-                "Style": string;
-                "Visible": string;
-            };
-            "StiGroupBoxControl": {
-                "Text": string;
-                "TextBinding": string;
-            };
-            "StiGroupFooterBand": {
-                "KeepGroupFooterTogether": string;
-            };
-            "StiGroupHeaderBand": {
-                "BeginRenderEvent": string;
-                "Condition": string;
-                "EndRenderEvent": string;
-                "GetCollapsedEvent": string;
-                "GetSummaryExpressionEvent": string;
-                "GetValueEvent": string;
-                "KeepGroupHeaderTogether": string;
-                "KeepGroupTogether": string;
-                "PrintOnAllPages": string;
-                "RenderingEvent": string;
-                "SortDirection": string;
-                "SummaryExpression": string;
-                "SummarySortDirection": string;
-                "SummaryType": string;
-            };
-            "StiHatchBrush": {
-                "BackColor": string;
-                "ForeColor": string;
-                "Style": string;
-            };
-            "StiHeaderBand": {
-                "KeepHeaderTogether": string;
-                "PrintIfEmpty": string;
-                "PrintOnAllPages": string;
-            };
-            "StiHierarchicalBand": {
-                "Footers": string;
-                "Headers": string;
-                "Indent": string;
-                "KeyDataColumn": string;
-                "MasterKeyDataColumn": string;
-                "ParentValue": string;
-            };
-            "StiImage": {
-                "DataColumn": string;
-                "File": string;
-                "GetImageDataEvent": string;
-                "GetImageURLEvent": string;
-                "GlobalizedName": string;
-                "Image": string;
-                "ImageData": string;
-                "ImageRotation": string;
-                "ImageURL": string;
-                "ProcessingDuplicates": string;
-            };
-            "StiInteraction": {
-                "AllowSeries": string;
-                "AllowSeriesElements": string;
-                "Bookmark": string;
-                "DrillDownEnabled": string;
-                "DrillDownMode": string;
-                "DrillDownPage": string;
-                "DrillDownParameter1": string;
-                "DrillDownParameter2": string;
-                "DrillDownParameter3": string;
-                "DrillDownParameter4": string;
-                "DrillDownParameter5": string;
-                "DrillDownReport": string;
-                "Hyperlink": string;
-                "SortingColumn": string;
-                "SortingEnabled": string;
-                "Tag": string;
-                "ToolTip": string;
-            };
-            "StiInterlacing": {
-                "InterlacedBrush": string;
-                "Visible": string;
-            };
-            "StiInterleaved2of5BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "Ratio": string;
-            };
-            "StiIsbn10BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-            };
-            "StiIsbn13BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-            };
-            "StiITF14BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "PrintVerticalBars": string;
-                "Ratio": string;
-            };
-            "StiJan13BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-            };
-            "StiJan8BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-            };
-            "StiLabelControl": {
-                "Text": string;
-                "TextAlign": string;
-                "TextBinding": string;
-            };
-            "StiLegend": {
-                "BorderColor": string;
-                "Brush": string;
-                "Columns": string;
-                "Direction": string;
-                "Font": string;
-                "HideSeriesWithEmptyTitle": string;
-                "HorAlignment": string;
-                "HorSpacing": string;
-                "LabelsColor": string;
-                "MarkerAlignment": string;
-                "MarkerBorder": string;
-                "MarkerSize": string;
-                "MarkerVisible": string;
-                "ShowShadow": string;
-                "Size": string;
-                "Title": string;
-                "TitleColor": string;
-                "TitleFont": string;
-                "VertAlignment": string;
-                "VertSpacing": string;
-                "Visible": string;
-            };
-            "StiLinePrimitive": {
-                "Color": string;
-                "EndCap": string;
-                "Size": string;
-                "StartCap": string;
-                "Style": string;
-            };
-            "StiListBoxControl": {
-                "ItemHeight": string;
-                "Items": string;
-                "ItemsBinding": string;
-                "SelectedIndexBinding": string;
-                "SelectedIndexChangedEvent": string;
-                "SelectedItemBinding": string;
-                "SelectedValueBinding": string;
-                "SelectionMode": string;
-                "Sorted": string;
-            };
-            "StiListViewControl": {
-                "SelectedIndexChangedEvent": string;
-            };
-            "StiLookUpBoxControl": {
-                "Keys": string;
-                "KeysBinding": string;
-                "SelectedKeyBinding": string;
-            };
-            "StiMargin": {
-                "Bottom": string;
-                "Left": string;
-                "Right": string;
-                "Top": string;
-            };
-            "StiMarker": {
-                "Angle": string;
-                "BorderColor": string;
-                "Brush": string;
-                "ShowInLegend": string;
-                "Size": string;
-                "Step": string;
-                "Type": string;
-                "Visible": string;
-            };
-            "StiMsiBarCodeType": {
-                "CheckSum1": string;
-                "CheckSum2": string;
-                "Height": string;
-                "Module": string;
-            };
-            "StiNumericUpDownControl": {
-                "Increment": string;
-                "Maximum": string;
-                "MaximumBinding": string;
-                "Minimum": string;
-                "MinimumBinding": string;
-                "Value": string;
-                "ValueBinding": string;
-                "ValueChangedEvent": string;
-            };
-            "StiOutsidePieLabels": {
-                "LineLength": string;
-            };
-            "StiPadding": {
-                "Bottom": string;
-                "Left": string;
-                "Right": string;
-                "Top": string;
-            };
-            "StiPage": {
-                "BeginRenderEvent": string;
-                "ColumnBeginRenderEvent": string;
-                "ColumnEndRenderEvent": string;
-                "EndRenderEvent": string;
-                "ExcelSheet": string;
-                "GetExcelSheetEvent": string;
-                "LargeHeight": string;
-                "LargeHeightFactor": string;
-                "Margins": string;
-                "MirrorMargins": string;
-                "NumberOfCopies": string;
-                "Orientation": string;
-                "PageHeight": string;
-                "PageWidth": string;
-                "PaperSize": string;
-                "PaperSourceOfFirstPage": string;
-                "PaperSourceOfOtherPages": string;
-                "PrintHeadersFootersFromPreviousPage": string;
-                "PrintOnPreviousPage": string;
-                "RenderingEvent": string;
-                "ResetPageNumber": string;
-                "SegmentPerHeight": string;
-                "SegmentPerWidth": string;
-                "StopBeforePrint": string;
-                "StretchToPrintArea": string;
-                "TitleBeforeHeader": string;
-                "UnlimitedBreakable": string;
-                "UnlimitedHeight": string;
-                "UnlimitedWidth": string;
-                "Watermark": string;
-            };
-            "StiPanel": {
-                "ColumnGaps": string;
-                "Columns": string;
-                "ColumnWidth": string;
-                "RightToLeft": string;
-            };
-            "StiPanelControl": {
-                "BorderStyle": string;
-            };
-            "StiPdf417BarCodeType": {
-                "AspectRatio": string;
-                "AutoDataColumns": string;
-                "AutoDataRows": string;
-                "DataColumns": string;
-                "DataRows": string;
-                "EncodingMode": string;
-                "ErrorsCorrectionLevel": string;
-                "Height": string;
-                "Module": string;
-                "RatioY": string;
-            };
-            "StiPharmacodeBarCodeType": {
-                "Height": string;
-                "Module": string;
-            };
-            "StiPictureBoxControl": {
-                "BorderStyle": string;
-                "Image": string;
-                "SizeMode": string;
-                "TransparentColor": string;
-            };
-            "StiPieSeries": {
-                "AllowApplyBorderColor": string;
-                "AllowApplyBrush": string;
-                "CutPieList": string;
-                "Diameter": string;
-                "Distance": string;
-                "GetCutPieListEvent": string;
-                "StartAngle": string;
-            };
-            "StiPlesseyBarCodeType": {
-                "CheckSum1": string;
-                "CheckSum2": string;
-                "Height": string;
-                "Module": string;
-            };
-            "StiPostnetBarCodeType": {
-                "Height": string;
-                "Module": string;
-                "Space": string;
-            };
-            "StiPrinterSettings": {
-                "Collate": string;
-                "Copies": string;
-                "Duplex": string;
-                "PrinterName": string;
-                "ShowDialog": string;
-            };
-            "StiQRCodeBarCodeType": {
-                "ErrorCorrectionLevel": string;
-                "Height": string;
-                "MatrixSize": string;
-                "Module": string;
-            };
-            "StiRadarAxis": {
-                "Visible": string;
-            };
-            "StiRadarAxisLabels": {
-                "Brush": string;
-                "DrawBorder": string;
-            };
-            "StiRadarGridLines": {
-                "Color": string;
-                "MinorColor": string;
-                "MinorCount": string;
-                "MinorStyle": string;
-                "MinorVisible": string;
-                "Style": string;
-                "Visible": string;
-            };
-            "StiRadioButtonControl": {
-                "Checked": string;
-                "CheckedBinding": string;
-                "CheckedChangedEvent": string;
-                "Text": string;
-                "TextBinding": string;
-            };
-            "StiRectanglePrimitive": {
-                "BottomSide": string;
-                "LeftSide": string;
-                "RightSide": string;
-                "TopSide": string;
-            };
-            "StiReport": {
-                "AutoLocalizeReportOnRun": string;
-                "BeginRenderEvent": string;
-                "CacheAllData": string;
-                "CacheTotals": string;
-                "CalculationMode": string;
-                "Collate": string;
-                "ConvertNulls": string;
-                "EndRenderEvent": string;
-                "EngineVersion": string;
-                "GlobalizationStrings": string;
-                "NumberOfPass": string;
-                "ParametersOrientation": string;
-                "PreviewMode": string;
-                "PreviewSettings": string;
-                "PrinterSettings": string;
-                "ReferencedAssemblies": string;
-                "RenderingEvent": string;
-                "ReportAlias": string;
-                "ReportAuthor": string;
-                "ReportCacheMode": string;
-                "ReportDescription": string;
-                "ReportName": string;
-                "ReportUnit": string;
-                "RequestParameters": string;
-                "ScriptLanguage": string;
-                "StopBeforePage": string;
-                "StoreImagesInResources": string;
-                "Styles": string;
-            };
-            "StiReportControl": {
-                "BackColor": string;
-                "ClickEvent": string;
-                "DataBindings": string;
-                "DoubleClickEvent": string;
-                "Enabled": string;
-                "EnterEvent": string;
-                "Font": string;
-                "ForeColor": string;
-                "GetTagEvent": string;
-                "GetToolTipEvent": string;
-                "LeaveEvent": string;
-                "Location": string;
-                "MouseDownEvent": string;
-                "MouseEnterEvent": string;
-                "MouseLeaveEvent": string;
-                "MouseMoveEvent": string;
-                "MouseUpEvent": string;
-                "RightToLeft": string;
-                "Size": string;
-                "TagValueBinding": string;
-                "Visible": string;
-            };
-            "StiReportSummaryBand": {
-                "KeepReportSummaryTogether": string;
-                "PrintIfEmpty": string;
-            };
-            "StiReportTitleBand": {
-                "PrintIfEmpty": string;
-            };
-            "StiRichText": {
-                "BackColor": string;
-                "DataColumn": string;
-                "DataUrl": string;
-                "DetectUrls": string;
-                "FullConvertExpression": string;
-                "Margins": string;
-                "WordWrap": string;
-                "Wysiwyg": string;
-            };
-            "StiRichTextBoxControl": {
-                "Text": string;
-            };
-            "StiRoundedRectanglePrimitive": {
-                "Round": string;
-            };
-            "StiRoundedRectangleShapeType": {
-                "Round": string;
-            };
-            "StiRoyalMail4StateBarCodeType": {
-                "CheckSum": string;
-                "Height": string;
-                "Module": string;
-            };
-            "StiSeries": {
-                "AllowApplyBrushNegative": string;
-                "AllowApplyColorNegative": string;
-                "Argument": string;
-                "ArgumentDataColumn": string;
-                "AutoSeriesColorDataColumn": string;
-                "AutoSeriesKeyDataColumn": string;
-                "AutoSeriesTitleDataColumn": string;
-                "BorderColor": string;
-                "Brush": string;
-                "BrushNegative": string;
-                "Conditions": string;
-                "FilterMode": string;
-                "Filters": string;
-                "Format": string;
-                "GetArgumentEvent": string;
-                "GetHyperlinkEvent": string;
-                "GetListOfArgumentsEvent": string;
-                "GetListOfHyperlinksEvent": string;
-                "GetListOfTagsEvent": string;
-                "GetListOfToolTipsEvent": string;
-                "GetListOfValuesEvent": string;
-                "GetListOfWeightsEvent": string;
-                "GetTagEvent": string;
-                "GetTitleEvent": string;
-                "GetToolTipEvent": string;
-                "GetValueEvent": string;
-                "GetWeightEvent": string;
-                "Interaction": string;
-                "LabelsOffset": string;
-                "Lighting": string;
-                "LineColor": string;
-                "LineColorNegative": string;
-                "LineMarker": string;
-                "LineStyle": string;
-                "LineWidth": string;
-                "ListOfArguments": string;
-                "ListOfValues": string;
-                "ListOfWeights": string;
-                "Marker": string;
-                "NewAutoSeriesEvent": string;
-                "PointAtCenter": string;
-                "SeriesLabels": string;
-                "ShowInLegend": string;
-                "ShowNulls": string;
-                "ShowSeriesLabels": string;
-                "ShowShadow": string;
-                "ShowZeros": string;
-                "SortBy": string;
-                "SortDirection": string;
-                "Tension": string;
-                "Title": string;
-                "TopmostLine": string;
-                "TopN": string;
-                "TrendLine": string;
-                "Value": string;
-                "ValueDataColumn": string;
-                "Weight": string;
-                "WeightDataColumn": string;
-                "YAxis": string;
-            };
-            "StiSeriesInteraction": {
-                "AllowSeries": string;
-                "AllowSeriesElements": string;
-                "DrillDownEnabled": string;
-                "DrillDownPage": string;
-                "DrillDownReport": string;
-                "Hyperlink": string;
-                "HyperlinkDataColumn": string;
-                "ListOfHyperlinks": string;
-                "ListOfTags": string;
-                "ListOfToolTips": string;
-                "Tag": string;
-                "TagDataColumn": string;
-                "ToolTip": string;
-                "ToolTipDataColumn": string;
-            };
-            "StiSeriesLabels": {
-                "Angle": string;
-                "Antialiasing": string;
-                "AutoRotate": string;
-                "BorderColor": string;
-                "Brush": string;
-                "Conditions": string;
-                "DrawBorder": string;
-                "Font": string;
-                "Format": string;
-                "LabelColor": string;
-                "LegendValueType": string;
-                "LineColor": string;
-                "LineLength": string;
-                "MarkerAlignment": string;
-                "MarkerSize": string;
-                "MarkerVisible": string;
-                "PreventIntersection": string;
-                "ShowInPercent": string;
-                "ShowNulls": string;
-                "ShowValue": string;
-                "ShowZeros": string;
-                "Step": string;
-                "TextAfter": string;
-                "TextBefore": string;
-                "UseSeriesColor": string;
-                "ValueType": string;
-                "ValueTypeSeparator": string;
-                "Visible": string;
-                "Width": string;
-                "WordWrap": string;
-            };
-            "StiSeriesTopN": {
-                "Count": string;
-                "Mode": string;
-                "OtherText": string;
-                "ShowOther": string;
-            };
-            "StiShape": {
-                "BorderColor": string;
-                "ShapeType": string;
-                "Size": string;
-                "Style": string;
-            };
-            "StiShapeTypeService": {
-                "Direction": string;
-            };
-            "StiSimpleBorder": {
-                "Color": string;
-                "Side": string;
-                "Size": string;
-                "Style": string;
-            };
-            "StiSimpleText": {
-                "GetValueEvent": string;
-                "GlobalizedName": string;
-                "HideZeros": string;
-                "LinesOfUnderline": string;
-                "MaxNumberOfLines": string;
-                "OnlyText": string;
-                "ProcessAt": string;
-                "ProcessAtEnd": string;
-                "ProcessingDuplicates": string;
-                "Text": string;
-            };
-            "StiSolidBrush": {
-                "Color": string;
-            };
-            "StiSSCC18BarCodeType": {
-                "CompanyPrefix": string;
-                "ExtensionDigit": string;
-                "Height": string;
-                "Module": string;
-                "SerialNumber": string;
-            };
-            "StiStandard2of5BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "Ratio": string;
-            };
-            "StiStrips": {
-                "Antialiasing": string;
-                "Font": string;
-                "MaxValue": string;
-                "MinValue": string;
-                "Orientation": string;
-                "ShowBehind": string;
-                "ShowInLegend": string;
-                "StripBrush": string;
-                "Text": string;
-                "TitleColor": string;
-                "TitleVisible": string;
-                "Visible": string;
-            };
-            "StiSubReport": {
-                "KeepSubReportTogether": string;
-                "SubReportPage": string;
-                "UseExternalReport": string;
-            };
-            "StiTable": {
-                "AutoWidth": string;
-                "AutoWidthType": string;
-                "ColumnCount": string;
-                "DockableTable": string;
-                "FooterCanBreak": string;
-                "FooterCanGrow": string;
-                "FooterCanShrink": string;
-                "FooterPrintAtBottom": string;
-                "FooterPrintIfEmpty": string;
-                "FooterPrintOn": string;
-                "FooterPrintOnAllPages": string;
-                "FooterPrintOnEvenOddPages": string;
-                "FooterRowsCount": string;
-                "HeaderCanBreak": string;
-                "HeaderCanGrow": string;
-                "HeaderCanShrink": string;
-                "HeaderPrintAtBottom": string;
-                "HeaderPrintIfEmpty": string;
-                "HeaderPrintOn": string;
-                "HeaderPrintOnAllPages": string;
-                "HeaderPrintOnEvenOddPages": string;
-                "HeaderRowsCount": string;
-                "RowCount": string;
-            };
-            "StiTableElement": {
-                "Columns": string;
-                "Group": string;
-                "SizeMode": string;
-                "Style": string;
-                "Title": string;
-            };
-            "StiText": {
-                "AllowHtmlTags": string;
-                "Angle": string;
-                "AutoWidth": string;
-                "ExcelValue": string;
-                "ExportAsImage": string;
-                "Font": string;
-                "GetExcelValueEvent": string;
-                "HorAlignment": string;
-                "Margins": string;
-                "RenderTo": string;
-                "ShrinkFontToFit": string;
-                "ShrinkFontToFitMinimumSize": string;
-                "TextFormat": string;
-                "TextOptions": string;
-                "TextQuality": string;
-                "WordWrap": string;
-            };
-            "StiTextBoxControl": {
-                "AcceptsReturn": string;
-                "AcceptsTab": string;
-                "MaxLength": string;
-                "Multiline": string;
-                "PasswordChar": string;
-                "Text": string;
-                "TextBinding": string;
-                "WordWrap": string;
-            };
-            "StiTextInCells": {
-                "CellHeight": string;
-                "CellWidth": string;
-                "ContinuousText": string;
-                "HorSpacing": string;
-                "RightToLeft": string;
-                "VertSpacing": string;
-                "WordWrap": string;
-            };
-            "StiTextOptions": {
-                "Angle": string;
-                "DistanceBetweenTabs": string;
-                "FirstTabOffset": string;
-                "HotkeyPrefix": string;
-                "LineLimit": string;
-                "RightToLeft": string;
-                "Trimming": string;
-                "WordWrap": string;
-            };
-            "StiTitle": {
-                "BackColor": string;
-                "Font": string;
-                "ForeColor": string;
-                "HorAlignment": string;
-                "Text": string;
-                "Visible": string;
-            };
-            "StiTreeViewControl": {
-                "AfterSelectEvent": string;
-            };
-            "StiTrendLine": {
-                "LineColor": string;
-                "LineStyle": string;
-                "LineWidth": string;
-                "ShowShadow": string;
-            };
-            "StiUpcABarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-            };
-            "StiUpcEBarCodeType": {
-                "Height": string;
-                "Module": string;
-                "SupplementCode": string;
-                "SupplementType": string;
-            };
-            "StiUpcSup2BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-            };
-            "StiUpcSup5BarCodeType": {
-                "Height": string;
-                "Module": string;
-                "ShowQuietZoneIndicator": string;
-            };
-            "StiVariable": {
-                "Alias": string;
-                "Category": string;
-                "Description": string;
-                "Name": string;
-            };
-            "StiView": {
-                "AspectRatio": string;
-                "MultipleFactor": string;
-                "Smoothing": string;
-                "Stretch": string;
-            };
-            "StiWatermark": {
-                "Angle": string;
-                "AspectRatio": string;
-                "Enabled": string;
-                "Font": string;
-                "Image": string;
-                "ImageAlignment": string;
-                "ImageMultipleFactor": string;
-                "ImageStretch": string;
-                "ImageTiling": string;
-                "ImageTransparency": string;
-                "RightToLeft": string;
-                "ShowBehind": string;
-                "ShowImageBehind": string;
-                "Text": string;
-                "TextBrush": string;
-            };
-            "StiWinControl": {
-                "BackColor": string;
-                "Font": string;
-                "ForeColor": string;
-                "Text": string;
-                "TypeName": string;
-            };
-            "StiXAxis": {
-                "DateTimeStep": string;
-            };
-            "StiZipCode": {
-                "Code": string;
-                "ForeColor": string;
-                "GetZipCodeEvent": string;
-                "Ratio": string;
-                "Size": string;
-            };
-            "Universal": {
-                "AllowApplyStyle": string;
-                "Key": string;
-                "Value": string;
+            CheckActions: {
+                ApplyEngineV2Long: string;
+                Change: string;
+                ChangeReportToInterpretationMode: string;
+                Code: string;
+                Convert: string;
+                Delete: string;
+                Edit: string;
+                Fix: string;
+                GotoCodeLong: string;
+                Hide: string;
+                NewName: string;
+                Off: string;
+                On: string;
+                SetGrowToHeightToFalse: string;
+                SetGrowToHeightToTrue: string;
+                StiAllowHtmlTagsInTextActionLong: string;
+                StiAllowOnDoublePassActionLong: string;
+                StiApplyGeneralTextFormatLong: string;
+                StiApplyGeneralTextFormatShort: string;
+                StiCanBreakComponentInContainerActionLong: string;
+                StiCanGrowComponentInContainerActionLong: string;
+                StiCanGrowGrowToHeightComponentInContainerLong: string;
+                StiCanGrowWordWrapTextAndWysiwygActionLong: string;
+                StiColumnsWidthGreaterContainerWidthActionLong: string;
+                StiComponentStyleIsNotFoundOnComponentActionLong: string;
+                StiDeleteComponentActionLong: string;
+                StiDeleteConnectionActionLong: string;
+                StiDeleteDataRelationActionLong: string;
+                StiDeleteDataSourceActionLong: string;
+                StiDeleteLostPointsActionLong: string;
+                StiDeletePageActionLong: string;
+                StiFixCrossLinePrimitiveActionLong: string;
+                StiGenerateNewNameComponentActionLong: string;
+                StiGenerateNewNameDataSourceActionLong: string;
+                StiGenerateNewNamePageActionLong: string;
+                StiGenerateNewNameRelationActionLong: string;
+                StiGrowToHeightOverlappingLong: string;
+                StiLargeHeightAtPageActionLong: string;
+                StiMinRowsInColumnsActionLong: string;
+                StiMoveComponentToPageAreaActionLong: string;
+                StiMoveComponentToPageAreaActionShort: string;
+                StiMoveComponentToPrintablePageAreaActionLong: string;
+                StiMoveComponentToPrintablePageAreaActionShort: string;
+                StiNegativeSizesOfComponentsActionLong: string;
+                StiOrientationPageToLandscapeActionLong: string;
+                StiOrientationPageToLandscapeActionShort: string;
+                StiOrientationPageToPortraitActionLong: string;
+                StiOrientationPageToPortraitActionShort: string;
+                StiPrintHeadersFootersFromPreviousPageLong: string;
+                StiPrintOnPreviousPageLong: string;
+                StiPropertiesOnlyEngineV1ActionLong: string;
+                StiPropertiesOnlyEngineV2ActionLong: string;
+                StiResetPageNumberActionLong: string;
+                StiSwitchWidthAndHeightOfPageActionLong: string;
+                StiVerySmallSizesOfComponentsLong: string;
+                StiVerySmallSizesOfComponentsShort: string;
+                StiWordWrapCanGrowTextDoesNotFitActionLong: string;
+                Zero: string;
+            };
+            CheckComponent: {
+                StiAllowHtmlTagsInTextCheckLong: string;
+                StiAllowHtmlTagsInTextCheckShort: string;
+                StiCanBreakComponentInContainerCheckLong: string;
+                StiCanBreakComponentInContainerCheckShort: string;
+                StiCanGrowComponentInContainerCheckLong: string;
+                StiCanGrowComponentInContainerCheckShort: string;
+                StiCanGrowGrowToHeightComponentInContainerLong: string;
+                StiCanGrowGrowToHeightComponentInContainerShort: string;
+                StiCanGrowWordWrapTextAndWysiwygCheckLong: string;
+                StiCanGrowWordWrapTextAndWysiwygCheckShort: string;
+                StiColumnsWidthGreaterContainerWidthCheckLong: string;
+                StiColumnsWidthGreaterContainerWidthCheckShort: string;
+                StiColumnsWidthGreaterPageWidthCheckLong: string;
+                StiColumnsWidthGreaterPageWidthCheckShort: string;
+                StiComponentBoundsAreOutOfBandLong: string;
+                StiComponentBoundsAreOutOfBandShort: string;
+                StiComponentExpressionCheckLong: string;
+                StiComponentExpressionCheckShort: string;
+                StiComponentResourceCheckLong: string;
+                StiComponentResourceCheckShort: string;
+                StiComponentStyleIsNotFoundCheckAtPageLong: string;
+                StiComponentStyleIsNotFoundCheckLong: string;
+                StiComponentStyleIsNotFoundCheckShort: string;
+                StiContainerInEngineV2CheckLong: string;
+                StiContainerInEngineV2CheckShort: string;
+                StiContourTextObsoleteCheckLong: string;
+                StiContourTextObsoleteCheckShort: string;
+                StiCorruptedCrossLinePrimitiveCheckLong: string;
+                StiCorruptedCrossLinePrimitiveCheckShort: string;
+                StiCountDataDataSourceAtDataBandLong: string;
+                StiCountDataDataSourceAtDataBandShort: string;
+                StiCrossGroupHeaderNotEqualToCrossGroupFooterOnPageLong: string;
+                StiCrossGroupHeaderNotEqualToGroupCrossFooterOnContainerLong: string;
+                StiDataSourcesForImageCheckLong: string;
+                StiDataSourcesForImageCheckShort: string;
+                StiEventsAtInterpretationCheckLong: string;
+                StiEventsAtInterpretationCheckShort: string;
+                StiFilterCircularDependencyElementCheckLong: string;
+                StiFilterCircularDependencyElementCheckShort: string;
+                StiExpressionElementCheckLong: string;
+                StiExpressionElementCheckShort: string;
+                StiFilterValueCheckLong: string;
+                StiFilterValueCheckShort: string;
+                StiFontMissingCheckLong: string;
+                StiFontMissingCheckShort: string;
+                StiFunctionsOnlyForEngineV2CheckLong: string;
+                StiFunctionsOnlyForEngineV2CheckShort: string;
+                StiGroupHeaderNotEqualToGroupFooterOnContainerLong: string;
+                StiGroupHeaderNotEqualToGroupFooterOnPageLong: string;
+                StiGroupHeaderNotEqualToGroupFooterShort: string;
+                StiGrowToHeightOverlappingLong: string;
+                StiGrowToHeightOverlappingShort: string;
+                StiIsFirstPageIsLastPageDoublePassCheckLong: string;
+                StiIsFirstPageIsLastPageDoublePassCheckShort: string;
+                StiIsFirstPassIsSecondPassCheckLong: string;
+                StiIsFirstPassIsSecondPassCheckShort: string;
+                StiLargeHeightAtPageCheckLong: string;
+                StiLargeHeightAtPageCheckShort: string;
+                StiLocationOutsidePageCheckLong: string;
+                StiLocationOutsidePageCheckShort: string;
+                StiLocationOutsidePrintableAreaCheckLong: string;
+                StiLocationOutsidePrintableAreaCheckShort: string;
+                StiMinRowsInColumnsCheckLong: string;
+                StiMinRowsInColumnsCheckShort: string;
+                StiNegativeSizesOfComponentsCheckLong: string;
+                StiNegativeSizesOfComponentsCheckShort: string;
+                StiNoConditionAtGroupCheckLong: string;
+                StiNoConditionAtGroupCheckShort: string;
+                StiNoNameComponentCheckLong: string;
+                StiNoNameComponentCheckShort: string;
+                StiNoNamePageCheckLong: string;
+                StiNoNamePageCheckShort: string;
+                StiPanelInEngineV1CheckLong: string;
+                StiPanelInEngineV1CheckShort: string;
+                StiPrintHeadersAndFootersFromPreviousPageLong: string;
+                StiPrintHeadersAndFootersFromPreviousPageShort: string;
+                StiPrintOnDoublePassCheckLong: string;
+                StiPrintOnDoublePassCheckShort: string;
+                StiPrintOnPreviousPageCheck2Long: string;
+                StiPrintOnPreviousPageCheck2Short: string;
+                StiPrintOnPreviousPageCheckLong: string;
+                StiPrintOnPreviousPageCheckShort: string;
+                StiPropertiesOnlyEngineV1CheckLong: string;
+                StiPropertiesOnlyEngineV1CheckShort: string;
+                StiPropertiesOnlyEngineV2CheckLong: string;
+                StiPropertiesOnlyEngineV2CheckShort: string;
+                StiResetPageNumberCheckLong: string;
+                StiResetPageNumberCheckShort: string;
+                StiShowInsteadNullValuesCheckLong: string;
+                StiShowInsteadNullValuesCheckShort: string;
+                StiSubReportPageZeroCheckLong: string;
+                StiSubReportPageZeroCheckShort: string;
+                StiSystemTextObsoleteCheckLong: string;
+                StiSystemTextObsoleteCheckShort: string;
+                StiTextColorEqualToBackColorCheckLong: string;
+                StiTextColorEqualToBackColorCheckShort: string;
+                StiTextTextFormatCheckLong: string;
+                StiTextTextFormatCheckShort: string;
+                StiTotalPageCountDoublePassCheckLong: string;
+                StiUndefinedComponentCheckLong: string;
+                StiUndefinedComponentCheckShort: string;
+                StiVerySmallSizesOfComponentsCheckLong: string;
+                StiVerySmallSizesOfComponentsCheckShort: string;
+                StiWidthHeightZeroComponentCheckLongHeight: string;
+                StiWidthHeightZeroComponentCheckLongWidth: string;
+                StiWidthHeightZeroComponentCheckLongWidthHeight: string;
+                StiWidthHeightZeroComponentCheckShortHeight: string;
+                StiWidthHeightZeroComponentCheckShortWidth: string;
+                StiWidthHeightZeroComponentCheckShortWidthHeight: string;
+                StiWordWrapCanGrowTextDoesNotFitLong: string;
+                StiWordWrapCanGrowTextDoesNotFitShort: string;
+            };
+            CheckConnection: {
+                StiUndefinedConnectionCheckLong: string;
+                StiUndefinedConnectionCheckShort: string;
+                StiUnsupportedConnectionCheckLong: string;
+                StiUnsupportedConnectionCheckShort: string;
+            };
+            CheckDataRelation: {
+                StiDifferentAmountOfKeysInDataRelationCheckLong: string;
+                StiDifferentAmountOfKeysInDataRelationCheckShort: string;
+                StiKeysInAbsentDataRelationCheckLong: string;
+                StiKeysInAbsentDataRelationCheckShort: string;
+                StiKeysNotFoundRelationCheckLong: string;
+                StiKeysNotFoundRelationCheckShort: string;
+                StiKeysTypesMismatchDataRelationCheckLong: string;
+                StiKeysTypesMismatchDataRelationCheckShort: string;
+                StiNoNameDataRelationCheckLong: string;
+                StiNoNameDataRelationCheckShort: string;
+                StiNoNameInSourceDataRelationCheckLong: string;
+                StiNoNameInSourceDataRelationCheckShort: string;
+                StiSourcesInAbsentDataRelationCheckLong: string;
+                StiSourcesInAbsentDataRelationCheckShort: string;
+            };
+            CheckDataSource: {
+                StiCalculatedColumnRecursionCheckLong: string;
+                StiCalculatedColumnRecursionCheckShort: string;
+                StiNoNameDataSourceCheckLong: string;
+                StiNoNameDataSourceCheckShort: string;
+                StiNoNameInSourceDataSourceCheckLong: string;
+                StiNoNameInSourceDataSourceCheckShort: string;
+                StiUndefinedDataSourceCheckLong: string;
+                StiUndefinedDataSourceCheckShort: string;
+            };
+            CheckGlobal: {
+                Error: string;
+                Information: string;
+                RenderingMessage: string;
+                Warning: string;
+            };
+            CheckLicense: {
+                StiLicenseTrialCheckLong: string;
+            };
+            CheckPage: {
+                StiLostPointsOnPageCheckLong: string;
+                StiLostPointsOnPageCheckShort: string;
+                StiOrientationPageCheckLongLandscape: string;
+                StiOrientationPageCheckLongPortrait: string;
+                StiOrientationPageCheckShort: string;
+            };
+            CheckReport: {
+                StiCloudCompilationModeCheckLong: string;
+                StiCloudCompilationModeCheckShort: string;
+                StiCompilationErrorAssemblyCheckLong: string;
+                StiCompilationErrorCheck2Long: string;
+                StiCompilationErrorCheck3Long: string;
+                StiCompilationErrorCheckLong: string;
+                StiCompilationErrorCheckShort: string;
+                StiDuplicatedName2CheckLong: string;
+                StiDuplicatedNameCheckLong: string;
+                StiDuplicatedNameCheckShort: string;
+                StiDuplicatedNameInSourceInDataRelationReportCheckLong: string;
+                StiDuplicatedNameInSourceInDataRelationReportCheckShort: string;
+                StiNetCoreCompilationModeCheckLong: string;
+                StiNetCoreCompilationModeCheckShort: string;
+            };
+            CheckVariable: {
+                StiVariableInitializationCheckLong: string;
+                StiVariableInitializationCheckShort: string;
+                StiVariableRecursionCheckLong: string;
+                StiVariableRecursionCheckShort: string;
+                StiVariableTypeCheckLong: string;
+                StiVariableTypeCheckShort: string;
+            };
+            Font: {
+                Bold: string;
+                Italic: string;
+                Name: string;
+                Size: string;
+                Strikeout: string;
+                Underline: string;
+            };
+            Publish: {
+                ActionDesign: string;
+                ActionExport: string;
+                ActionShow: string;
+                AddNewConnection: string;
+                Cancel: string;
+                Close: string;
+                ConnectionsFromReport: string;
+                ConnectionsRegData: string;
+                ConnectionsReplace: string;
+                Copy: string;
+                CopyingLibraries: string;
+                DeployReportPlatform: string;
+                DownloadingLibraries: string;
+                ExportFormat: string;
+                ExportFormatData: string;
+                ExportFormatDataType: string;
+                ExportFormatImage: string;
+                ExportFormatImageType: string;
+                FullScreenViewer: string;
+                GetLibrariesFrom: string;
+                GroupAddons: string;
+                GroupConnections: string;
+                GroupParameters: string;
+                HideOptions: string;
+                IncludeFonts: string;
+                IncludeLibrariesToStandalone: string;
+                IncludeLicenseKey: string;
+                IncludeLocalization: string;
+                IncludeReportPackedStringToCode: string;
+                IncludeUITheme: string;
+                JavaScriptFramework: string;
+                LicenseKeyTypeFile: string;
+                LicenseKeyTypeString: string;
+                LoadReport: string;
+                LoadReportAssembly: string;
+                LoadReportByteArray: string;
+                LoadReportClass: string;
+                LoadReportFile: string;
+                LoadReportHyperlink: string;
+                LoadReportResource: string;
+                LoadReportStream: string;
+                LoadReportString: string;
+                ParametersFromReport: string;
+                ParametersReplace: string;
+                ParametersReplacePhpInfo: string;
+                ParametersRequestFromUser: string;
+                Publish: string;
+                PublishType: string;
+                PublishTypeProject: string;
+                PublishTypeStandalone: string;
+                ReadMore: string;
+                RegDataOnlyForPreview: string;
+                RegDataSynchronize: string;
+                ReplaceConnectionString: string;
+                ReplacePathToData: string;
+                ReportAction: string;
+                ReportErrors: string;
+                SaveProjectPackage: string;
+                SaveStandalone: string;
+                SaveStandalonePackage: string;
+                SearchLibraries: string;
+                ShowMore: string;
+                ShowOptions: string;
+                ThemeBackground: string;
+                ThemeStyle: string;
+                TrialVersion: string;
+                Use: string;
+                UseCompilationCache: string;
+                UseCompressedScripts: string;
+                UseLatestVersion: string;
+                UseWpfDesignerV2: string;
+            };
+            ReportComparer: {
+                Change: string;
+                Copy: string;
+                CopyAll: string;
+                Delete: string;
+                SaveChangesInReports: string;
+                StiBusinessObjectDifferentColumnCompareComment: string;
+                StiBusinessObjectDifferentColumnCompareLong: string;
+                StiBusinessObjectDifferentColumnCompareShort: string;
+                StiBusinessObjectPropertiesCompareComment: string;
+                StiBusinessObjectPropertiesCompareLong: string;
+                StiBusinessObjectPropertiesCompareShort: string;
+                StiChangeInReportPropertyActionDescription: string;
+                StiComponentPropertiesCompareComment: string;
+                StiComponentPropertiesCompareLong: string;
+                StiComponentPropertiesCompareShort: string;
+                StiCopyAllActionDescription: string;
+                StiCopyBusinessDataColumnActionsDescription: string;
+                StiCopyBusinessObjectActionDescription: string;
+                StiCopyComponentActionDescription: string;
+                StiCopyDataColumnActionDescription: string;
+                StiCopyDataRelationActionDescription: string;
+                StiCopyDataSourceActionDescription: string;
+                StiCopyStyleActionDescription: string;
+                StiCopyVariableActionDescription: string;
+                StiDataRelationPropertiesCompareComment: string;
+                StiDataRelationPropertiesCompareLong: string;
+                StiDataRelationPropertiesCompareShort: string;
+                StiDataSourceDifferentColumnCompareComment: string;
+                StiDataSourceDifferentColumnCompareLong: string;
+                StiDataSourceDifferentColumnCompareShort: string;
+                StiDataSourcePropertiesCompareComment: string;
+                StiDataSourcePropertiesCompareLong: string;
+                StiDataSourcePropertiesCompareShort: string;
+                StiDeleteBusinessDataColumnActionsDescription: string;
+                StiDeleteBusinessObjectActionDescription: string;
+                StiDeleteComponentActionDescription: string;
+                StiDeleteDataColumnActionDescription: string;
+                StiDeleteDataRelationActionDescription: string;
+                StiDeleteDataSourceActionDescription: string;
+                StiDeleteStyleActionDescription: string;
+                StiDeleteVariableActionDescription: string;
+                StiReportDifferentBusinessObjectCompareComment: string;
+                StiReportDifferentBusinessObjectCompareLong: string;
+                StiReportDifferentBusinessObjectCompareShort: string;
+                StiReportDifferentComponentsCompareComment: string;
+                StiReportDifferentComponentsCompareLong: string;
+                StiReportDifferentComponentsCompareMessag1: string;
+                StiReportDifferentComponentsCompareMessag2: string;
+                StiReportDifferentComponentsCompareShort: string;
+                StiReportDifferentDataRelationCompareComment: string;
+                StiReportDifferentDataRelationCompareLong: string;
+                StiReportDifferentDataRelationCompareShort: string;
+                StiReportDifferentDataSourceCompareComment: string;
+                StiReportDifferentDataSourceCompareLong: string;
+                StiReportDifferentDataSourceCompareShort: string;
+                StiReportDifferentStyleCompareComment: string;
+                StiReportDifferentStyleCompareLong: string;
+                StiReportDifferentStyleCompareShort: string;
+                StiReportDifferentVariableCompareComment: string;
+                StiReportDifferentVariableCompareLong: string;
+                StiReportDifferentVariableCompareShort: string;
+                StiReportPropertiesCompareComment: string;
+                StiReportPropertiesCompareLong: string;
+                StiReportPropertiesCompareShort: string;
+                StiStylePropertiesCompareComment: string;
+                StiStylePropertiesCompareLong: string;
+                StiStylePropertiesCompareShort: string;
+                StiVariablePropertiesCompareComment: string;
+                StiVariablePropertiesCompareLong: string;
+                StiVariablePropertiesCompareShort: string;
+            };
+            ReportComparerViewer: {
+                Browse: string;
+                BusinessObjects: string;
+                BusinessObjectsDataColumns: string;
+                Cancel: string;
+                Compare: string;
+                CompareList: string;
+                CompareReports: string;
+                Compares: string;
+                Components: string;
+                DataRelations: string;
+                DataSources: string;
+                DataSourcesDataColumns: string;
+                EnterPassword: string;
+                FirstReport: string;
+                LongMessage: string;
+                Next: string;
+                OK: string;
+                OpenReports: string;
+                Previous: string;
+                Report: string;
+                ReportToCompare: string;
+                SaveReports: string;
+                SecondReport: string;
+                SelectReports: string;
+                StatusHigh: string;
+                StatusLow: string;
+                StatusMiddle: string;
+                Styles: string;
+                Variables: string;
+                WarningFile1EqualFile2: string;
+                WarningFirstAndSecondReportNotFound: string;
+                WarningFirstReportNotFound: string;
+                WarningSecondReportNotFound: string;
+            };
+            StiAdvancedBorder: {
+                BottomSide: string;
+                LeftSide: string;
+                RightSide: string;
+                TopSide: string;
+            };
+            StiArea: {
+                BorderColor: string;
+                Brush: string;
+                ColorEach: string;
+                GridLinesHor: string;
+                GridLinesHorRight: string;
+                GridLinesVert: string;
+                InterlacingHor: string;
+                InterlacingVert: string;
+                RadarStyle: string;
+                ReverseHor: string;
+                ReverseVert: string;
+                ShowShadow: string;
+                XAxis: string;
+                XTopAxis: string;
+                YAxis: string;
+                YRightAxis: string;
+            };
+            StiAreaSeries: {
+                Brush: string;
+            };
+            StiArrowShapeType: {
+                ArrowHeight: string;
+                ArrowWidth: string;
+            };
+            StiAustraliaPost4StateBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiAxis: {
+                ArrowStyle: string;
+                Interaction: string;
+                Labels: string;
+                LineColor: string;
+                LineStyle: string;
+                LineWidth: string;
+                LogarithmicScale: string;
+                Range: string;
+                RangeScrollEnabled: string;
+                ShowEdgeValues: string;
+                ShowScrollBar: string;
+                ShowXAxis: string;
+                ShowYAxis: string;
+                StartFromZero: string;
+                Step: string;
+                Ticks: string;
+                Title: string;
+                Visible: string;
+            };
+            StiAxisDateTimeStep: {
+                Interpolation: string;
+                NumberOfValues: string;
+                Step: string;
+            };
+            StiAxisInteraction: {
+                RangeScrollEnabled: string;
+            };
+            StiAxisLabels: {
+                Angle: string;
+                Antialiasing: string;
+                Color: string;
+                Font: string;
+                Format: string;
+                Placement: string;
+                Step: string;
+                TextAfter: string;
+                TextAlignment: string;
+                TextBefore: string;
+                Width: string;
+                WordWrap: string;
+            };
+            StiAxisRange: {
+                Auto: string;
+                Maximum: string;
+                Minimum: string;
+            };
+            StiAxisTicks: {
+                Length: string;
+                LengthUnderLabels: string;
+                MinorCount: string;
+                MinorLength: string;
+                MinorVisible: string;
+                Step: string;
+                Visible: string;
+            };
+            StiAxisTitle: {
+                Alignment: string;
+                Antialiasing: string;
+                Color: string;
+                Direction: string;
+                Font: string;
+                Position: string;
+                Text: string;
+            };
+            StiBand: {
+                MaxHeight: string;
+                MinHeight: string;
+                PrintOnEvenOddPages: string;
+                ResetPageNumber: string;
+                StartNewPage: string;
+                StartNewPageIfLessThan: string;
+            };
+            StiBandInteraction: {
+                Collapsed: string;
+                CollapseGroupFooter: string;
+                CollapsingEnabled: string;
+                SelectionEnabled: string;
+            };
+            StiBarCode: {
+                Angle: string;
+                AutoScale: string;
+                BackColor: string;
+                BarCodeType: string;
+                Code: string;
+                Font: string;
+                ForeColor: string;
+                GetBarCodeEvent: string;
+                ShowLabelText: string;
+                ShowQuietZones: string;
+                Zoom: string;
+            };
+            StiBarCodeTypeService: {
+                AddClearZone: string;
+                AspectRatio: string;
+                AutoDataColumns: string;
+                AutoDataRows: string;
+                Checksum: string;
+                CheckSum: string;
+                CheckSum1: string;
+                CheckSum2: string;
+                DataColumns: string;
+                DataRows: string;
+                EncodingMode: string;
+                EncodingType: string;
+                ErrorsCorrectionLevel: string;
+                Height: string;
+                MatrixSize: string;
+                Module: string;
+                PrintVerticalBars: string;
+                Ratio: string;
+                RatioY: string;
+                ShowQuietZoneIndicator: string;
+                Space: string;
+                SupplementCode: string;
+                SupplementType: string;
+                UseRectangularSymbols: string;
+            };
+            StiBaseStyle: {
+                AllowUseBackColor: string;
+                AllowUseBorderFormatting: string;
+                AllowUseBorderSides: string;
+                AllowUseBorderSidesFromLocation: string;
+                AllowUseBrush: string;
+                AllowUseFont: string;
+                AllowUseForeColor: string;
+                AllowUseHorAlignment: string;
+                AllowUseImage: string;
+                AllowUseTextBrush: string;
+                AllowUseTextOptions: string;
+                AllowUseVertAlignment: string;
+                AxisLabelsColor: string;
+                AxisLineColor: string;
+                AxisTitleColor: string;
+                BackColor: string;
+                BasicStyleColor: string;
+                Border: string;
+                Brush: string;
+                BrushType: string;
+                ChartAreaBorderColor: string;
+                ChartAreaBrush: string;
+                CollectionName: string;
+                Color: string;
+                Conditions: string;
+                Description: string;
+                Font: string;
+                ForeColor: string;
+                GridLinesHorColor: string;
+                GridLinesVertColor: string;
+                HorAlignment: string;
+                Image: string;
+                InterlacingHorBrush: string;
+                InterlacingVertBrush: string;
+                LegendBorderColor: string;
+                LegendBrush: string;
+                LegendLabelsColor: string;
+                LegendTitleColor: string;
+                Name: string;
+                SeriesLabelsBorderColor: string;
+                SeriesLabelsBrush: string;
+                SeriesLabelsColor: string;
+                StyleColors: string;
+                TextBrush: string;
+                VertAlignment: string;
+            };
+            StiBorder: {
+                Color: string;
+                DropShadow: string;
+                ShadowBrush: string;
+                ShadowSize: string;
+                Side: string;
+                Size: string;
+                Style: string;
+                Topmost: string;
+            };
+            StiBorderSide: {
+                Color: string;
+                Size: string;
+                Style: string;
+            };
+            StiBusinessObject: {
+                Alias: string;
+                Category: string;
+                Columns: string;
+                Name: string;
+            };
+            StiButtonControl: {
+                Cancel: string;
+                Default: string;
+                DialogResult: string;
+                Image: string;
+                ImageAlign: string;
+                Text: string;
+                TextAlign: string;
+            };
+            StiCandlestickSeries: {
+                ListOfValuesClose: string;
+                ListOfValuesHigh: string;
+                ListOfValuesLow: string;
+                ListOfValuesOpen: string;
+                ValueClose: string;
+                ValueDataColumnClose: string;
+                ValueDataColumnHigh: string;
+                ValueDataColumnLow: string;
+                ValueDataColumnOpen: string;
+                ValueHigh: string;
+                ValueLow: string;
+                ValueOpen: string;
+            };
+            StiCap: {
+                Color: string;
+                Fill: string;
+                Height: string;
+                Style: string;
+                Width: string;
+            };
+            StiChart: {
+                Area: string;
+                ChartType: string;
+                ConstantLines: string;
+                HorSpacing: string;
+                Legend: string;
+                ProcessAtEnd: string;
+                ProcessChartEvent: string;
+                Rotation: string;
+                Series: string;
+                SeriesLabels: string;
+                Strips: string;
+                Style: string;
+                Table: string;
+                Title: string;
+                VertSpacing: string;
+            };
+            StiChartElement: {
+                Arguments: string;
+                CloseValues: string;
+                ColorEach: string;
+                EndValues: string;
+                Group: string;
+                HighValues: string;
+                LowValues: string;
+                Series: string;
+                Style: string;
+                TextFormat: string;
+                Title: string;
+                Values: string;
+                Weights: string;
+            };
+            StiChartTable: {
+                Font: string;
+                GridLineColor: string;
+                GridLinesHor: string;
+                GridLinesVert: string;
+                GridOutline: string;
+                MarkerVisible: string;
+                Visible: string;
+            };
+            StiChartTitle: {
+                Alignment: string;
+                Antialiasing: string;
+                Brush: string;
+                Dock: string;
+                Font: string;
+                Spacing: string;
+                Text: string;
+                Visible: string;
+            };
+            StiCheckBox: {
+                Checked: string;
+                CheckStyleForFalse: string;
+                CheckStyleForTrue: string;
+                ContourColor: string;
+                ExcelValue: string;
+                GetCheckedEvent: string;
+                Size: string;
+                Values: string;
+            };
+            StiCheckBoxControl: {
+                Checked: string;
+                CheckedBinding: string;
+                CheckedChangedEvent: string;
+                Text: string;
+                TextBinding: string;
+            };
+            StiCheckedListBoxControl: {
+                CheckOnClick: string;
+                ItemHeight: string;
+                Items: string;
+                ItemsBinding: string;
+                SelectedIndexBinding: string;
+                SelectedIndexChangedEvent: string;
+                SelectedItemBinding: string;
+                SelectedValueBinding: string;
+                SelectionMode: string;
+                Sorted: string;
+            };
+            StiChildBand: {
+                KeepChildTogether: string;
+                PrintIfParentDisabled: string;
+            };
+            StiClone: {
+                Container: string;
+                ScaleHor: string;
+            };
+            StiClusteredColumnSeries: {
+                Width: string;
+            };
+            StiCodabarBarCodeType: {
+                Height: string;
+                Module: string;
+                Ratio: string;
+            };
+            StiCode11BarCodeType: {
+                Checksum: string;
+                Height: string;
+                Module: string;
+            };
+            StiCode128aBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiCode128AutoBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiCode128BarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiCode128bBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiCode128cBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiCode39BarCodeType: {
+                CheckSum: string;
+                Height: string;
+                Module: string;
+                Ratio: string;
+            };
+            StiCode39ExtBarCodeType: {
+                CheckSum: string;
+                Height: string;
+                Module: string;
+                Ratio: string;
+            };
+            StiCode93BarCodeType: {
+                Height: string;
+                Module: string;
+                Ratio: string;
+            };
+            StiCode93ExtBarCodeType: {
+                Height: string;
+                Module: string;
+                Ratio: string;
+            };
+            StiComboBoxControl: {
+                DropDownStyle: string;
+                DropDownWidth: string;
+                ItemHeight: string;
+                Items: string;
+                ItemsBinding: string;
+                MaxDropDownItems: string;
+                MaxLength: string;
+                SelectedIndexChangedEvent: string;
+                SelectedItemBinding: string;
+                SelectedValueBinding: string;
+                Sorted: string;
+                Text: string;
+                TextBinding: string;
+            };
+            StiComponent: {
+                AfterPrintEvent: string;
+                Alias: string;
+                Anchor: string;
+                BeforePrintEvent: string;
+                Bookmark: string;
+                Border: string;
+                Brush: string;
+                BusinessObject: string;
+                CanBreak: string;
+                CanGrow: string;
+                CanShrink: string;
+                CellDockStyle: string;
+                CellType: string;
+                ClickEvent: string;
+                ComponentStyle: string;
+                Conditions: string;
+                CountData: string;
+                DataRelation: string;
+                DataSource: string;
+                DockStyle: string;
+                DoubleClickEvent: string;
+                Editable: string;
+                Enabled: string;
+                FilterMode: string;
+                FilterOn: string;
+                Filters: string;
+                FixedWidth: string;
+                GetBookmarkEvent: string;
+                GetDrillDownReportEvent: string;
+                GetHyperlinkEvent: string;
+                GetTagEvent: string;
+                GetToolTipEvent: string;
+                GrowToHeight: string;
+                Height: string;
+                HorAlignment: string;
+                Hyperlink: string;
+                Interaction: string;
+                Left: string;
+                Linked: string;
+                Locked: string;
+                MasterComponent: string;
+                MaxSize: string;
+                MinSize: string;
+                MouseEnterEvent: string;
+                MouseLeaveEvent: string;
+                Name: string;
+                Printable: string;
+                PrintOn: string;
+                Restrictions: string;
+                ShiftMode: string;
+                Sort: string;
+                Tag: string;
+                TextBrush: string;
+                ToolTip: string;
+                Top: string;
+                UseParentStyles: string;
+                VertAlignment: string;
+                Width: string;
+            };
+            StiConstantLines: {
+                Antialiasing: string;
+                AxisValue: string;
+                Font: string;
+                LineColor: string;
+                LineStyle: string;
+                LineWidth: string;
+                Orientation: string;
+                Position: string;
+                ShowBehind: string;
+                ShowInLegend: string;
+                Text: string;
+                TitleVisible: string;
+                Visible: string;
+            };
+            StiCrossDataBand: {
+                MaxWidth: string;
+                MinWidth: string;
+            };
+            StiCrossField: {
+                DisplayValue: string;
+                EnumeratorSeparator: string;
+                EnumeratorType: string;
+                GetCrossValueEvent: string;
+                GetDisplayCrossValueEvent: string;
+                HideZeros: string;
+                KeepMergedCellsTogether: string;
+                MergeHeaders: string;
+                PrintOnAllPages: string;
+                ShowPercents: string;
+                ShowTotal: string;
+                SortDirection: string;
+                SortType: string;
+                Summary: string;
+                SummaryValues: string;
+                UseStyleOfSummaryInColumnTotal: string;
+                UseStyleOfSummaryInRowTotal: string;
+                Value: string;
+            };
+            StiCrossFooterBand: {
+                MaxWidth: string;
+                MinWidth: string;
+            };
+            StiCrossGroupFooterBand: {
+                MaxWidth: string;
+                MinWidth: string;
+            };
+            StiCrossGroupHeaderBand: {
+                MaxWidth: string;
+                MinWidth: string;
+            };
+            StiCrossHeaderBand: {
+                MaxWidth: string;
+                MinWidth: string;
+            };
+            StiCrossTab: {
+                EmptyValue: string;
+                HorAlignment: string;
+                KeepCrossTabTogether: string;
+                PrintIfEmpty: string;
+                RightToLeft: string;
+                Wrap: string;
+                WrapGap: string;
+            };
+            StiDataBand: {
+                BeginRenderEvent: string;
+                CalcInvisible: string;
+                ColumnDirection: string;
+                ColumnGaps: string;
+                Columns: string;
+                ColumnWidth: string;
+                EndRenderEvent: string;
+                EvenStyle: string;
+                FilterEngine: string;
+                FilterMode: string;
+                GetCollapsedEvent: string;
+                KeepChildTogether: string;
+                KeepDetailsTogether: string;
+                KeepFooterTogether: string;
+                KeepGroupTogether: string;
+                KeepHeaderTogether: string;
+                MinRowsInColumn: string;
+                OddStyle: string;
+                PrintIfDetailEmpty: string;
+                PrintOnAllPages: string;
+                RenderingEvent: string;
+                ResetDataSource: string;
+                RightToLeft: string;
+            };
+            StiDatabase: {
+                Alias: string;
+                ConnectedEvent: string;
+                ConnectingEvent: string;
+                ConnectionString: string;
+                DisconnectedEvent: string;
+                DisconnectingEvent: string;
+                Name: string;
+                PathData: string;
+                PathSchema: string;
+                PromptUserNameAndPassword: string;
+            };
+            StiDataColumn: {
+                Alias: string;
+                Expression: string;
+                Name: string;
+                NameInSource: string;
+                Type: string;
+            };
+            StiDataMatrixBarCodeType: {
+                EncodingType: string;
+                Height: string;
+                MatrixSize: string;
+                Module: string;
+                UseRectangularSymbols: string;
+            };
+            StiDataParameter: {
+                Alias: string;
+                Expression: string;
+                Name: string;
+                Size: string;
+                Type: string;
+            };
+            StiDataRelation: {
+                Alias: string;
+                ChildColumns: string;
+                ChildSource: string;
+                Name: string;
+                NameInSource: string;
+                ParentColumns: string;
+                ParentSource: string;
+            };
+            StiDataSource: {
+                Alias: string;
+                AllowExpressions: string;
+                CodePage: string;
+                Columns: string;
+                CommandTimeout: string;
+                ConnectionOrder: string;
+                ConnectOnStart: string;
+                Name: string;
+                NameInSource: string;
+                Parameters: string;
+                Path: string;
+                ReconnectOnEachRow: string;
+                SqlCommand: string;
+                Type: string;
+            };
+            StiDateTimePickerControl: {
+                CustomFormat: string;
+                DropDownAlign: string;
+                Format: string;
+                MaxDate: string;
+                MaxDateBinding: string;
+                MinDate: string;
+                MinDateBinding: string;
+                ShowUpDown: string;
+                Today: string;
+                Value: string;
+                ValueBinding: string;
+                ValueChangedEvent: string;
+            };
+            StiDialogStyle: {
+                GlyphColor: string;
+                HotBackColor: string;
+                HotForeColor: string;
+                HotGlyphColor: string;
+                HotSelectedBackColor: string;
+                HotSelectedForeColor: string;
+                HotSelectedGlyphColor: string;
+                SelectedBackColor: string;
+                SelectedForeColor: string;
+                SelectedGlyphColor: string;
+                SeparatorColor: string;
+            };
+            StiDoughnutSeries: {
+                Diameter: string;
+            };
+            StiDrillDownParameter: {
+                Expression: string;
+                Name: string;
+            };
+            StiDutchKIXBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiDynamicBand: {
+                BreakIfLessThan: string;
+                NewColumnAfter: string;
+                NewColumnBefore: string;
+                NewPageAfter: string;
+                NewPageBefore: string;
+                PrintAtBottom: string;
+                SkipFirst: string;
+            };
+            StiEAN128aBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiEAN128AutoBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiEAN128bBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiEAN128cBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiEAN13BarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+                SupplementCode: string;
+                SupplementType: string;
+            };
+            StiEAN8BarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+                SupplementCode: string;
+                SupplementType: string;
+            };
+            StiElement: {
+                BackColor: string;
+                Margin: string;
+                Padding: string;
+            };
+            StiEmptyBand: {
+                BeginRenderEvent: string;
+                EndRenderEvent: string;
+                EvenStyle: string;
+                OddStyle: string;
+                RenderingEvent: string;
+                SizeMode: string;
+            };
+            StiFIMBarCodeType: {
+                AddClearZone: string;
+                Height: string;
+                Module: string;
+            };
+            StiFooterBand: {
+                KeepFooterTogether: string;
+                PrintIfEmpty: string;
+                PrintOnAllPages: string;
+            };
+            StiForm: {
+                BackColor: string;
+                ClickEvent: string;
+                ClosedFormEvent: string;
+                ClosingFormEvent: string;
+                Font: string;
+                LoadFormEvent: string;
+                Location: string;
+                RightToLeft: string;
+                Size: string;
+                StartMode: string;
+                StartPosition: string;
+                Text: string;
+                Visible: string;
+                WindowState: string;
+            };
+            StiGanttSeries: {
+                GetListOfValuesEndEvent: string;
+                GetValueEndEvent: string;
+                ListOfValues: string;
+                ListOfValuesEnd: string;
+                Value: string;
+                ValueDataColumn: string;
+                ValueDataColumnEnd: string;
+                ValueEnd: string;
+            };
+            StiGlareBrush: {
+                Angle: string;
+                EndColor: string;
+                Focus: string;
+                Scale: string;
+                StartColor: string;
+            };
+            StiGlassBrush: {
+                Blend: string;
+                Color: string;
+                DrawHatch: string;
+            };
+            StiGradientBrush: {
+                Angle: string;
+                EndColor: string;
+                StartColor: string;
+            };
+            StiGridColumn: {
+                Alignment: string;
+                DataTextField: string;
+                HeaderText: string;
+                NullText: string;
+                Visible: string;
+                Width: string;
+            };
+            StiGridControl: {
+                AlternatingBackColor: string;
+                BackColor: string;
+                BackgroundColor: string;
+                ColumnHeadersVisible: string;
+                Columns: string;
+                Filter: string;
+                ForeColor: string;
+                GridLineColor: string;
+                GridLineStyle: string;
+                HeaderBackColor: string;
+                HeaderFont: string;
+                HeaderForeColor: string;
+                PositionChangedEvent: string;
+                PreferredColumnWidth: string;
+                PreferredRowHeight: string;
+                RowHeadersVisible: string;
+                RowHeaderWidth: string;
+                SelectionBackColor: string;
+                SelectionForeColor: string;
+            };
+            StiGridLines: {
+                Color: string;
+                MinorColor: string;
+                MinorCount: string;
+                MinorStyle: string;
+                MinorVisible: string;
+                Style: string;
+                Visible: string;
+            };
+            StiGroupBoxControl: {
+                Text: string;
+                TextBinding: string;
+            };
+            StiGroupFooterBand: {
+                KeepGroupFooterTogether: string;
+            };
+            StiGroupHeaderBand: {
+                BeginRenderEvent: string;
+                Condition: string;
+                EndRenderEvent: string;
+                GetCollapsedEvent: string;
+                GetSummaryExpressionEvent: string;
+                GetValueEvent: string;
+                KeepGroupHeaderTogether: string;
+                KeepGroupTogether: string;
+                PrintOnAllPages: string;
+                RenderingEvent: string;
+                SortDirection: string;
+                SummaryExpression: string;
+                SummarySortDirection: string;
+                SummaryType: string;
+            };
+            StiHatchBrush: {
+                BackColor: string;
+                ForeColor: string;
+                Style: string;
+            };
+            StiHeaderBand: {
+                KeepHeaderTogether: string;
+                PrintIfEmpty: string;
+                PrintOnAllPages: string;
+            };
+            StiHierarchicalBand: {
+                Footers: string;
+                Headers: string;
+                Indent: string;
+                KeyDataColumn: string;
+                MasterKeyDataColumn: string;
+                ParentValue: string;
+            };
+            StiImage: {
+                DataColumn: string;
+                File: string;
+                GetImageDataEvent: string;
+                GetImageURLEvent: string;
+                GlobalizedName: string;
+                Image: string;
+                ImageData: string;
+                ImageRotation: string;
+                ImageURL: string;
+                ProcessingDuplicates: string;
+            };
+            StiInteraction: {
+                AllowSeries: string;
+                AllowSeriesElements: string;
+                Bookmark: string;
+                DrillDownEnabled: string;
+                DrillDownMode: string;
+                DrillDownPage: string;
+                DrillDownParameter1: string;
+                DrillDownParameter2: string;
+                DrillDownParameter3: string;
+                DrillDownParameter4: string;
+                DrillDownParameter5: string;
+                DrillDownReport: string;
+                Hyperlink: string;
+                SortingColumn: string;
+                SortingEnabled: string;
+                Tag: string;
+                ToolTip: string;
+            };
+            StiInterlacing: {
+                InterlacedBrush: string;
+                Visible: string;
+            };
+            StiInterleaved2of5BarCodeType: {
+                Height: string;
+                Module: string;
+                Ratio: string;
+            };
+            StiIsbn10BarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+                SupplementCode: string;
+                SupplementType: string;
+            };
+            StiIsbn13BarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+                SupplementCode: string;
+                SupplementType: string;
+            };
+            StiITF14BarCodeType: {
+                Height: string;
+                Module: string;
+                PrintVerticalBars: string;
+                Ratio: string;
+            };
+            StiJan13BarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+                SupplementCode: string;
+                SupplementType: string;
+            };
+            StiJan8BarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+                SupplementCode: string;
+                SupplementType: string;
+            };
+            StiLabelControl: {
+                Text: string;
+                TextAlign: string;
+                TextBinding: string;
+            };
+            StiLegend: {
+                BorderColor: string;
+                Brush: string;
+                Columns: string;
+                Direction: string;
+                Font: string;
+                HideSeriesWithEmptyTitle: string;
+                HorAlignment: string;
+                HorSpacing: string;
+                LabelsColor: string;
+                MarkerAlignment: string;
+                MarkerBorder: string;
+                MarkerSize: string;
+                MarkerVisible: string;
+                ShowShadow: string;
+                Size: string;
+                Title: string;
+                TitleColor: string;
+                TitleFont: string;
+                VertAlignment: string;
+                VertSpacing: string;
+                Visible: string;
+            };
+            StiLinePrimitive: {
+                Color: string;
+                EndCap: string;
+                Size: string;
+                StartCap: string;
+                Style: string;
+            };
+            StiListBoxControl: {
+                ItemHeight: string;
+                Items: string;
+                ItemsBinding: string;
+                SelectedIndexBinding: string;
+                SelectedIndexChangedEvent: string;
+                SelectedItemBinding: string;
+                SelectedValueBinding: string;
+                SelectionMode: string;
+                Sorted: string;
+            };
+            StiListViewControl: {
+                SelectedIndexChangedEvent: string;
+            };
+            StiLookUpBoxControl: {
+                Keys: string;
+                KeysBinding: string;
+                SelectedKeyBinding: string;
+            };
+            StiMargin: {
+                Bottom: string;
+                Left: string;
+                Right: string;
+                Top: string;
+            };
+            StiMarker: {
+                Angle: string;
+                BorderColor: string;
+                Brush: string;
+                ShowInLegend: string;
+                Size: string;
+                Step: string;
+                Type: string;
+                Visible: string;
+            };
+            StiMsiBarCodeType: {
+                CheckSum1: string;
+                CheckSum2: string;
+                Height: string;
+                Module: string;
+            };
+            StiNumericUpDownControl: {
+                Increment: string;
+                Maximum: string;
+                MaximumBinding: string;
+                Minimum: string;
+                MinimumBinding: string;
+                Value: string;
+                ValueBinding: string;
+                ValueChangedEvent: string;
+            };
+            StiOutsidePieLabels: {
+                LineLength: string;
+            };
+            StiPadding: {
+                Bottom: string;
+                Left: string;
+                Right: string;
+                Top: string;
+            };
+            StiPage: {
+                BeginRenderEvent: string;
+                ColumnBeginRenderEvent: string;
+                ColumnEndRenderEvent: string;
+                EndRenderEvent: string;
+                ExcelSheet: string;
+                GetExcelSheetEvent: string;
+                LargeHeight: string;
+                LargeHeightFactor: string;
+                Margins: string;
+                MirrorMargins: string;
+                NumberOfCopies: string;
+                Orientation: string;
+                PageHeight: string;
+                PageWidth: string;
+                PaperSize: string;
+                PaperSourceOfFirstPage: string;
+                PaperSourceOfOtherPages: string;
+                PrintHeadersFootersFromPreviousPage: string;
+                PrintOnPreviousPage: string;
+                RenderingEvent: string;
+                ResetPageNumber: string;
+                SegmentPerHeight: string;
+                SegmentPerWidth: string;
+                StopBeforePrint: string;
+                StretchToPrintArea: string;
+                TitleBeforeHeader: string;
+                UnlimitedBreakable: string;
+                UnlimitedHeight: string;
+                UnlimitedWidth: string;
+                Watermark: string;
+            };
+            StiPanel: {
+                ColumnGaps: string;
+                Columns: string;
+                ColumnWidth: string;
+                RightToLeft: string;
+            };
+            StiPanelControl: {
+                BorderStyle: string;
+            };
+            StiPdf417BarCodeType: {
+                AspectRatio: string;
+                AutoDataColumns: string;
+                AutoDataRows: string;
+                DataColumns: string;
+                DataRows: string;
+                EncodingMode: string;
+                ErrorsCorrectionLevel: string;
+                Height: string;
+                Module: string;
+                RatioY: string;
+            };
+            StiPharmacodeBarCodeType: {
+                Height: string;
+                Module: string;
+            };
+            StiPictureBoxControl: {
+                BorderStyle: string;
+                Image: string;
+                SizeMode: string;
+                TransparentColor: string;
+            };
+            StiPieSeries: {
+                AllowApplyBorderColor: string;
+                AllowApplyBrush: string;
+                CutPieList: string;
+                Diameter: string;
+                Distance: string;
+                GetCutPieListEvent: string;
+                StartAngle: string;
+            };
+            StiPlesseyBarCodeType: {
+                CheckSum1: string;
+                CheckSum2: string;
+                Height: string;
+                Module: string;
+            };
+            StiPostnetBarCodeType: {
+                Height: string;
+                Module: string;
+                Space: string;
+            };
+            StiPrinterSettings: {
+                Collate: string;
+                Copies: string;
+                Duplex: string;
+                PrinterName: string;
+                ShowDialog: string;
+            };
+            StiQRCodeBarCodeType: {
+                ErrorCorrectionLevel: string;
+                Height: string;
+                MatrixSize: string;
+                Module: string;
+            };
+            StiRadarAxis: {
+                Visible: string;
+            };
+            StiRadarAxisLabels: {
+                Brush: string;
+                DrawBorder: string;
+            };
+            StiRadarGridLines: {
+                Color: string;
+                MinorColor: string;
+                MinorCount: string;
+                MinorStyle: string;
+                MinorVisible: string;
+                Style: string;
+                Visible: string;
+            };
+            StiRadioButtonControl: {
+                Checked: string;
+                CheckedBinding: string;
+                CheckedChangedEvent: string;
+                Text: string;
+                TextBinding: string;
+            };
+            StiRectanglePrimitive: {
+                BottomSide: string;
+                LeftSide: string;
+                RightSide: string;
+                TopSide: string;
+            };
+            StiReport: {
+                AutoLocalizeReportOnRun: string;
+                BeginRenderEvent: string;
+                CacheAllData: string;
+                CacheTotals: string;
+                CalculationMode: string;
+                Collate: string;
+                ConvertNulls: string;
+                EndRenderEvent: string;
+                EngineVersion: string;
+                GlobalizationStrings: string;
+                NumberOfPass: string;
+                ParametersOrientation: string;
+                PreviewMode: string;
+                PreviewSettings: string;
+                PrinterSettings: string;
+                ReferencedAssemblies: string;
+                RenderingEvent: string;
+                ReportAlias: string;
+                ReportAuthor: string;
+                ReportCacheMode: string;
+                ReportDescription: string;
+                ReportName: string;
+                ReportUnit: string;
+                RequestParameters: string;
+                ScriptLanguage: string;
+                StopBeforePage: string;
+                StoreImagesInResources: string;
+                Styles: string;
+            };
+            StiReportControl: {
+                BackColor: string;
+                ClickEvent: string;
+                DataBindings: string;
+                DoubleClickEvent: string;
+                Enabled: string;
+                EnterEvent: string;
+                Font: string;
+                ForeColor: string;
+                GetTagEvent: string;
+                GetToolTipEvent: string;
+                LeaveEvent: string;
+                Location: string;
+                MouseDownEvent: string;
+                MouseEnterEvent: string;
+                MouseLeaveEvent: string;
+                MouseMoveEvent: string;
+                MouseUpEvent: string;
+                RightToLeft: string;
+                Size: string;
+                TagValueBinding: string;
+                Visible: string;
+            };
+            StiReportSummaryBand: {
+                KeepReportSummaryTogether: string;
+                PrintIfEmpty: string;
+            };
+            StiReportTitleBand: {
+                PrintIfEmpty: string;
+            };
+            StiRichText: {
+                BackColor: string;
+                DataColumn: string;
+                DataUrl: string;
+                DetectUrls: string;
+                FullConvertExpression: string;
+                Margins: string;
+                WordWrap: string;
+                Wysiwyg: string;
+            };
+            StiRichTextBoxControl: {
+                Text: string;
+            };
+            StiRoundedRectanglePrimitive: {
+                Round: string;
+            };
+            StiRoundedRectangleShapeType: {
+                Round: string;
+            };
+            StiRoyalMail4StateBarCodeType: {
+                CheckSum: string;
+                Height: string;
+                Module: string;
+            };
+            StiSeries: {
+                AllowApplyBrushNegative: string;
+                AllowApplyColorNegative: string;
+                Argument: string;
+                ArgumentDataColumn: string;
+                AutoSeriesColorDataColumn: string;
+                AutoSeriesKeyDataColumn: string;
+                AutoSeriesTitleDataColumn: string;
+                BorderColor: string;
+                Brush: string;
+                BrushNegative: string;
+                Conditions: string;
+                FilterMode: string;
+                Filters: string;
+                Format: string;
+                GetArgumentEvent: string;
+                GetHyperlinkEvent: string;
+                GetListOfArgumentsEvent: string;
+                GetListOfHyperlinksEvent: string;
+                GetListOfTagsEvent: string;
+                GetListOfToolTipsEvent: string;
+                GetListOfValuesEvent: string;
+                GetListOfWeightsEvent: string;
+                GetTagEvent: string;
+                GetTitleEvent: string;
+                GetToolTipEvent: string;
+                GetValueEvent: string;
+                GetWeightEvent: string;
+                Interaction: string;
+                LabelsOffset: string;
+                Lighting: string;
+                LineColor: string;
+                LineColorNegative: string;
+                LineMarker: string;
+                LineStyle: string;
+                LineWidth: string;
+                ListOfArguments: string;
+                ListOfValues: string;
+                ListOfWeights: string;
+                Marker: string;
+                NewAutoSeriesEvent: string;
+                PointAtCenter: string;
+                SeriesLabels: string;
+                ShowInLegend: string;
+                ShowNulls: string;
+                ShowSeriesLabels: string;
+                ShowShadow: string;
+                ShowZeros: string;
+                SortBy: string;
+                SortDirection: string;
+                Tension: string;
+                Title: string;
+                TopmostLine: string;
+                TopN: string;
+                TrendLine: string;
+                Value: string;
+                ValueDataColumn: string;
+                Weight: string;
+                WeightDataColumn: string;
+                YAxis: string;
+            };
+            StiSeriesInteraction: {
+                AllowSeries: string;
+                AllowSeriesElements: string;
+                DrillDownEnabled: string;
+                DrillDownPage: string;
+                DrillDownReport: string;
+                Hyperlink: string;
+                HyperlinkDataColumn: string;
+                ListOfHyperlinks: string;
+                ListOfTags: string;
+                ListOfToolTips: string;
+                Tag: string;
+                TagDataColumn: string;
+                ToolTip: string;
+                ToolTipDataColumn: string;
+            };
+            StiSeriesLabels: {
+                Angle: string;
+                Antialiasing: string;
+                AutoRotate: string;
+                BorderColor: string;
+                Brush: string;
+                Conditions: string;
+                DrawBorder: string;
+                Font: string;
+                Format: string;
+                LabelColor: string;
+                LegendValueType: string;
+                LineColor: string;
+                LineLength: string;
+                MarkerAlignment: string;
+                MarkerSize: string;
+                MarkerVisible: string;
+                PreventIntersection: string;
+                ShowInPercent: string;
+                ShowNulls: string;
+                ShowValue: string;
+                ShowZeros: string;
+                Step: string;
+                TextAfter: string;
+                TextBefore: string;
+                UseSeriesColor: string;
+                ValueType: string;
+                ValueTypeSeparator: string;
+                Visible: string;
+                Width: string;
+                WordWrap: string;
+            };
+            StiSeriesTopN: {
+                Count: string;
+                Mode: string;
+                OtherText: string;
+                ShowOther: string;
+            };
+            StiShape: {
+                BorderColor: string;
+                ShapeType: string;
+                Size: string;
+                Style: string;
+            };
+            StiShapeTypeService: {
+                Direction: string;
+            };
+            StiSimpleBorder: {
+                Color: string;
+                Side: string;
+                Size: string;
+                Style: string;
+            };
+            StiSimpleText: {
+                GetValueEvent: string;
+                GlobalizedName: string;
+                HideZeros: string;
+                LinesOfUnderline: string;
+                MaxNumberOfLines: string;
+                OnlyText: string;
+                ProcessAt: string;
+                ProcessAtEnd: string;
+                ProcessingDuplicates: string;
+                Text: string;
+            };
+            StiSolidBrush: {
+                Color: string;
+            };
+            StiSSCC18BarCodeType: {
+                CompanyPrefix: string;
+                ExtensionDigit: string;
+                Height: string;
+                Module: string;
+                SerialNumber: string;
+            };
+            StiStandard2of5BarCodeType: {
+                Height: string;
+                Module: string;
+                Ratio: string;
+            };
+            StiStrips: {
+                Antialiasing: string;
+                Font: string;
+                MaxValue: string;
+                MinValue: string;
+                Orientation: string;
+                ShowBehind: string;
+                ShowInLegend: string;
+                StripBrush: string;
+                Text: string;
+                TitleColor: string;
+                TitleVisible: string;
+                Visible: string;
+            };
+            StiSubReport: {
+                KeepSubReportTogether: string;
+                SubReportPage: string;
+                UseExternalReport: string;
+            };
+            StiTable: {
+                AutoWidth: string;
+                AutoWidthType: string;
+                ColumnCount: string;
+                DockableTable: string;
+                FooterCanBreak: string;
+                FooterCanGrow: string;
+                FooterCanShrink: string;
+                FooterPrintAtBottom: string;
+                FooterPrintIfEmpty: string;
+                FooterPrintOn: string;
+                FooterPrintOnAllPages: string;
+                FooterPrintOnEvenOddPages: string;
+                FooterRowsCount: string;
+                HeaderCanBreak: string;
+                HeaderCanGrow: string;
+                HeaderCanShrink: string;
+                HeaderPrintAtBottom: string;
+                HeaderPrintIfEmpty: string;
+                HeaderPrintOn: string;
+                HeaderPrintOnAllPages: string;
+                HeaderPrintOnEvenOddPages: string;
+                HeaderRowsCount: string;
+                RowCount: string;
+            };
+            StiTableElement: {
+                Columns: string;
+                Group: string;
+                SizeMode: string;
+                Style: string;
+                Title: string;
+            };
+            StiText: {
+                AllowHtmlTags: string;
+                Angle: string;
+                AutoWidth: string;
+                ExcelValue: string;
+                ExportAsImage: string;
+                Font: string;
+                GetExcelValueEvent: string;
+                HorAlignment: string;
+                Margins: string;
+                RenderTo: string;
+                ShrinkFontToFit: string;
+                ShrinkFontToFitMinimumSize: string;
+                TextFormat: string;
+                TextOptions: string;
+                TextQuality: string;
+                WordWrap: string;
+            };
+            StiTextBoxControl: {
+                AcceptsReturn: string;
+                AcceptsTab: string;
+                MaxLength: string;
+                Multiline: string;
+                PasswordChar: string;
+                Text: string;
+                TextBinding: string;
+                WordWrap: string;
+            };
+            StiTextInCells: {
+                CellHeight: string;
+                CellWidth: string;
+                ContinuousText: string;
+                HorSpacing: string;
+                RightToLeft: string;
+                VertSpacing: string;
+                WordWrap: string;
+            };
+            StiTextOptions: {
+                Angle: string;
+                DistanceBetweenTabs: string;
+                FirstTabOffset: string;
+                HotkeyPrefix: string;
+                LineLimit: string;
+                RightToLeft: string;
+                Trimming: string;
+                WordWrap: string;
+            };
+            StiTitle: {
+                BackColor: string;
+                Font: string;
+                ForeColor: string;
+                HorAlignment: string;
+                Text: string;
+                Visible: string;
+            };
+            StiTreeViewControl: {
+                AfterSelectEvent: string;
+            };
+            StiTrendLine: {
+                LineColor: string;
+                LineStyle: string;
+                LineWidth: string;
+                ShowShadow: string;
+            };
+            StiUpcABarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+                SupplementCode: string;
+                SupplementType: string;
+            };
+            StiUpcEBarCodeType: {
+                Height: string;
+                Module: string;
+                SupplementCode: string;
+                SupplementType: string;
+            };
+            StiUpcSup2BarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+            };
+            StiUpcSup5BarCodeType: {
+                Height: string;
+                Module: string;
+                ShowQuietZoneIndicator: string;
+            };
+            StiVariable: {
+                Alias: string;
+                Category: string;
+                Description: string;
+                Name: string;
+            };
+            StiView: {
+                AspectRatio: string;
+                MultipleFactor: string;
+                Smoothing: string;
+                Stretch: string;
+            };
+            StiWatermark: {
+                Angle: string;
+                AspectRatio: string;
+                Enabled: string;
+                Font: string;
+                Image: string;
+                ImageAlignment: string;
+                ImageMultipleFactor: string;
+                ImageStretch: string;
+                ImageTiling: string;
+                ImageTransparency: string;
+                RightToLeft: string;
+                ShowBehind: string;
+                ShowImageBehind: string;
+                Text: string;
+                TextBrush: string;
+            };
+            StiWinControl: {
+                BackColor: string;
+                Font: string;
+                ForeColor: string;
+                Text: string;
+                TypeName: string;
+            };
+            StiXAxis: {
+                DateTimeStep: string;
+            };
+            StiZipCode: {
+                Code: string;
+                ForeColor: string;
+                GetZipCodeEvent: string;
+                Ratio: string;
+                Size: string;
+            };
+            Universal: {
+                AllowApplyStyle: string;
+                Key: string;
+                Value: string;
             };
         };
         private static _cultureName;
@@ -64312,6 +64812,9 @@ declare namespace Stimulsoft.Designer.Dashboards {
         private getMeterHashItem;
         private getMetersHash;
         private setPropertySeriesType;
+        private showEmptyValuesInSimpleWay;
+        private isShowZeros;
+        private isShowNulls;
         executeJSCommand(parameters: any, callbackResult: any): void;
         private setPropertyValue;
         private setPropertyValueToValueMeter;
@@ -64632,6 +65135,7 @@ declare namespace Stimulsoft.Designer {
         static createIconSetCondition(conditionObject: any): StiBaseCondition;
         static setInteractionProperty(component: any, propertyValue: any): void;
         static setChartStyleProperty(component: any, propertyValue: any): void;
+        static setGaugeStyleProperty(component: any, propertyValue: any): void;
         static setMapStyleProperty(component: any, propertyValue: any): void;
         static setCrossTabStyleProperty(component: any, propertyValue: any): void;
         static setSubReportParametersProperty(component: any, propertyValue: any): void;
@@ -64749,6 +65253,8 @@ declare namespace Stimulsoft.Designer.Dashboards {
         static getDashboardStylesAsync(report: StiReport, param: any, callbackResult: any): StiPromise<any[]>;
         static getDashboardStyleSampleImageAsync(element: IStiElement, width: number, height: number): StiPromise<string>;
         static changeDashboardStyle(report: StiReport, param: any, callbackResult: any): void;
+        static changeDashboardViewMode(report: StiReport, param: any, callbackResult: any): void;
+        static getMobileViewUnplacedElements(report: StiReport, param: any, callbackResult: any): void;
     }
 }
 declare namespace Stimulsoft.Designer.Dashboards {
@@ -65142,6 +65648,21 @@ declare namespace Stimulsoft.Designer {
     }
 }
 declare namespace Stimulsoft.Designer {
+    import StiGauge = Stimulsoft.Report.Components.StiGauge;
+    import StiReport = Stimulsoft.Report.StiReport;
+    class StiGaugeHelper {
+        static getGaugeProperties(gauge: StiGauge): any;
+        static setGaugeProperties(report: StiReport, param: any, callbackResult: any): void;
+        private static getIndicatorColumn;
+        private static setIndicatorColumn;
+        static getStyle(gauge: StiGauge): any;
+        private static getGaugeStyles;
+        static getGaugeSampleImage(gauge: StiGauge, width: number, height: number, zoom: number): string;
+        static setGaugeStyle(report: StiReport, param: any, callbackResult: any): void;
+        static getStylesContent(report: StiReport, param: any, callbackResult: any, forStylesControl: boolean): void;
+    }
+}
+declare namespace Stimulsoft.Designer {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import StiComponentsCollection = Stimulsoft.Report.Components.StiComponentsCollection;
     import StiPage = Stimulsoft.Report.Components.StiPage;
@@ -65286,6 +65807,7 @@ declare namespace Stimulsoft.Designer {
         private getFirstIndexY;
         private getLastIndexY;
         private joinCells;
+        private unJoinCells;
         private setSelectedCurrentCells;
         private getSelectedCellNames;
         private getSelectedCellsByNames;
