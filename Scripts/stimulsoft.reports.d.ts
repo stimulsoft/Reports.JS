@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2020.3.1
-Build date: 2020.06.11
+Version: 2020.3.2
+Build date: 2020.06.17
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System.Collections {
@@ -29903,6 +29903,12 @@ declare namespace Stimulsoft.Report.Dashboard {
         getSeries(): IStiMeter;
         getSeries2(meter: IStiMeter): IStiMeter;
         createNewSeries(): any;
+        addTarget2(cell: IStiAppDataCell): any;
+        addTarget(meter: IStiMeter): any;
+        removeTarget(): any;
+        getTarget(): IStiMeter;
+        getTarget2(meter: IStiMeter): IStiMeter;
+        createNewTarget(): any;
         rangeType: StiGaugeRangeType;
         rangeMode: StiGaugeRangeMode;
         getRanges(): List<IStiGaugeRange>;
@@ -31551,6 +31557,7 @@ declare namespace Stimulsoft.Report.Engine.StiParser {
         baseMessage: string;
         position: number;
         length: number;
+        toString(): string;
         constructor(message: string);
     }
     class StiParser_Check extends StiParser_Properties {
@@ -56192,6 +56199,16 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
         constructor(key?: string, expression?: string, label?: string);
     }
 }
+declare namespace Stimulsoft.Dashboard.Components.Gauge {
+    import IStiTargetMeter = Stimulsoft.Base.Meters.IStiTargetMeter;
+    class StiTargetGaugeMeter extends StiMeasureMeter implements IStiTargetMeter {
+        private static ImplementsStiTargetGaugeMeter;
+        implements(): string[];
+        ident: StiMeterIdent;
+        get localizedName(): string;
+        constructor(key?: string, expression?: string, label?: string);
+    }
+}
 declare namespace Stimulsoft.Dashboard.Components.Indicator {
     import IStiSeriesMeter = Stimulsoft.Base.Meters.IStiSeriesMeter;
     class StiSeriesIndicatorMeter extends StiDimensionMeter implements IStiSeriesMeter {
@@ -56362,6 +56379,7 @@ declare namespace Stimulsoft.Dashboard.Helpers {
     import StiKeyComboBoxMeter = Stimulsoft.Dashboard.Components.ComboBox.StiKeyComboBoxMeter;
     import StiSeriesGaugeMeter = Stimulsoft.Dashboard.Components.Gauge.StiSeriesGaugeMeter;
     import StiValueGaugeMeter = Stimulsoft.Dashboard.Components.Gauge.StiValueGaugeMeter;
+    import StiTargetGaugeMeter = Stimulsoft.Dashboard.Components.Gauge.StiTargetGaugeMeter;
     import StiSeriesIndicatorMeter = Stimulsoft.Dashboard.Components.Indicator.StiSeriesIndicatorMeter;
     import StiValueIndicatorMeter = Stimulsoft.Dashboard.Components.Indicator.StiValueIndicatorMeter;
     import StiTargetIndicatorMeter = Stimulsoft.Dashboard.Components.Indicator.StiTargetIndicatorMeter;
@@ -56420,6 +56438,8 @@ declare namespace Stimulsoft.Dashboard.Helpers {
         static getSeries2(cell: IStiAppDataCell): StiSeriesGaugeMeter;
         static getValue(meter: StiMeter): StiValueGaugeMeter;
         static getValue2(cell: IStiAppDataCell): StiValueGaugeMeter;
+        static getTarget(meter: StiMeter): StiTargetGaugeMeter;
+        static getTarget2(cell: IStiAppDataCell): StiTargetGaugeMeter;
     }
     class Indicator {
         static getSeries(meter: StiMeter): StiSeriesIndicatorMeter;
@@ -57621,6 +57641,7 @@ declare namespace Stimulsoft.Dashboard.Render {
     class StiElementBuilder {
         protected getSeries(table: StiDataTable, seriesIndex: number, seriesKey: string, shortValue?: boolean): string;
         protected getValue(table: StiDataTable, valueIndex: number, seriesIndex: number, seriesCount: number, seriesKey: string): number;
+        protected getTarget(table: StiDataTable, targetIndex: number, seriesIndex: number, seriesCount: number, seriesKey: string): number;
         protected getNullableValue(table: StiDataTable, valueIndex: number, seriesIndex: number, seriesCount: number, seriesKey: string): number;
         protected getSeriesKeys(table: StiDataTable, seriesIndex: number, unlimitedCount?: boolean): List<string>;
         private replaceDbNull;
@@ -57658,6 +57679,7 @@ declare namespace Stimulsoft.Dashboard.Render {
     class StiGaugeElementBuilder extends StiElementBuilder {
         render(element: StiGaugeElement, size: Size, dataTable: StiDataTable): List<StiGaugeIteration>;
         render2(element: StiGaugeElement, size: Size, dataTable: StiDataTable, needToScroll?: boolean): () => List<StiGaugeIteration>;
+        private calculateScaleData;
         private static setStyle;
         private createScale;
         private getSummary;
@@ -57674,6 +57696,7 @@ declare namespace Stimulsoft.Dashboard.Render {
         private getMinMeterIndex;
         private getMaxMeterIndex;
         private getSeriesMeterIndex;
+        private getTargetMeterIndex;
     }
 }
 declare namespace Stimulsoft.Dashboard.Components.Gauge {
@@ -57792,6 +57815,12 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
         getSeries(): IStiMeter;
         getSeries2(meter: IStiMeter): IStiMeter;
         createNewSeries(): void;
+        addTarget2(cell: IStiAppDataCell): void;
+        addTarget(meter: IStiMeter): void;
+        removeTarget(): void;
+        getTarget(): IStiMeter;
+        getTarget2(meter: IStiMeter): IStiMeter;
+        createNewTarget(): void;
         getRanges(): List<IStiGaugeRange>;
         private getPreferedColor;
         addRange(): IStiGaugeRange;
@@ -57835,6 +57864,7 @@ declare namespace Stimulsoft.Dashboard.Components.Gauge {
         shortValue: boolean;
         value: StiValueGaugeMeter;
         series: StiSeriesGaugeMeter;
+        target: StiTargetGaugeMeter;
         minimum: number;
         maximum: number;
         calculationMode: Report.Gauge.StiGaugeCalculationMode;
@@ -59420,39 +59450,40 @@ declare namespace Stimulsoft.Dashboard.Components {
         MinGaugeMeter = 13,
         SeriesGaugeMeter = 14,
         ValueGaugeMeter = 15,
-        SeriesIndicatorMeter = 16,
-        TargetIndicatorMeter = 17,
-        ValueIndicatorMeter = 18,
-        SeriesProgressMeter = 19,
-        TargetProgressMeter = 20,
-        ValueProgressMeter = 21,
-        LatitudeMapMeter = 22,
-        LongitudeMapMeter = 23,
-        LocationMapMeter = 24,
-        LocationValueMapMeter = 25,
-        LocationColorMapMeter = 26,
-        LocationArgumentMapMeter = 27,
-        KeyMapMeter = 28,
-        NameMapMeter = 29,
-        ValueMapMeter = 30,
-        GroupMapMeter = 31,
-        ColorMapMeter = 32,
-        ColorScaleColumn = 33,
-        DataBarsColumn = 34,
-        DimensionColumn = 35,
-        IndicatorColumn = 36,
-        MeasureColumn = 37,
-        SparklinesColumn = 38,
-        PivotColumn = 39,
-        PivotRow = 40,
-        PivotSummary = 41,
-        NameListBoxMeter = 42,
-        KeyListBoxMeter = 43,
-        KeyTreeViewMeter = 44,
-        KeyTreeViewBoxMeter = 45,
-        NameComboBoxMeter = 46,
-        KeyComboBoxMeter = 47,
-        ValueDatePickerMeter = 48
+        TargetGaugeMeter = 16,
+        SeriesIndicatorMeter = 17,
+        TargetIndicatorMeter = 18,
+        ValueIndicatorMeter = 19,
+        SeriesProgressMeter = 20,
+        TargetProgressMeter = 21,
+        ValueProgressMeter = 22,
+        LatitudeMapMeter = 23,
+        LongitudeMapMeter = 24,
+        LocationMapMeter = 25,
+        LocationValueMapMeter = 26,
+        LocationColorMapMeter = 27,
+        LocationArgumentMapMeter = 28,
+        KeyMapMeter = 29,
+        NameMapMeter = 30,
+        ValueMapMeter = 31,
+        GroupMapMeter = 32,
+        ColorMapMeter = 33,
+        ColorScaleColumn = 34,
+        DataBarsColumn = 35,
+        DimensionColumn = 36,
+        IndicatorColumn = 37,
+        MeasureColumn = 38,
+        SparklinesColumn = 39,
+        PivotColumn = 40,
+        PivotRow = 41,
+        PivotSummary = 42,
+        NameListBoxMeter = 43,
+        KeyListBoxMeter = 44,
+        KeyTreeViewMeter = 45,
+        KeyTreeViewBoxMeter = 46,
+        NameComboBoxMeter = 47,
+        KeyComboBoxMeter = 48,
+        ValueDatePickerMeter = 49
     }
 }
 declare namespace Stimulsoft.Dashboard.Components {
