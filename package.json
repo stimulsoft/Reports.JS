@@ -1,6 +1,6 @@
 {
     "name": "stimulsoft-reports-js",
-    "version": "2020.3.2",
+    "version": "2020.4.1",
     "description": "Stimulsoft Reports.JS is a reporting tool for Node.js",
     "main": "index.js",
     "types": "Scripts/stimulsoft.reports.d.ts",
@@ -19,7 +19,7 @@
     ],
     "dependencies": {
         "jimp": "^0.2.28",
-        "mssql": "^5.0.2",
+        "mssql": "^6.2.1",
         "mysql": "^2.15.0",
         "pg": "^4.5.1",
         "sync-request": "^3.0.1",
