@@ -7,7 +7,7 @@ Ceate a project folder and install Reports.JS module using the specified command
 npm install stimulsoft-reports-js
 ```
 
-# How to load and save the report
+# How to load and save a report
 Create index.js file in the folder, and add the required code:
 ```js
 // Stimulsoft reports module loading
