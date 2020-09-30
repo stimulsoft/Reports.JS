@@ -27,6 +27,11 @@ report.renderAsync(() => {
 
 }
 
+// Exporting the report to PDF
+report.exportDocumentAsync((pdfData) => {
+
+}
+
 // Saving the report object into a template file (MRT)
 report.saveFile("report2.mrt");
 
