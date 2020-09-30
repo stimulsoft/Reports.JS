@@ -1,6 +1,6 @@
 {
     "name": "stimulsoft-reports-js",
-    "version": "2020.4.2",
+    "version": "2020.4.2c",
     "description": "Stimulsoft Reports.JS is a reporting tool for Node.js",
     "main": "index.js",
     "types": "Scripts/stimulsoft.reports.d.ts",
