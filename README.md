@@ -47,6 +47,8 @@ Read more about [Stimulsoft Reports.JS](https://www.stimulsoft.com/en/products/r
 
 You can try the [Live Demo](http://demo.stimulsoft.com/#Js)
 
+More information in the [Online Documentation](https://www.stimulsoft.com/en/documentation/online/programming-manual/index.html?reports_js.htm)
+
 [Free Download](https://www.stimulsoft.com/en/downloads)
 
 [License](LICENSE.md)
