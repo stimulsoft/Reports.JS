@@ -1,4 +1,4 @@
-var Stimulsoft = require('./Scripts/stimulsoft.reports');
+var Stimulsoft = require('./Scripts/stimulsoft.reports').Stimulsoft;
 Stimulsoft.ExternalLibrary.xmldoc = require('xmldoc');
 
 module.exports = Stimulsoft;
