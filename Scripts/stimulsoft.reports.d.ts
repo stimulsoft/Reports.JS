@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.1.1
-Build date: 2021.01.15
+Version: 2021.1.2
+Build date: 2021.01.28
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System.Collections {
