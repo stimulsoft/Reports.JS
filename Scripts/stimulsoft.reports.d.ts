@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.2.1
-Build date: 2021.03.15
+Version: 2021.2.2
+Build date: 2021.03.25
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System.Collections {
@@ -1017,9 +1017,7 @@ declare namespace Stimulsoft.System.Xml {
             name: string;
         }): string;
         static getNodeLocalName(xmlDocument: any): string;
-        static getNodeTextContent(xmlDocument: {
-            textContent: string;
-        }): string;
+        static getText(str: string): string;
         static getChildNodesArray(xmlDocument: any): any[];
     }
 }
@@ -18319,6 +18317,7 @@ declare namespace Stimulsoft.Report.BarCodes {
     }
 }
 declare namespace Stimulsoft.Report.BarCodes {
+    import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import StiJson = Stimulsoft.Base.StiJson;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
@@ -18344,6 +18343,7 @@ declare namespace Stimulsoft.Report.BarCodes {
         getCombinedCode(): string;
         private getCheckDigit;
         private checkContens;
+        draw(context: any, barCode: StiBarCode, rect: Rectangle, zoom: number): void;
         createNew(): StiBarCodeTypeService;
         constructor(module?: number, height?: number);
     }
@@ -18462,7 +18462,7 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     let IStiClusteredBarArea: System.Interface<IStiClusteredBarArea>;
-    interface IStiClusteredBarArea extends IStiClusteredColumnArea {
+    interface IStiClusteredBarArea extends IStiClusteredColumnArea, IStiRoundValuesArea {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -18472,7 +18472,7 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     let IStiClusteredColumnArea: System.Interface<IStiClusteredColumnArea>;
-    interface IStiClusteredColumnArea extends IStiAxisArea {
+    interface IStiClusteredColumnArea extends IStiAxisArea, IStiRoundValuesArea {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -18482,7 +18482,7 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     let IStiParetoArea: System.Interface<IStiParetoArea>;
-    interface IStiParetoArea extends IStiClusteredColumnArea {
+    interface IStiParetoArea extends IStiClusteredColumnArea, IStiRoundValuesArea {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -18507,7 +18507,7 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     let IStiWaterfallArea: System.Interface<IStiWaterfallArea>;
-    interface IStiWaterfallArea extends IStiAxisArea {
+    interface IStiWaterfallArea extends IStiAxisArea, IStiRoundValuesArea {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -18557,8 +18557,7 @@ declare namespace Stimulsoft.Report.Chart {
 }
 declare namespace Stimulsoft.Report.Chart {
     let IStiPictorialArea: System.Interface<IStiPictorialArea>;
-    interface IStiPictorialArea extends IStiArea {
-        roundValues: boolean;
+    interface IStiPictorialArea extends IStiArea, IStiRoundValuesArea {
         actual: boolean;
     }
 }
@@ -18732,6 +18731,12 @@ declare namespace Stimulsoft.Report.Chart {
         scrollDpiX: number;
         scrollDpiY: number;
         getArgumentLabel(line: IStiStripLineXF, series: IStiSeries): string;
+    }
+}
+declare namespace Stimulsoft.Report.Chart {
+    let IStiRoundValuesArea: System.Interface<IStiRoundValuesArea>;
+    interface IStiRoundValuesArea {
+        roundValues: boolean;
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -39160,6 +39165,7 @@ declare namespace Stimulsoft.Base.Context {
         measureRotatedString1(text: string, font: StiFontGeom, rect: Rectangle, sf: StiStringFormatGeom, angle: number): Rectangle;
         measureRotatedString2(text: string, font: StiFontGeom, rect: Rectangle, sf: StiStringFormatGeom, mode: StiRotationMode, angle: number, maximalWidth?: number): Rectangle;
         measureRotatedString3(text: string, font: StiFontGeom, point: Point, sf: StiStringFormatGeom, mode: StiRotationMode, angle: number, maximalWidth: number): Rectangle;
+        private getTextSize;
         measureRotatedString4(text: string, font: StiFontGeom, point: Point, sf: StiStringFormatGeom, mode: StiRotationMode, angle: number): Rectangle;
         private getStartPoint;
         render(rect: Rectangle, geoms: StiGeom[]): void;
@@ -41304,7 +41310,7 @@ declare namespace Stimulsoft.Report {
         static getFontIcons1(iconGroup: StiFontIconGroup): List<StiFontIcons>;
         static getIconFontSize(context: StiContext, size: Size, text: string): number;
         static drawFillIcons(context: StiContext, brush: object, rect: Rectangle, singleSize: Size, icon: StiFontIcons, toolTip: string, verticalDirection?: boolean): void;
-        static drawDirectionIcons(context: StiContext, brush: object, rect: Rectangle, singleSize: Size, icon: StiFontIcons, toolTip: string, verticalDirection?: boolean): void;
+        static drawDirectionIcons(context: StiContext, brush: object, rect: Rectangle, singleSize: Size, icon: StiFontIcons, toolTip: string, verticalDirection: boolean, roundValues?: boolean): void;
         private static getStringFormatGeom;
     }
 }
@@ -46507,9 +46513,16 @@ declare namespace Stimulsoft.Report.Chart {
 declare namespace Stimulsoft.Report.Chart {
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import ICloneable = Stimulsoft.System.ICloneable;
-    class StiClusteredColumnArea extends StiAxisArea implements IStiJsonReportObject, IStiClusteredColumnArea, IStiAxisArea, ICloneable, IStiArea {
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiJson = Stimulsoft.Base.StiJson;
+    class StiClusteredColumnArea extends StiAxisArea implements IStiJsonReportObject, IStiClusteredColumnArea, IStiAxisArea, IStiRoundValuesArea, ICloneable, IStiArea {
         private static implementsStiClusteredColumnArea;
         implements(): any[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(jObject: StiJson): void;
+        loadFromXml(xmlNode: XmlNode): void;
+        roundValues: boolean;
         get componentId(): StiComponentId;
         getDefaultSeriesType(): Stimulsoft.System.Type;
         getSeriesTypes(): Stimulsoft.System.Type[];
@@ -51516,9 +51529,16 @@ declare namespace Stimulsoft.Report.Chart {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
-    class StiWaterfallArea extends StiAxisArea implements IStiWaterfallArea {
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiJson = Stimulsoft.Base.StiJson;
+    class StiWaterfallArea extends StiAxisArea implements IStiWaterfallArea, IStiRoundValuesArea {
         private static implementsStiWaterfallArea;
         implements(): any[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(jObject: StiJson): void;
+        loadFromXml(xmlNode: XmlNode): void;
+        roundValues: boolean;
         get componentId(): StiComponentId;
         getDefaultSeriesType(): Stimulsoft.System.Type;
         getSeriesTypes(): Stimulsoft.System.Type[];
@@ -51711,17 +51731,13 @@ declare namespace Stimulsoft.Report.Chart {
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import ICloneable = Stimulsoft.System.ICloneable;
-    class StiPictorialArea extends StiArea implements IStiJsonReportObject, IStiPictorialArea, IStiArea, ICloneable {
+    class StiPictorialArea extends StiArea implements IStiJsonReportObject, IStiPictorialArea, IStiRoundValuesArea, IStiArea, ICloneable {
         private static implementsStiPictorialArea;
         implements(): any[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         get componentId(): StiComponentId;
-        private _roundValues;
-        get roundValues(): boolean;
-        set roundValues(value: boolean);
-        private _actual;
-        get actual(): boolean;
-        set actual(value: boolean);
+        roundValues: boolean;
+        actual: boolean;
         getDefaultSeriesLabelsType(): Stimulsoft.System.Type;
         getSeriesLabelsTypes(): Stimulsoft.System.Type[];
         getDefaultSeriesType(): Stimulsoft.System.Type;
@@ -60127,6 +60143,7 @@ declare namespace Stimulsoft.Dashboard.Components.Chart {
         private shouldSerializeMarker;
         icon: StiFontIcons;
         private shouldSerializeIcon;
+        roundValues: boolean;
         get isAxisAreaChart(): boolean;
         get isStackedChart(): boolean;
         get isLinesChart(): boolean;
