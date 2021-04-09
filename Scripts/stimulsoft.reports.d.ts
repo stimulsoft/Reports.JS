@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.2.2
-Build date: 2021.03.25
+Version: 2021.2.3
+Build date: 2021.04.08
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System.Collections {
@@ -4050,7 +4050,7 @@ declare namespace Stimulsoft.Base {
         private scope;
         private state;
         connectionString: string;
-        сonnectionIdent: StiConnectionIdent;
+        connectionIdent: StiConnectionIdent;
         connectionOrder: StiConnectionOrder;
         name: string;
         isAvailable: boolean;
@@ -6561,6 +6561,7 @@ declare namespace Stimulsoft.Base.Localization {
                 LabelRenderedReport: string;
                 LabelResponseAsFile: string;
                 LabelResultType: string;
+                LabelStartDate: string;
                 LabelSeparateReport: string;
                 LabelShowReport: string;
                 labelUserName: string;
@@ -6818,6 +6819,7 @@ declare namespace Stimulsoft.Base.Localization {
                 LimitRows: string;
                 Measure: string;
                 Measures: string;
+                Metrics: string;
                 NewDimension: string;
                 NewField: string;
                 NewMeasure: string;
@@ -6883,6 +6885,7 @@ declare namespace Stimulsoft.Base.Localization {
                 CurrentQuarter: string;
                 CurrentWeek: string;
                 CurrentYear: string;
+                DaysAgo: string;
                 FirstQuarter: string;
                 FourthQuarter: string;
                 Index: string;
@@ -6984,6 +6987,7 @@ declare namespace Stimulsoft.Base.Localization {
             };
             Editor: {
                 AllowSQLFormatting: string;
+                BetweenMetrics: string;
                 CantFind: string;
                 CollapseToDefinitions: string;
                 Column: string;
@@ -7003,6 +7007,7 @@ declare namespace Stimulsoft.Base.Localization {
                 MatchWholeWord: string;
                 Outlining: string;
                 PromptOnReplace: string;
+                MaximumDimensions: string;
                 Replace: string;
                 ReplaceAll: string;
                 ReplaceWith: string;
@@ -7872,6 +7877,7 @@ declare namespace Stimulsoft.Base.Localization {
                 barsys_autohide_tooltip: string;
                 barsys_close_tooltip: string;
                 barsys_customize_tooltip: string;
+                ClickAndDragPickColor: string;
                 colorpicker_morecolors: string;
                 colorpicker_nofill: string;
                 colorpicker_standardcolorslabel: string;
@@ -9729,6 +9735,7 @@ declare namespace Stimulsoft.Base.Localization {
                 ContourColor: string;
                 Converting: string;
                 ConvertNulls: string;
+                CornerRadius: string;
                 Copies: string;
                 Count: string;
                 CountData: string;
@@ -9892,6 +9899,8 @@ declare namespace Stimulsoft.Base.Localization {
                 GroupDataColumn: string;
                 GroupMeter: string;
                 GrowToHeight: string;
+                Heatmap: string;
+                HeatmapWithGroup: string;
                 HeaderBackColor: string;
                 HeaderCanBreak: string;
                 HeaderCanGrow: string;
@@ -10191,6 +10200,7 @@ declare namespace Stimulsoft.Base.Localization {
                 ProcessTilde: string;
                 ProductHomePage: string;
                 Provider: string;
+                Property: string;
                 RadarStyle: string;
                 RadialBarBorderBrush: string;
                 RadialBarBrush: string;
@@ -10507,6 +10517,7 @@ declare namespace Stimulsoft.Base.Localization {
                 XTopAxis: string;
                 YAxis: string;
                 YRightAxis: string;
+                ZeroColor: string;
                 Zoom: string;
             };
             PropertySystemColors: {
@@ -10731,6 +10742,11 @@ declare namespace Stimulsoft.Base.Localization {
                 StyleNormal: string;
                 StyleNote: string;
                 StyleWarning: string;
+                VisualDefault: string;
+                VisualDisabled: string;
+                VisualHovered: string;
+                VisualPressed: string;
+                VisualChecked: string;
                 Warnings: string;
                 WhatsNewInVersion: string;
                 When: string;
