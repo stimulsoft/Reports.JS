@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.2.3
-Build date: 2021.04.08
+Version: 2021.2.4
+Build date: 2021.04.22
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System.Collections {
@@ -160,6 +160,7 @@ declare namespace Stimulsoft.System {
         getType(): Stimulsoft.System.Type;
         getTypeName(): string;
         getNetTypeName(): string;
+        compareTo(object: boolean): number;
     }
     class StiArray extends StiObject {
         getHashCode(): number;
@@ -5625,6 +5626,7 @@ declare namespace Stimulsoft.Base.Drawing {
         private static stringToListLevels;
         private static stringToStack;
         private static parseFontSize;
+        private static parseSizeToEm;
         private static parseColor;
         static measureString(maxWidth: number, font: Font, text: string, angle?: number, allowHtmlTags?: boolean): Size;
         static getTextLinesAndWidths(g: Graphics, REFtext: any, font: Font, bounds: Rectangle, lineSpacing: number, wordWrap: boolean, rightToLeft: boolean, scale: number, angle: number, trimming: StringTrimming, allowHtmlTags: boolean, REFtextLines: any, REFlinesInfo: any): string[];
@@ -6514,6 +6516,7 @@ declare namespace Stimulsoft.Base.Localization {
                 Create: string;
                 CreateError: string;
                 CreateNewCollection: string;
+                CreateYourTeam: string;
                 CreatingReport: string;
                 DashboardWindowTitleNew: string;
                 DeleteFile: string;
@@ -6776,6 +6779,7 @@ declare namespace Stimulsoft.Base.Localization {
                 AddRange: string;
                 AfterGroupingData: string;
                 AllowUserDrillDown: string;
+                AllowUserColumnSelection: string;
                 AllowUserFiltering: string;
                 AllowUserSorting: string;
                 Blank: string;
@@ -7049,6 +7053,7 @@ declare namespace Stimulsoft.Base.Localization {
             };
             ExceptionProvider: {
                 Assemblies: string;
+                ClickIgnore: string;
                 Exception: string;
                 ExceptionReport: string;
                 Framework: string;
@@ -7061,6 +7066,8 @@ declare namespace Stimulsoft.Base.Localization {
                 SendErrorSuccess: string;
                 Source: string;
                 StackTrace: string;
+                YourPreviousWorkSession: string;
+                YouCanRestore: string;
             };
             Export: {
                 AddPageBreaks: string;
@@ -10393,6 +10400,7 @@ declare namespace Stimulsoft.Base.Localization {
                 SubReportPage: string;
                 Summaries: string;
                 Summary: string;
+                SummaryAlignment: string;
                 SummaryExpression: string;
                 SummarySortDirection: string;
                 SummaryType: string;
@@ -40254,7 +40262,9 @@ declare namespace Stimulsoft.Report.Export {
     class StiExcelExportSettings extends StiPageRangeExportSettings {
         excelType: StiExcelType;
         useOnePageHeaderAndFooter: boolean;
-        exportDataOnly: boolean;
+        get exportDataOnly(): boolean;
+        set exportDataOnly(value: boolean);
+        dataExportMode: StiDataExportMode;
         exportPageBreaks: boolean;
         exportObjectFormatting: boolean;
         exportEachPageToSheet: boolean;
@@ -43993,7 +44003,7 @@ declare namespace Stimulsoft.Report.Export {
         private minRowList;
         private maxRowList;
         private useOnePageHeaderAndFooter;
-        private exportDataOnly;
+        private dataExportMode;
         private exportObjectFormatting;
         private exportEachPageToSheet;
         private exportHorizontalPageBreaks;
@@ -48116,6 +48126,7 @@ declare namespace Stimulsoft.Report.Chart {
         private renderDoughnutElement;
         isNotNullValues(seriesArray: IStiSeries[]): boolean;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, seriesArray: IStiSeries[]): void;
+        private checkNonZerovalue;
         protected getGradPerValue(series: IStiSeries[]): number;
         getPercentPerValue(series: IStiSeries[]): number;
         protected getArgumentText(series: IStiSeries, index: number): string;
@@ -48288,6 +48299,7 @@ declare namespace Stimulsoft.Report.Chart {
         applyStyle(style: IStiChartStyle, color: Color): void;
         isNotNullValues(seriesArray: IStiSeries[]): boolean;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, seriesArray: IStiSeries[]): void;
+        private checkNonZerovalue;
         getSeriesBorderColor(colorIndex: number, colorCount: number): Color;
         getSeriesBrush(colorIndex: number, colorCount: number): StiBrush;
         getCurrentValue(funnelSeries: IStiFunnelSeries, index: number, values: number[]): number;
@@ -48315,6 +48327,7 @@ declare namespace Stimulsoft.Report.Chart {
         applyStyle(style: IStiChartStyle, color: Color): void;
         isNotNullValues(seriesArray: IStiSeries[]): boolean;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, seriesArray: IStiSeries[]): void;
+        private checkNonZerovalue;
         getSeriesBorderColor(colorIndex: number, colorCount: number): Color;
         getSeriesBrush(colorIndex: number, colorCount: number): StiBrush;
         getAllValues(funnelSeries: IStiFunnelSeries[]): number[];
