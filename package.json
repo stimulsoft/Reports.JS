@@ -22,7 +22,7 @@
         "sync-request": "^3.0.1",
         "node-machine-id": "^1.1.12",
         "xmldoc": "^1.1.0",
-        "mssql": "^4.1.0",
+        "mssql": "^6.2.1",
         "mysql": "^2.15.0",
         "node-firebird": "^0.9.8",
         "pg": "^8.3.3"
