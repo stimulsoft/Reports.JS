@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.3.1
-Build date: 2021.05.14
+Version: 2021.3.2
+Build date: 2021.05.27
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System {
@@ -3083,6 +3083,7 @@ declare namespace Stimulsoft.System.Drawing {
         set location(value: Point);
         get size(): Size;
         set size(value: Size);
+        toString(): string;
         constructor(x?: number, y?: number, width?: number, height?: number);
     }
 }
@@ -7581,8 +7582,18 @@ declare namespace Stimulsoft.Base.Localization {
                 StiTextQualityStandard: string;
                 StiTextQualityTypographic: string;
                 StiTextQualityWysiwyg: string;
+                StiTimeDateStepNone: string;
+                StiTimeDateStepSecond: string;
+                StiTimeDateStepMinute: string;
+                StiTimeDateStepHour: string;
+                StiTimeDateStepDay: string;
+                StiTimeDateStepMonth: string;
+                StiTimeDateStepYear: string;
                 StiTitlePositionInside: string;
                 StiTitlePositionOutside: string;
+                StiTopNModeNone: string;
+                StiTopNModeTop: string;
+                StiTopNModeBottom: string;
                 StiTypeModeList: string;
                 StiTypeModeNullableValue: string;
                 StiTypeModeRange: string;
@@ -7923,6 +7934,7 @@ declare namespace Stimulsoft.Base.Localization {
                 DataAdapters: string;
                 DataBarCondition: string;
                 DataBindings: string;
+                DataCells: string;
                 DataColor: string;
                 DataColumn: string;
                 DataColumns: string;
@@ -8073,6 +8085,7 @@ declare namespace Stimulsoft.Base.Localization {
                 GrowToHeight: string;
                 Heatmap: string;
                 HeatmapWithGroup: string;
+                Header: string;
                 HeaderBackColor: string;
                 HeaderCanBreak: string;
                 HeaderCanGrow: string;
@@ -8201,6 +8214,7 @@ declare namespace Stimulsoft.Base.Localization {
                 LinearBarEmptyBrush: string;
                 LineColor: string;
                 LineColorNegative: string;
+                LineLength: string;
                 LineLimit: string;
                 LineMarker: string;
                 LinesOfUnderline: string;
@@ -8499,6 +8513,7 @@ declare namespace Stimulsoft.Base.Localization {
                 ShowNulls: string;
                 ShowOthers: string;
                 ShowPercents: string;
+                ShowTotalSummary: string;
                 ShowQuietZoneIndicator: string;
                 ShowQuietZones: string;
                 ShowScrollBar: string;
@@ -38996,6 +39011,7 @@ declare namespace Stimulsoft.Report.Dictionary {
     import StiDatabase = Stimulsoft.Report.Dictionary.StiDatabase;
     import StiJson = Stimulsoft.Base.StiJson;
     class StiXmlDatabase extends StiFileDatabase implements IStiJsonReportObject {
+        private adonetErrorMessage;
         createNew(): StiDatabase;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -41984,6 +42000,7 @@ declare namespace Stimulsoft.Report.Export {
         private pointerToTag;
         chartData: Hashtable;
         hashBookmarkGuid: Hashtable;
+        private hiToPt;
         renderStyles: boolean;
         styles: StiCellStyle[];
         insertInteractionParameters: boolean;
@@ -42549,7 +42566,7 @@ declare namespace Stimulsoft.Report.Export {
         private static wrongUrlSymbols;
         htmlExportSettings: StiHtmlExportSettings;
         static stringToUrl(input: string): string;
-        renderControl(writer: StiHtmlTextWriter): void;
+        renderControl(writer: StiHtmlTextWriter, addPageBreaks: boolean): void;
         private writeTableBegin;
         private writeTableEnd;
         constructor();
@@ -45280,6 +45297,7 @@ declare namespace Stimulsoft.Report.Export {
         private static fontCorrectValue;
         private static boldFontStrokeWidthValue;
         private static italicAngleTanValue;
+        private static charCode07;
         static renderText(pp: StiPdfData): void;
         private static isWordWrapSymbol;
         private static getTabsSize;
@@ -63337,14 +63355,6 @@ declare namespace Stimulsoft.Dashboard.Helpers {
         private static getUsingRect;
         private static checkMinRect;
         private static getSimpleRect;
-    }
-}
-declare namespace Stimulsoft.Dashboard.Helpers {
-    import Rectangle = Stimulsoft.System.Drawing.Rectangle;
-    class StiElementLocationKey {
-        rectKey: Rectangle;
-        countKey: number;
-        constructor(rectKey: Rectangle, countKey: number);
     }
 }
 declare namespace Stimulsoft.Dashboard.Helpers {
