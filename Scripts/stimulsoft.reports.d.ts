@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.3.3
-Build date: 2021.06.11
+Version: 2021.3.4
+Build date: 2021.06.24
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System {
@@ -4429,6 +4429,7 @@ declare namespace Stimulsoft.Base.Localization {
                 ShowMore: string;
                 ShowSpecific: string;
                 Submit: string;
+                SwitchTo: string;
                 Test: string;
                 Up: string;
                 Upgrade: string;
@@ -4665,7 +4666,7 @@ declare namespace Stimulsoft.Base.Localization {
                 ButtonResendEmail: string;
                 ButtonResetPassword: string;
                 ButtonRun: string;
-                ButtonShedule: string;
+                ButtonScheduler: string;
                 ButtonShare: string;
                 ButtonSignUp: string;
                 ButtonSignUpWith: string;
@@ -4871,10 +4872,12 @@ declare namespace Stimulsoft.Base.Localization {
             };
             Scheduler: {
                 Schedulers: string;
+                Schedule: string;
                 Scheduler: string;
+                NoSchedulers: string;
+                PleaseSelectSchedulerType: string;
                 NewScheduler: string;
                 EditScheduler: string;
-                AllSchedulers: string;
                 NewAction: string;
                 ActionRunReport: string;
                 TextPressPlusIconAddNewAction: string;
@@ -4882,6 +4885,8 @@ declare namespace Stimulsoft.Base.Localization {
                 NoShedulers: string;
                 SenderEmail: string;
                 Host: string;
+                Logs: string;
+                NoLogs: string;
                 EnableSSL: string;
                 AdvancedSettings: string;
                 WizardOnce: string;
@@ -4918,6 +4923,8 @@ declare namespace Stimulsoft.Base.Localization {
                 NumberOfDayNone: string;
                 DaysOfWeekAll: string;
                 DaysOfWeekNone: string;
+                MonthAll: string;
+                MonthNone: string;
                 LabelRunAtMonth: string;
                 LabelDaysOfWeek: string;
                 TextDragDropReportHere: string;
@@ -5179,6 +5186,7 @@ declare namespace Stimulsoft.Base.Localization {
                 RetrievingColumns: string;
                 SavingConfiguration: string;
                 SavingReport: string;
+                Saving: string;
                 TestConnection: string;
                 TextNotFound: string;
             };
@@ -5833,6 +5841,7 @@ declare namespace Stimulsoft.Base.Localization {
                 BlankForm: string;
                 BlankReport: string;
                 Default: string;
+                DefaultScriptMode: string;
                 Drawing: string;
                 DrawMarkersWhenMoving: string;
                 EditAfterInsert: string;
@@ -7493,6 +7502,7 @@ declare namespace Stimulsoft.Base.Localization {
                 StiNestedFactorNormal: string;
                 StiNumberOfPassDoublePass: string;
                 StiNumberOfPassSinglePass: string;
+                StiOnlineMapHeatmapColorGradientTypeAddRange: string;
                 StiOnlineMapHeatmapColorGradientTypeBlackAquaWhite: string;
                 StiOnlineMapHeatmapColorGradientTypeBlueRed: string;
                 StiOnlineMapHeatmapColorGradientTypeColorSpectrum: string;
@@ -7907,6 +7917,7 @@ declare namespace Stimulsoft.Base.Localization {
                 BarCodeType: string;
                 BasicStyleColor: string;
                 Blend: string;
+                Blocks: string;
                 Bold: string;
                 Bookmark: string;
                 Border: string;
@@ -8097,6 +8108,7 @@ declare namespace Stimulsoft.Base.Localization {
                 ErrorCorrectionLevel: string;
                 ErrorsCorrectionLevel: string;
                 EvenStyle: string;
+                ExceedMargins: string;
                 ExcelSheet: string;
                 ExcelValue: string;
                 Exponential: string;
@@ -8824,6 +8836,9 @@ declare namespace Stimulsoft.Base.Localization {
                 Window: string;
                 WindowFrame: string;
                 WindowText: string;
+            };
+            PromptForm: {
+                CacheLoginData: string;
             };
             QueryBuilder: {
                 AddObject: string;
@@ -40202,6 +40217,7 @@ declare namespace Stimulsoft.Report.Engine {
         prepare(masterComp: StiComponent): void;
         internalRenderAsync(masterComp: StiComponent): Promise<StiComponent>;
         internalRender(masterComp: StiComponent): StiComponent;
+        static tryToDecimal(value: any): number;
     }
 }
 declare namespace Stimulsoft.Report.Engine {
@@ -41698,6 +41714,9 @@ declare namespace Stimulsoft.Report.Maps {
         private _countData;
         get countData(): number;
         set countData(value: number);
+        private _pushPins;
+        get pushPins(): string;
+        set pushPins(value: string);
         first(): void;
         prior(): void;
         next(): void;
@@ -65357,6 +65376,38 @@ declare namespace Stimulsoft.Report.Check {
             "@language": string;
             "@description": string;
             "@cultureName": string;
+            StiGaugeStyle: {
+                Brush: string;
+                BorderColor: string;
+                TargetColor: string;
+                ForeColor: string;
+                BorderWidth: string;
+                TickMarkMajorBrush: string;
+                TickMarkMajorBorder: string;
+                TickMarkMajorBorderWidth: string;
+                TickMarkMinorBrush: string;
+                TickMarkMinorBorder: string;
+                TickMarkMinorBorderWidth: string;
+                TickLabelMajorTextBrush: string;
+                TickLabelMajorFont: string;
+                TickLabelMinorTextBrush: string;
+                TickLabelMinorFont: string;
+                MarkerBrush: string;
+                LinearBarBrush: string;
+                LinearScaleBrush: string;
+                LinearBarBorderBrush: string;
+                LinearBarEmptyBrush: string;
+                LinearBarEmptyBorderBrush: string;
+                RadialBarBrush: string;
+                RadialBarBorderBrush: string;
+                RadialBarEmptyBrush: string;
+                RadialBarEmptyBorderBrush: string;
+                NeedleBrush: string;
+                NeedleBorderBrush: string;
+                NeedleBorderWidth: string;
+                NeedleCapBrush: string;
+                NeedleCapBorderBrush: string;
+            };
             CheckActions: {
                 ApplyEngineV2Long: string;
                 Change: string;
