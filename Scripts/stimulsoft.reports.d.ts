@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.3.4
-Build date: 2021.06.24
+Version: 2021.3.5
+Build date: 2021.07.09
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System {
@@ -211,6 +211,7 @@ declare namespace Stimulsoft.System.Globalization {
         dateTimeFormat: DateTimeFormatInfo;
         name: string;
         textInfo: TextInfo;
+        fix(): void;
         private static _cultures;
         private static _currentCulture;
         static get currentCulture(): CultureInfo;
@@ -19895,6 +19896,7 @@ declare namespace Stimulsoft.Report.Components {
     }
 }
 declare namespace Stimulsoft.Report.Dictionary {
+    import IStiAppCell = Stimulsoft.Base.IStiAppCell;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import DataRow = Stimulsoft.System.Data.DataRow;
@@ -19916,7 +19918,7 @@ declare namespace Stimulsoft.Report.Dictionary {
     import IStiAppDataColumn = Stimulsoft.Base.IStiAppDataColumn;
     import IStiAppConnection = Stimulsoft.Base.IStiAppConnection;
     import IStiAppDataRelation = Stimulsoft.Base.IStiAppDataRelation;
-    class StiDataSource implements ICloneable, IStiAppDataSource, IStiStateSaveRestore, IStiEnumerator, IStiName, IStiInherited, IStiJsonReportObject {
+    class StiDataSource implements ICloneable, IStiAppCell, IStiAppDataSource, IStiStateSaveRestore, IStiEnumerator, IStiName, IStiAlias, IStiInherited, IStiJsonReportObject {
         implements(): any[];
         is<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): this is T;
         is2<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): boolean;
@@ -20126,6 +20128,12 @@ declare namespace Stimulsoft.Report.Func {
         static dayOfWeek(date: DateTime, cultureOrLocalized?: string | boolean, upperCase?: boolean): string;
         static addCulture(monthsNames: string[], cultureNames: string[], defaultUpperCase: boolean): void;
         static DayOfWeekToStr(): void;
+    }
+}
+declare namespace Stimulsoft.Report {
+    let IStiAlias: System.Interface<IStiName>;
+    interface IStiAlias {
+        alias: string;
     }
 }
 declare namespace Stimulsoft.Report {
@@ -20649,6 +20657,8 @@ declare namespace Stimulsoft.Report.Events {
     }
 }
 declare namespace Stimulsoft.Report.Dictionary {
+    import IStiAppCell = Stimulsoft.Base.IStiAppCell;
+    import ICloneable = Stimulsoft.System.ICloneable;
     import StiDisconnectedEvent = Stimulsoft.Report.Events.StiDisconnectedEvent;
     import StiDisconnectingEvent = Stimulsoft.Report.Events.StiDisconnectingEvent;
     import StiConnectedEvent = Stimulsoft.Report.Events.StiConnectedEvent;
@@ -20673,7 +20683,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         PromptUserNameAndPassword = 700,
         SaveDataInReportResources = 800
     }
-    class StiDatabase extends StiService implements IStiInherited, IStiAppConnection, IStiJsonReportObject {
+    class StiDatabase extends StiService implements IStiInherited, IStiAppConnection, IStiJsonReportObject, IStiName, IStiAlias, ICloneable, IStiAppCell {
         implements(): any[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -20699,6 +20709,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         invokeDisconnected(): void;
         disconnectedEvent: StiDisconnectedEvent;
         get serviceName(): string;
+        set serviceName(value: string);
         private _name;
         get name(): string;
         set name(value: string);
@@ -20722,6 +20733,7 @@ declare namespace Stimulsoft.Report.Dictionary {
     }
 }
 declare namespace Stimulsoft.Report.Dictionary {
+    import ICloneable = Stimulsoft.System.ICloneable;
     import StiRelationDirection = Stimulsoft.Base.StiRelationDirection;
     import DataSet = Stimulsoft.System.Data.DataSet;
     import Image = Stimulsoft.System.Drawing.Image;
@@ -20730,7 +20742,7 @@ declare namespace Stimulsoft.Report.Dictionary {
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     import IStiAppCell = Stimulsoft.Base.IStiAppCell;
-    class StiResource implements IStiName, IStiAppCell, IStiInherited, IStiJsonReportObject {
+    class StiResource implements IStiName, IStiAlias, ICloneable, IStiAppCell, IStiInherited, IStiJsonReportObject {
         implements(): any[];
         is<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): this is T;
         is2<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): boolean;
@@ -20999,18 +21011,20 @@ declare namespace Stimulsoft.Report {
     }
 }
 declare namespace Stimulsoft.Report.Dictionary {
+    import ICloneable = Stimulsoft.System.ICloneable;
+    import IStiAppCell = Stimulsoft.Base.IStiAppCell;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import DateTime = Stimulsoft.System.DateTime;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     import IStiName = Stimulsoft.Report.IStiName;
     import StiExpression = Stimulsoft.Report.Expressions.StiExpression;
     import Type = Stimulsoft.System.Type;
-    import IClonable = Stimulsoft.System.ICloneable;
     import StiJson = Stimulsoft.Base.StiJson;
     import StiDialogInfo = Stimulsoft.Report.Dictionary.StiDialogInfo;
     import IStiAppVariable = Stimulsoft.Base.IStiAppVariable;
     import IStiAppAlias = Stimulsoft.Base.IStiAppAlias;
-    class StiVariable extends StiExpression implements IStiName, IStiInherited, IClonable, IStiAppVariable, IStiAppAlias, IStiJsonReportObject {
+    class StiVariable extends StiExpression implements IStiName, IStiAlias, IStiInherited, ICloneable, IStiAppCell, IStiAppVariable, IStiAppAlias, IStiJsonReportObject {
+        implements(): any[];
         private convertTypeToJsonString;
         private convertJsonStringToType;
         saveToJsonObject(): StiJson;
@@ -23885,49 +23899,50 @@ declare namespace Stimulsoft.Report.Engine {
         Left = 470,
         Mid = 471,
         Right = 472,
-        StrToNullableDateTime = 473,
-        IsNull = 474,
-        Next = 475,
-        NextIsNull = 476,
-        Previous = 477,
-        PreviousIsNull = 478,
-        IIF = 479,
-        Choose = 480,
-        Switch = 481,
-        ToString = 482,
-        Format = 483,
-        SystemConvertToBoolean = 484,
-        SystemConvertToByte = 485,
-        SystemConvertToChar = 486,
-        SystemConvertToDateTime = 487,
-        SystemConvertToDecimal = 488,
-        SystemConvertToDouble = 489,
-        SystemConvertToInt16 = 490,
-        SystemConvertToInt32 = 491,
-        SystemConvertToInt64 = 492,
-        SystemConvertToSByte = 493,
-        SystemConvertToSingle = 494,
-        SystemConvertToString = 495,
-        SystemConvertToUInt16 = 496,
-        SystemConvertToUInt32 = 497,
-        SystemConvertToUInt64 = 498,
-        MathRound = 499,
-        MathPow = 500,
-        AddAnchor = 501,
-        GetAnchorPageNumber = 502,
-        GetAnchorPageNumberThrough = 503,
-        ConvertRtf = 504,
-        GetLabel = 505,
-        GetParam = 506,
-        ParseInt = 507,
-        ParseDouble = 508,
-        ParseDecimal = 509,
-        ParseDateTime = 510,
-        ParseTimeSpan = 511,
-        StringIsNullOrEmpty = 512,
-        StringIsNullOrWhiteSpace = 513,
-        EngineHelperJoinColumnContent = 514,
-        EngineHelperToQueryString = 515,
+        StrToDateTime = 473,
+        StrToNullableDateTime = 474,
+        IsNull = 475,
+        Next = 476,
+        NextIsNull = 477,
+        Previous = 478,
+        PreviousIsNull = 479,
+        IIF = 480,
+        Choose = 481,
+        Switch = 482,
+        ToString = 483,
+        Format = 484,
+        SystemConvertToBoolean = 485,
+        SystemConvertToByte = 486,
+        SystemConvertToChar = 487,
+        SystemConvertToDateTime = 488,
+        SystemConvertToDecimal = 489,
+        SystemConvertToDouble = 490,
+        SystemConvertToInt16 = 491,
+        SystemConvertToInt32 = 492,
+        SystemConvertToInt64 = 493,
+        SystemConvertToSByte = 494,
+        SystemConvertToSingle = 495,
+        SystemConvertToString = 496,
+        SystemConvertToUInt16 = 497,
+        SystemConvertToUInt32 = 498,
+        SystemConvertToUInt64 = 499,
+        MathRound = 500,
+        MathPow = 501,
+        AddAnchor = 502,
+        GetAnchorPageNumber = 503,
+        GetAnchorPageNumberThrough = 504,
+        ConvertRtf = 505,
+        GetLabel = 506,
+        GetParam = 507,
+        ParseInt = 508,
+        ParseDouble = 509,
+        ParseDecimal = 510,
+        ParseDateTime = 511,
+        ParseTimeSpan = 512,
+        StringIsNullOrEmpty = 513,
+        StringIsNullOrWhiteSpace = 514,
+        EngineHelperJoinColumnContent = 515,
+        EngineHelperToQueryString = 516,
         m_Substring = 1000,
         m_ToString = 1001,
         m_ToLower = 1002,
@@ -37749,6 +37764,7 @@ declare namespace Stimulsoft.Report.Dictionary {
     }
 }
 declare namespace Stimulsoft.Report.Dictionary {
+    import IStiAppCell = Stimulsoft.Base.IStiAppCell;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import ICloneable = Stimulsoft.System.ICloneable;
@@ -37758,7 +37774,7 @@ declare namespace Stimulsoft.Report.Dictionary {
     import IStiAppDictionary = Stimulsoft.Base.IStiAppDictionary;
     import IStiAppDataSource = Stimulsoft.Base.IStiAppDataSource;
     import List = Stimulsoft.System.Collections.List;
-    class StiDataRelation implements IStiName, IStiInherited, ICloneable, IStiAppDataRelation, IStiJsonReportObject {
+    class StiDataRelation implements IStiName, IStiAlias, IStiInherited, ICloneable, IStiAppCell, IStiAppDataRelation, IStiJsonReportObject {
         implements(): any[];
         is<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): this is T;
         is2<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): boolean;
@@ -38074,6 +38090,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         private directionFactor;
         compare(x: StiResource, y: StiResource): number;
         sort(order?: StiSortOrder): void;
+        contains2(name: string): boolean;
         getByName(name: string): StiResource;
         getByAlias(alias: string): StiResource;
         setByName(name: string, value: StiResource): void;
@@ -38199,6 +38216,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         get name(): string;
         getDataSourceType(): Stimulsoft.System.Type;
         getDataAdapter(): StiSqlAdapterService;
+        create(dictionary: StiDictionary, addToDictionary?: boolean): StiDataSource;
         callRemoteApi(command: any, timeout: number): StiPromise<string>;
         retrieveDataAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString: string): StiPromise<DataTable>;
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
@@ -38262,6 +38280,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         get serviceName(): string;
         isObjectAdapter: boolean;
         getDataSourceType(): Type;
+        getDataTypes(): Type[];
     }
 }
 declare namespace Stimulsoft.Report.Dictionary {
@@ -38856,6 +38875,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         private static encryptedId;
         createNew(): StiDatabase;
         get serviceName(): string;
+        set serviceName(value: string);
         get componentId(): StiComponentId;
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         loadFromJsonObject(jObject: StiJson): void;
@@ -38900,6 +38920,7 @@ declare namespace Stimulsoft.Report.Dictionary {
         createNew(): StiDatabase;
         private _serviceName;
         get serviceName(): string;
+        set serviceName(value: string);
         createDataSource(nameInSource: string, name: string): StiCustomSource;
         getDataAdapter(): StiSqlAdapterService;
         getDataAdapterType(): Stimulsoft.System.Type;
@@ -39490,6 +39511,8 @@ declare namespace Stimulsoft.Report.Dictionary {
         static toCurrencyWords2(value: number, upperCase?: boolean | string, showCents?: boolean | number | string, dollars?: string | boolean, cents?: string): string;
         static toOrdinal(value: number): string;
         static toWordsRu(value: number, upperCase?: boolean): string;
+        static strToDateTime(value: string): DateTime;
+        static strToNullableDateTime(value: string): DateTime;
         static dateToStrRu(value: DateTime, upperCase?: boolean): string;
         static toCurrencyWordsRu(value: number, uppercase?: boolean, currency?: string, cents?: boolean): string;
         static toCurrencyWordsThai(value: number): string;
@@ -65090,7 +65113,7 @@ declare namespace Stimulsoft.Viewer {
         static applyReportBindingVariables(report: StiReport, values: any): void;
         private static setVariableValue;
         static getVariables(report: StiReport, values: any, sortDataItems: boolean): Promise<any>;
-        static getVariablesValues(report: StiReport, sortDataItems: boolean): KeyObjectType;
+        static getVariablesValues(report: StiReport): KeyObjectType;
     }
 }
 declare namespace Stimulsoft.Viewer.Helpers.Dashboards {
@@ -65376,38 +65399,6 @@ declare namespace Stimulsoft.Report.Check {
             "@language": string;
             "@description": string;
             "@cultureName": string;
-            StiGaugeStyle: {
-                Brush: string;
-                BorderColor: string;
-                TargetColor: string;
-                ForeColor: string;
-                BorderWidth: string;
-                TickMarkMajorBrush: string;
-                TickMarkMajorBorder: string;
-                TickMarkMajorBorderWidth: string;
-                TickMarkMinorBrush: string;
-                TickMarkMinorBorder: string;
-                TickMarkMinorBorderWidth: string;
-                TickLabelMajorTextBrush: string;
-                TickLabelMajorFont: string;
-                TickLabelMinorTextBrush: string;
-                TickLabelMinorFont: string;
-                MarkerBrush: string;
-                LinearBarBrush: string;
-                LinearScaleBrush: string;
-                LinearBarBorderBrush: string;
-                LinearBarEmptyBrush: string;
-                LinearBarEmptyBorderBrush: string;
-                RadialBarBrush: string;
-                RadialBarBorderBrush: string;
-                RadialBarEmptyBrush: string;
-                RadialBarEmptyBorderBrush: string;
-                NeedleBrush: string;
-                NeedleBorderBrush: string;
-                NeedleBorderWidth: string;
-                NeedleCapBrush: string;
-                NeedleCapBorderBrush: string;
-            };
             CheckActions: {
                 ApplyEngineV2Long: string;
                 Change: string;
@@ -65642,10 +65633,10 @@ declare namespace Stimulsoft.Report.Check {
                 StiDuplicatedName2CheckLong: string;
                 StiDuplicatedNameCheckLong: string;
                 StiDuplicatedNameCheckShort: string;
-                StiDuplicatedReportNameCheckLong: string;
-                StiDuplicatedReportName2CheckLong: string;
                 StiDuplicatedNameInSourceInDataRelationReportCheckLong: string;
                 StiDuplicatedNameInSourceInDataRelationReportCheckShort: string;
+                StiDuplicatedReportName2CheckLong: string;
+                StiDuplicatedReportNameCheckLong: string;
                 StiNetCoreCompilationModeCheckLong: string;
                 StiNetCoreCompilationModeCheckShort: string;
             };
@@ -66137,20 +66128,96 @@ declare namespace Stimulsoft.Report.Check {
                 Title: string;
                 VertSpacing: string;
             };
+            StiChartArea: {
+                ColorEach: string;
+                GridLinesHor: string;
+                GridLinesVert: string;
+                InterlacingHor: string;
+                InterlacingVert: string;
+                ReverseHor: string;
+                ReverseVert: string;
+                XAxis: string;
+                XTopAxis: string;
+                YAxis: string;
+                YRightAxis: string;
+            };
+            StiChartAxis: {
+                Visible: string;
+            };
+            StiChartAxisLabels: {
+                Angle: string;
+                Color: string;
+                Font: string;
+                Placement: string;
+                Step: string;
+                TextAfter: string;
+                TextAlignment: string;
+                TextBefore: string;
+            };
+            StiChartAxisRange: {
+                Auto: string;
+                Maximum: string;
+                Minimum: string;
+            };
+            StiChartAxisTitle: {
+                Alignment: string;
+                Color: string;
+                Font: string;
+                Position: string;
+                Text: string;
+                Visible: string;
+            };
             StiChartElement: {
+                Area: string;
                 Arguments: string;
                 CloseValues: string;
                 ColorEach: string;
+                ConstantLines: string;
                 EndValues: string;
                 Group: string;
                 HighValues: string;
+                Labels: string;
+                Legend: string;
                 LowValues: string;
                 Series: string;
                 Style: string;
                 TextFormat: string;
                 Title: string;
+                TrendLines: string;
                 Values: string;
                 Weights: string;
+            };
+            StiChartGridLines: {
+                Color: string;
+            };
+            StiChartInterlacing: {
+                Color: string;
+                Visible: string;
+            };
+            StiChartLabels: {
+                AutoRotate: string;
+                Font: string;
+                ForeColor: string;
+                Position: string;
+                Style: string;
+                TextAfter: string;
+                TextBefore: string;
+            };
+            StiChartLegend: {
+                Columns: string;
+                Direction: string;
+                HorAlignment: string;
+                VertAlignment: string;
+                Visible: string;
+            };
+            StiChartLegendLabels: {
+                Color: string;
+                Font: string;
+            };
+            StiChartLegendTitle: {
+                Color: string;
+                Font: string;
+                Text: string;
             };
             StiChartTable: {
                 Font: string;
@@ -66159,6 +66226,8 @@ declare namespace Stimulsoft.Report.Check {
                 GridLinesVert: string;
                 GridOutline: string;
                 MarkerVisible: string;
+                NegativeSeriesColors: string;
+                SeriesColors: string;
                 Visible: string;
             };
             StiChartTitle: {
@@ -66627,6 +66696,38 @@ declare namespace Stimulsoft.Report.Check {
                 Style: string;
                 Title: string;
             };
+            StiGaugeStyle: {
+                BorderColor: string;
+                BorderWidth: string;
+                Brush: string;
+                ForeColor: string;
+                LinearBarBorderBrush: string;
+                LinearBarBrush: string;
+                LinearBarEmptyBorderBrush: string;
+                LinearBarEmptyBrush: string;
+                LinearScaleBrush: string;
+                MarkerBrush: string;
+                NeedleBorderBrush: string;
+                NeedleBorderWidth: string;
+                NeedleBrush: string;
+                NeedleCapBorderBrush: string;
+                NeedleCapBrush: string;
+                RadialBarBorderBrush: string;
+                RadialBarBrush: string;
+                RadialBarEmptyBorderBrush: string;
+                RadialBarEmptyBrush: string;
+                TargetColor: string;
+                TickLabelMajorFont: string;
+                TickLabelMajorTextBrush: string;
+                TickLabelMinorFont: string;
+                TickLabelMinorTextBrush: string;
+                TickMarkMajorBorder: string;
+                TickMarkMajorBorderWidth: string;
+                TickMarkMajorBrush: string;
+                TickMarkMinorBorder: string;
+                TickMarkMinorBorderWidth: string;
+                TickMarkMinorBrush: string;
+            };
             StiGlareBrush: {
                 Angle: string;
                 EndColor: string;
@@ -66722,6 +66823,9 @@ declare namespace Stimulsoft.Report.Check {
                 KeyDataColumn: string;
                 MasterKeyDataColumn: string;
                 ParentValue: string;
+            };
+            StiHorChartGridLines: {
+                Visible: string;
             };
             StiImage: {
                 DataColumn: string;
@@ -67408,6 +67512,9 @@ declare namespace Stimulsoft.Report.Check {
                 Description: string;
                 Name: string;
             };
+            StiVertChartGridLines: {
+                Visible: string;
+            };
             StiView: {
                 AspectRatio: string;
                 MultipleFactor: string;
@@ -67441,6 +67548,20 @@ declare namespace Stimulsoft.Report.Check {
             StiXAxis: {
                 DateTimeStep: string;
             };
+            StiXChartAxis: {
+                ShowEdgeValues: string;
+                StartFromZero: string;
+                Title: string;
+            };
+            StiXChartAxisTitle: {
+                Direction: string;
+            };
+            StiYChartAxis: {
+                StartFromZero: string;
+            };
+            StiYChartAxisTitle: {
+                Direction: string;
+            };
             StiZipCode: {
                 Code: string;
                 ForeColor: string;
@@ -67451,8 +67572,8 @@ declare namespace Stimulsoft.Report.Check {
             Universal: {
                 AllowApplyStyle: string;
                 Key: string;
-                Value: string;
                 Label: string;
+                Value: string;
             };
         };
         private static _cultureName;
@@ -68977,6 +69098,7 @@ declare namespace Stimulsoft.Designer {
         static getNewDatabaseName(report: StiReport, fileName: string): string;
         private static isCategoryVariable;
         private static getVariableCategory;
+        private static getUniqueName;
         static removeTempSampleData(report: StiReport, dataGuid: string): void;
         private static applyParametersToSqlSourse;
         private static restoreParametersToSqlSourse;
@@ -69059,6 +69181,7 @@ declare namespace Stimulsoft.Designer {
         static openDictionary(report: StiReport, param: any, callbackResult: any): void;
         static embedAllDataToResources(report: StiReport, param: Hashtable, callbackResult: Hashtable): Promise<void>;
         static testODataConnection(report: StiReport, param: any, callbackResult: any): void;
+        static duplicateDictionaryElement(report: StiReport, param: any, callbackResult: any): void;
     }
 }
 declare namespace Stimulsoft.Designer.Dashboards {
