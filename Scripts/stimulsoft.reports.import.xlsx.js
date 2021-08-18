@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.3.6
-Build date: 2021.07.22
+Version: 2021.3.7
+Build date: 2021.08.16
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 /*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
