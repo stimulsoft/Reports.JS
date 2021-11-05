@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.4.2
-Build date: 2021.10.25
+Version: 2021.4.3
+Build date: 2021.11.04
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System {
@@ -41152,12 +41152,13 @@ declare namespace Stimulsoft.Base.Context {
     }
 }
 declare namespace Stimulsoft.Base.Context {
+    import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
     import Color = Stimulsoft.System.Drawing.Color;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import Point = Stimulsoft.System.Drawing.Point;
-    class StiTextGeom extends StiGeom implements IStiJsonReportObject {
+    class StiTextGeom extends StiAnimationGeom implements IStiJsonReportObject {
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
         text: string;
         font: StiFontGeom;
@@ -41172,7 +41173,7 @@ declare namespace Stimulsoft.Base.Context {
         rotationMode: Stimulsoft.Base.Drawing.StiRotationMode;
         toolTip: string;
         get type(): StiGeomType;
-        constructor(text: string, font: StiFontGeom, brush: any, location: any, stringFormat: StiStringFormatGeom, angle: number, antialiasing: boolean, maximalWidth: number, rotationMode: Stimulsoft.Base.Drawing.StiRotationMode, isRotatedText: boolean, toolTip: string);
+        constructor(text: string, font: StiFontGeom, brush: any, location: any, stringFormat: StiStringFormatGeom, angle: number, antialiasing: boolean, maximalWidth: number, rotationMode: Stimulsoft.Base.Drawing.StiRotationMode, isRotatedText: boolean, toolTip: string, animation?: StiAnimation);
     }
 }
 declare namespace Stimulsoft.Base.Context {
@@ -41622,6 +41623,7 @@ declare namespace Stimulsoft.Base.Context {
         pushClipPath(listGeoms: StiSegmentGeom[]): void;
         pushClip(clipRect: Rectangle): void;
         popClip(): void;
+        drawAnimationText(text: string, font: StiFontGeom, brush: any, rect: Rectangle, sf: StiStringFormatGeom, mode: StiRotationMode, angle: number, antialiasing: boolean, maximalWidth: number, animation: StiAnimation): StiTextGeom;
         drawAnimationColumn(brush: any, borderPen: StiPenGeom, rect: any, value: number, toolTip: string, tag: any, animation: StiAnimation, interaction: StiInteractionDataGeom): void;
         drawAnimationBar(brush: any, borderPen: StiPenGeom, columnRect: any, value: number, toolTip: string, tag: any, animation: StiAnimation, interaction: StiInteractionDataGeom): void;
         drawAnimationRectangle(brush: any, pen: StiPenGeom, rect: Rectangle, tag: any, animation: StiAnimation, interaction: StiInteractionDataGeom, tooltip: string): void;
@@ -52073,10 +52075,13 @@ declare namespace Stimulsoft.Report.Chart {
         private _animation;
         get animation(): StiAnimation;
         draw(context: StiContext): void;
+        private drawLabelArea;
+        private drawLabelText;
         constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, labelColor: Color, labelBorderColor: Color, seriesBrush: StiBrush, seriesLabelsBrush: StiBrush, seriesBorderColor: Color, font: StiFontGeom, animation: StiAnimation);
     }
 }
 declare namespace Stimulsoft.Report.Chart {
+    import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import StiFontGeom = Stimulsoft.Base.Context.StiFontGeom;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
@@ -52100,8 +52105,13 @@ declare namespace Stimulsoft.Report.Chart {
         get startPoint(): PointD;
         private _endPoint;
         get endPoint(): PointD;
+        private _animation;
+        get animation(): StiAnimation;
         draw(context: StiContext): void;
-        constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, labelColor: Color, labelBorderColor: Color, seriesBrush: StiBrush, seriesBorderColor: Color, font: StiFontGeom, startPoint: PointD, endPoint: PointD);
+        private drawLabelArea;
+        private drawLines;
+        private drawLabelText;
+        constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, labelColor: Color, labelBorderColor: Color, seriesBrush: StiBrush, seriesBorderColor: Color, font: StiFontGeom, startPoint: PointD, endPoint: PointD, animation: StiAnimation);
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -52109,6 +52119,7 @@ declare namespace Stimulsoft.Report.Chart {
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import Color = Stimulsoft.System.Drawing.Color;
     import RectangleD = Stimulsoft.System.Drawing.Rectangle;
+    import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
     class StiCenterFunnelLabelsGeom extends StiSeriesLabelsGeom {
         private _seriesBrush;
         get seriesBrush(): StiBrush;
@@ -52122,8 +52133,12 @@ declare namespace Stimulsoft.Report.Chart {
         get text(): string;
         private _labelRect;
         get labelRect(): RectangleD;
+        private _animation;
+        get animation(): StiAnimation;
         draw(context: StiContext): void;
-        constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, seriesBrush: StiBrush, labelBrush: StiBrush, borderColor: Color, seriesBorderColor: Color, labelRect: RectangleD);
+        private drawLabelArea;
+        private drawLabelText;
+        constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, seriesBrush: StiBrush, labelBrush: StiBrush, borderColor: Color, seriesBorderColor: Color, labelRect: RectangleD, animation: StiAnimation);
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -52160,6 +52175,8 @@ declare namespace Stimulsoft.Report.Chart {
         angleToUse: number;
         animation: StiAnimation;
         draw(context: StiContext): void;
+        private drawLabelArea;
+        private drawLabelText;
         constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, seriesBrush: StiBrush, labelBrush: StiBrush, seriesLabelsBrush: StiBrush, borderColor: Color, seriesBorderColor: Color, rotationMode: StiRotationMode, labelRect: RectangleD, angleToUse: number, animation: StiAnimation);
     }
 }
@@ -52179,6 +52196,7 @@ declare namespace Stimulsoft.Report.Chart {
     }
 }
 declare namespace Stimulsoft.Report.Chart {
+    import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
@@ -52198,9 +52216,13 @@ declare namespace Stimulsoft.Report.Chart {
         endPoint: PointD;
         arcPoint: PointD;
         centerPie: PointD;
+        animation: StiAnimation;
         draw(context: StiContext): void;
+        private drawLines;
         drawMarker(context: StiContext, itemRect: Rectangle, markerColor: any, markerBrush: StiBrush): void;
-        constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, seriesBrush: StiBrush, labelBrush: StiBrush, seriesLabelsBrush: StiBrush, borderColor: Color, seriesBorderColor: Color, labelRect: RectangleD, lineColor: Color, startPoint: PointD, endPoint: PointD, arcPoint: PointD, centerPie: PointD);
+        private drawLabelArea;
+        private drawLabelText;
+        constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, seriesBrush: StiBrush, labelBrush: StiBrush, seriesLabelsBrush: StiBrush, borderColor: Color, seriesBorderColor: Color, labelRect: RectangleD, lineColor: Color, startPoint: PointD, endPoint: PointD, arcPoint: PointD, centerPie: PointD, animation: StiAnimation);
     }
 }
 declare namespace Stimulsoft.Report.Chart {
@@ -52228,6 +52250,8 @@ declare namespace Stimulsoft.Report.Chart {
         private _animation;
         get animation(): StiAnimation;
         draw(context: StiContext): void;
+        private drawLabelArea;
+        private drawLabelText;
         constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, clientRectangle: RectangleD, text: string, labelColor: Color, labelBorderColor: Color, seriesBrush: StiBrush, seriesLabelsBrush: StiBrush, seriesBorderColor: Color, font: StiFontGeom, animation: StiAnimation);
     }
 }
