@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2021.4.3
-Build date: 2021.11.04
+Version: 2021.4.4
+Build date: 2021.11.18
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 declare namespace Stimulsoft.System {
@@ -4993,13 +4993,22 @@ declare namespace Stimulsoft.Base.Localization {
                 StiWinControl: string;
                 StiZipCode: string;
             };
+            CustomMapWindow: {
+                CheckedAll: string;
+                HideText: string;
+                KeysChangePosition: string;
+                KeysChangeSize: string;
+                UncheckedAll: string;
+            };
             Dashboard: {
                 AddRange: string;
                 AfterGroupingData: string;
+                AfterSortingData: string;
                 AllowUserColumnSelection: string;
                 AllowUserDrillDown: string;
                 AllowUserFiltering: string;
                 AllowUserSorting: string;
+                BeforeTransformation: string;
                 Blank: string;
                 Blanks: string;
                 BooleanFilters: string;
@@ -5052,6 +5061,7 @@ declare namespace Stimulsoft.Base.Localization {
                 Nulls: string;
                 NumberFilters: string;
                 ParentElement: string;
+                Priority: string;
                 RangeMode: string;
                 RangeType: string;
                 RemoveActions: string;
@@ -7668,6 +7678,9 @@ declare namespace Stimulsoft.Base.Localization {
                 StiTextQualityStandard: string;
                 StiTextQualityTypographic: string;
                 StiTextQualityWysiwyg: string;
+                StiTextSizeModeFit: string;
+                StiTextSizeModeTrimming: string;
+                StiTextSizeModeWordWrap: string;
                 StiTimeDateStepDay: string;
                 StiTimeDateStepHour: string;
                 StiTimeDateStepMinute: string;
@@ -7961,6 +7974,7 @@ declare namespace Stimulsoft.Base.Localization {
                 CheckAlignment: string;
                 CheckColor: string;
                 Checked: string;
+                CheckedIcon: string;
                 CheckOnClick: string;
                 CheckStyle: string;
                 CheckStyleForFalse: string;
@@ -8225,6 +8239,7 @@ declare namespace Stimulsoft.Base.Localization {
                 HyperlinkPattern: string;
                 Icon: string;
                 IconAlignment: string;
+                IconBrush: string;
                 IconColor: string;
                 IconSet: string;
                 IconSetCondition: string;
@@ -8429,6 +8444,7 @@ declare namespace Stimulsoft.Base.Localization {
                 OnlyText: string;
                 OpenValues: string;
                 Operation: string;
+                Options3D: string;
                 Options: string;
                 Orientation: string;
                 OthersText: string;
@@ -8758,6 +8774,7 @@ declare namespace Stimulsoft.Base.Localization {
                 Type: string;
                 TypeName: string;
                 Types: string;
+                UncheckedIcon: string;
                 Underline: string;
                 UndoLimit: string;
                 Unit: string;
@@ -8962,6 +8979,7 @@ declare namespace Stimulsoft.Base.Localization {
                 FinishingReport: string;
                 FirstPass: string;
                 FixedBugs: string;
+                FromCurrentState: string;
                 FromDefaultState: string;
                 Gallery: string;
                 GenerateNewCode: string;
@@ -10922,6 +10940,8 @@ declare namespace Stimulsoft.Base.Drawing {
         static dark(baseBrush: StiBrush, value: number): StiBrush;
         static getBrush(brush: StiBrush, rect: Rectangle): Brush;
         static toColor(brush: StiBrush): Color;
+        static isEmpty(brush: StiBrush): boolean;
+        static isTransparent(brush: StiBrush): boolean;
     }
 }
 declare namespace Stimulsoft.Base.Drawing {
@@ -21267,6 +21287,8 @@ declare namespace Stimulsoft.Report {
         static createResourceName(report: StiReport, baseName: string): string;
         static createConnectionName(report: StiReport, baseName: string): string;
         static createDataSourcesName(report: StiReport, baseName: string): string;
+        static createRelationName(report: StiReport, dataRelation: StiDataRelation, baseName: string): string;
+        static isRelationExists(report: StiReport, dataRelation: StiDataRelation, name: string): boolean;
         static isTableDataSourcesExists(report: StiReport, name: string): boolean;
         static isResourceNameExists(report: StiReport, name: string): boolean;
         static isConnectionNameExists(report: StiReport, name: string): boolean;
@@ -34377,6 +34399,7 @@ declare namespace Stimulsoft.Report.Dashboard {
         isFullStackedChart: boolean;
         isWaterfallChart: boolean;
         isRadarChart: boolean;
+        isRange: boolean;
         argumentFormat: StiFormatService;
         valueFormat: StiFormatService;
         colorEach: boolean;
@@ -67606,6 +67629,7 @@ declare namespace Stimulsoft.Report.Check {
                 CellType: string;
                 CheckAlignment: string;
                 CheckBrush: string;
+                CheckSize: string;
                 Checked: string;
                 CheckedChangedEvent: string;
                 ClickEvent: string;
