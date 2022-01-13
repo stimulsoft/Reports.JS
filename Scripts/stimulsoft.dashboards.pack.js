@@ -1,0 +1,1 @@
+!function(e){'object'==typeof exports&&'undefined'!=typeof module?module.exports=((s)=>Object.assign(s,e(s.Stimulsoft)))(require('./stimulsoft.reports.pack')):'function'==typeof define&&define.amd?define(['./stimulsoft.reports.pack'],(s)=>Object.assign(s,e(s.Stimulsoft))):Object.assign(window,e(window.Stimulsoft))}(function(Stimulsoft){return{Stimulsoft:Stimulsoft||{}};});
