@@ -15,7 +15,20 @@
         "Stimulsoft",
         "Reports",
         "Stimulsoft.Reports.JS",
-        "Reporting tool"
+        "Reporting tool",
+        "Report builder",
+        "Report generator",
+        "Data visualization",
+        "Data analytics",
+        "Create reports",
+        "Business intelligence",
+        "Reporting software",
+        "JavaScript Report Designer",
+        "JavaScript Report Viewer",
+        "Node.js reporting tool",
+        "Angular reporting tool",
+        "Vue.js reporting tool",
+        "React.js reporting tool"
     ],
     "dependencies": {
         "jimp": "^0.16.1",
