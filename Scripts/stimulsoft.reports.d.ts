@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.1.4
-Build date: 2022.01.14
+Version: 2022.1.5
+Build date: 2022.01.27
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -563,6 +563,7 @@ export namespace Stimulsoft.System {
         getType(): Stimulsoft.System.Type;
         getTypeName(): string;
         getNetTypeName(): string;
+        private static _numberRegexp;
         static tryParse(value: string): {
             result: number;
             successfully: boolean;
@@ -1861,6 +1862,7 @@ export namespace Stimulsoft.System.Data {
         contains(columnName: string): boolean;
         remove(column: DataColumn): void;
         removeByName(name: string): void;
+        hashNames: Map<string, DataColumn>;
         getByName(name: string): DataColumn;
         getIndexByName(name: string): number;
         constructor(table: DataTable);
@@ -18631,7 +18633,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         private _componentsList;
         get componentsList(): Hashtable;
         private static _methodsHash;
-        static get methodsHash(): Hashtable;
+        static get methodsHash(): Map<StiFunctionType, StiParserMethodInfo[]>;
         private static _constantsList;
         static get constantsList(): Hashtable;
         protected static namespaceObj: any;
@@ -60679,6 +60681,19 @@ export namespace Stimulsoft.Report.Check {
         get isDataSource(): boolean;
         set isDataSource(value: boolean);
         private dataBuilder;
+        processCheck(report: StiReport, obj: any): any;
+    }
+}
+export namespace Stimulsoft.Report.Check {
+    class StiDuplicatedNameInSourceCheck extends StiReportCheck {
+        get elementName(): string;
+        get previewVisible(): boolean;
+        get shortMessage(): string;
+        get longMessage(): string;
+        status: StiCheckStatus;
+        private _isDataSource;
+        get isDataSource(): boolean;
+        set isDataSource(value: boolean);
         processCheck(report: StiReport, obj: any): any;
     }
 }
