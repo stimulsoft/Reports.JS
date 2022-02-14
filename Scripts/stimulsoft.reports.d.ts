@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.1.5
-Build date: 2022.01.27
+Version: 2022.1.6
+Build date: 2022.02.11
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -315,7 +315,6 @@ export namespace Stimulsoft.System {
         static daysInMonth(year: number, month: number): number;
         static compare(t1: DateTime, t2: DateTime): number;
         private static doubleDateToTicks;
-        private static ticksToOADate;
         static ticksNetToTicksJs(ticks: number): number;
         negate(): DateTime;
         addYears(value: number): DateTime;
@@ -14216,9 +14215,7 @@ export namespace Stimulsoft.Report.Components {
         private static propertyAllowHtmlTags;
         get allowHtmlTags(): boolean;
         set allowHtmlTags(value: boolean);
-        private static propertyMargins;
-        get margins(): StiMargins;
-        set margins(value: StiMargins);
+        margins: StiMargins;
         private static propertyShrinkFontToFit;
         get shrinkFontToFit(): boolean;
         set shrinkFontToFit(value: boolean);
@@ -14561,7 +14558,7 @@ export namespace Stimulsoft.Report.Components {
         top: number;
         bottom: number;
         get isEmpty(): boolean;
-        static empty: StiMargins;
+        static get empty(): StiMargins;
         static create(all?: number): StiMargins;
         constructor(left?: number, right?: number, top?: number, bottom?: number);
     }
@@ -15970,13 +15967,12 @@ export namespace Stimulsoft.Report {
 export namespace Stimulsoft.Report {
     import Type = Stimulsoft.System.Type;
     class StiLogService {
-        clearLogOnStart: boolean;
-        writeLogString(s: string): void;
-        static write1(message: string): void;
+        private static _logEnabled;
+        static get logEnabled(): boolean;
+        static set logEnabled(value: boolean);
+        static logString: string;
         static write(type: Type, e: any): void;
-        private closeWriter;
-        private openWriter;
-        private first;
+        static write1(message: string): void;
     }
 }
 export namespace Stimulsoft.Report {
@@ -17395,6 +17391,7 @@ export namespace Stimulsoft.Report.Components {
         private static ImplementsStiImage;
         implements(): any[];
         meta(): StiMeta[];
+        memberwiseClone(base?: boolean): StiImage;
         getImage(REFzoom: any, format?: StiExportFormat): Image;
         isExportAsImage(format: StiExportFormat): boolean;
         protected getImageFromFile(): Image;
@@ -17430,9 +17427,7 @@ export namespace Stimulsoft.Report.Components {
         private _image;
         get image(): Image;
         set image(value: Image);
-        private static propertyMargins;
-        get margins(): StiMargins;
-        set margins(value: StiMargins);
+        margins: StiMargins;
         private _file;
         get file(): string;
         set file(value: string);
@@ -28431,6 +28426,7 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
     import IStiCrossFiltering = Stimulsoft.Data.Engine.IStiCrossFiltering;
     import IStiUserSorts = Stimulsoft.Data.Engine.IStiUserSorts;
@@ -28479,6 +28475,7 @@ export namespace Stimulsoft.Report.Dashboard {
         minimum: number;
         maximum: number;
         shortValue: boolean;
+        valueFormat: StiFormatService;
         previousAnimations: List<StiAnimation>;
     }
 }
@@ -29440,7 +29437,7 @@ export namespace Stimulsoft.Report.Dashboard {
         bottom: number;
         get isEmpty(): boolean;
         equals(obj: any): boolean;
-        static empty: StiPadding;
+        static get empty(): StiPadding;
         static create(all?: number): StiPadding;
         constructor(left: number, top: number, right: number, bottom: number);
     }
