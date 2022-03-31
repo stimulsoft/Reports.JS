@@ -1,6 +1,8 @@
 # Stimulsoft Reports.JS
 Stimulsoft Reports.JS is a set of reporting tools designed on JavaScript and HTML5 technologies. The report generator works in any JavaScript application, and installation of any browser extensions or frameworks is not required. The product contains everything you need to create, edit, build, view, and export reports to PDF, PowerPoint, HTML, Word, Text, Excel, OpenDocument Writer and Calc, Image (Svg) and Data (Csv).
 
+Data analytics tool for creating dashboards - Stimulsoft Dashboard.JS [NPM](https://www.npmjs.com/package/stimulsoft-dashboards-js), [GitHub](https://github.com/stimulsoft/Dashboards.JS)
+
 # How to install
 Ceate a project folder and install Reports.JS module using the specified command:
 ```
@@ -45,11 +47,9 @@ Open console and run index.js
 node index
 ```
 
-# Trial limitation
-The free trial versions of Stimulsoft Reports.JS for Node.js are fully functional. The limitation is **120 days** and a **Trial** watermark on the pages. You do not need to install a special version to activate the product and just add a license key.
-
 # Integration
-Stimulsoft Reports.JS is excellent for working in any JavaScript application. Components are optimized to work with most popular frameworks such as Node.js, Angular, React, Vue.js, etc. You may use the Publish wizard to integrate your reports into the project.
+Our report generator is excellent for working in any JavaScript application. Components are optimized to work with most popular platforms such as Node.js, Angular, React, Vue.js, and others.
+For integration you need to install only one package from the NPM repository, or download the package from our website to a computer and add several scripts and css-styles to the project. All other things you can find in our, on pure JavaScript developed report builder.
 
 # Live Demo
 We prepared many templates of reports and dashboards that you can explore and edit in our online demo. Choose the template you need, connect your data, and create rich reports and analytical dashboards – the solution is ready. Try the [Live Demo](http://demo.stimulsoft.com/#Js)
