@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.2.2
-Build date: 2022.03.29
+Version: 2022.2.3
+Build date: 2022.04.06
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -12071,6 +12071,11 @@ export namespace Stimulsoft.Report {
         UsingDataFields = 0,
         ManuallyEnteringData = 1
     }
+    enum StiDesignerStartScreen {
+        Welcome = 0,
+        BlankReport = 1,
+        BlankDashboard = 2
+    }
 }
 export namespace Stimulsoft.Report.Dictionary {
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
@@ -16518,8 +16523,6 @@ export namespace Stimulsoft.Report.Dictionary {
     class StiVariable extends StiExpression implements IStiName, IStiAlias, IStiInherited, ICloneable, IStiAppCell, IStiAppVariable, IStiAppAlias {
         implements(): any[];
         private report;
-        private currentCulture;
-        private static currentCulture;
         private convertTypeToJsonString;
         private convertJsonStringToType;
         meta(): StiMeta[];
@@ -20012,6 +20015,7 @@ export namespace StiOptions {
         static sortDictionaryByAliases: boolean;
         static runWizardAfterLoad: boolean;
         static runSpecificWizardAfterLoad: string;
+        static startScreen: Stimulsoft.Report.StiDesignerStartScreen;
         static Editors: {
             allowConnectToDataInGallery: boolean;
         };
@@ -53818,14 +53822,23 @@ export namespace Stimulsoft.Dashboard.Components {
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Button {
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiJson = Stimulsoft.Base.StiJson;
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import StiFontIcons = Stimulsoft.Report.Helpers.StiFontIcons;
     import ICloneable = Stimulsoft.System.ICloneable;
     import IStiDefault = Stimulsoft.Base.Design.IStiDefault;
     import IStiButtonElementIconSet = Stimulsoft.Report.Dashboard.IStiButtonElementIconSet;
     class StiButtonElementIconSet implements IStiButtonElementIconSet, IStiDefault, ICloneable {
+        implements(): any[];
         protected _hash: StiMeta[];
         meta(): StiMeta[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(j: StiJson): void;
+        loadFromXml(xn: XmlNode): void;
+        static createFromJsonObject(j: StiJson): StiButtonElementIconSet;
+        static createFromXml(xmlNode: XmlNode): StiButtonElementIconSet;
         clone(): any;
         isDefault(): boolean;
         icon: StiFontIcons;
@@ -53966,6 +53979,7 @@ export namespace Stimulsoft.Dashboard.Components.Button {
     import ICloneable = Stimulsoft.System.ICloneable;
     import IStiButtonVisualState = Stimulsoft.Report.Dashboard.IStiButtonVisualState;
     class StiButtonVisualState implements IStiButtonVisualState, ICloneable, IStiDefault {
+        implements(): any[];
         protected _hash: StiMeta[];
         meta(): StiMeta[];
         saveToJsonObject(mode: StiJsonSaveMode): StiJson;
@@ -53992,8 +54006,11 @@ export namespace Stimulsoft.Dashboard.Components.Button {
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Button {
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiJson = Stimulsoft.Base.StiJson;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiButtonVisualState = Stimulsoft.Report.Dashboard.IStiButtonVisualState;
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import Font = Stimulsoft.System.Drawing.Font;
     import List = Stimulsoft.System.Collections.List;
     import IStiDefault = Stimulsoft.Base.Design.IStiDefault;
@@ -54002,8 +54019,14 @@ export namespace Stimulsoft.Dashboard.Components.Button {
     import ICloneable = Stimulsoft.System.ICloneable;
     import IStiButtonVisualStates = Stimulsoft.Report.Dashboard.IStiButtonVisualStates;
     class StiButtonVisualStates implements IStiButtonVisualStates, ICloneable, IStiGetFonts, IStiCopyStyleExt, IStiDefault {
+        implements(): any[];
         protected _hash: StiMeta[];
         meta(): StiMeta[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(j: StiJson): void;
+        loadFromXml(xn: XmlNode): void;
+        static createFromJsonObject(j: StiJson): StiButtonVisualStates;
+        static createFromXml(xmlNode: XmlNode): StiButtonVisualStates;
         clone(): any;
         isDefault(): boolean;
         getFonts(): List<Font>;
@@ -59235,7 +59258,7 @@ export namespace Stimulsoft.Dashboard.Render {
         private static renderSeriesShowNulls;
         private static renderSeriesLighting;
         private static renderSeriesIcon;
-        private renderMarker;
+        renderMarker(element: StiChartElement, series: IStiSeries): void;
         private renderSeriesNegativeColor;
         private renderSeriesParetoColor;
         protected renderArea(element: StiChartElement, chart: IStiChart): void;
@@ -62767,7 +62790,7 @@ export namespace Stimulsoft.Designer {
         static getComponentHeaderSize(component: any): string;
         static getInteractionProperty(interaction: StiInteraction): any;
         static getCrossTabFieldsProperties(crossTab: StiCrossTab): any[];
-        static getEventsProperty(object_: any): any;
+        static getEventsProperty(element: any): any;
         static getSubReportParametersProperty(subReport: StiSubReport): any[];
         static getShapeTypeProperty(component: StiShape): string;
         static getElementLayoutProperty(layout: StiElementLayout): string;
@@ -63099,6 +63122,7 @@ export namespace Stimulsoft.Designer {
         showAdaptersInNewConnectionForm: boolean;
         showDictionary: boolean;
         useAliases: StiUseAliases;
+        showDictionaryContextMenuProperties: boolean;
         newReportDictionary: StiNewReportDictionary;
         dataSourcesPermissions: StiDesignerPermissions;
         dataConnectionsPermissions: StiDesignerPermissions;
