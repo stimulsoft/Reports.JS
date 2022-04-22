@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.2.3
-Build date: 2022.04.06
+Version: 2022.2.4
+Build date: 2022.04.22
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -1058,6 +1058,9 @@ export namespace Stimulsoft.System {
         abort(previusPromise?: StiPromise<any>): StiPromise<T>;
         private abortFunction;
         onAbort(abortFunction: Function): void;
+        private behindFunction;
+        onBehindFunction(behindFunction: Function): void;
+        promise(): Promise<T>;
         constructor();
     }
 }
@@ -2726,8 +2729,8 @@ export namespace Stimulsoft.System.Drawing.Imaging {
         private header;
         private guid;
         private checkHeader;
-        getWidth(dataBytes: number[], base64?: string): number;
-        getHeight(dataBytes: number[], base64?: string): number;
+        getWidth(dataBytes: number[], base64?: string, svg?: string): number;
+        getHeight(dataBytes: number[], base64?: string, svg?: string): number;
         getHorizontalResolution(dataBytes: number[]): number;
         getVerticalResolution(dataBytes: number[]): number;
         needReconvert(dataBytes: number[]): boolean;
@@ -2741,15 +2744,21 @@ export namespace Stimulsoft.System.Drawing {
     class Image {
         data: any;
         imageFormat: ImageFormat;
-        width: number;
-        height: number;
-        horizontalResolution: number;
-        verticalResolution: number;
         imageData: any;
+        private _width;
+        get width(): number;
+        private _height;
+        get height(): number;
+        private _horizontalResolution;
+        get horizontalResolution(): number;
+        private _verticalResolution;
+        get verticalResolution(): number;
         get base64(): string;
         set base64(value: string);
         get bytes(): number[];
         set bytes(value: number[]);
+        get svg(): string;
+        set svg(value: string);
         static fromFile(path: string): Image;
         static fromBytes(bytes: number[]): Image;
         static fromBase64(base64: string): Image;
@@ -15483,6 +15492,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getNameInSource(): string;
         getName(): string;
         getDataTable2(allowConnectToData: boolean): Promise<DataTable>;
+        private connectSqlSource;
         getDictionary(): IStiAppDictionary;
         fetchColumns(): List<IStiAppDataColumn>;
         getConnection(): IStiAppConnection;
@@ -28144,7 +28154,8 @@ export namespace Stimulsoft.Report.Dashboard {
         Left = 1,
         Right = 2,
         Top = 3,
-        Bottom = 4
+        Bottom = 4,
+        Center = 5
     }
     enum StiIndicatorFieldCondition {
         Value = 0,
@@ -32766,7 +32777,10 @@ export namespace Stimulsoft.Report.Dictionary {
         clear(): void;
         private disposeCacheDataSet;
         renameDatabase(database: StiDatabase, newName: string): void;
-        connectToDatabasesAsync(databases?: List<StiDatabase>, loadData?: boolean): StiPromise<void>;
+        connectToDatabasesAsync(loadData?: boolean): StiPromise<void>;
+        private connectToDatabases2Async;
+        connectToDatabases(loadData?: boolean, throwException?: boolean): void;
+        private connectToDatabases2;
         connectAsync(loadData?: boolean, dataSources?: StiDataSource[]): StiPromise<void>;
         connect(loadData?: boolean, dataSources?: StiDataSource[]): void;
         connectVirtualDataSourcesAsync(): StiPromise<void>;
@@ -46284,8 +46298,10 @@ export namespace Stimulsoft.Report.Chart {
 export namespace Stimulsoft.Report.Chart {
     import StiFontGeom = Stimulsoft.Base.Context.StiFontGeom;
     import StiContext = Stimulsoft.Base.Context.StiContext;
+    import Font = Stimulsoft.System.Drawing.Font;
     class StiTextContentHelper {
-        static getMeasureText(context: StiContext, text: string, font: StiFontGeom, maxWidth: number): string;
+        static getMeasureText(context: StiContext, text: string, font: Font, maxWidth: number): string;
+        static getMeasureText2(context: StiContext, text: string, font: StiFontGeom, maxWidth: number): string;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -46997,6 +47013,7 @@ export namespace Stimulsoft.Report.Chart {
 export namespace Stimulsoft.Report.Chart {
     import IComparer = Stimulsoft.System.Collections.IComparer;
     class StiDataItem {
+        index: number;
         argument: any;
         value: any;
         valueEnd: any;
@@ -47010,7 +47027,7 @@ export namespace Stimulsoft.Report.Chart {
         color: any;
         toolTip: any;
         tag: any;
-        constructor(argument: any, value: any, valueEnd: any, weight: any, valueOpen: any, valueClose: any, valueLow: any, valueHight: any, title: any, key: any, color: any, toolTip: any, tag: any);
+        constructor(index: number, argument: any, value: any, valueEnd: any, weight: any, valueOpen: any, valueClose: any, valueLow: any, valueHight: any, title: any, key: any, color: any, toolTip: any, tag: any);
     }
     class StiDataItemComparer implements IComparer<StiDataItem> {
         compare(x: StiDataItem, y: StiDataItem): number;
@@ -53850,7 +53867,6 @@ export namespace Stimulsoft.Dashboard.Components.Button {
 }
 export namespace Stimulsoft.Dashboard.Components.Button {
     import StiCheckedChangedEvent = Stimulsoft.Report.Events.StiCheckedChangedEvent;
-    import StiClickEvent = Stimulsoft.Report.Events.StiClickEvent;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import StiButtonElementIconSet = Stimulsoft.Dashboard.Components.Button.StiButtonElementIconSet;
@@ -53945,10 +53961,10 @@ export namespace Stimulsoft.Dashboard.Components.Button {
         set visualStates(value: StiButtonVisualStates);
         private shouldSerializeVisualStates;
         get isChecked(): boolean;
-        get minSize(): System.Drawing.Size;
-        set minSize(value: System.Drawing.Size);
-        get maxSize(): System.Drawing.Size;
-        set maxSize(value: System.Drawing.Size);
+        getMinSize(): System.Drawing.Size;
+        setMinSize(value: any): void;
+        getMaxSize(): System.Drawing.Size;
+        setMaxSize(value: any): void;
         text: string;
         group: string;
         iconAlignment: StiIconAlignment;
@@ -53956,8 +53972,6 @@ export namespace Stimulsoft.Dashboard.Components.Button {
         private shouldSerializeIconSet;
         iconBrush: StiBrush;
         private shouldSerializeIconBrush;
-        get clickEvent(): StiClickEvent;
-        set clickEvent(value: StiClickEvent);
         private static eventCheckedChanged;
         invokeCheckedChanged(sender: any, e: any): void;
         private _checkedChangedEvent;
@@ -59283,6 +59297,8 @@ export namespace Stimulsoft.Dashboard.Render {
         private static renderAxisLineColor;
         private static renderRadarAxis;
         private static renderAxis;
+        private static renderAxisTitle;
+        private static renderAxisLabels;
         private static renderAxisStartFromZero;
         private static renderAxisShowEdgeValues;
         private static renderAxisRange;
@@ -60570,6 +60586,7 @@ export namespace Stimulsoft.Viewer {
         private static getBasicType;
         private static getStiType;
         static applyReportParameters(report: StiReport, values: any): void;
+        static transferParametersValuesToReport(report: StiReport, values: any): void;
         static applyReportBindingVariables(report: StiReport, values: any): void;
         private static setVariableLabel;
         private static setVariableValue;
@@ -62564,6 +62581,7 @@ export namespace Stimulsoft.Designer {
         static setChartPropertyValue(report: StiReport, param: any, callbackResult: any): void;
         static setContainerValue(report: StiReport, param: any, callbackResult: any): void;
         private static convertSeries;
+        private static transferSeriesData;
         private static setSeriesType;
         private static rewriteArgumentDataColumns;
         private static getDraggedDataColumnValue;
@@ -62910,6 +62928,9 @@ export namespace Stimulsoft.Designer {
         static updateReportAliases(designer: StiDesigner, report: StiReport, param: any, callbackResult: any): void;
         private static getPageTypeFromContent;
         static openPage(report: StiReport, param: any, callbackResult: any): void;
+        private static checkSvgContentQueue;
+        private static checkSvgContentCheckQueue;
+        private static checkSvgContent2;
         static checkSvgContent(checkObject: any): StiPromise<void>;
     }
 }
