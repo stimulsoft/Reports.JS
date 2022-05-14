@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.2.4
-Build date: 2022.04.22
+Version: 2022.2.5
+Build date: 2022.05.13
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -945,8 +945,9 @@ export namespace Stimulsoft.System {
 }
 export namespace Stimulsoft.System {
     class StiError {
-        static consoleWarningLog: boolean;
         static consoleErrorLog: boolean;
+        static consoleWarningLog: boolean;
+        static consoleMessageLog: boolean;
         private static lastErrorMessage;
         static errorMessageForm: any;
         static showError(e: any, showForm?: boolean, infoForm?: boolean): void;
@@ -2711,7 +2712,14 @@ export namespace Stimulsoft.System.Drawing {
     }
 }
 export namespace Stimulsoft.System.Drawing.Imaging {
-    class ImageFormat {
+    type ImageInfo = {
+        width: number;
+        height: number;
+        horizontalResolution: number;
+        verticalResolution: number;
+        needReconvert: boolean;
+    };
+    export class ImageFormat {
         private static _tiff;
         static get Tiff(): ImageFormat;
         private static _png;
@@ -2729,15 +2737,13 @@ export namespace Stimulsoft.System.Drawing.Imaging {
         private header;
         private guid;
         private checkHeader;
-        getWidth(dataBytes: number[], base64?: string, svg?: string): number;
-        getHeight(dataBytes: number[], base64?: string, svg?: string): number;
-        getHorizontalResolution(dataBytes: number[]): number;
-        getVerticalResolution(dataBytes: number[]): number;
+        getInfo(dataBytes: number[], base64?: string, svg?: string): ImageInfo;
         needReconvert(dataBytes: number[]): boolean;
         get mimeType(): string;
         toString(): string;
         constructor(guid: string);
     }
+    export {};
 }
 export namespace Stimulsoft.System.Drawing {
     import ImageFormat = Stimulsoft.System.Drawing.Imaging.ImageFormat;
@@ -2753,6 +2759,7 @@ export namespace Stimulsoft.System.Drawing {
         get horizontalResolution(): number;
         private _verticalResolution;
         get verticalResolution(): number;
+        private fillImageInfo;
         get base64(): string;
         set base64(value: string);
         get bytes(): number[];
@@ -3246,42 +3253,35 @@ export namespace Stimulsoft.System.IO {
         static getFile(filePath: string, binary?: boolean, contentType?: string, headers?: {
             key: string;
             value: string;
-        }[]): any;
-        static getFileAsync(callback: Function, filePath: string, binary?: boolean, contentType?: string): void;
+        }[], disableCache?: boolean): any;
+        static getFileAsync(callback: Function, filePath: string, binary?: boolean, contentType?: string, disableCache?: boolean): void;
         static saveFile(filePath: string, fileData: string): void;
         static getFilesNames(filePath: string): string[];
     }
 }
 export namespace Stimulsoft.System.IO {
     import StiPromise = Stimulsoft.System.StiPromise;
-    class Http {
-        static addNoCacheHeaders(request: XMLHttpRequest): void;
-        static getFile(filePath: string, binary?: boolean, contentType?: string, headers?: {
-            key: string;
-            value: string;
-        }[]): any;
-        static getFileAsync(callback: Function, filePath: string, binary?: boolean, contentType?: string): void;
+    type RequestHeaders = null | {
+        key: string;
+        value: string;
+    }[];
+    type SendResult = {
+        status: number;
+        responseText: string;
+        statusText: string;
+    };
+    export class Http {
+        private static addNoCacheHeaders;
+        static getFile(filePath: string, binary?: boolean, contentType?: string, headers?: RequestHeaders, disableCache?: boolean): any;
+        static getFileAsync(callback: Function, filePath: string, binary?: boolean, contentType?: string, disableCache?: boolean): void;
         static getUrlParameters(): {
             name: string;
             value: string;
         }[];
-        static send(method: string, url: string, body?: string, headers?: {
-            key: string;
-            value: string;
-        }[]): {
-            status: number;
-            responseText: string;
-            statusText: string;
-        };
-        static sendAsync(method: string, url: string, body?: string, headers?: {
-            key: string;
-            value: string;
-        }[], timeout?: number): StiPromise<{
-            status: number;
-            responseText: string;
-            statusText: string;
-        }>;
+        static send(method: string, url: string, body?: string, headers?: RequestHeaders, disableCache?: boolean): SendResult;
+        static sendAsync(method: string, url: string, body?: string, headers?: RequestHeaders, timeout?: number, disableCache?: boolean): StiPromise<SendResult>;
     }
+    export {};
 }
 export namespace Stimulsoft.System.IO {
     class MemoryStream {
@@ -13221,6 +13221,7 @@ export namespace Stimulsoft.Report.Components {
         sortBandsByTopPosition(): void;
         sortBandsByLeftPosition(): void;
         getComponentByName(componentName: string, container: StiContainer): StiComponent;
+        getComponentByGuid(guid: string, container: StiContainer): StiComponent;
         getPageByAlias(alias: string): StiPage;
         setParent(parent: StiContainer): void;
         private parent;
@@ -20111,6 +20112,7 @@ export namespace StiOptions {
         static useSyncRenderMode: boolean;
         static loadDataOnce: boolean;
         static useNewHtmlEngine: boolean;
+        static htmlAllowListItemSecondLineIndent: boolean;
     }
     class Print {
         static customPaperSizes: PaperSizeCollection;
@@ -28347,6 +28349,7 @@ export namespace Stimulsoft.Report.Dashboard {
     interface IStiAltProperties {
         altTitleVisible: boolean;
         altClientRectangle: RectangleD;
+        altParentKey: string;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -28477,6 +28480,13 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
+    let IStiGroupElement: System.Interface<IStiGroupElement>;
+    let ImplementsIStiGroupElement: any[];
+    interface IStiGroupElement {
+        group: string;
+    }
+}
+export namespace Stimulsoft.Report.Dashboard {
     import Color = Stimulsoft.System.Drawing.Color;
     import IStiMeter = Stimulsoft.Base.Meters.IStiMeter;
     import IStiAppDataCell = Stimulsoft.Base.IStiAppDataCell;
@@ -28499,6 +28509,7 @@ export namespace Stimulsoft.Report.Dashboard {
         backColor: Color;
         columnCount: number;
         orientation: StiItemOrientation;
+        crossFiltering: boolean;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -28529,13 +28540,6 @@ export namespace Stimulsoft.Report.Dashboard {
         lineColor: Color;
         axisValue: string;
         lineWidth: number;
-    }
-}
-export namespace Stimulsoft.Report.Dashboard {
-    let IStiGroupElement: System.Interface<IStiGroupElement>;
-    let ImplementsIStiGroupElement: any[];
-    interface IStiGroupElement {
-        group: string;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -32269,7 +32273,7 @@ export namespace Stimulsoft.Report.Dashboard.Visuals {
     import StiSvgData = Stimulsoft.Report.Export.StiSvgData;
     let IStiCardsVisualSvgHelper: System.Interface<IStiCardsVisualSvgHelper>;
     interface IStiCardsVisualSvgHelper {
-        writeCards(writer: XmlTextWriter, svgData: StiSvgData, refNeedToScroll?: any, refContentHeight?: any): Promise<void>;
+        writeCards(writer: XmlTextWriter, svgData: StiSvgData, refNeedToScroll?: any, refContentHeight?: any, refContentWidth?: any): Promise<void>;
     }
 }
 export namespace Stimulsoft.Report.Dashboard.Visuals {
@@ -36186,10 +36190,27 @@ export namespace Stimulsoft.Base.Context {
     }
 }
 export namespace Stimulsoft.Report.Export {
+    import StiResourceType = Stimulsoft.Report.Dictionary.StiResourceType;
+    class StiReportResourceHelper {
+        static isFontResourceType(resourceType: StiResourceType): boolean;
+        static getBase64DataFromFontResourceContent(resourceType: StiResourceType, content: number[]): string;
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import XmlTextWriter = Stimulsoft.System.Xml.XmlTextWriter;
+    class StiSvgWriter extends XmlTextWriter {
+        private knownBinFonts;
+        constructor(report: StiReport, ...rest: ConstructorParameters<typeof XmlTextWriter>);
+        get fontStylesText(): string;
+        writeEmbeddedFontsDefinitions(): void;
+        writeAttributeString(localName: string, value: string): void;
+    }
+}
+export namespace Stimulsoft.Report.Export {
     import XmlTextWriter = Stimulsoft.System.Xml.XmlTextWriter;
     import Image = Stimulsoft.System.Drawing.Image;
     class StiChartSvgHelper {
-        static getImage(svgData: StiSvgData): Image;
+        static getImage(svgData: StiSvgData, embedFonts?: boolean): Image;
         static writeChart(writer: XmlTextWriter, svgData: StiSvgData, zoom: number, needAnimation: boolean): void;
         private static writeEmptyDataMessage;
         private static getEmptyDataImage;
@@ -53689,6 +53710,7 @@ export namespace Stimulsoft.Dashboard.Components.Panel {
         private shouldSerializeCornerRadius;
         altTitleVisible: boolean;
         altClientRectangle: RectangleD;
+        altParentKey: string;
         get toolboxPosition(): number;
         get localizedName(): string;
         defaultClientRectangle: Rectangle;
@@ -53758,6 +53780,7 @@ export namespace Stimulsoft.Dashboard.Components {
         shouldSerializePadding(): boolean;
         altTitleVisible: boolean;
         altClientRectangle: RectangleD;
+        altParentKey: string;
         get serviceCategory(): string;
         canContainIn(component: StiComponent): boolean;
         toolboxCategory: StiToolboxCategory;
@@ -55312,7 +55335,9 @@ export namespace Stimulsoft.Dashboard.Components.Cards {
         get localizedName(): string;
         helpUrl: string;
         dataFilters: List<StiDataFilterRule>;
+        group: string;
         title: StiTitle;
+        crossFiltering: boolean;
         shadow: StiSimpleShadow;
         private shouldSerializeShadow;
         convertFrom(element: IStiElement): void;
@@ -58892,7 +58917,7 @@ export namespace Stimulsoft.Dashboard.Helpers {
     class StiCardsVisualSvgHelper implements IStiCardsVisualSvgHelper {
         private static ImplementsStiCardsVisualSvgHelper;
         implements(): any[];
-        writeCards(writer: Stimulsoft.System.Xml.XmlTextWriter, svgData: Stimulsoft.Report.Export.StiSvgData, refNeedToScroll?: any, refContentHeight?: any): Promise<void>;
+        writeCards(writer: Stimulsoft.System.Xml.XmlTextWriter, svgData: Stimulsoft.Report.Export.StiSvgData, refNeedToScroll?: any, refContentHeight?: any, refContentWidth?: any): Promise<void>;
         private static getDataTable;
     }
 }
