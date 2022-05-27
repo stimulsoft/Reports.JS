@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.2.5
-Build date: 2022.05.13
+Version: 2022.2.6
+Build date: 2022.05.27
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -27132,6 +27132,7 @@ export namespace Stimulsoft.Report.Components {
         getImage(REFzoom: any, format?: StiExportFormat): Image;
         isExportAsImage(format: StiExportFormat): boolean;
         text: string;
+        getParsedText(): string;
         font: Font;
         horAlignment: StiTextHorAlignment;
         vertAlignment: StiVertAlignment;
@@ -31008,6 +31009,7 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         cellDataBarsOverlapped: Color;
         cellDataBarsPositive: Color;
         cellDataBarsNegative: Color;
+        seriesColors: Color[];
     }
 }
 export namespace Stimulsoft.Report.Dashboard.Styles {
@@ -32578,6 +32580,7 @@ export namespace Stimulsoft.Report.Dictionary {
         private cachedDataParameters;
         onInsert(index: number, value: any): void;
         contains(parameter: StiDataParameter | string): boolean;
+        remove(parameter: StiDataParameter): void;
         getByName(name: string): StiDataParameter;
         setByName(name: string, value: StiDataParameter): void;
         constructor(dataSource?: StiDataSource);
@@ -33797,6 +33800,7 @@ export namespace Stimulsoft.Report.Dictionary {
         regData(dictionary: StiDictionary, loadData: boolean): void;
         private getDataSet;
         getDataSetPrivate(workbook: Stimulsoft.ExternalLibrary.XLSX.IWorkBook): DataSet;
+        private getNumber;
         private getType1;
         private isTimeSpan;
         private getTimeSpan;
@@ -39750,6 +39754,7 @@ export namespace Stimulsoft.Report.Export {
         service: StiPdfExportService;
         get Right(): number;
         get Top(): number;
+        clone(): StiPdfData;
         constructor(service: StiPdfExportService);
     }
     class StiImageData {
@@ -41793,6 +41798,38 @@ export namespace Stimulsoft.Report.Chart {
         private static simplifyRadialDistance;
         private static simplifyDouglasPeucker;
         static simplify(points: PointD[], tolerance: number, highestQuality: boolean): PointD[];
+    }
+}
+export namespace Stimulsoft.Report.Chart {
+    class StiBoxAndWhiskerHelper {
+        static checkArgument(chart: IStiChart): void;
+    }
+}
+export namespace Stimulsoft.Report.Chart {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
+    class StiHistogramHelper {
+        static checkValuesAndArguments(series: IStiSeries, formatService: StiFormatService): void;
+        private static roundToSignificantDigits;
+        private static getStandardDeviation;
+    }
+}
+export namespace Stimulsoft.Report.Chart {
+    import Color = Stimulsoft.System.Drawing.Color;
+    import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    class StiPie3dHelper {
+        static readonly brightnessEnhancementFactor1: number;
+        static createColorWithCorrectedLightness(color: Color, correctionFactor: number): Color;
+        static getActualAngle(rect: Rectangle, transformedAngle: number): number;
+        static transformAngle(rect: Rectangle, angle: number): number;
+    }
+}
+export namespace Stimulsoft.Report.Chart {
+    import StiFontGeom = Stimulsoft.Base.Context.StiFontGeom;
+    import StiContext = Stimulsoft.Base.Context.StiContext;
+    import Font = Stimulsoft.System.Drawing.Font;
+    class StiTextContentHelper {
+        static getMeasureText(context: StiContext, text: string, font: Font, maxWidth: number): string;
+        static getMeasureText2(context: StiContext, text: string, font: StiFontGeom, maxWidth: number): string;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -46291,38 +46328,6 @@ export namespace Stimulsoft.Report.Chart {
         draw(context: StiContext): void;
         private static getArray;
         constructor(pointStart: PointD, pointEnd: PointD, trendLine: IStiTrendLine);
-    }
-}
-export namespace Stimulsoft.Report.Chart {
-    class StiBoxAndWhiskerHelper {
-        static checkArgument(chart: IStiChart): void;
-    }
-}
-export namespace Stimulsoft.Report.Chart {
-    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
-    class StiHistogramHelper {
-        static checkValuesAndArguments(series: IStiSeries, formatService: StiFormatService): void;
-        private static roundToSignificantDigits;
-        private static getStandardDeviation;
-    }
-}
-export namespace Stimulsoft.Report.Chart {
-    import Color = Stimulsoft.System.Drawing.Color;
-    import Rectangle = Stimulsoft.System.Drawing.Rectangle;
-    class StiPie3dHelper {
-        static readonly brightnessEnhancementFactor1: number;
-        static createColorWithCorrectedLightness(color: Color, correctionFactor: number): Color;
-        static getActualAngle(rect: Rectangle, transformedAngle: number): number;
-        static transformAngle(rect: Rectangle, angle: number): number;
-    }
-}
-export namespace Stimulsoft.Report.Chart {
-    import StiFontGeom = Stimulsoft.Base.Context.StiFontGeom;
-    import StiContext = Stimulsoft.Base.Context.StiContext;
-    import Font = Stimulsoft.System.Drawing.Font;
-    class StiTextContentHelper {
-        static getMeasureText(context: StiContext, text: string, font: Font, maxWidth: number): string;
-        static getMeasureText2(context: StiContext, text: string, font: StiFontGeom, maxWidth: number): string;
     }
 }
 export namespace Stimulsoft.Report.Chart {
