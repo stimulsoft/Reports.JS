@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.3.1
-Build date: 2022.06.17
+Version: 2022.3.2
+Build date: 2022.06.23
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -1547,6 +1547,7 @@ export namespace Stimulsoft.System.Collections {
         private _source;
         constructor(source: Iterable<T>);
         protected get source(): Iterable<T>;
+        copyTo(array: T[], index: number): void;
         [Symbol.iterator](): Generator<T, void, undefined>;
     }
 }
@@ -6830,6 +6831,7 @@ export namespace Stimulsoft.Base.Drawing {
     }
 }
 export namespace Stimulsoft.Base.Drawing {
+    import Point = Stimulsoft.System.Drawing.Point;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import StringFormat = Stimulsoft.System.Drawing.StringFormat;
     import List = Stimulsoft.System.Collections.List;
@@ -6837,11 +6839,22 @@ export namespace Stimulsoft.Base.Drawing {
     import Graphics = Stimulsoft.System.Drawing.Graphics;
     import Font = Stimulsoft.System.Drawing.Font;
     import StringAlignment = Stimulsoft.System.Drawing.StringAlignment;
+    class Range {
+        text: string;
+        pos: Point;
+        size: Size;
+        isStart: boolean;
+        isEnd: boolean;
+        newLineForm: boolean;
+        constructor(text: string, size: Size, newLineForm: boolean);
+    }
     class StiTextDrawing {
         static measureString(g: Graphics, text: string, font: Font, width?: number, textOptions?: StiTextOptions, ha?: StiTextHorAlignment, va?: StiVertAlignment, antialiasing?: boolean, allowHtmlTags?: boolean): Size;
         private static correctFontSize;
         static splitTextWordwrap(text: string, g: Graphics, font: Font, rect: Rectangle, textOptions: StiTextOptions, ha: StiTextHorAlignment, typographic: boolean): List<LineInfo>;
         static splitTextWordwrap2(text: string, g: Graphics, font: Font, rect: Rectangle, sf: StringFormat, horAlignWidth?: boolean): List<LineInfo>;
+        static splitTextWordwrapWidth(text: string, g: Graphics, font: Font, rect: Rectangle): List<string>;
+        private static getAdditionalSpaceSize;
         private static makeLineInfo;
         static splitString(inputString: string, removeControl: boolean): List<string>;
         static getStringFormat(textOptions: StiTextOptions, ha: StiTextHorAlignment, va: StiVertAlignment, zoom: number): StringFormat;
@@ -14403,7 +14416,7 @@ export namespace Stimulsoft.Report.Components {
     import StiGetExcelValueEventArgs = Stimulsoft.Report.Events.StiGetExcelValueEventArgs;
     import RectangleD = Stimulsoft.System.Drawing.Rectangle;
     import SizeD = Stimulsoft.System.Drawing.Size;
-    class StiText extends StiSimpleText implements IStiTextOptions, IStiAutoWidth, IStiTextHorAlignment, IStiVertAlignment, IStiBorder, IStiFont, IStiBrush, IStiTextBrush, IStiTextFormat, IStiBreakable, IStiGlobalizationProvider, IStiEditable, IStiJsonReportObject, IStiGetFonts {
+    class StiText extends StiSimpleText implements IStiTextOptions, IStiAutoWidth, IStiTextHorAlignment, IStiVertAlignment, IStiBorder, IStiFont, IStiBrush, IStiTextBrush, IStiTextFormat, IStiBreakable, IStiGlobalizationProvider, IStiExportImageExtended, IStiExportImage, IStiEditable, IStiJsonReportObject, IStiGetFonts {
         private static ImplementsStiText;
         implements(): any[];
         meta(): StiMeta[];
@@ -17002,7 +17015,7 @@ export namespace Stimulsoft.Report.Export {
     class StiExportUtils {
         static convertDigitsToArabic(inputString: string, digitsType: StiArabicDigitsType): string;
         private static reportVersion;
-        static getReportVersion(): string;
+        static getReportVersion(report?: StiReport): string;
         static saveComponentToString(component: StiComponent, imageFormat?: ImageFormat, imageQuality?: number, imageResolution?: number): string;
         static trimEndWhiteSpace(inputString: string): string;
         static trimEndWhiteSpace2(inputString: string, removeControl: boolean): string;
@@ -20442,10 +20455,6 @@ export namespace StiOptions {
         defaultCoordinatesPrecision: number;
         defaultAutoPrintMode: StiPdfAutoPrintMode;
         useProperCaseFontNamesFromHtml: boolean;
-        useAlternativeFontNames: boolean;
-        private static _alternativeFontNames;
-        get alternativeFontNames(): Hashtable;
-        set alternativeFontNames(value: Hashtable);
     }
     class ExportText {
         useFullTextBoxWidth: boolean;
@@ -20455,6 +20464,11 @@ export namespace StiOptions {
         checkBoxTextForFalse: string;
         trimTrailingSpaces: boolean;
         removeLastNewLineMarker: boolean;
+    }
+    class ExportXps {
+        allowImageComparer: boolean;
+        allowImageTransparency: boolean;
+        reduceFontFileSize: boolean;
     }
     class CheckBoxReplacementForExcelValue_ {
         Font: Font;
@@ -20470,10 +20484,15 @@ export namespace StiOptions {
         static PowerPoint: ExportPowerPoint;
         static Pdf: ExportPdf;
         static Text: ExportText;
+        static Xps: ExportXps;
         static CheckBoxReplacementForExcelValue: CheckBoxReplacementForExcelValue_;
         static optimizeDataOnlyMode: boolean;
         static checkBoxTextForTrue: string;
         static checkBoxTextForFalse: string;
+        static useAlternativeFontNames: boolean;
+        private static _alternativeFontNames;
+        static get alternativeFontNames(): Hashtable;
+        static set alternativeFontNames(value: Hashtable);
     }
     class WebServer {
         static url: string;
@@ -35847,6 +35866,14 @@ export namespace Stimulsoft.Report.Export {
 }
 export namespace Stimulsoft.Report.Export {
     import MemoryStream = Stimulsoft.System.IO.MemoryStream;
+    let IStiXpsExportService: System.Interface<IStiXpsExportService>;
+    interface IStiXpsExportService extends StiExportService {
+        exportTo(report: StiReport, stream: MemoryStream, settings: StiExportSettings): any;
+        exportToAsync(onExport: Function, report: StiReport, stream: MemoryStream, settings: StiExportSettings): any;
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import MemoryStream = Stimulsoft.System.IO.MemoryStream;
     let IStiCsvExportService: System.Interface<IStiCsvExportService>;
     interface IStiCsvExportService extends IStiExportService {
         exportTo(report: StiReport, stream: MemoryStream, settings: StiExportSettings): any;
@@ -37620,6 +37647,14 @@ export namespace Stimulsoft.Report.Export {
     }
 }
 export namespace Stimulsoft.Report.Export {
+    class StiXpsExportSettings extends StiPageRangeExportSettings {
+        getExportFormat(): StiExportFormat;
+        imageQuality: number;
+        imageResolution: number;
+        exportRtfTextAsImage: boolean;
+    }
+}
+export namespace Stimulsoft.Report.Export {
     import Encoding = Stimulsoft.System.Text.Encoding;
     class StiDataExportSettings extends StiPageRangeExportSettings {
         getExportFormat(): StiExportFormat;
@@ -37800,6 +37835,98 @@ export namespace Stimulsoft.Report.Export {
         clear(): void;
         constructor(modePdf?: boolean);
     }
+}
+export namespace Stimulsoft.Report.Export {
+    enum BidiClass {
+        L = 0,
+        LRE = 1,
+        LRO = 2,
+        R = 3,
+        AL = 4,
+        RLE = 5,
+        RLO = 6,
+        PDF = 7,
+        EN = 8,
+        ES = 9,
+        ET = 10,
+        AN = 11,
+        CS = 12,
+        NSM = 13,
+        BN = 14,
+        B = 15,
+        S = 16,
+        WS = 17,
+        ON = 18,
+        LRI = 19,
+        RLI = 20,
+        FSI = 21,
+        PDI = 22
+    }
+    class IsolatingRunSequence {
+        level: number;
+        sos: BidiClass;
+        eos: BidiClass;
+        length: number;
+        indexes: number[];
+        types: number[];
+        resolvedLevels: number[];
+        resolveWeaks(): void;
+        resolveNeutrals(input: string): void;
+        resolveImplicit(): void;
+        applyTypesAndLevels(refTypesList: {
+            ref: number[];
+        }, refLevelsList: {
+            ref: number[];
+        }): void;
+        computeIsolatingRunSequence(pLevel: number, indexList: number[], typesList: number[], levels: number[]): void;
+        getRunLimit(index: number, limit: number, typesSet: BidiClass[]): number;
+        setRunTypes(start: number, limit: number, newType: BidiClass): void;
+        constructor(paragraphEmbeddingLevel: number, runIndexList: number[], types: number[], levels: number[]);
+    }
+    export class StiBidirectionalConvert2 {
+        static MAX_DEPTH: number;
+        static MAX_NESTED_BRACKET_PAIRS: number;
+        static leftBracketsList: string;
+        static rightBracketsList: string;
+        static convertString(input: string, rightToLeft: boolean, modePdf?: boolean): string;
+        static logicalToVisual(input: string, rightToLeft: boolean, lineBreaks?: number[]): string;
+        static convertArabicHebrew(inputSB: string): string;
+        static classifyCharacters(text: string, refTypesList: {
+            ref: number[];
+        }): void;
+        static getParagraphEmbeddingLevel(types: number[], matchingPDI: number[], si?: number, ei?: number): number;
+        static getExplicitEmbeddingLevels(level: number, types: number[], refLevels: {
+            ref: number[];
+        }, matchingPDI: number[]): void;
+        static getReorderedIndexes(level: number, typesList: number[], levelsList: number[], lineBreaks: number[], refLevels: {
+            ref: number[];
+        }): number[];
+        static getMatchingPDI(types: number[], outMatchingPDI: {
+            ref: number[];
+        }, outMatchingIsolateInitiator: {
+            ref: number[];
+        }): void;
+        static removeX9Characters(refBuffer: {
+            ref: number[];
+        }): void;
+        static getLevelRuns(levels: number[]): number[][];
+        static getRunForCharacter(levelRuns: number[][], length: number): number[];
+        static getIsolatingRunSequences(pLevel: number, types: number[], levels: number[], levelRuns: number[][], matchingIsolateInitiator: number[], matchingPDI: number[], runCharsArray: number[]): IsolatingRunSequence[];
+        static setLevels(refLevels: {
+            ref: number[];
+        }, newLevel: number): void;
+        static leastGreaterOdd(l: number): number;
+        static leastGreaterEven(l: number): number;
+        static isOdd(n: number): boolean;
+        static getTypeForLevel(level: number): BidiClass;
+        static getTextLevels(paragraphEmbeddingLevel: number, typesList: number[], levelsList: number[], lineBreaks: number[]): number[];
+        static getMultiLineReordered(levels: number[], lineBreaks: number[]): number[];
+        static computeReorderingIndexes(levels: number[]): number[];
+        static getOrderedString(input: string, newIndexes: number[], levels: number[]): string;
+        static isBracketTypeOpen(ch: string): boolean;
+        static isBracketTypeClose(ch: string): boolean;
+    }
+    export {};
 }
 export namespace Stimulsoft.Report.Export {
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
@@ -39328,7 +39455,13 @@ export namespace Stimulsoft.Base.Maps.Geoms {
     }
 }
 export namespace Stimulsoft.Report.Resources {
+    class RobotoFont {
+        static getContent(): number[];
+    }
+}
+export namespace Stimulsoft.Report.Resources {
     class StimulsoftFont {
+        static getContent(): number[];
         static getBase64Content(): string;
     }
 }
@@ -39832,6 +39965,62 @@ export namespace Stimulsoft.Report.Export {
         private getEscapeNumber;
         private getEscapeNames;
         exportTxt(report: StiReport, stream: MemoryStream, settings: StiTxtExportSettings): void;
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import MemoryStream = Stimulsoft.System.IO.MemoryStream;
+    class StiXpsExportService extends StiExportService implements IStiXpsExportService {
+        defaultExtension: string;
+        get exportFormat(): StiExportFormat;
+        groupCategory: string;
+        position: number;
+        exportNameInMenu: string;
+        multipleFiles: boolean;
+        exportTo(report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
+        exportToAsync(onExport: Function, report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
+        getFilter(): string;
+        private hiToDpi;
+        private report;
+        private fileName;
+        private imageCache;
+        private pageImages;
+        private pageFonts;
+        private pageBookmarks;
+        private indexPage;
+        private xmlIndentation;
+        private pdfFont;
+        private precision_digits;
+        private reduceFontSize;
+        private useImageComparer;
+        private imageQuality;
+        private imageResolution;
+        private fontCorrectValue;
+        private exportRtfTextAsImage;
+        private isWordWrapSymbol;
+        private isWordWrapSymbol2;
+        private floatToString;
+        private prepareData;
+        private getTabsSize;
+        private static convertToEscapeSequence;
+        private getLineStyleDash;
+        private checkGraphicsForTextRenderer;
+        private writeContentTypes;
+        private writeMainRels;
+        private writeDocPropsCore;
+        private writeFixedDocSeq;
+        private writeFixedDoc;
+        private writePage;
+        private writeBorderFill;
+        private writeBorderStroke;
+        private writeBorderSide;
+        private writeHyperlinksData;
+        private writeText;
+        private writeImage;
+        private writeWatermark;
+        private writePageRels;
+        private writeResourceImage;
+        private writeRecourceFont;
+        exportXps(report: StiReport, stream: MemoryStream, settings: StiXpsExportSettings): void;
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -61364,6 +61553,7 @@ export namespace Stimulsoft.Viewer {
         showExportToOpenDocumentCalc: boolean;
         showExportToPowerPoint: boolean;
         showExportToImageSvg: boolean;
+        showExportToXps: boolean;
     }
 }
 export namespace Stimulsoft.Viewer {
