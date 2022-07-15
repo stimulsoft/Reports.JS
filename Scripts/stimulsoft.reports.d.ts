@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.3.2
-Build date: 2022.06.23
+Version: 2022.3.3
+Build date: 2022.07.15
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -270,7 +270,7 @@ export namespace Stimulsoft.System {
         static minValue: DateTime;
         static maxValue: DateTime;
         static getNetTypeName(): string;
-        DateTimeOffset: string;
+        dateTimeOffset: string;
         private innerDate;
         get year(): number;
         get month(): number;
@@ -341,6 +341,13 @@ export namespace Stimulsoft.System {
         static isISO8601String(d: string): boolean;
         get timeOfDay(): TimeSpan;
         get date2(): DateTime;
+        constructor(param1: Date | number, month?: number, day?: number, hour?: number, minute?: number, second?: number, millisecond?: number);
+    }
+}
+export namespace Stimulsoft.System {
+    class DateTimeOffset extends DateTime {
+        static getNetTypeName(): string;
+        static fromString(d?: string, logError?: boolean): DateTimeOffset;
         constructor(param1: Date | number, month?: number, day?: number, hour?: number, minute?: number, second?: number, millisecond?: number);
     }
 }
@@ -619,6 +626,7 @@ export namespace Stimulsoft.System {
         getTypeName(): string;
         getNetTypeName(): string;
         compareTo(object: boolean): number;
+        toNumber(float?: boolean): number;
     }
     class StiArray extends StiObject {
         getHashCode(): number;
@@ -16659,6 +16667,7 @@ export namespace Stimulsoft.Report {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import DateTimeOffset = Stimulsoft.System.DateTimeOffset;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import ICloneable = Stimulsoft.System.ICloneable;
     import IStiAppCell = Stimulsoft.Base.IStiAppCell;
@@ -16721,7 +16730,9 @@ export namespace Stimulsoft.Report.Dictionary {
         private setValue;
         getNativeValue(): string;
         static getDateTimeFromValue(value: string): DateTime;
+        static getDateTimeOffsetFromValue(value: string): DateTimeOffset;
         static getValueFromDateTime(value: Stimulsoft.System.DateTime): string;
+        static getValueFromDateTimeOffset(value: Stimulsoft.System.DateTimeOffset): string;
         eval(report: StiReport): any;
         toString(): string;
         constructor(category?: string, name?: string, alias?: string, description?: string, typeT?: Type, value?: any, readOnly?: boolean, initBy?: StiVariableInitBy, requestFromUser?: boolean, dialogInfo?: StiDialogInfo, key?: string, allowUseAsSqlParameter?: boolean, selection?: StiSelectionMode);
@@ -17915,7 +17926,7 @@ export namespace Stimulsoft.Report.Components.Table {
         get tableStyleFX(): StiTableStyleFX;
         set tableStyleFX(value: StiTableStyleFX);
         private applyCustomStyle;
-        private refreshTableStyle;
+        refreshTableStyle(): void;
         applyStyleNone(): void;
         private changeRowCount;
         private changeColumnCount;
@@ -19606,6 +19617,9 @@ export namespace Stimulsoft.Report.Export {
         is2<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): boolean;
         as<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): T;
         getExportFormat(): StiExportFormat;
+        protected _returnType: any;
+        get returnType(): any;
+        set returnType(value: any);
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -19630,6 +19644,8 @@ export namespace Stimulsoft.Report.Export {
         multipleFiles: boolean;
         ditheringType: StiMonochromeDitheringType;
         tiffCompressionScheme: StiTiffCompressionScheme;
+        protected _returnType: any;
+        get returnType(): any;
         constructor(imageType?: StiImageType);
     }
 }
@@ -19823,7 +19839,8 @@ export namespace Stimulsoft.Report {
     import IStiAppDictionary = Stimulsoft.Base.IStiAppDictionary;
     import JsonRelationDirection = Stimulsoft.System.Data.JsonRelationDirection;
     import StiClone = Stimulsoft.Report.Components.StiClone;
-    class StiJsonLoaderHelper {
+    type Buffer = Uint8Array;
+    export class StiJsonLoaderHelper {
         masterComponents: IStiMasterComponent[];
         clones: StiClone[];
         dialogInfo: StiDialogInfo[];
@@ -19832,7 +19849,7 @@ export namespace Stimulsoft.Report {
         refNames: string[];
         clean(): void;
     }
-    class StiReport implements IStiUnitConvert, IStiReport, IStiApp, IStiAppCell, IStiGetFonts {
+    export class StiReport implements IStiUnitConvert, IStiReport, IStiApp, IStiAppCell, IStiGetFonts {
         implements(): any[];
         is<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): this is T;
         is2<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): boolean;
@@ -20142,11 +20159,12 @@ export namespace Stimulsoft.Report {
         printToPdf(pagesRange?: StiPagesRange, element?: HTMLElement): void;
         reportFile: string;
         exportDocumentAsync(onExport: Function, exportFormat: StiExportFormat, exportService?: StiExportService, settings?: StiExportSettings): void;
-        exportDocumentAsync2(exportFormat: StiExportFormat, exportService?: StiExportService, settings?: StiExportSettings): Promise<string | number[]>;
-        exportDocument(exportFormat: StiExportFormat, exportService?: StiExportService, settings?: StiExportSettings, onExport?: Function): string | number[];
+        exportDocumentAsync2(exportFormat: StiExportFormat, exportService?: StiExportService, settings?: StiExportSettings): Promise<string | number[] | Buffer>;
+        exportDocument(exportFormat: StiExportFormat, exportService?: StiExportService, settings?: StiExportSettings, onExport?: Function): string | number[] | Buffer;
         static createNewReport(): StiReport;
         static createNewDashboard(): StiReport;
     }
+    export {};
 }
 export namespace StiOptions {
     import StiParserType = Stimulsoft.Report.StiParserType;
@@ -20415,6 +20433,7 @@ export namespace StiOptions {
         printLayoutOptimization: boolean;
         useComponentStyleName: boolean;
         exportComponentsFromPageMargins: boolean;
+        disableJavascriptInHyperlinks: boolean;
     }
     class ExportExcel {
         AllowExportDateTime: boolean;
@@ -37644,6 +37663,7 @@ export namespace Stimulsoft.Report.Export {
         zoomY: number;
         useEscapeCodes: boolean;
         escapeCodesCollectionName: string;
+        protected _returnType: StringConstructor;
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -37666,6 +37686,7 @@ export namespace Stimulsoft.Report.Export {
         separator: string;
         skipColumnHeaders: boolean;
         useDefaultSystemEncoding: boolean;
+        protected _returnType: StringConstructor;
         constructor(dataType?: StiDataType);
     }
 }
@@ -37699,6 +37720,7 @@ export namespace Stimulsoft.Report.Export {
         chartType: StiHtmlChartType;
         openLinksTarget: string;
         useWatermarkMargins: boolean;
+        protected _returnType: StringConstructor;
         constructor(htmlType?: StiHtmlType);
     }
 }
@@ -37709,6 +37731,7 @@ export namespace Stimulsoft.Report.Export {
 }
 export namespace Stimulsoft.Report.Export {
     class StiSvgExportSettings extends StiImageExportSettings {
+        protected _returnType: StringConstructor;
         constructor();
     }
 }
@@ -64359,6 +64382,7 @@ export namespace Stimulsoft.Designer {
     }
 }
 export namespace Stimulsoft.Designer {
+    import Color = Stimulsoft.System.Drawing.Color;
     import StiBaseStyle = Stimulsoft.Report.Styles.StiBaseStyle;
     import StiReport = Stimulsoft.Report.StiReport;
     import StiStyleConditionsCollection = Stimulsoft.Report.Styles.Conditions.StiStyleConditionsCollection;
@@ -64383,6 +64407,7 @@ export namespace Stimulsoft.Designer {
         private static generateDeafaultStyle;
         private static cloneColors;
         static createStyleCollection(report: StiReport, param: any, callbackResult: any): void;
+        static сreateStylesCollectionFromBaseColor(baseColor: Color, name: string): StiStylesCollection;
         static createStylesFromComponents(report: StiReport, param: any, callbackResult: any): void;
         static openStyle(report: StiReport, param: any, callbackResult: any): void;
     }
