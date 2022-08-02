@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.3.3
-Build date: 2022.07.15
+Version: 2022.3.4
+Build date: 2022.08.02
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -1251,6 +1251,10 @@ export namespace Stimulsoft.System {
         static getNetTypeName(): string;
     }
     class NullableDateTime extends Nullable {
+        static getTypeName(): string;
+        static getNetTypeName(): string;
+    }
+    class NullableDateTimeOffset extends Nullable {
         static getTypeName(): string;
         static getNetTypeName(): string;
     }
@@ -3397,7 +3401,7 @@ export namespace Stimulsoft.System.IO {
 }
 export namespace Stimulsoft.System.IO {
     class Path {
-        static Combine(path1: string, path2: string): string;
+        static combine(path1: string, path2: string): string;
         static getFileNameWithoutExtension(path: string): string;
         static getExtension(path: string): string;
         static getSep(): string;
@@ -12907,8 +12911,6 @@ export namespace Stimulsoft.Report.Components {
         private _page;
         get page(): StiPage;
         set page(value: StiPage);
-        protected getPage(): StiPage;
-        protected setPage(value: StiPage): void;
         private _parent;
         get parent(): StiContainer;
         set parent(value: StiContainer);
@@ -14315,6 +14317,8 @@ export namespace Stimulsoft.Report.Components {
     let IStiEditable: System.Interface<IStiEditable>;
     interface IStiEditable {
         editable: boolean;
+        saveState(): string;
+        restoreState(value: string): any;
     }
 }
 export namespace Stimulsoft.Report.Components {
@@ -14371,6 +14375,8 @@ export namespace Stimulsoft.Report.Components {
         get onlyText(): boolean;
         set onlyText(value: boolean);
         editable: boolean;
+        saveState(): string;
+        restoreState(value: string): void;
         get processAtEnd(): boolean;
         set processAtEnd(value: boolean);
         protected static propertyProcessAt: string;
@@ -15913,6 +15919,7 @@ export namespace Stimulsoft.Report {
     }
 }
 export namespace Stimulsoft.Report {
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
     class StiEditableItem {
         pageIndex: number;
         position: number;
@@ -15921,21 +15928,20 @@ export namespace Stimulsoft.Report {
         constructor(pageIndex: number, position: number, componentName: string, textValue: string);
     }
     class StiEditableItemsContainer {
-        private _items;
-        get items(): any[];
+        loadFromXml(xmlNode: XmlNode): void;
+        saveToXml(): string;
+        items: StiEditableItem[];
     }
 }
 export namespace Stimulsoft.Report {
     import Image = Stimulsoft.System.Drawing.Image;
     class StiFileImageCache {
-        private static imageCache;
-        static createNewCache(): string;
-        static getImageCacheName(cache: string, cacheImageGuid: string): string;
-        static saveImage(image: Image, path: string): void;
-        static loadImage(path: string): Image;
-        static exist(cacheGuid: string): boolean;
-        static clear(): void;
-        static remove(path: string): any;
+        static getImageCacheName(report: StiReport, cacheImageGuid: string): string;
+        static saveImage(report: StiReport, image: Image, path: string): void;
+        static loadImage(report: StiReport, path: string): Image;
+        static exist(report: StiReport, cacheGuid: string): boolean;
+        static clear(report: StiReport): void;
+        static remove(report: StiReport, path: string): void;
     }
 }
 export namespace Stimulsoft.Report {
@@ -17676,7 +17682,6 @@ export namespace Stimulsoft.Report.Components {
         set brush(value: StiBrush);
         getActualSize(): SizeD;
         getRealSize(): SizeD;
-        setPage(value: StiPage): void;
         private _smoothing;
         get smoothing(): boolean;
         set smoothing(value: boolean);
@@ -19145,6 +19150,7 @@ export namespace Stimulsoft.Report.Dictionary {
         static dateDiff(date1: DateTime, date2: DateTime): TimeSpan;
         static year(date: DateTime): number;
         static month(date: DateTime): number;
+        static monthIdent(value: DateTime): any;
         static hour(date: DateTime): number;
         static minute(date: DateTime): number;
         static second(date: DateTime): number;
@@ -19494,6 +19500,8 @@ export namespace Stimulsoft.Report.Components {
         border: StiBorder;
         textBrush: StiBrush;
         editable: boolean;
+        saveState(): string;
+        restoreState(value: string): void;
         clone(cloneProperties: boolean): StiCheckBox;
         private _canBreak;
         get canBreak(): boolean;
@@ -19840,6 +19848,7 @@ export namespace Stimulsoft.Report {
     import JsonRelationDirection = Stimulsoft.System.Data.JsonRelationDirection;
     import StiClone = Stimulsoft.Report.Components.StiClone;
     type Buffer = Uint8Array;
+    let Buffer: any;
     export class StiJsonLoaderHelper {
         masterComponents: IStiMasterComponent[];
         clones: StiClone[];
@@ -19890,6 +19899,10 @@ export namespace Stimulsoft.Report {
         savePackedDocumentFile(path: string): void;
         savePackedDocumentToString(): string;
         savePackedDocumentToByteArray(): number[];
+        saveEditableFieldsFile(path: string): StiReport;
+        saveEditableFields(): string;
+        loadEditableFieldsFile(path: string): StiReport;
+        loadEditableFields(param: string | XmlNode): StiReport;
         getDictionary(): IStiAppDictionary;
         getKey(): string;
         setKey(key: string): void;
@@ -20052,9 +20065,7 @@ export namespace Stimulsoft.Report {
         subReports: StiReportsCollection;
         key: string;
         reportGuid: string;
-        private _imageCachePath;
-        get imageCachePath(): string;
-        set imageCachePath(value: string);
+        imageCache: Hashtable;
         parentReport: StiReport;
         globalizationManager: IStiGlobalizationManager;
         pages: StiPagesCollection;
@@ -20237,6 +20248,9 @@ export namespace StiOptions {
     class Viewer {
         static Map: Map;
     }
+    class ImageCache {
+        enabled: boolean;
+    }
     class Engine {
         static Image: Image;
         static Watermark: Watemark;
@@ -20279,6 +20293,7 @@ export namespace StiOptions {
         static printIfDetailEmptyNesting: boolean;
         static allowForceCanBreakForCrossTabPrintOnAllPages: boolean;
         static Globalization: Globalization;
+        static ImageCache: ImageCache;
         static reportResources: any;
         static filterDataInDataSourceBeforeSorting: boolean;
         static allowConvertingInFormatting: boolean;
@@ -34724,8 +34739,12 @@ export namespace Stimulsoft.Report.Dictionary {
         static toWordsRu(value: number, upperCase?: boolean): string;
         static strToDateTime(value: string): DateTime;
         static strToNullableDateTime(value: string): DateTime;
+        static tryParseDateTime(value: string): boolean;
+        static tryParseLong(value: string): boolean;
+        static tryParseDouble(value: string): boolean;
+        static tryParseDecimal(value: string): boolean;
         static dateToStrRu(value: DateTime, upperCase?: boolean): string;
-        static toCurrencyWordsRu(value: number, uppercase?: boolean, currency?: string, cents?: boolean): string;
+        static toCurrencyWordsRu(value: number, cents?: boolean, currency?: string, uppercase?: boolean): string;
         static toCurrencyWordsThai(value: number): string;
         private static SP_STRtNumToMny;
         private static SP_XCGtNumToMny;
@@ -34753,7 +34772,7 @@ export namespace Stimulsoft.Report.Dictionary {
         private static tC_Complete;
         static toWordsUa(value: number, uppercase?: boolean, gender?: Stimulsoft.Report.Func.Gender): string;
         static dateToStrUa(value: DateTime, upperCase?: boolean): string;
-        static toCurrencyWordsUa(value: number, uppercase?: boolean, currency?: string, cents?: boolean): string;
+        static toCurrencyWordsUa(value: number, cents?: boolean, currency?: string, uppercase?: boolean): string;
         static toWordsPt(value: number, upperCase: boolean): string;
         static toCurrencyWordsPt(value: number, upperCase: boolean, showCents: boolean): string;
         static toCurrencyWordsPtBr(value: number): string;
@@ -34761,7 +34780,7 @@ export namespace Stimulsoft.Report.Dictionary {
         static dateToStrPtBr(value: DateTime): string;
         static toCurrencyWordsFr(numberr: number, currencyISO: string, decimals: number): string;
         static toCurrencyWordsEs(numberr: number, currencyISO: string, decimals: number): string;
-        static toWordsEs(value: number, upperCase: boolean): string;
+        static toWordsEs(value: number, upperCase: boolean, female?: boolean): string;
         static toWordsEs2(value: number, upperCase: boolean, female: boolean): string;
         static toCurrencyWordsNl(numberr: number, currencyISO: string, decimals: number): string;
         static toCurrencyWordsEnGb(numberr: number, currencyISO: string, decimals: number): string;
@@ -34774,10 +34793,11 @@ export namespace Stimulsoft.Report.Dictionary {
         static toWordsZh(value: number): string;
         static toCurrencyWordsZh(value: number): string;
         static toWordsTr(value: number): string;
-        static toCurrencyWordsTr(value: number): string;
-        static toCurrencyWordsTr2(value: number, currencyName: string, showZeroCents: boolean): string;
+        static toCurrencyWordsTr(value: number, currencyName?: string, showZeroCents?: boolean): string;
+        static toCurrencyWordsTr2(value: number, currencyName?: string, showZeroCents?: boolean): string;
         static toWordsAr(value: number): string;
         static toCurrencyWordsAr(value: number, currencyBasicUnit: string, currencyFractionalUnit: string): string;
+        static convertToBase64String(value: string): string;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -37388,7 +37408,7 @@ export namespace Stimulsoft.Report.Export {
         private static writeIndicator;
         private static writeIconSetIndicatorTypePainter;
         private static writeDataBarIndicator;
-        static saveComponentToString(component: StiComponent, imageFormat?: ImageFormat, imageQuality?: number, imageResolution?: number, isDesigner?: boolean): string;
+        static saveComponentToString(component: StiComponent, imageFormat?: ImageFormat, imageQuality?: number, imageResolution?: number, isDesigner?: boolean, ignoreIsImage?: boolean): string;
         static saveToString(report: StiReport, page: StiPage, compressed: boolean, standalone?: boolean, REFclipCounter?: any, imageFormat?: ImageFormat, imageQuality?: number, imageResolution?: number): string;
         static writeCheckBox(writer: XmlTextWriter, svgData: StiSvgData, checkedValue: any): void;
         private static getCheckBoxData;
@@ -40515,7 +40535,6 @@ export namespace Stimulsoft.Report.Export {
         private colorTable;
         private alphaTable;
         pdfFont: PdfFonts;
-        bidi: StiBidirectionalConvert;
         private standardPdfFonts;
         private embeddedFonts;
         useUnicodeMode: boolean;
@@ -61434,6 +61453,7 @@ export namespace Stimulsoft.Viewer {
         static applyReportParameters(report: StiReport, values: any): void;
         static transferParametersValuesToReport(report: StiReport, values: any): void;
         static applyReportBindingVariables(report: StiReport, values: any): void;
+        private static getLabelValue;
         private static setVariableLabel;
         private static setVariableValue;
         static getVariables(report: StiReport, values: any, sortDataItems: boolean): Promise<any>;
