@@ -27,12 +27,12 @@ report.loadFile("report1.mrt");
 // Renreding the report
 report.renderAsync(() => {
 
-}
+});
 
 // Exporting the report to PDF
 report.exportDocumentAsync((pdfData) => {
 
-}
+});
 
 // Saving the report object into a template file (MRT)
 report.saveFile("report2.mrt");
