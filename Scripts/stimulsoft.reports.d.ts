@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.3.4
-Build date: 2022.08.02
+Version: 2022.3.5
+Build date: 2022.08.25
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -11957,196 +11957,198 @@ export namespace Stimulsoft.Report {
         StiTeradataDatabase = 372,
         StiVistaDBDatabase = 373,
         StiODataDatabase = 374,
-        StiDataTableSource = 375,
-        StiDataViewSource = 376,
-        StiUndefinedDataSource = 377,
-        StiCsvSource = 378,
-        StiDBaseSource = 379,
-        StiBusinessObjectSource = 380,
-        StiCrossTabDataSource = 381,
-        StiEnumerableSource = 382,
-        StiUserSource = 383,
-        StiVirtualSource = 384,
-        StiDataTransformation = 385,
-        StiOracleODPSource = 386,
-        StiFirebirdSource = 387,
-        StiInformixSource = 388,
-        StiMongoDbSource = 389,
-        StiAzureTableStorageSource = 390,
-        StiAzureBlobStorageSource = 391,
-        StiMSAccessSource = 392,
-        StiMySqlSource = 393,
-        StiDataWorldSource = 394,
-        StiQuickBooksSource = 395,
-        StiOdbcSource = 396,
-        StiOleDbSource = 397,
-        StiOracleSource = 398,
-        StiPostgreSQLSource = 399,
-        StiSqlCeSource = 400,
-        StiSQLiteSource = 401,
-        StiSqlSource = 402,
-        StiNoSqlSource = 403,
-        StiSybaseSource = 404,
-        StiTeradataSource = 405,
-        StiVistaDBSource = 406,
-        StiDB2Source = 407,
-        StiDiagonalUpLineShapeType = 408,
-        StiHorizontalLineShapeType = 409,
-        StiLeftAndRightLineShapeType = 410,
-        StiOvalShapeType = 411,
-        StiRectangleShapeType = 412,
-        StiTopAndBottomLineShapeType = 413,
-        StiVerticalLineShapeType = 414,
-        StiDivisionShapeType = 415,
-        StiFlowchartCardShapeType = 416,
-        StiFlowchartDecisionShapeType = 417,
-        StiFlowchartManualInputShapeType = 418,
-        StiFlowchartSortShapeType = 419,
-        StiFrameShapeType = 420,
-        StiMinusShapeType = 421,
-        StiMultiplyShapeType = 422,
-        StiParallelogramShapeType = 423,
-        StiPlusShapeType = 424,
-        StiRegularPentagonShapeType = 425,
-        StiTrapezoidShapeType = 426,
-        StiSnipSameSideCornerRectangleShapeType = 427,
-        StiSnipDiagonalSideCornerRectangleShapeType = 428,
-        StiFlowchartPreparationShapeType = 429,
-        StiRadialScale = 430,
-        StiLinearScale = 431,
-        StiLinearBar = 432,
-        StiRadialBar = 433,
-        StiNeedle = 434,
-        StiRadialMarker = 435,
-        StiScaleRangeList = 436,
-        StiRadialRange = 437,
-        StiStateIndicator = 438,
-        StiStateIndicatorFilter = 439,
-        StiRadialRangeList = 440,
-        StiLinearRangeList = 441,
-        StiLinearRange = 442,
-        StiLinearTickMarkMajor = 443,
-        StiLinearTickMarkMinor = 444,
-        StiLinearTickMarkCustomValue = 445,
-        StiLinearTickLabelMajor = 446,
-        StiLinearTickLabelMinor = 447,
-        StiLinearTickLabelCustom = 448,
-        StiLinearTickLabelCustomValue = 449,
-        StiRadialTickMarkMajor = 450,
-        StiRadialTickMarkMinor = 451,
-        StiRadialTickMarkCustom = 452,
-        StiRadialTickMarkCustomValue = 453,
-        StiRadialTickLabelMajor = 454,
-        StiRadialTickLabelMinor = 455,
-        StiRadialTickLabelCustom = 456,
-        StiRadialTickLabelCustomValue = 457,
-        StiLinearMarker = 458,
-        StiLinearTickMarkCustom = 459,
-        StiLinearIndicatorRangeInfo = 460,
-        StiRadialIndicatorRangeInfo = 461,
-        StiBlueDashboardControlStyle = 462,
-        StiBlueDashboardIndicatorStyle = 463,
-        StiBlueDashboardPageStyle = 464,
-        StiBlueDashboardPivotStyle = 465,
-        StiBlueDashboardProgressStyle = 466,
-        StiBlueDashboardTableStyle = 467,
-        StiBlueDashboardCardsStyle = 468,
-        StiOrangeDashboardControlStyle = 469,
-        StiOrangeDashboardIndicatorStyle = 470,
-        StiOrangeDashboardPageStyle = 471,
-        StiOrangeDashboardPivotStyle = 472,
-        StiOrangeDashboardProgressStyle = 473,
-        StiOrangeDashboardTableStyle = 474,
-        StiOrangeDashboardCardsStyle = 475,
-        StiGreenDashboardControlStyle = 476,
-        StiGreenDashboardIndicatorStyle = 477,
-        StiGreenDashboardPageStyle = 478,
-        StiGreenDashboardProgressStyle = 479,
-        StiGreenDashboardPivotStyle = 480,
-        StiGreenDashboardTableStyle = 481,
-        StiGreenDashboardCardsStyle = 482,
-        StiTurquoiseDashboardControlStyle = 483,
-        StiTurquoiseDashboardIndicatorStyle = 484,
-        StiTurquoiseDashboardPageStyle = 485,
-        StiTurquoiseDashboardProgressStyle = 486,
-        StiTurquoiseDashboardPivotStyle = 487,
-        StiTurquoiseDashboardTableStyle = 488,
-        StiTurquoiseDashboardCardsStyle = 489,
-        StiSlateGrayDashboardControlStyle = 490,
-        StiSlateGrayDashboardIndicatorStyle = 491,
-        StiSlateGrayDashboardPageStyle = 492,
-        StiSlateGrayDashboardProgressStyle = 493,
-        StiSlateGrayDashboardPivotStyle = 494,
-        StiSlateGrayDashboardTableStyle = 495,
-        StiSlateGrayDashboardCardsStyle = 496,
-        StiDarkBlueDashboardControlStyle = 497,
-        StiDarkBlueDashboardIndicatorStyle = 498,
-        StiDarkBlueDashboardPageStyle = 499,
-        StiDarkBlueDashboardProgressStyle = 500,
-        StiDarkBlueDashboardPivotStyle = 501,
-        StiDarkBlueDashboardTableStyle = 502,
-        StiDarkBlueDashboardCardsStyle = 503,
-        StiYellowDashboardPageStyle = 504,
-        StiDarkGrayDashboardControlStyle = 505,
-        StiDarkGrayDashboardIndicatorStyle = 506,
-        StiDarkGrayDashboardPageStyle = 507,
-        StiDarkGrayDashboardProgressStyle = 508,
-        StiDarkGrayDashboardPivotStyle = 509,
-        StiDarkGrayDashboardTableStyle = 510,
-        StiDarkGrayDashboardCardsStyle = 511,
-        StiDarkTurquoiseDashboardControlStyle = 512,
-        StiDarkTurquoiseDashboardIndicatorStyle = 513,
-        StiDarkTurquoiseDashboardPageStyle = 514,
-        StiDarkTurquoiseDashboardProgressStyle = 515,
-        StiDarkTurquoiseDashboardPivotStyle = 516,
-        StiDarkTurquoiseDashboardTableStyle = 517,
-        StiDarkTurquoiseDashboardCardsStyle = 518,
-        StiSilverDashboardControlStyle = 519,
-        StiSilverDashboardIndicatorStyle = 520,
-        StiSilverDashboardPageStyle = 521,
-        StiSilverDashboardPivotStyle = 522,
-        StiSilverDashboardProgressStyle = 523,
-        StiSilverDashboardTableStyle = 524,
-        StiSilverDashboardCardsStyle = 525,
-        StiAliceBlueDashboardControlStyle = 526,
-        StiAliceBlueDashboardIndicatorStyle = 527,
-        StiAliceBlueDashboardPageStyle = 528,
-        StiAliceBlueDashboardPivotStyle = 529,
-        StiAliceBlueDashboardProgressStyle = 530,
-        StiAliceBlueDashboardTableStyle = 531,
-        StiAliceBlueDashboardCardsStyle = 532,
-        StiDarkGreenDashboardControlStyle = 533,
-        StiDarkGreenDashboardIndicatorStyle = 534,
-        StiDarkGreenDashboardPageStyle = 535,
-        StiDarkGreenDashboardProgressStyle = 536,
-        StiDarkGreenDashboardPivotStyle = 537,
-        StiDarkGreenDashboardTableStyle = 538,
-        StiDarkGreenDashboardCardsStyle = 539,
-        StiSiennaDashboardControlStyle = 540,
-        StiSiennaDashboardIndicatorStyle = 541,
-        StiSiennaDashboardPageStyle = 542,
-        StiSiennaDashboardPivotStyle = 543,
-        StiSiennaDashboardProgressStyle = 544,
-        StiSiennaDashboardTableStyle = 545,
-        StiSiennaDashboardCardsStyle = 546,
-        StiCustomDashboardControlStyle = 547,
-        StiCustomDashboardPivotStyle = 548,
-        StiCustomDashboardIndicatorStyle = 549,
-        StiCustomDashboardProgressStyle = 550,
-        StiCustomDashboardTableStyle = 551,
-        StiCustomDashboardCardsStyle = 552,
-        StiDataWorldDatabase = 553,
-        StiQuickBooksDatabase = 554,
-        StiCosmosDbDatabase = 555,
-        StiSybaseAdsDatabase = 556,
-        StiBigQueryDatabase = 557,
-        StiGoogleAnalyticsDatabase = 558,
-        StiAzureBlobStorageDatabase = 559,
-        StiFirebaseDatabase = 560,
-        StiGoogleSheetsDatabase = 561,
-        StiGisDatabase = 562,
-        StiCosmosDbSource = 563,
-        StiSybaseAdsSource = 564
+        StiGraphQLDatabase = 375,
+        StiDataTableSource = 376,
+        StiDataViewSource = 377,
+        StiUndefinedDataSource = 378,
+        StiCsvSource = 379,
+        StiDBaseSource = 380,
+        StiBusinessObjectSource = 381,
+        StiCrossTabDataSource = 382,
+        StiEnumerableSource = 383,
+        StiUserSource = 384,
+        StiVirtualSource = 385,
+        StiDataTransformation = 386,
+        StiOracleODPSource = 387,
+        StiFirebirdSource = 388,
+        StiInformixSource = 389,
+        StiMongoDbSource = 390,
+        StiAzureTableStorageSource = 391,
+        StiAzureBlobStorageSource = 392,
+        StiMSAccessSource = 393,
+        StiMySqlSource = 394,
+        StiDataWorldSource = 395,
+        StiQuickBooksSource = 396,
+        StiOdbcSource = 397,
+        StiOleDbSource = 398,
+        StiOracleSource = 399,
+        StiPostgreSQLSource = 400,
+        StiSqlCeSource = 401,
+        StiSQLiteSource = 402,
+        StiSqlSource = 403,
+        StiNoSqlSource = 404,
+        StiSybaseSource = 405,
+        StiTeradataSource = 406,
+        StiVistaDBSource = 407,
+        StiDB2Source = 408,
+        StiGraphQLSource = 409,
+        StiDiagonalUpLineShapeType = 410,
+        StiHorizontalLineShapeType = 411,
+        StiLeftAndRightLineShapeType = 412,
+        StiOvalShapeType = 413,
+        StiRectangleShapeType = 414,
+        StiTopAndBottomLineShapeType = 415,
+        StiVerticalLineShapeType = 416,
+        StiDivisionShapeType = 417,
+        StiFlowchartCardShapeType = 418,
+        StiFlowchartDecisionShapeType = 419,
+        StiFlowchartManualInputShapeType = 420,
+        StiFlowchartSortShapeType = 421,
+        StiFrameShapeType = 422,
+        StiMinusShapeType = 423,
+        StiMultiplyShapeType = 424,
+        StiParallelogramShapeType = 425,
+        StiPlusShapeType = 426,
+        StiRegularPentagonShapeType = 427,
+        StiTrapezoidShapeType = 428,
+        StiSnipSameSideCornerRectangleShapeType = 429,
+        StiSnipDiagonalSideCornerRectangleShapeType = 430,
+        StiFlowchartPreparationShapeType = 431,
+        StiRadialScale = 432,
+        StiLinearScale = 433,
+        StiLinearBar = 434,
+        StiRadialBar = 435,
+        StiNeedle = 436,
+        StiRadialMarker = 437,
+        StiScaleRangeList = 438,
+        StiRadialRange = 439,
+        StiStateIndicator = 440,
+        StiStateIndicatorFilter = 441,
+        StiRadialRangeList = 442,
+        StiLinearRangeList = 443,
+        StiLinearRange = 444,
+        StiLinearTickMarkMajor = 445,
+        StiLinearTickMarkMinor = 446,
+        StiLinearTickMarkCustomValue = 447,
+        StiLinearTickLabelMajor = 448,
+        StiLinearTickLabelMinor = 449,
+        StiLinearTickLabelCustom = 450,
+        StiLinearTickLabelCustomValue = 451,
+        StiRadialTickMarkMajor = 452,
+        StiRadialTickMarkMinor = 453,
+        StiRadialTickMarkCustom = 454,
+        StiRadialTickMarkCustomValue = 455,
+        StiRadialTickLabelMajor = 456,
+        StiRadialTickLabelMinor = 457,
+        StiRadialTickLabelCustom = 458,
+        StiRadialTickLabelCustomValue = 459,
+        StiLinearMarker = 460,
+        StiLinearTickMarkCustom = 461,
+        StiLinearIndicatorRangeInfo = 462,
+        StiRadialIndicatorRangeInfo = 463,
+        StiBlueDashboardControlStyle = 464,
+        StiBlueDashboardIndicatorStyle = 465,
+        StiBlueDashboardPageStyle = 466,
+        StiBlueDashboardPivotStyle = 467,
+        StiBlueDashboardProgressStyle = 468,
+        StiBlueDashboardTableStyle = 469,
+        StiBlueDashboardCardsStyle = 470,
+        StiOrangeDashboardControlStyle = 471,
+        StiOrangeDashboardIndicatorStyle = 472,
+        StiOrangeDashboardPageStyle = 473,
+        StiOrangeDashboardPivotStyle = 474,
+        StiOrangeDashboardProgressStyle = 475,
+        StiOrangeDashboardTableStyle = 476,
+        StiOrangeDashboardCardsStyle = 477,
+        StiGreenDashboardControlStyle = 478,
+        StiGreenDashboardIndicatorStyle = 479,
+        StiGreenDashboardPageStyle = 480,
+        StiGreenDashboardProgressStyle = 481,
+        StiGreenDashboardPivotStyle = 482,
+        StiGreenDashboardTableStyle = 483,
+        StiGreenDashboardCardsStyle = 484,
+        StiTurquoiseDashboardControlStyle = 485,
+        StiTurquoiseDashboardIndicatorStyle = 486,
+        StiTurquoiseDashboardPageStyle = 487,
+        StiTurquoiseDashboardProgressStyle = 488,
+        StiTurquoiseDashboardPivotStyle = 489,
+        StiTurquoiseDashboardTableStyle = 490,
+        StiTurquoiseDashboardCardsStyle = 491,
+        StiSlateGrayDashboardControlStyle = 492,
+        StiSlateGrayDashboardIndicatorStyle = 493,
+        StiSlateGrayDashboardPageStyle = 494,
+        StiSlateGrayDashboardProgressStyle = 495,
+        StiSlateGrayDashboardPivotStyle = 496,
+        StiSlateGrayDashboardTableStyle = 497,
+        StiSlateGrayDashboardCardsStyle = 498,
+        StiDarkBlueDashboardControlStyle = 499,
+        StiDarkBlueDashboardIndicatorStyle = 500,
+        StiDarkBlueDashboardPageStyle = 501,
+        StiDarkBlueDashboardProgressStyle = 502,
+        StiDarkBlueDashboardPivotStyle = 503,
+        StiDarkBlueDashboardTableStyle = 504,
+        StiDarkBlueDashboardCardsStyle = 505,
+        StiYellowDashboardPageStyle = 506,
+        StiDarkGrayDashboardControlStyle = 507,
+        StiDarkGrayDashboardIndicatorStyle = 508,
+        StiDarkGrayDashboardPageStyle = 509,
+        StiDarkGrayDashboardProgressStyle = 510,
+        StiDarkGrayDashboardPivotStyle = 511,
+        StiDarkGrayDashboardTableStyle = 512,
+        StiDarkGrayDashboardCardsStyle = 513,
+        StiDarkTurquoiseDashboardControlStyle = 514,
+        StiDarkTurquoiseDashboardIndicatorStyle = 515,
+        StiDarkTurquoiseDashboardPageStyle = 516,
+        StiDarkTurquoiseDashboardProgressStyle = 517,
+        StiDarkTurquoiseDashboardPivotStyle = 518,
+        StiDarkTurquoiseDashboardTableStyle = 519,
+        StiDarkTurquoiseDashboardCardsStyle = 520,
+        StiSilverDashboardControlStyle = 521,
+        StiSilverDashboardIndicatorStyle = 522,
+        StiSilverDashboardPageStyle = 523,
+        StiSilverDashboardPivotStyle = 524,
+        StiSilverDashboardProgressStyle = 525,
+        StiSilverDashboardTableStyle = 526,
+        StiSilverDashboardCardsStyle = 527,
+        StiAliceBlueDashboardControlStyle = 528,
+        StiAliceBlueDashboardIndicatorStyle = 529,
+        StiAliceBlueDashboardPageStyle = 530,
+        StiAliceBlueDashboardPivotStyle = 531,
+        StiAliceBlueDashboardProgressStyle = 532,
+        StiAliceBlueDashboardTableStyle = 533,
+        StiAliceBlueDashboardCardsStyle = 534,
+        StiDarkGreenDashboardControlStyle = 535,
+        StiDarkGreenDashboardIndicatorStyle = 536,
+        StiDarkGreenDashboardPageStyle = 537,
+        StiDarkGreenDashboardProgressStyle = 538,
+        StiDarkGreenDashboardPivotStyle = 539,
+        StiDarkGreenDashboardTableStyle = 540,
+        StiDarkGreenDashboardCardsStyle = 541,
+        StiSiennaDashboardControlStyle = 542,
+        StiSiennaDashboardIndicatorStyle = 543,
+        StiSiennaDashboardPageStyle = 544,
+        StiSiennaDashboardPivotStyle = 545,
+        StiSiennaDashboardProgressStyle = 546,
+        StiSiennaDashboardTableStyle = 547,
+        StiSiennaDashboardCardsStyle = 548,
+        StiCustomDashboardControlStyle = 549,
+        StiCustomDashboardPivotStyle = 550,
+        StiCustomDashboardIndicatorStyle = 551,
+        StiCustomDashboardProgressStyle = 552,
+        StiCustomDashboardTableStyle = 553,
+        StiCustomDashboardCardsStyle = 554,
+        StiDataWorldDatabase = 555,
+        StiQuickBooksDatabase = 556,
+        StiCosmosDbDatabase = 557,
+        StiSybaseAdsDatabase = 558,
+        StiBigQueryDatabase = 559,
+        StiGoogleAnalyticsDatabase = 560,
+        StiAzureBlobStorageDatabase = 561,
+        StiFirebaseDatabase = 562,
+        StiGoogleSheetsDatabase = 563,
+        StiGisDatabase = 564,
+        StiCosmosDbSource = 565,
+        StiSybaseAdsSource = 566
     }
     enum StiRenderedWith {
         Unknown = 0,
@@ -19654,6 +19656,7 @@ export namespace Stimulsoft.Report.Export {
         tiffCompressionScheme: StiTiffCompressionScheme;
         protected _returnType: any;
         get returnType(): any;
+        set returnType(value: any);
         constructor(imageType?: StiImageType);
     }
 }
@@ -33259,6 +33262,7 @@ export namespace Stimulsoft.Report.Dictionary {
         private equalsColumns;
         createDatabases(loadData: boolean): void;
         createDatabasesAsync(loadData: boolean): StiPromise<void>;
+        merge(dictionary: StiDictionary): void;
         removeUnusedData(): void;
         removeUnusedDataSourcesV2(): void;
         retrievalData(REFusedRelations: any, REFusedDataSources: any, REFusedColumns: any): void;
@@ -33634,6 +33638,14 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    class StiGraphQLAdapterService extends StiNoSqlAdapterService {
+        get name(): string;
+        getDataSourceType(): Stimulsoft.System.Type;
+        getColumnsFromData(data: StiData, dataSource: StiDataSource): StiDataColumnsCollection;
+        connectDataSourceToData(dictionary: StiDictionary, dataSource: StiDataSource, loadData: boolean): void;
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
     import StiDataSchema = Stimulsoft.Base.StiDataSchema;
     import StiPromise = Stimulsoft.System.StiPromise;
     class StiODataAdapterService extends StiSqlAdapterService {
@@ -33881,6 +33893,14 @@ export namespace Stimulsoft.Report.Dictionary {
 }
 export namespace Stimulsoft.Report.Dictionary {
     class StiDataWorldSource extends StiNoSqlSource {
+        getDataAdapterType(): Stimulsoft.System.Type;
+        get componentId(): StiComponentId;
+        createNew(): StiDataSource;
+        constructor(nameInSource?: string, name?: string, alias?: string, sqlCommand?: string, connectOnStart?: boolean, reconnectOnEachRow?: boolean, commandTimeout?: number, key?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
+    class StiGraphQLSource extends StiNoSqlSource {
         getDataAdapterType(): Stimulsoft.System.Type;
         get componentId(): StiComponentId;
         createNew(): StiDataSource;
@@ -34295,6 +34315,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getDataSetPrivate(workbook: Stimulsoft.ExternalLibrary.XLSX.IWorkBook): DataSet;
         private getNumber;
         private getType1;
+        private getTicksForTimeSpan;
         private isTimeSpan;
         private getTimeSpan;
         constructor(name?: string, pathData?: string, key?: string, firstRowIsHeader?: boolean);
@@ -34434,6 +34455,17 @@ export namespace Stimulsoft.Report.Dictionary {
         createConnector(connectionString?: string): StiDataWorldConnector;
         getDataAdapterType(): Stimulsoft.System.Type;
         createDataSource(nameInSource: string, name: string): StiNoSqlSource;
+        constructor(name?: string, alias?: string, connectionString?: string, promptUserNameAndpassword?: boolean, key?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
+    class StiGraphQLDatabase extends StiNoSqlDatabase {
+        createNew(): StiDatabase;
+        get componentId(): StiComponentId;
+        createDataSource(nameInSource: string, name: string): StiNoSqlSource;
+        get serviceName(): string;
+        getSampleConnectionString(): string;
+        get connectionType(): StiConnectionType;
         constructor(name?: string, alias?: string, connectionString?: string, promptUserNameAndpassword?: boolean, key?: string);
     }
 }
@@ -35000,6 +35032,7 @@ export namespace Stimulsoft.Report.Engine {
         newPageTime: number;
         newPageAsync(ignoreKeepContainers?: boolean): Promise<void>;
         newPageAsync2(ignoreKeepContainers?: boolean): Promise<void>;
+        NewPage(ignoreKeepContainers?: boolean): void;
         newPage(ignoreKeepContainers?: boolean): void;
         private newContainerAsync;
         private newContainer;
@@ -37481,6 +37514,7 @@ export namespace Stimulsoft.Report.Export {
         hashBookmarkGuid: Hashtable;
         get hiToPt(): number;
         get pxToPt(): number;
+        get dpi96(): number;
         renderStyles: boolean;
         styles: StiCellStyle[];
         insertInteractionParameters: boolean;
@@ -37527,7 +37561,7 @@ export namespace Stimulsoft.Report.Export {
         private renderEndDoc;
         private renderBookmarkTree;
         private addBookmarkNode;
-        prepareTextForHtml(text: string, processWhiteSpaces?: boolean): string;
+        prepareTextForHtml(text: string, processWhiteSpaces: boolean, isJustify: boolean): string;
         static convertTextWithHtmlTagsToHtmlText(stiText: StiText, text: string, zoom: number): string;
         private static getParagraphString;
         renderWatermarkText(sWriter: StiHtmlTextWriter, page: StiPage, topPos?: number): void;
@@ -38156,6 +38190,7 @@ export namespace Stimulsoft.Report.Export {
         htmlExportSettings: StiHtmlExportSettings;
         htmlExport: StiHtmlExportService;
         matrix: StiMatrix;
+        get dpi96(): number;
         static stringToUrl(input: string): string;
         renderControl(writer: StiHtmlTextWriter, addPageBreaks: boolean, page: StiPage): void;
         private renderImage;
@@ -63357,6 +63392,7 @@ export namespace Stimulsoft.Designer {
         static moveDictionaryItem(report: StiReport, param: any, callbackResult: any): void;
         static moveConnectionDataToResource(report: StiReport, param: any, callbackResult: any): void;
         static openDictionary(report: StiReport, param: any, callbackResult: any): void;
+        static mergeDictionary(report: StiReport, param: any, callbackResult: any): void;
         static embedAllDataToResources(report: StiReport, param: Hashtable, callbackResult: Hashtable): Promise<void>;
         static testODataConnection(report: StiReport, param: any, callbackResult: any): void;
         static duplicateDictionaryElement(report: StiReport, param: any, callbackResult: any): void;
