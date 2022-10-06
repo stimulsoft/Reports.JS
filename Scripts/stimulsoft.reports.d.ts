@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.4.1
-Build date: 2022.09.27
+Version: 2022.4.2
+Build date: 2022.10.06
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -2648,6 +2648,7 @@ export namespace Stimulsoft.System.Drawing {
         is(type: any): this is Color;
         is2(type: any): boolean;
         as(type: any): this;
+        getType(): typeof Color;
         over(other: Color): Color;
     }
     interface Color {
@@ -7805,6 +7806,7 @@ export namespace Stimulsoft.Base.Meters {
         visibility: StiTableColumnVisibility;
         visibilityExpression: string;
         summaryAlignment: StiHorAlignment;
+        headerAlignment: StiHorAlignment;
     }
 }
 export namespace Stimulsoft.Base.Meters {
@@ -14724,7 +14726,9 @@ export namespace Stimulsoft.Report.Components {
         private _valueDataColumn;
         get valueDataColumn(): string;
         set valueDataColumn(value: string);
-        values: number[];
+        _values: number[];
+        get values(): number[];
+        set values(value: number[]);
         get valuesContainer(): string;
         set valuesContainer(value: string);
         type: StiSparklineType;
@@ -20191,6 +20195,9 @@ export namespace Stimulsoft.Report {
         autoLocalizeReportOnRun: boolean;
         scriptLanguage: StiReportLanguageType;
         parametersOrientation: StiOrientation;
+        private _parameterWidth;
+        get parameterWidth(): number;
+        set parameterWidth(value: number);
         requestParameters: boolean;
         cacheTotals: boolean;
         culture: string;
@@ -26029,6 +26036,12 @@ export namespace Stimulsoft.Report.Chart {
     }
 }
 export namespace Stimulsoft.Report.Chart {
+    let IStiClusteredColumnArea3D: System.Interface<IStiClusteredColumnArea3D>;
+    interface IStiClusteredColumnArea3D extends IStiAxisArea3D {
+        sideBySide: boolean;
+    }
+}
+export namespace Stimulsoft.Report.Chart {
     let IStiFullStackedColumnArea3D: System.Interface<IStiFullStackedColumnArea3D>;
     interface IStiFullStackedColumnArea3D extends IStiStackedColumnArea3D {
     }
@@ -26084,6 +26097,8 @@ export namespace Stimulsoft.Report.Chart {
         allowApplyStyle: boolean;
         color: Color;
         font: Font;
+        textBefore: string;
+        textAfter: string;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -28943,6 +28958,10 @@ export namespace Stimulsoft.Report.Dashboard {
         CheckBox = 1,
         RadioButton = 2
     }
+    enum StiInteractionViewsState {
+        Always = 0,
+        OnHover = 1
+    }
 }
 export namespace Stimulsoft.Report.Dashboard {
     let IStiAllowUserColumnSelectionDashboardInteraction: System.Interface<IStiAllowUserColumnSelectionDashboardInteraction>;
@@ -29169,6 +29188,14 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
+    import IStiDashboardInteraction = Stimulsoft.Report.Dashboard.IStiDashboardInteraction;
+    let IStiChartDashboardInteraction: System.Interface<IStiChartDashboardInteraction>;
+    let ImplementsIStiChartDashboardInteraction: System.Interface<IStiDashboardInteraction>[];
+    interface IStiChartDashboardInteraction extends IStiDashboardInteraction {
+        viewsState: StiInteractionViewsState;
+    }
+}
+export namespace Stimulsoft.Report.Dashboard {
     import StiDataTable = Stimulsoft.Data.Engine.StiDataTable;
     let IStiManuallyEnteredData: System.Interface<IStiManuallyEnteredData>;
     let ImplementsIStiManuallyEnteredData: any[];
@@ -29179,6 +29206,7 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
+    import StiColumnShape3D = Stimulsoft.Report.Chart.StiColumnShape3D;
     import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
     import IStiCrossFiltering = Stimulsoft.Data.Engine.IStiCrossFiltering;
     import StiMarkerType = Stimulsoft.Report.Chart.StiMarkerType;
@@ -29297,6 +29325,8 @@ export namespace Stimulsoft.Report.Dashboard {
         getChartSeries(): IStiSeries;
         getManuallyEnteredChartMeter(): IStiMeter;
         isAxisAreaChart: boolean;
+        isAxisAreaChart3D: boolean;
+        isClusteredColumnChart3D: boolean;
         isScatterChart: boolean;
         isStackedChart: boolean;
         isLinesChart: boolean;
@@ -29320,6 +29350,7 @@ export namespace Stimulsoft.Report.Dashboard {
         colorEach: boolean;
         icon: StiFontIcons;
         roundValues: boolean;
+        columnShape: StiColumnShape3D;
         previousAnimations: List<StiAnimation>;
     }
 }
@@ -50607,6 +50638,7 @@ export namespace Stimulsoft.Report.Chart {
     class StiXAxisCoreXF3D extends StiAxisCoreXF3D {
         getAxisRect(context: StiContext, rect: Rectangle, includeAxisArrow: boolean, includeLabelsHeight: boolean, isDrawing: boolean, includeScrollBar: boolean): SizeF;
         private measureStripLines;
+        getLabelText(line: IStiStripLineXF): string;
         render3D(context: StiContext, rect3D: StiRectangle3D, render: StiRender3D): StiCellGeom;
         private renderLabels;
         constructor(axis: IStiAxis3D);
@@ -50759,6 +50791,7 @@ export namespace Stimulsoft.Report.Chart {
         drawElements(context: StiContext, vertices: StiMatrix): void;
         drawBorder(context: StiContext, vertices: StiMatrix): void;
         protected drawFaceBorder(context: StiContext, vertices: StiMatrix, face: number[], color: Color): void;
+        protected getFacePolygonPoints(face: number[], vertices: StiMatrix): List<PointF>;
         getBorderColor(): Color;
         protected getPoint(vertices: StiMatrix, vertIndex: number): PointF;
         protected getPointN(x: number, y: number): PointF;
@@ -50877,23 +50910,29 @@ export namespace Stimulsoft.Report.Chart {
     }
 }
 export namespace Stimulsoft.Report.Chart {
+    import StiInteractionDataGeom = Stimulsoft.Base.Context.StiInteractionDataGeom;
     import Color = Stimulsoft.System.Drawing.Color;
     import StiSeriesInteractionData = Stimulsoft.Base.Context.StiSeriesInteractionData;
     class StiSeriesElementGeom3D extends StiGeom3D implements IStiSeriesElement {
+        private static implementsStiSeriesElementGeom3D;
+        implements(): any[];
         seriesColor: Color;
         value: number;
         index: number;
         series: IStiSeries;
         interaction: StiSeriesInteractionData;
         elementIndex: string;
+        getInteractionData(): StiInteractionDataGeom;
         constructor(render: StiRender3D, value: number, index: number, series: IStiSeries, color: Color);
     }
 }
 export namespace Stimulsoft.Report.Chart {
+    import PointF = Stimulsoft.System.Drawing.Point;
     import Color = Stimulsoft.System.Drawing.Color;
     import IStiBorderColor = Stimulsoft.Report.Components.IStiBorderColor;
     import IStiColor = Stimulsoft.Report.Components.IStiColor;
     import StiContext = Stimulsoft.Base.Context.StiContext;
+    import List = Stimulsoft.System.Collections.List;
     class StiBoxSeriesElementGeom3D extends StiSeriesElementGeom3D implements IStiBorderColor, IStiColor, IStiDrawSidesGeom3D {
         private static implements;
         implements(): any[];
@@ -50924,6 +50963,11 @@ export namespace Stimulsoft.Report.Chart {
         drawBorder(context: StiContext, vertices: StiMatrix): void;
         buildFaces(): void;
         buildColorFaces(): void;
+        protected getFacePolygonPoints(face: number[], vertices: StiMatrix): List<PointF>;
+        private isTopFace;
+        private isBottomFace;
+        private isDrawTopFace;
+        private isDrawBottomFace;
         constructor(columnRect3D: StiRectangle3D, value: number, index: number, series: IStiSeries, color: Color, borderColor: Color, render: StiRender3D);
     }
 }
@@ -51134,7 +51178,7 @@ export namespace Stimulsoft.Report.Chart {
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import ICloneable = Stimulsoft.System.ICloneable;
-    class StiClusteredColumnArea3D extends StiAxisArea3D implements IStiJsonReportObject, ICloneable, IStiArea3D {
+    class StiClusteredColumnArea3D extends StiAxisArea3D implements IStiJsonReportObject, IStiClusteredColumnArea3D, ICloneable, IStiArea3D {
         private static implements;
         implements(): any[];
         meta(): StiMeta[];
@@ -51222,7 +51266,9 @@ export namespace Stimulsoft.Report.Chart {
         format: string;
         font: Font;
         color: Color;
-        constructor();
+        textBefore: string;
+        textAfter: string;
+        constructor(format?: string, textBefore?: string, textAfter?: string, font?: Font, color?: Color, allowApplyStyle?: boolean);
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -51270,7 +51316,7 @@ export namespace Stimulsoft.Report.Chart {
     import ICloneable = Stimulsoft.System.ICloneable;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import Color = Stimulsoft.System.Drawing.Color;
-    class StiClusteredColumnSeries3D extends StiSeries3D implements IStiClusteredColumnSeries3D, IStiJsonReportObject, ICloneable {
+    class StiClusteredColumnSeries3D extends StiSeries3D implements IStiClusteredColumnSeries3D, IStiColumnShape3D, IStiJsonReportObject, ICloneable {
         private static implementsStiClusteredColumnSeries;
         implements(): any[];
         meta(): StiMeta[];
@@ -51294,7 +51340,7 @@ export namespace Stimulsoft.Report.Chart {
     import ICloneable = Stimulsoft.System.ICloneable;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import Color = Stimulsoft.System.Drawing.Color;
-    class StiStackedColumnSeries3D extends StiSeries3D implements IStiStackedColumnSeries3D, IStiClusteredColumnSeries3D, IStiJsonReportObject, ICloneable, IStiSeries {
+    class StiStackedColumnSeries3D extends StiSeries3D implements IStiStackedColumnSeries3D, IStiClusteredColumnSeries3D, IStiColumnShape3D, IStiJsonReportObject, ICloneable, IStiSeries {
         private static implementsStiStackedColumnSeries3D;
         implements(): any[];
         meta(): StiMeta[];
@@ -51314,7 +51360,7 @@ export namespace Stimulsoft.Report.Chart {
     }
 }
 export namespace Stimulsoft.Report.Chart {
-    class StiFullStackedColumnSeries3D extends StiStackedColumnSeries3D implements IStiFullStackedColumnSeries3D, IStiStackedColumnSeries3D, IStiClusteredColumnSeries3D {
+    class StiFullStackedColumnSeries3D extends StiStackedColumnSeries3D implements IStiFullStackedColumnSeries3D, IStiStackedColumnSeries3D, IStiClusteredColumnSeries3D, IStiColumnShape3D {
         private static implements;
         implements(): any[];
         get componentId(): StiComponentId;
@@ -56535,7 +56581,8 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         showTotalSummary: boolean;
         summaryType: StiSummaryColumnType;
         summaryAlignment: StiHorAlignment;
-        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visibility?: StiTableColumnVisibility, visibilityExpression?: string, foreColor?: Color, showTotalSummary?: boolean, summaryType?: StiSummaryColumnType, summaryAlignment?: StiHorAlignment, interaction?: StiTableColumnDashboardInteraction);
+        headerAlignment: StiHorAlignment;
+        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visibility?: StiTableColumnVisibility, visibilityExpression?: string, foreColor?: Color, showTotalSummary?: boolean, summaryType?: StiSummaryColumnType, summaryAlignment?: StiHorAlignment, headerAlignment?: StiHorAlignment, interaction?: StiTableColumnDashboardInteraction);
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Table {
@@ -56552,7 +56599,7 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         implements(): any[];
         ident: StiMeterIdent;
         get localizedName(): string;
-        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visibility?: StiTableColumnVisibility, visibilityExpression?: string, foreColor?: Color, showTotalSummary?: boolean, summaryType?: StiSummaryColumnType, summaryAlignment?: StiHorAlignment, interaction?: StiTableColumnDashboardInteraction);
+        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visibility?: StiTableColumnVisibility, visibilityExpression?: string, foreColor?: Color, showTotalSummary?: boolean, summaryType?: StiSummaryColumnType, summaryAlignment?: StiHorAlignment, headerAlignment?: StiHorAlignment, interaction?: StiTableColumnDashboardInteraction);
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Table {
@@ -57621,6 +57668,7 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
         loadFromJsonObject(j: StiJson): void;
         loadFromXml(xn: XmlNode): void;
         clone(): StiChartArea;
+        sideBySide: boolean;
         colorEach: boolean;
         reverseHor: boolean;
         reverseVert: boolean;
@@ -57982,6 +58030,7 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
     }
 }
 export namespace Stimulsoft.Dashboard.Interactions {
+    import StiInteractionViewsState = Stimulsoft.Report.Dashboard.StiInteractionViewsState;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import StiAvailableInteractionOnDataManipulation = Stimulsoft.Report.Dashboard.StiAvailableInteractionOnDataManipulation;
     import IStiAllowUserSortingDashboardInteraction = Stimulsoft.Report.Dashboard.IStiAllowUserSortingDashboardInteraction;
@@ -58004,6 +58053,7 @@ export namespace Stimulsoft.Dashboard.Interactions {
         allowUserSorting: boolean;
         availableOnClick: StiAvailableInteractionOnClick;
         availableOnDataManipulation: StiAvailableInteractionOnDataManipulation;
+        viewsState: StiInteractionViewsState;
         showFullScreenButton: boolean;
         showSaveButton: boolean;
         showViewDataButton: boolean;
@@ -58012,7 +58062,7 @@ export namespace Stimulsoft.Dashboard.Interactions {
         footerText: string;
         get isDefaultLayout(): boolean;
         isDefault(): boolean;
-        constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>, allowUserDrillDown?: boolean, fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean, showViewDataButton?: boolean);
+        constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>, allowUserDrillDown?: boolean, fileName?: string, headerText?: string, footerText?: string, showFullScreenButton?: boolean, showSaveButton?: boolean, showViewDataButton?: boolean, viewsState?: StiInteractionViewsState);
     }
 }
 export namespace Stimulsoft.Dashboard.Interactions {
@@ -58058,6 +58108,7 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Chart {
+    import StiColumnShape3D = Stimulsoft.Report.Chart.StiColumnShape3D;
     import Sti3dOptions = Stimulsoft.Report.Chart.Sti3dOptions;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
@@ -58310,6 +58361,7 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
         icon: StiFontIcons;
         private shouldSerializeIcon;
         roundValues: boolean;
+        columnShape: StiColumnShape3D;
         dataMode: StiDataMode;
         manuallyEnteredData: string;
         getManuallyEnteredDataTable(): StiDataTable;
@@ -58332,7 +58384,8 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
         get isFullStackedChart(): boolean;
         get isWaterfallChart(): boolean;
         get isRadarChart(): boolean;
-        get isClusteredColumn3D(): boolean;
+        get isAxisAreaChart3D(): boolean;
+        get isClusteredColumnChart3D(): boolean;
         getNestedPages(): List<StiPage>;
         drillDownFiltersList: List<List<StiDataFilterRule>>;
         drillDownFilters: List<StiDataFilterRule>;
@@ -61525,11 +61578,14 @@ export namespace Stimulsoft.Dashboard.Render {
         private renderSeriesParetoColor;
         protected renderArea(element: StiChartElement, chart: IStiChart): Promise<void>;
         private static getColorEach;
+        private renderAxisAxes3d;
         private renderAxisAxes;
         private static renderInterlacingHor;
         private static renderInterlacingVert;
         private static renderGridLinesHor;
         private static renderGridLinesVert;
+        private renderXAxis3D;
+        private renderYAxis3D;
         private renderXAxis;
         private renderYAxis;
         private static renderXRadarAxis;
@@ -61544,13 +61600,16 @@ export namespace Stimulsoft.Dashboard.Render {
         private static renderYAxisTitleText;
         private static renderAxisLineColor;
         private static renderRadarAxis;
+        private static renderAxis3D;
         private static renderAxis;
         private static renderAxisTitle;
+        private static renderAxisLabels3D;
         private static renderAxisLabels;
         private static renderAxisStartFromZero;
         private static renderAxisShowEdgeValues;
         private static renderAxisRange;
         private static renderAxisLabelsTitleColor;
+        private static renderAxisLabelsColor3D;
         private static renderAxisLabelsColor;
         private static getTitleAxisChart;
         private renderLegend;
@@ -62030,7 +62089,10 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
     }
 }
 export namespace Stimulsoft.Dashboard.Export {
+    import StiExportSettings = Stimulsoft.Report.Export.StiExportSettings;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    import StiExportFormat = Stimulsoft.Report.StiExportFormat;
+    import IStiAppCell = Stimulsoft.Base.IStiAppCell;
     import List = Stimulsoft.System.Collections.List;
     import StiContainer = Stimulsoft.Report.Components.StiContainer;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
@@ -62038,6 +62100,8 @@ export namespace Stimulsoft.Dashboard.Export {
     import StiDashboardExportSettings = Stimulsoft.Dashboard.Export.Settings.StiDashboardExportSettings;
     import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
     class StiDashboardExportTools {
+        static exportAsync(onExport: Function, cell: IStiAppCell, settings: (StiExportSettings | StiDashboardExportSettings) | StiExportFormat): void;
+        static export(cell: IStiAppCell, settings: (StiExportSettings | StiDashboardExportSettings) | StiExportFormat): Promise<number[]>;
         private static exportToStream;
         private static renderDashboardAsync;
         private static renderSingleElementAsync;
@@ -62275,6 +62339,7 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
         private static measureBubbleCell;
         private static measureCommonCell;
         private static renderHeader;
+        private static getHeaderAlignment;
         private static renderFooter;
         static renderCell(destination: StiPanel, rect: Rectangle, table: StiTableElement, rowValues: any[], columnKeys: string[], column: StiTableColumn, zoom: number, value: any, min: number, max: number, isInterlaced: boolean, format: StiDashboardExportFormat, exportDataOnly: boolean): Promise<void>;
         private static renderGraphicCell;
@@ -65093,6 +65158,8 @@ export namespace Stimulsoft.Designer {
         private static setDataColumnValue;
         private static getDataColumnValue;
         static isAxisAreaChart(chart: IStiChart): boolean;
+        static isAxisAreaChart3D(chart: IStiChart): boolean;
+        static isClusteredColumnChart3D(chart: IStiChart): boolean;
         static isPieChart(chart: IStiChart): boolean;
         static isDoughnutChart(chart: IStiChart): boolean;
         static isFunnelChart(chart: IStiChart): boolean;
