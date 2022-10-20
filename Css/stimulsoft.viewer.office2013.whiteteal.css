@@ -1,4 +1,9 @@
 /*
 stimulsoft.viewer.office2013.whiteteal.css is no longer needed.
 Please remove the links from your project and delete this file.
+
+Use the next code to set the initial theme:
+var options = new Stimulsoft.Viewer.StiViewerOptions();
+options.appearance.theme = Stimulsoft.Viewer.StiViewerTheme.Office2013WhiteTeal;
+var viewer = new Stimulsoft.Viewer.StiViewer(options);
 */

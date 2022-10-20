@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.4.2
-Build date: 2022.10.06
+Version: 2022.4.3
+Build date: 2022.10.19
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -224,6 +224,7 @@ export namespace Stimulsoft.System.Globalization {
         name: string;
         readonly displayName: string;
         textInfo: TextInfo;
+        regionInfo: RegionInfo;
         private static _cultures;
         private static _currentCulture;
         static get currentCulture(): CultureInfo;
@@ -1524,6 +1525,7 @@ export namespace Stimulsoft.System.Collections {
         where(predicate: (value: T, index: number) => boolean, __this?: any): LinqHelper<T>;
         cast<S>(): LinqHelper<S>;
         toList(): Stimulsoft.System.Collections.List<T>;
+        get list(): Stimulsoft.System.Collections.List<T>;
         toArray(): T[];
         toDictionary<K, V>(keySelector: (item: T) => K, elementSelector: (item: T) => V): Stimulsoft.System.Collections.Dictionary<K, V>;
         toLookup<K>(keySelector: (value: T) => K, __this?: any): Stimulsoft.System.Collections.Hashtable;
@@ -3327,7 +3329,6 @@ export namespace Stimulsoft.System.Globalization {
         threeLetterISORegionName: string;
         threeLetterWindowsRegionName: string;
         twoLetterISORegionName: string;
-        constructor(name: string);
     }
 }
 export namespace Stimulsoft.System.IO {
@@ -19846,6 +19847,7 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report {
+    import IStiDesignerBase = Stimulsoft.Report.Design.IStiDesignerBase;
     import Image = Stimulsoft.System.Drawing.Image;
     import StiRefreshingEvent = Stimulsoft.Report.Events.StiRefreshingEvent;
     import StiMetaTagCollection = Stimulsoft.Report.Dictionary.StiMetaTagCollection;
@@ -19855,6 +19857,7 @@ export namespace Stimulsoft.Report {
     import IStiApp = Stimulsoft.Base.IStiApp;
     import StiExportSettings = Stimulsoft.Report.Export.StiExportSettings;
     import StiExportService = Stimulsoft.Report.Export.StiExportService;
+    import StiExportEventArgs = Stimulsoft.Report.Events.StiExportEventArgs;
     import StiPrintedEvent = Stimulsoft.Report.Events.StiPrintedEvent;
     import StiPrintingEvent = Stimulsoft.Report.Events.StiPrintingEvent;
     import StiExportedEvent = Stimulsoft.Report.Events.StiExportedEvent;
@@ -19891,6 +19894,72 @@ export namespace Stimulsoft.Report {
     import IStiAppDictionary = Stimulsoft.Base.IStiAppDictionary;
     import JsonRelationDirection = Stimulsoft.System.Data.JsonRelationDirection;
     import StiClone = Stimulsoft.Report.Components.StiClone;
+    export type PrepareVariablesObject = {
+        name: string;
+        value: any | string[];
+        type: string;
+    };
+    export type PrepareVariablesArgs = {
+        event: string;
+        sender: string;
+        preventDefault: boolean;
+        report: StiReport;
+        variables: PrepareVariablesObject[];
+        success?: boolean;
+        notice?: string;
+    };
+    export type PrepareVariablesContinuationCallback = (args: PrepareVariablesObject[] | PrepareVariablesArgs) => void;
+    type CommonBeginProcessDataArgs = {
+        event: "BeginProcessData";
+        preventDefault: boolean;
+        headers: {
+            key: string;
+            value: string;
+        }[];
+        withCredentials?: boolean;
+        database: string;
+        connection: string;
+        report: StiReport;
+        sender?: string;
+    };
+    type BeginGetDataArgs = {
+        command: "GetData";
+        pathData: string;
+    };
+    type BeginGetSchemaArgs = {
+        command: "GetSchema";
+        pathSchema: string;
+    };
+    type BeginExecuteQueryArgs = {
+        command: "ExecuteQuery";
+        connectionString: string;
+        queryString?: string;
+        dataSource?: string;
+    };
+    type BeginTestConnectionArgs = {
+        command: "TestConnection";
+        connectionString: string;
+    };
+    export type BeginProcessDataArgs = CommonBeginProcessDataArgs & (BeginGetDataArgs | BeginGetSchemaArgs | BeginExecuteQueryArgs | BeginTestConnectionArgs);
+    type EndGetDataArgs = {
+        event: "EndProcessData";
+        command: "GetData";
+        database: string;
+        connection: string;
+        dataSet: Stimulsoft.System.Data.DataSet;
+        report: StiReport;
+        sender?: string;
+    };
+    type EndSqlProcessDataArgs = {
+        event: "EndProcessData";
+        command: "TestConnection" | "ExecuteQuery";
+        database: string;
+        connection: string;
+        report: StiReport;
+        sender?: string;
+        result: any;
+    };
+    export type EndProcessDataArgs = EndGetDataArgs | EndSqlProcessDataArgs;
     type Buffer = Uint8Array;
     let Buffer: any;
     export class StiJsonLoaderHelper {
@@ -20014,12 +20083,12 @@ export namespace Stimulsoft.Report {
         private prepareVariablesFromURL;
         private static getPrepareVariablesArgs;
         private static setPrepareVariablesArgs;
-        onPrepareVariables: Function;
+        onPrepareVariables: null | ((args: PrepareVariablesArgs, callback: PrepareVariablesContinuationCallback) => void);
         invokePrepareVariablesAsync(): Promise<unknown>;
-        onBeginProcessData: Function;
-        invokeBeginProcessData(args: any, callback: Function): void;
-        onEndProcessData: Function;
-        invokeEndProcessData(args: any): void;
+        onBeginProcessData: (args: BeginProcessDataArgs, callback: (args: any) => void) => void;
+        invokeBeginProcessData(args: any, callback: (args: BeginProcessDataArgs) => void): void;
+        onEndProcessData: (args: EndProcessDataArgs) => void;
+        invokeEndProcessData(args: Partial<EndProcessDataArgs>): void;
         events: Hashtable;
         invokeRefreshPreview(): void;
         invokeRefreshViewer(): void;
@@ -20027,16 +20096,16 @@ export namespace Stimulsoft.Report {
         invokeDoubleClick(sender: any, e: EventArgs): void;
         invokeGotoComp(e: StiGotoCompEventArgs): void;
         invokePaint(sender: any, e: EventArgs): void;
-        onBeginRender: Function;
+        onBeginRender: () => void;
         private static eventBeginRender;
         invokeBeginRender(): void;
         invokeBeginRenderAsync(): Promise<void>;
         private beginRenderEventScript;
         get beginRenderEvent(): StiBeginRenderEvent;
         set beginRenderEvent(value: StiBeginRenderEvent);
-        onRendering: Function;
+        onRendering: () => void;
         invokeRendering(): void;
-        onEndRender: Function;
+        onEndRender: () => void;
         renderingEvent: StiRenderingEvent;
         private static eventEndRender;
         invokeEndRender(): void;
@@ -20044,13 +20113,13 @@ export namespace Stimulsoft.Report {
         get endRenderEvent(): StiEndRenderEvent;
         set endRenderEvent(value: StiEndRenderEvent);
         invokeStatusChanged(): void;
-        onExporting: Function;
+        onExporting: (args: StiExportEventArgs) => void;
         exportingEvent: StiExportingEvent;
         invokeExporting(exportFormat: StiExportFormat): void;
-        onExported: Function;
+        onExported: (args: StiExportEventArgs) => void;
         exportedEvent: StiExportedEvent;
         invokeExported(exportFormat: StiExportFormat): void;
-        onPrinting: Function;
+        onPrinting: (args: StiPrintingEvent) => void;
         printingEvent: StiPrintingEvent;
         invokePrinting(): void;
         protected onPrinted(e: EventArgs): void;
@@ -20059,7 +20128,7 @@ export namespace Stimulsoft.Report {
         protected onRefreshing(e: EventArgs): void;
         refreshingEvent: StiRefreshingEvent;
         invokeRefreshing(): void;
-        onGetSubReport: Function;
+        onGetSubReport: (args: StiGetSubReportEventArgs) => void;
         invokeGetSubReport(args: StiGetSubReportEventArgs): void;
         invokeReportCacheProcessing(): void;
         reportCacheProcessingEvent: StiReportCacheProcessingEvent;
@@ -20122,6 +20191,7 @@ export namespace Stimulsoft.Report {
         private _info;
         get info(): Stimulsoft.Report.Design.StiDesignerInfo;
         set info(value: Stimulsoft.Report.Design.StiDesignerInfo);
+        designer: IStiDesignerBase;
         private pointerValue;
         get pointer(): StiBookmark;
         set pointer(value: StiBookmark);
@@ -26033,6 +26103,7 @@ export namespace Stimulsoft.Report.Chart {
     interface IStiAxisAreaCoreXF3D {
         valuesCount: number;
         getDividerY(): number;
+        switchOff(): any;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -26062,6 +26133,7 @@ export namespace Stimulsoft.Report.Chart {
         lineColor: Color;
         visible: boolean;
         labels: IStiAxisLabels3D;
+        area: IStiAxisArea3D;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -26087,6 +26159,7 @@ export namespace Stimulsoft.Report.Chart {
     }
 }
 export namespace Stimulsoft.Report.Chart {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import ICloneable = Stimulsoft.System.ICloneable;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import Font = Stimulsoft.System.Drawing.Font;
@@ -26099,6 +26172,9 @@ export namespace Stimulsoft.Report.Chart {
         font: Font;
         textBefore: string;
         textAfter: string;
+        format: string;
+        formatService: StiFormatService;
+        calculatedStep: number;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -33129,6 +33205,12 @@ export namespace Stimulsoft.Report.Design {
     }
 }
 export namespace Stimulsoft.Report.Design {
+    let IStiDesignerBase: System.Interface<IStiDesignerBase>;
+    interface IStiDesignerBase {
+        useAliases: boolean;
+    }
+}
+export namespace Stimulsoft.Report.Design {
     import StiJson = Stimulsoft.Base.StiJson;
     class StiCopyStyleExtHub {
         static visualStateDefault: StiJson;
@@ -36961,6 +37043,7 @@ export namespace Stimulsoft.Report.Export.Services.Helpers {
         private static round;
         static correctRectLabel(rotationMode: StiRotationMode, textRect: Rectangle): Rectangle;
         private static convertArcToCubicBezier;
+        static replaceJsonNotSupportedSymbols(tooltip: string): string;
         static writeTooltip(writer: XmlTextWriter, tooltip: string): void;
         static getFillBrush(writer: XmlTextWriter, brush: Color | StiBrush | SolidBrush, rect: Rectangle): string;
         static writeFillBrush(writer: XmlTextWriter, brush: any, rect: Rectangle, dx?: number, dy?: number): string;
@@ -50523,6 +50606,7 @@ export namespace Stimulsoft.Report.Chart {
         contextTranslate: Point;
         render(context: StiContext, rect: Rectangle): StiCellGeom;
         private renderInterlacingVer;
+        switchOff(): void;
         private renderInterlacingHor;
         protected prepareInfo(rect: Rectangle): void;
         calculateMinimumAndMaximumYAxis(axis: IStiAxis3D): void;
@@ -50636,9 +50720,10 @@ export namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import SizeF = Stimulsoft.System.Drawing.Size;
     class StiXAxisCoreXF3D extends StiAxisCoreXF3D {
+        private storedCulture;
         getAxisRect(context: StiContext, rect: Rectangle, includeAxisArrow: boolean, includeLabelsHeight: boolean, isDrawing: boolean, includeScrollBar: boolean): SizeF;
         private measureStripLines;
-        getLabelText(line: IStiStripLineXF): string;
+        getLabelText(objectValue: any, value: number, series: IStiSeries): string;
         render3D(context: StiContext, rect3D: StiRectangle3D, render: StiRender3D): StiCellGeom;
         private renderLabels;
         constructor(axis: IStiAxis3D);
@@ -50649,8 +50734,10 @@ export namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import SizeF = Stimulsoft.System.Drawing.Size;
     class StiYAxisCoreXF3D extends StiAxisCoreXF3D {
+        private storedCulture;
         getAxisRect(context: StiContext, rect: Rectangle, includeAxisArrow: boolean, includeLabelsHeight: boolean, isDrawing: boolean, includeScrollBar: boolean): SizeF;
         private measureStripLines;
+        setTotalNumberCapacity(): void;
         getLabelText(line: IStiStripLineXF): string;
         render3D(context: StiContext, rect3D: StiRectangle3D, render: StiRender3D): StiCellGeom;
         private renderLabels;
@@ -51138,13 +51225,23 @@ export namespace Stimulsoft.Report.Chart {
     }
 }
 export namespace Stimulsoft.Report.Chart {
-    class StiAxisArea3D extends StiArea implements IStiAxisArea3D {
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
+    import ICloneable = Stimulsoft.System.ICloneable;
+    import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
+    class StiAxisArea3D extends StiArea implements IStiJsonReportObject, IStiAxisArea3D, IStiArea, ICloneable {
         private static implementsStiAxisArea;
         implements(): any[];
+        meta(): StiMeta[];
         clone(): any;
-        xAxis: IStiXAxis3D;
-        yAxis: IStiYAxis3D;
-        zAxis: IStiAxis3D;
+        private _xAxis;
+        get xAxis(): IStiXAxis3D;
+        set xAxis(value: IStiXAxis3D);
+        private _yAxis;
+        get yAxis(): IStiYAxis3D;
+        set yAxis(value: IStiYAxis3D);
+        private _zAxis;
+        get zAxis(): IStiAxis3D;
+        set zAxis(value: IStiAxis3D);
         private _rotationX;
         get rotationX(): number;
         set rotationX(value: number);
@@ -51240,9 +51337,11 @@ export namespace Stimulsoft.Report.Chart {
         labels: IStiAxisLabels3D;
         lineColor: Color;
         visible: boolean;
+        area: IStiAxisArea3D;
     }
 }
 export namespace Stimulsoft.Report.Chart {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import ICloneable = Stimulsoft.System.ICloneable;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
@@ -51268,6 +51367,8 @@ export namespace Stimulsoft.Report.Chart {
         color: Color;
         textBefore: string;
         textAfter: string;
+        calculatedStep: number;
+        formatService: StiFormatService;
         constructor(format?: string, textBefore?: string, textAfter?: string, font?: Font, color?: Color, allowApplyStyle?: boolean);
     }
 }
@@ -51673,6 +51774,7 @@ export namespace Stimulsoft.Report.Components.Gauge.Primitives {
         scaleHelper: StiScaleHelper;
         get isUp(): boolean;
         gauge: StiGauge;
+        seriesKey: {};
         private _left;
         get left(): number;
         set left(value: number);
@@ -62740,13 +62842,6 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
 }
 export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     import StiReport = Stimulsoft.Report.StiReport;
-    class StiDashboardVariablesHelpers {
-        private static isParametersExist;
-        static fillParametersAsync(report: StiReport): Promise<void>;
-    }
-}
-export namespace Stimulsoft.Viewer.Helpers.Dashboards {
-    import StiReport = Stimulsoft.Report.StiReport;
     import IStiDatePickerElement = Stimulsoft.Report.Dashboard.IStiDatePickerElement;
     class StiDatePickerElementViewHelper {
         private static storedCulture;
@@ -62785,7 +62880,84 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
 }
 export namespace Stimulsoft.Viewer {
     import StiReport = Stimulsoft.Report.StiReport;
-    class StiJsViewer {
+    import StiHtmlExportSettings = Stimulsoft.Report.Export.StiHtmlExportSettings;
+    import StiExportFormat = Stimulsoft.Report.StiExportFormat;
+    import StiExportSettings = Stimulsoft.Report.Export.StiExportSettings;
+    type PrintReportEventArgs = {
+        sender: "Viewer";
+        event: "PrintReport";
+        preventDefault: boolean;
+        fileName: string;
+        printAction: string;
+        report: StiReport;
+    };
+    type BeginExportReportArgs = {
+        sender: "Viewer";
+        event: "BeginExportReport";
+        action: StiExportAction;
+        preventDefault: boolean;
+        async: boolean;
+        settings: StiExportSettings;
+        format: StiExportFormat;
+        formatName: string;
+        fileName: string;
+        openAfterExport: boolean;
+        report: StiReport;
+    };
+    type EndExportReportArgs = {
+        sender: "Viewer";
+        event: "EndExportReport";
+        preventDefault: false;
+        format: StiExportFormat;
+        formatName: string;
+        fileName: string;
+        openAfterExport: boolean;
+        data: string | number[];
+        report: StiReport;
+        settings: StiHtmlExportSettings;
+    };
+    type InteractionArgs = {
+        sender: "Viewer";
+        event: "Interaction";
+        async: boolean;
+        action: string;
+        variables: any;
+        sortingParameters: any;
+        collapsingParameters: any;
+        drillDownParameters: any;
+        report: StiReport;
+    };
+    type EmailReportArgs = {
+        sender: "Viewer";
+        event: "EmailReport";
+        settings: StiEmailSettings;
+        format: StiExportFormat;
+        formatName: string;
+        fileName: string;
+        data: string | number[];
+        report: StiReport;
+    };
+    type DesignReportArgs = {
+        sender: "Viewer";
+        event: "DesignReport";
+        fileName: string;
+        report: StiReport;
+    };
+    type ShowReportArgs = {
+        sender: "Viewer";
+        event: "ShowReport";
+        report: StiReport;
+    };
+    type LoadDocumentArgs = {
+        sender: "Viewer";
+        event: "LoadReport";
+        report: StiReport;
+        async: boolean;
+    };
+    type GetReportArgs = {
+        report: null | StiReport;
+    };
+    export class StiJsViewer {
         options: any;
         defaultParameters: any;
         controls: any;
@@ -62823,23 +62995,23 @@ export namespace Stimulsoft.Viewer {
         static getImageSource(options: any, collections: any, name: string): string;
         constructor(parameters: any, collections: any);
     }
-    class StiBase64 {
+    export class StiBase64 {
     }
-    class StiViewer {
+    export class StiViewer {
         drillDownReportCache: any;
         private _renderAfterCreate;
-        onPrepareVariables: Function;
-        onBeginProcessData: Function;
-        onEndProcessData: Function;
-        onPrintReport: Function;
-        onBeginExportReport: Function;
-        onEndExportReport: Function;
-        onInteraction: Function;
-        onEmailReport: Function;
-        onDesignReport: Function;
-        onShowReport: Function;
-        onLoadDocument: Function;
-        onGetReport: Function;
+        onPrepareVariables: (args: Report.PrepareVariablesArgs, callback: Report.PrepareVariablesContinuationCallback) => void;
+        onBeginProcessData: (args: Report.BeginProcessDataArgs, callback: (args: Report.BeginProcessDataArgs) => void) => void;
+        onEndProcessData: (args: Report.EndProcessDataArgs) => void;
+        onPrintReport: (args: PrintReportEventArgs) => void;
+        onBeginExportReport: (args: BeginExportReportArgs, callback: (args: BeginExportReportArgs) => void) => void;
+        onEndExportReport: (args: EndExportReportArgs) => void;
+        onInteraction: (args: InteractionArgs, callback: (args: InteractionArgs) => (void | Promise<void>)) => void;
+        onEmailReport: (args: EmailReportArgs) => void;
+        onDesignReport: (args: DesignReportArgs) => void;
+        onShowReport: (args: ShowReportArgs) => void;
+        onLoadDocument: (args: LoadDocumentArgs, callback: () => (void | Promise<void>)) => void;
+        onGetReport: (args: GetReportArgs) => void;
         onGetSubReport: Function;
         private reportCache;
         viewerId: string;
@@ -62879,6 +63051,7 @@ export namespace Stimulsoft.Viewer {
         setTheme(theme: StiViewerTheme): void;
         constructor(options?: StiViewerOptions, viewerId?: string, renderAfterCreate?: boolean);
     }
+    export {};
 }
 export namespace Stimulsoft.Viewer {
     class StiViewerOptions {
@@ -64649,12 +64822,12 @@ export namespace Stimulsoft.Designer {
     import StiReport = Stimulsoft.Report.StiReport;
     import StiReportUnitType = Stimulsoft.Report.StiReportUnitType;
     import StiViewer = Stimulsoft.Viewer.StiViewer;
-    class StiMobileDesigner {
-        static setImageSource(htmlImage: any, options: any, name: string, transform: boolean): any;
+    export class StiMobileDesigner {
+        static setImageSource(htmlImage: any, options: any, name: string, transform: boolean): void;
         static checkImageSource(options: any, name: string): boolean;
         static getImageSource(options: any, name: string): string;
     }
-    class StiJsDesigner {
+    export class StiJsDesigner {
         options: any;
         defaultParameters: any;
         loc: any;
@@ -64699,22 +64872,52 @@ export namespace Stimulsoft.Designer {
         OnSetTheme?: () => any;
         constructor(parameters: any);
     }
-    class StiDesigner {
+    type ExitEventArgs = {
+        sender: "Designer";
+        event: "Exit";
+    };
+    type PreviewReportArgs = {
+        sender: "Designer";
+        event: "PreviewReport";
+        fileName: string;
+        report: StiReport;
+        async: boolean;
+    };
+    type OpenReportArgs = {
+        sender: "Designer";
+        event: "OpenReport";
+        preventDefault: boolean;
+    };
+    type SaveReportArgs = {
+        sender: "Designer";
+        event: "SaveReport" | "SaveAsReport";
+        preventDefault: boolean;
+        fileName: string;
+        report: StiReport;
+    };
+    type CreateReportArgs = {
+        sender: "Designer";
+        event: "CreateReport";
+        report: StiReport;
+        async: boolean;
+        isWizardUsed: boolean;
+    };
+    export class StiDesigner {
         private _renderAfterCreate;
         private viewState;
         undoLevel: number;
         private callbackResult;
         private viewerOptions;
         viewer: StiViewer;
-        onPrepareVariables: Function;
-        onBeginProcessData: Function;
-        onEndProcessData: Function;
-        onCreateReport: Function;
-        onOpenReport: Function;
-        onSaveReport: Function;
-        onSaveAsReport: Function;
-        onPreviewReport: Function;
-        onExit: Function;
+        onPrepareVariables: (args: Report.PrepareVariablesArgs, callback: Report.PrepareVariablesContinuationCallback) => void;
+        onBeginProcessData: (args: Report.BeginProcessDataArgs, callback: (args: Report.BeginProcessDataArgs) => void) => void;
+        onEndProcessData: (args: Report.EndProcessDataArgs) => void;
+        onCreateReport: (args: CreateReportArgs, callback: (args: CreateReportArgs) => unknown) => void;
+        onOpenReport: (args: OpenReportArgs) => void;
+        onSaveReport: (args: SaveReportArgs) => void;
+        onSaveAsReport: (args: SaveReportArgs) => void;
+        onPreviewReport: (args: PreviewReportArgs, callback: (args: PreviewReportArgs) => (void | Promise<void>)) => void;
+        onExit: (args: ExitEventArgs) => void;
         onGetSubReport: Function;
         designerId: string;
         options: StiDesignerOptions;
@@ -64774,6 +64977,7 @@ export namespace Stimulsoft.Designer {
         setTheme(theme: StiDesignerTheme): void;
         constructor(options?: StiDesignerOptions, designerId?: string, renderAfterCreate?: boolean);
     }
+    export {};
 }
 export namespace Stimulsoft.Designer {
     import StiViewerOptions = Stimulsoft.Viewer.StiViewerOptions;
@@ -64795,15 +64999,6 @@ export namespace Stimulsoft.Designer {
         private netCoreMode;
         private serverMode;
         private cloudMode;
-        private permissionResources;
-        private permissionDataConnections;
-        private permissionVariables;
-        private permissionDataColumns;
-        private permissionSqlParameters;
-        private permissionDataRelations;
-        private permissionDataSources;
-        private permissionDataTransformations;
-        private permissionBusinessObjects;
         private allowAutoUpdateCookies;
         private allowAutoUpdateCache;
         private haveSaveAsEvent;
@@ -65121,6 +65316,7 @@ export namespace Stimulsoft.Designer {
         static setTrendLinesValue(trendLines: IStiTrendLinesCollection, trendLinesValues: any[]): void;
         static getChartSampleSvg(svgData: StiSvgData, zoom: number): string;
         private static addDefaultSeries;
+        private static setAreaToSimpleMode;
         static cloneChart(chart: IStiChart): IStiChart;
         static cloneChart2(element: IStiChartElement): IStiChart;
         private static getChartStyles;
@@ -65677,6 +65873,7 @@ export namespace Stimulsoft.Designer {
         showGauge: boolean;
         showSparkline: boolean;
         showMathFormula: boolean;
+        showMap: boolean;
     }
 }
 export namespace Stimulsoft.Designer {
@@ -65893,6 +66090,7 @@ export namespace Stimulsoft.Designer {
         private getComponents;
         private getComponent;
         private getReportInfo;
+        static applyParamsToReport(report: StiReport, designer: StiDesigner): void;
         constructor(report: StiReport);
     }
 }
@@ -66227,6 +66425,12 @@ export namespace Stimulsoft.Designer {
         buildAsync(): StiPromise<void>;
         private buildBusinessObject;
         private buildDataSourceAsync;
+    }
+}
+export namespace Stimulsoft.Designer {
+    import IStiDesignerBase = Stimulsoft.Report.Design.IStiDesignerBase;
+    class StiWebDesignerBase implements IStiDesignerBase {
+        useAliases: boolean;
     }
 }
 export namespace Stimulsoft.Designer {

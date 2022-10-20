@@ -1,4 +1,9 @@
 /*
 stimulsoft.designer.office2013.darkgrayorange.css is no longer needed.
 Please remove the links from your project and delete this file.
+
+Use the next code to set the initial theme:
+var options = new Stimulsoft.Designer.StiDesignerOptions();
+options.appearance.theme = Stimulsoft.Designer.StiDesignerTheme.Office2013DarkGrayOrange;
+var designer = new Stimulsoft.Designer.StiDesigner(options);
 */
