@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.4.3
-Build date: 2022.10.19
+Version: 2022.4.4
+Build date: 2022.11.01
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -13185,6 +13185,7 @@ export namespace Stimulsoft.Report.Components {
         set printOnAllPages(value: boolean);
         printIfDetailEmpty: boolean;
         get isDataSourceEmpty(): boolean;
+        private _dataSource;
         get dataSource(): StiDataSource;
         private _dataSourceName;
         get dataSourceName(): string;
@@ -13280,6 +13281,7 @@ export namespace Stimulsoft.Report.Components {
         line: number;
         selectedLine: number;
         resetDataSource: boolean;
+        multipleInitialization: boolean;
         calcInvisible: boolean;
         private _countData;
         get countData(): number;
@@ -15728,6 +15730,7 @@ export namespace Stimulsoft.Report.Dictionary {
         private resSortColumns;
         private isEqualSort;
         setData(dataBand: StiDataBand, relationName: string, filterMethod: any, sortColumns: string[], reinit: boolean, component: StiComponent): void;
+        private filtersEqual;
         getConditions(dataBand: StiDataBand): any[][][];
         setDetails(relationName: string): void;
         setFilter(filterMethod: any): void;
@@ -16195,7 +16198,6 @@ export namespace Stimulsoft.Report.Dictionary {
     import CollectionBase = Stimulsoft.System.Collections.CollectionBase;
     import ICloneable = Stimulsoft.System.ICloneable;
     import IComparer = Stimulsoft.System.Collections.IComparer;
-    import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import StiJson = Stimulsoft.Base.StiJson;
     import StiPromise = Stimulsoft.System.StiPromise;
@@ -16208,8 +16210,9 @@ export namespace Stimulsoft.Report.Dictionary {
         private dictionary;
         private directionFactor;
         compare(x: any, y: any): number;
-        private _cachedDataSources;
-        get cachedDataSources(): Hashtable;
+        cachedDataSources: {
+            [name: string]: StiDataSource;
+        };
         fetchAllDataTransformations(): List<StiDataTransformation>;
         fetchAllVirtualDataSources(): List<StiVirtualSource>;
         add(dataSource: StiDataSource): void;
@@ -18357,8 +18360,9 @@ export namespace Stimulsoft.Report.Engine {
         Position = 31,
         Line = 32,
         Rows = 33,
-        Enabled = 34,
-        Skip = 35
+        Text = 34,
+        Enabled = 35,
+        Skip = 36
     }
     enum StiFunctionType {
         NameSpace = 0,
@@ -19274,6 +19278,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
     class StiFilterParserData {
         component: StiComponent;
         expression: string;
+        equals(obj: any): boolean;
         constructor(component: StiComponent, expression: string);
     }
     class StiToken {
@@ -30883,102 +30888,103 @@ export namespace Stimulsoft.Report.Maps {
         EU = 10,
         Europe = 11,
         EuropeWithRussia = 12,
-        France = 13,
-        France_FR = 14,
-        Germany = 15,
-        Germany_DE = 16,
-        Italy = 17,
-        Italy_IT = 18,
-        Netherlands = 19,
-        Russia = 20,
-        Russia_RU = 21,
-        UK = 22,
-        UKCountries = 23,
-        USAAndCanada = 24,
-        NorthAmerica = 25,
-        SouthAmerica = 26,
-        USA = 27,
-        Albania = 28,
-        Andorra = 29,
-        Argentina = 30,
-        ArgentinaFD = 31,
-        Afghanistan = 32,
-        Armenia = 33,
-        Azerbaijan = 34,
-        Belarus = 35,
-        Belgium = 36,
-        Bolivia = 37,
-        BosniaAndHerzegovina = 38,
-        Bulgaria = 39,
-        Chile = 40,
-        Colombia = 41,
-        Croatia = 42,
-        Cyprus = 43,
-        CzechRepublic = 44,
-        Denmark = 45,
-        Ecuador = 46,
-        Estonia = 47,
-        FalklandIslands = 48,
-        Finland = 49,
-        Georgia = 50,
-        Greece = 51,
-        Guyana = 52,
-        Hungary = 53,
-        Iceland = 54,
-        India = 55,
-        Indonesia = 56,
-        Ireland = 57,
-        Israel = 58,
-        Japan = 59,
-        Kazakhstan = 60,
-        Latvia = 61,
-        Liechtenstein = 62,
-        Lithuania = 63,
-        Luxembourg = 64,
-        Macedonia = 65,
-        Malaysia = 66,
-        Malta = 67,
-        Mexico = 68,
-        Moldova = 69,
-        Monaco = 70,
-        Montenegro = 71,
-        NewZealand = 72,
-        Norway = 73,
-        Oceania = 74,
-        Paraguay = 75,
-        Peru = 76,
-        Philippines = 77,
-        Poland = 78,
-        Portugal = 79,
-        Romania = 80,
-        SanMarino = 81,
-        SaudiArabia = 82,
-        Serbia = 83,
-        Slovakia = 84,
-        Slovenia = 85,
-        SouthAfrica = 86,
-        SouthKorea = 87,
-        Spain = 88,
-        Suriname = 89,
-        Sweden = 90,
-        Switzerland = 91,
-        Thailand = 92,
-        Turkey = 93,
-        Ukraine = 94,
-        Uruguay = 95,
-        Vatican = 96,
-        Venezuela = 97,
-        Vietnam = 98,
-        MiddleEast = 99,
-        Oman = 100,
-        Qatar = 101,
-        Benelux = 102,
-        Scandinavia = 103,
-        FranceDepartments = 104,
-        France18Regions = 105,
-        CentralAfricanRepublic = 106,
-        Asia = 107,
-        SoutheastAsia = 108
+        EUWithUnitedKingdom = 13,
+        France = 14,
+        France_FR = 15,
+        Germany = 16,
+        Germany_DE = 17,
+        Italy = 18,
+        Italy_IT = 19,
+        Netherlands = 20,
+        Russia = 21,
+        Russia_RU = 22,
+        UK = 23,
+        UKCountries = 24,
+        USAAndCanada = 25,
+        NorthAmerica = 26,
+        SouthAmerica = 27,
+        USA = 28,
+        Albania = 29,
+        Andorra = 30,
+        Argentina = 31,
+        ArgentinaFD = 32,
+        Afghanistan = 33,
+        Armenia = 34,
+        Azerbaijan = 35,
+        Belarus = 36,
+        Belgium = 37,
+        Bolivia = 38,
+        BosniaAndHerzegovina = 39,
+        Bulgaria = 40,
+        Chile = 41,
+        Colombia = 42,
+        Croatia = 43,
+        Cyprus = 44,
+        CzechRepublic = 45,
+        Denmark = 46,
+        Ecuador = 47,
+        Estonia = 48,
+        FalklandIslands = 49,
+        Finland = 50,
+        Georgia = 51,
+        Greece = 52,
+        Guyana = 53,
+        Hungary = 54,
+        Iceland = 55,
+        India = 56,
+        Indonesia = 57,
+        Ireland = 58,
+        Israel = 59,
+        Japan = 60,
+        Kazakhstan = 61,
+        Latvia = 62,
+        Liechtenstein = 63,
+        Lithuania = 64,
+        Luxembourg = 65,
+        Macedonia = 66,
+        Malaysia = 67,
+        Malta = 68,
+        Mexico = 69,
+        Moldova = 70,
+        Monaco = 71,
+        Montenegro = 72,
+        NewZealand = 73,
+        Norway = 74,
+        Oceania = 75,
+        Paraguay = 76,
+        Peru = 77,
+        Philippines = 78,
+        Poland = 79,
+        Portugal = 80,
+        Romania = 81,
+        SanMarino = 82,
+        SaudiArabia = 83,
+        Serbia = 84,
+        Slovakia = 85,
+        Slovenia = 86,
+        SouthAfrica = 87,
+        SouthKorea = 88,
+        Spain = 89,
+        Suriname = 90,
+        Sweden = 91,
+        Switzerland = 92,
+        Thailand = 93,
+        Turkey = 94,
+        Ukraine = 95,
+        Uruguay = 96,
+        Vatican = 97,
+        Venezuela = 98,
+        Vietnam = 99,
+        MiddleEast = 100,
+        Oman = 101,
+        Qatar = 102,
+        Benelux = 103,
+        Scandinavia = 104,
+        FranceDepartments = 105,
+        France18Regions = 106,
+        CentralAfricanRepublic = 107,
+        Asia = 108,
+        SoutheastAsia = 109
     }
     enum StiMapStyleIdent {
         Style21 = 0,
@@ -55320,6 +55326,11 @@ export namespace Stimulsoft.Report.Maps {
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEU {
         static EU: string;
+    }
+}
+export namespace Stimulsoft.Report.Maps {
+    class StiMapResourcesEUWithUnitedKingdom {
+        static EUWithUnitedKingdom: string;
     }
 }
 export namespace Stimulsoft.Report.Maps {
