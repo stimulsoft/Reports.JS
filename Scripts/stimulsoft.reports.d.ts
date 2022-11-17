@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2022.4.4
-Build date: 2022.11.01
+Version: 2022.4.5
+Build date: 2022.11.17
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -5529,7 +5529,7 @@ export namespace Stimulsoft.Base {
 export namespace Stimulsoft.Base {
     class StiDataColumnSchema extends StiObjectSchema {
         type: Stimulsoft.System.Type;
-        constructor(name?: string, type?: Stimulsoft.System.Type);
+        constructor(name: string, type: Stimulsoft.System.Type);
     }
 }
 export namespace Stimulsoft.Base {
@@ -15240,6 +15240,7 @@ export namespace Stimulsoft.Report.Engine {
         static getParentBand(parent: StiContainer): StiBand;
         static renderSubReportAsync(containerOfSubReport: StiContainer, subReport: StiSubReport): Promise<void>;
         static renderSubReport(containerOfSubReport: StiContainer, subReport: StiSubReport): void;
+        private static correctComponentRecursive;
         static specialSubReportHeight: number;
         private static renderInternalSubReportAsync;
         private static renderInternalSubReport;
@@ -27844,10 +27845,12 @@ export namespace Stimulsoft.Report.Components.Table {
 export namespace Stimulsoft.Report.Components.Table {
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
+    import StiJson = Stimulsoft.Base.StiJson;
     class StiTableCell extends StiText implements IStiTableCell, IStiTableComponent, IStiJsonReportObject {
         private static ImplementsStiTableCell;
         implements(): any[];
         meta(): StiMeta[];
+        loadFromJsonObject(jObject: StiJson): void;
         private loadJoinCellsFromXml;
         get componentId(): StiComponentId;
         clone(cloneProperties: boolean): StiTableCell;
@@ -37201,9 +37204,14 @@ export namespace Stimulsoft.Report.Export {
     }
 }
 export namespace Stimulsoft.Report.Gauge.GaugeGeoms {
+    import IAsIs = Stimulsoft.System.IAsIs;
     import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
-    class StiGaugeGeom {
+    class StiGaugeGeom implements IAsIs {
         get type(): StiGaugeGeomType;
+        implements(): any[];
+        is<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): this is T;
+        is2<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): boolean;
+        as<T>(type: (new (...args: any[]) => T) | Stimulsoft.System.Interface<T>): T;
         animation: StiAnimation;
     }
 }
@@ -40901,6 +40909,15 @@ export namespace Stimulsoft.Report.Export {
     }
 }
 export namespace Stimulsoft.Report.Export {
+    import Point = Stimulsoft.System.Drawing.Point;
+    class StiGaugeDrawingHelper {
+        private static PiDiv180;
+        private static FourDivThree;
+        static convertArcToCubicBezier(centerPoint: Point, radius: number, startAngle: number, sweepAngle: number): Point[];
+        static convertArcToCubicBezier2(centerPoint: Point, radius1: number, radius2: number, startAngle: number, sweepAngle: number): Point[];
+    }
+}
+export namespace Stimulsoft.Report.Export {
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import Color = Stimulsoft.System.Drawing.Color;
     import MemoryStream = Stimulsoft.System.IO.MemoryStream;
@@ -41317,6 +41334,7 @@ export namespace Stimulsoft.Report.Export {
         restoreState(): void;
         translateTransform(x: number, y: number): void;
         rotateTransform(angle: number): void;
+        rotateTransform2(angle: number, x: number, y: number): void;
         setClip(rect: Rectangle): void;
         drawArc2(rect: RectangleD, p1: PointD, p2: PointD, pen: Pen): void;
         drawText(basePoint: PointD, text: string, charsOffset: number[], font: Font, textColor: Color, angle: number, textAlign: EmfTextAlignmentMode): void;
@@ -41336,6 +41354,15 @@ export namespace Stimulsoft.Report.Export {
         private static rectToRectangle;
         private static brushToStiBrush;
         private static checkPenGeom;
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    class StiPdfRenderGauge {
+        static renderGauge(pp: StiPdfData, assemble: boolean, pageNumber: number): void;
+        private static checkPenGeom;
+        private static getPenGeom2;
+        private static getPenGeom;
+        private static round;
     }
 }
 export namespace Stimulsoft.Report.Export {
