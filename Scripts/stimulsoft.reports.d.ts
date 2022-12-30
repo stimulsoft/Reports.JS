@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.1.2
-Build date: 2022.12.15
+Version: 2023.1.3
+Build date: 2022.12.29
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -96,8 +96,9 @@ export namespace Stimulsoft.System {
         private static base64StringToBytes;
         static fromBase64String(input: string): number[];
         static fromBase64StringText(input: string): string;
-        static fromUTF16LE(input: string | number[] | Uint8Array): number[];
+        static fromUTF16LE<T extends string | number[] | Uint8Array>(input: T): T;
         static isUTF16LE(input: string | number[] | Uint8Array): boolean;
+        static stripBom<T extends string | number[]>(data: T): T;
     }
 }
 declare let __require__: any;
@@ -332,6 +333,7 @@ export namespace Stimulsoft.System {
         toOADate(): number;
         toOADate2(round: boolean): number;
         toNetJsonString(): string;
+        getHashCode(): number;
         static tryParseExact(d: string, format: string[]): {
             result: DateTime;
             successfully: boolean;
@@ -1608,7 +1610,8 @@ export namespace Stimulsoft.System.Collections {
         selectMany2<C, V>(collectionSelector: (value: T) => List<C>, resultSelector: (value1: T, value2: C) => V, __this?: any): List<V>;
         
         orderByDescending<K>(keySelector: (value: T) => K, comparer?: IComparer<K>): List<T>;
-        groupBy<K>(keySelector: (value: T) => K, comparer?: IEqualityComparer<K>, __this?: any): List<Grouping<K, T>>;
+        groupBy<K>(keySelector: (value: T) => K, __this?: any): List<Grouping<K, T>>;
+        groupBy2<K>(keySelector: (value: T) => K, comparer?: IEqualityComparer<K>, __this?: any): List<Grouping<K, T>>;
         cast<S>(): List<S>;
         toDictionary<K, V>(keySelector: (item: T) => K, elementSelector: (item: T) => V): Dictionary<K, V>;
         toLookup<K>(keySelector: (value: T) => K, __this?: any): Hashtable;
@@ -2492,148 +2495,149 @@ export namespace Stimulsoft.System.Drawing {
 }
 export namespace Stimulsoft.System.Drawing {
     class Color {
-        static get aliceBlue(): Color;
-        static get antiqueWhite(): Color;
-        static get aqua(): Color;
-        static get aquamarine(): Color;
-        static get azure(): Color;
-        static get beige(): Color;
-        static get bisque(): Color;
-        static get black(): Color;
-        static get blanchedAlmond(): Color;
-        static get blue(): Color;
-        static get blueViolet(): Color;
-        static get brown(): Color;
-        static get burlyWood(): Color;
-        static get cadetBlue(): Color;
-        static get chartreuse(): Color;
-        static get chocolate(): Color;
-        static get coral(): Color;
-        static get cornflowerBlue(): Color;
-        static get cornsilk(): Color;
-        static get crimson(): Color;
-        static get cyan(): Color;
-        static get darkBlue(): Color;
-        static get darkCyan(): Color;
-        static get darkGoldenrod(): Color;
-        static get darkGray(): Color;
-        static get darkGreen(): Color;
-        static get darkKhaki(): Color;
-        static get darkMagenta(): Color;
-        static get darkOliveGreen(): Color;
-        static get darkOrange(): Color;
-        static get darkOrchid(): Color;
-        static get darkRed(): Color;
-        static get darkSalmon(): Color;
-        static get darkSeaGreen(): Color;
-        static get darkSlateBlue(): Color;
-        static get darkSlateGray(): Color;
-        static get darkTurquoise(): Color;
-        static get darkViolet(): Color;
-        static get deepPink(): Color;
-        static get deepSkyBlue(): Color;
-        static get dimGray(): Color;
-        static get dodgerBlue(): Color;
-        static get firebrick(): Color;
-        static get floralWhite(): Color;
-        static get forestGreen(): Color;
-        static get fuchsia(): Color;
-        static get gainsboro(): Color;
-        static get ghostWhite(): Color;
-        static get gold(): Color;
-        static get goldenrod(): Color;
-        static get gray(): Color;
-        static get green(): Color;
-        static get greenYellow(): Color;
-        static get honeydew(): Color;
-        static get hotPink(): Color;
-        static get indianRed(): Color;
-        static get indigo(): Color;
-        static get ivory(): Color;
-        static get khaki(): Color;
-        static get lavender(): Color;
-        static get lavenderBlush(): Color;
-        static get lawnGreen(): Color;
-        static get lemonChiffon(): Color;
-        static get lightBlue(): Color;
-        static get lightCoral(): Color;
-        static get lightCyan(): Color;
-        static get lightGoldenrodYellow(): Color;
-        static get lightGray(): Color;
-        static get lightGreen(): Color;
-        static get lightPink(): Color;
-        static get lightSalmon(): Color;
-        static get lightSeaGreen(): Color;
-        static get lightSkyBlue(): Color;
-        static get lightSlateGray(): Color;
-        static get lightSteelBlue(): Color;
-        static get lightYellow(): Color;
-        static get lime(): Color;
-        static get limeGreen(): Color;
-        static get linen(): Color;
-        static get magenta(): Color;
-        static get maroon(): Color;
-        static get mediumAquamarine(): Color;
-        static get mediumBlue(): Color;
-        static get mediumOrchid(): Color;
-        static get mediumPurple(): Color;
-        static get mediumSeaGreen(): Color;
-        static get mediumSlateBlue(): Color;
-        static get mediumSpringGreen(): Color;
-        static get mediumTurquoise(): Color;
-        static get mediumVioletRed(): Color;
-        static get midnightBlue(): Color;
-        static get mintCream(): Color;
-        static get mistyRose(): Color;
-        static get moccasin(): Color;
-        static get navajoWhite(): Color;
-        static get navy(): Color;
-        static get oldLace(): Color;
-        static get olive(): Color;
-        static get oliveDrab(): Color;
-        static get orange(): Color;
-        static get orangeRed(): Color;
-        static get orchid(): Color;
-        static get paleGoldenrod(): Color;
-        static get paleGreen(): Color;
-        static get paleTurquoise(): Color;
-        static get paleVioletRed(): Color;
-        static get papayaWhip(): Color;
-        static get peachPuff(): Color;
-        static get peru(): Color;
-        static get pink(): Color;
-        static get plum(): Color;
-        static get powderBlue(): Color;
-        static get purple(): Color;
-        static get red(): Color;
-        static get rosyBrown(): Color;
-        static get royalBlue(): Color;
-        static get saddleBrown(): Color;
-        static get salmon(): Color;
-        static get sandyBrown(): Color;
-        static get seaGreen(): Color;
-        static get seaShell(): Color;
-        static get sienna(): Color;
-        static get silver(): Color;
-        static get skyBlue(): Color;
-        static get slateBlue(): Color;
-        static get slateGray(): Color;
-        static get snow(): Color;
-        static get springGreen(): Color;
-        static get steelBlue(): Color;
-        static get tan(): Color;
-        static get teal(): Color;
-        static get thistle(): Color;
-        static get tomato(): Color;
-        static get turquoise(): Color;
-        static get violet(): Color;
-        static get wheat(): Color;
-        static get white(): Color;
-        static get whiteSmoke(): Color;
-        static get yellow(): Color;
-        static get yellowGreen(): Color;
-        static get transparent(): Color;
-        static get empty(): Color;
+        private static colorCache;
+        static aliceBlue: Color;
+        static antiqueWhite: Color;
+        static aqua: Color;
+        static aquamarine: Color;
+        static azure: Color;
+        static beige: Color;
+        static bisque: Color;
+        static black: Color;
+        static blanchedAlmond: Color;
+        static blue: Color;
+        static blueViolet: Color;
+        static brown: Color;
+        static burlyWood: Color;
+        static cadetBlue: Color;
+        static chartreuse: Color;
+        static chocolate: Color;
+        static coral: Color;
+        static cornflowerBlue: Color;
+        static cornsilk: Color;
+        static crimson: Color;
+        static cyan: Color;
+        static darkBlue: Color;
+        static darkCyan: Color;
+        static darkGoldenrod: Color;
+        static darkGray: Color;
+        static darkGreen: Color;
+        static darkKhaki: Color;
+        static darkMagenta: Color;
+        static darkOliveGreen: Color;
+        static darkOrange: Color;
+        static darkOrchid: Color;
+        static darkRed: Color;
+        static darkSalmon: Color;
+        static darkSeaGreen: Color;
+        static darkSlateBlue: Color;
+        static darkSlateGray: Color;
+        static darkTurquoise: Color;
+        static darkViolet: Color;
+        static deepPink: Color;
+        static deepSkyBlue: Color;
+        static dimGray: Color;
+        static dodgerBlue: Color;
+        static firebrick: Color;
+        static floralWhite: Color;
+        static forestGreen: Color;
+        static fuchsia: Color;
+        static gainsboro: Color;
+        static ghostWhite: Color;
+        static gold: Color;
+        static goldenrod: Color;
+        static gray: Color;
+        static green: Color;
+        static greenYellow: Color;
+        static honeydew: Color;
+        static hotPink: Color;
+        static indianRed: Color;
+        static indigo: Color;
+        static ivory: Color;
+        static khaki: Color;
+        static lavender: Color;
+        static lavenderBlush: Color;
+        static lawnGreen: Color;
+        static lemonChiffon: Color;
+        static lightBlue: Color;
+        static lightCoral: Color;
+        static lightCyan: Color;
+        static lightGoldenrodYellow: Color;
+        static lightGray: Color;
+        static lightGreen: Color;
+        static lightPink: Color;
+        static lightSalmon: Color;
+        static lightSeaGreen: Color;
+        static lightSkyBlue: Color;
+        static lightSlateGray: Color;
+        static lightSteelBlue: Color;
+        static lightYellow: Color;
+        static lime: Color;
+        static limeGreen: Color;
+        static linen: Color;
+        static magenta: Color;
+        static maroon: Color;
+        static mediumAquamarine: Color;
+        static mediumBlue: Color;
+        static mediumOrchid: Color;
+        static mediumPurple: Color;
+        static mediumSeaGreen: Color;
+        static mediumSlateBlue: Color;
+        static mediumSpringGreen: Color;
+        static mediumTurquoise: Color;
+        static mediumVioletRed: Color;
+        static midnightBlue: Color;
+        static mintCream: Color;
+        static mistyRose: Color;
+        static moccasin: Color;
+        static navajoWhite: Color;
+        static navy: Color;
+        static oldLace: Color;
+        static olive: Color;
+        static oliveDrab: Color;
+        static orange: Color;
+        static orangeRed: Color;
+        static orchid: Color;
+        static paleGoldenrod: Color;
+        static paleGreen: Color;
+        static paleTurquoise: Color;
+        static paleVioletRed: Color;
+        static papayaWhip: Color;
+        static peachPuff: Color;
+        static peru: Color;
+        static pink: Color;
+        static plum: Color;
+        static powderBlue: Color;
+        static purple: Color;
+        static red: Color;
+        static rosyBrown: Color;
+        static royalBlue: Color;
+        static saddleBrown: Color;
+        static salmon: Color;
+        static sandyBrown: Color;
+        static seaGreen: Color;
+        static seaShell: Color;
+        static sienna: Color;
+        static silver: Color;
+        static skyBlue: Color;
+        static slateBlue: Color;
+        static slateGray: Color;
+        static snow: Color;
+        static springGreen: Color;
+        static steelBlue: Color;
+        static tan: Color;
+        static teal: Color;
+        static thistle: Color;
+        static tomato: Color;
+        static turquoise: Color;
+        static violet: Color;
+        static wheat: Color;
+        static white: Color;
+        static whiteSmoke: Color;
+        static yellow: Color;
+        static yellowGreen: Color;
+        static transparent: Color;
+        static empty: Color;
         static fromName(name: string): Color;
         readonly a: number;
         readonly r: number;
@@ -2645,7 +2649,9 @@ export namespace Stimulsoft.System.Drawing {
         get isNamedColor(): boolean;
         equals(color: Color): boolean;
         toString(): string;
-        static fromArgb(alpha: number, red?: any, green?: number, blue?: number): Color;
+        static fromArgb(alpha: number, red: number, green: number, blue: number): Color;
+        static fromArgb2(red: number, green: number, blue: number): Color;
+        static fromArgb3(alpha: number, color: Color): Color;
         changeAlpha(alpha: number): Color;
         toArgb(): number;
         getHashCode(): number;
@@ -7406,11 +7412,10 @@ export namespace Stimulsoft.Base {
         private static encryptedId;
         static allowPacking: boolean;
         static pack(bytes: number[]): number[];
-        static unpack(bytes: number[]): number[];
-        static packAndEncrypt(bytes: number[], encryptedId: string): number[];
-        static unpackAndDecrypt(bytes: number[], encryptedId: string): number[];
-        static packAndEncryptToString(bytes: number[]): string;
-        static unpackAndDecrypt2(str: string): number[];
+        static unpack<B extends boolean>(bytes: number[], returnString: B): B extends true ? string : number[];
+        static unpack2(bytes: number[]): string;
+        static unpackAndDecrypt<B extends boolean>(str: string, returnString: B): B extends true ? string : number[];
+        static packAndEncryptToString(data: number[] | string): string;
         static packToString(bytes: number[]): string;
         static unpackFromString(str: string): number[];
         static packToBytes(str: string, allowPacking?: boolean): number[];
@@ -7468,7 +7473,7 @@ export namespace Stimulsoft.Base.StiJsonReportObjectHelper {
     import StiSimpleBorder = Stimulsoft.Base.Drawing.StiSimpleBorder;
     class Serialize {
         static fontArial8(font: Font): string;
-        static fonSegoeUI12Bold(font: Font): string;
+        static fonSegoeUI20(font: Font): string;
         static font(font: Font, defaultFamily?: string, defaultEmSize?: number, defaultStyle?: FontStyle, defaultUnit?: GraphicsUnit): string;
         static rectangleD(rect: Rectangle): string;
         static sizeD(size: Size | Size): string;
@@ -8152,6 +8157,12 @@ export namespace Stimulsoft.Base.SignatureFonts {
         Style3 = 2
     }
 }
+export namespace Stimulsoft.Base {
+    import StiSignatureStyle = Stimulsoft.Base.SignatureFonts.StiSignatureStyle;
+    class StiSignatureFontsHelper {
+        static getFontName(style: StiSignatureStyle): string;
+    }
+}
 export namespace Stimulsoft.ExternalLibrary.JSZip {
     interface JSZip {
         file(path: string): JSZipObject;
@@ -8243,7 +8254,7 @@ export namespace Stimulsoft.Base {
         private static readString;
         private static readBytes;
         static pack(data2: string | number[] | Uint8Array, name?: string): string | number[];
-        static unpack(data: string | number[] | Uint8Array): string | number[];
+        static unpack<B extends boolean>(data: string | number[] | Uint8Array, returnString: B): B extends true ? string : number[];
     }
 }
 export namespace Stimulsoft.Base.Zip {
@@ -16680,8 +16691,8 @@ export namespace Stimulsoft.Report.Dictionary {
         alias: string;
         availableInTheViewer: boolean;
         private _content;
-        get content(): number[];
-        set content(value: number[]);
+        get content(): number[] | string;
+        set content(value: number[] | string);
         private _packAndEncryptContent;
         get packAndEncryptContent(): string;
         set packAndEncryptContent(value: string);
@@ -16694,6 +16705,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getContentType(): string;
         getFileExt(): string;
         createFileDatabase(): StiFileDatabase;
+        static isTextResourceType(type: StiResourceType): boolean;
         constructor(name?: string, alias?: string, inherited?: boolean, type?: StiResourceType, content?: number[], availableInTheViewer?: boolean);
     }
 }
@@ -19470,6 +19482,7 @@ export namespace Stimulsoft.Report.Engine {
 export namespace Stimulsoft.Report.Engine.StiParser {
     import StiParserParameters = Stimulsoft.Report.Engine.StiParserParameters;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
+    import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import StiText = Stimulsoft.Report.Components.StiText;
     import StiVariable = Stimulsoft.Report.Dictionary.StiVariable;
     class StiParserData {
@@ -19519,7 +19532,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         private call_arrayElement;
         protected get_systemVariable(name: any): any;
         static parseTextValue2(inputExpression: string, component: StiComponent, sender?: any, parameters?: StiParserParameters): any;
-        static parseTextValue(inputExpression: string, component: StiComponent, sender?: any, REFstoreToPrint?: any, executeIfStoreToPrint?: boolean, returnAsmList?: boolean, parser?: StiParser): any;
+        static parseTextValue(inputExpression: string, component: StiComponent, sender?: any, REFstoreToPrint?: any, executeIfStoreToPrint?: boolean, returnAsmList?: boolean, parser?: StiParser, constants?: Hashtable): any;
         private parseToAsm;
         private static checkForStoreToPrint;
         static checkExpression(inputExpression: string, component: StiComponent, useAliases?: boolean): StiParserException;
@@ -26539,7 +26552,6 @@ export namespace Stimulsoft.Report.Components {
     import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import StiJson = Stimulsoft.Base.StiJson;
-    import StiExpression = Stimulsoft.Report.Expressions.StiExpression;
     class StiDrillDownParameter implements IStiJsonReportObject {
         implements(): any[];
         protected _hash: StiMeta[];
@@ -26549,7 +26561,7 @@ export namespace Stimulsoft.Report.Components {
         loadFromXml(xmlNode: XmlNode): void;
         isDefault(): boolean;
         name: string;
-        expression: StiExpression;
+        expression: string;
         interaction: StiInteraction;
     }
 }
@@ -27939,7 +27951,6 @@ export namespace Stimulsoft.Report.Components {
         meta(): StiMeta[];
         clone(cloneProperties: boolean): any;
         helpUrl: string;
-        isExportAsImage(format: StiExportFormat): boolean;
         brush: StiBrush;
         private shouldSerializeBrush;
         border: StiBorder;
@@ -27951,6 +27962,7 @@ export namespace Stimulsoft.Report.Components {
     }
 }
 export namespace Stimulsoft.Report.Components {
+    import Image = Stimulsoft.System.Drawing.Image;
     import IStiSignatureDraw = Stimulsoft.Report.Components.IStiSignatureDraw;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import StiSignatureMode = Stimulsoft.Report.Components.StiSignatureMode;
@@ -27974,6 +27986,22 @@ export namespace Stimulsoft.Report.Components {
         private shouldSerializeText;
         type: IStiSignatureType;
         private shouldSerializeType;
+        bitmapImageForExport: Image;
+        bitmapDrawForExport: Image;
+        createNew(): StiComponent;
+        constructor(rect?: Rectangle);
+    }
+}
+export namespace Stimulsoft.Report.Components {
+    import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
+    class StiPdfDigitalSignature extends StiSignature implements IStiJsonReportObject {
+        meta(): StiMeta[];
+        get componentId(): StiComponentId;
+        get toolboxPosition(): number;
+        get localizedName(): string;
+        placeholder: string;
         createNew(): StiComponent;
         constructor(rect?: Rectangle);
     }
@@ -35060,6 +35088,7 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import Type = Stimulsoft.System.Type;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import DataTable = Stimulsoft.System.Data.DataTable;
     class StiCustomDatabase extends StiSqlDatabase {
@@ -35080,6 +35109,7 @@ export namespace Stimulsoft.Report.Dictionary {
         protected applyDatabaseInformationSource(information: StiDatabaseInformation, report: StiReport, informationAll: StiDatabaseInformation, dataTable: DataTable, type?: StiSqlSourceType): void;
         private _sampleConnectionString;
         getSampleConnectionString(): string;
+        getDatasourceType(): Type;
         constructor(name?: string, alias?: string, connectionString?: string);
     }
 }
@@ -37732,7 +37762,7 @@ export namespace Stimulsoft.Report.Export {
     import StiResourceType = Stimulsoft.Report.Dictionary.StiResourceType;
     class StiReportResourceHelper {
         static isFontResourceType(resourceType: StiResourceType): boolean;
-        static getBase64DataFromFontResourceContent(resourceType: StiResourceType, content: number[]): string;
+        static getBase64DataFromFontResourceContent(resourceType: StiResourceType, content: number[] | string): string;
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -38407,6 +38437,7 @@ export namespace Stimulsoft.Report.Export {
         static writeWatermark(writer: XmlTextWriter, xmlIndentation: number, page: StiPage, behind: boolean, pageWidth: number, pageHeight: number, imageResolution: number, zoom?: number): void;
         private static writeBorder1;
         private static writeBorder2;
+        private static writeElectronicSignature;
         private static writeText2;
         private static writeText;
         static getStyleString(font: Font, textColor: Color): string;
@@ -41676,7 +41707,7 @@ export namespace Stimulsoft.Report.Export {
         storeImageDataForGeom(image: StiImage): void;
         private writeImageInfo;
         writeImageInfo2(pp: StiPdfData, imageResolutionX: number, imageResolutionY: number): void;
-        renderImage(pp: StiPdfData, imageResolution: number): void;
+        renderImage(pp: StiPdfData, imageResolution: number, forceResolutionModeAuto?: boolean): void;
         private renderWatermark;
         storeShadingData1(brush: StiBrush, pageNumber: number): void;
         storeShadingData2(x: number, y: number, width: number, height: number, brush: StiBrush, compAngle?: number): number;
@@ -43694,6 +43725,7 @@ export namespace Stimulsoft.Report.Chart {
         isAutoRangeXAxis(axis: IStiAxis): boolean;
         isAutoRangeYAxis(axis: IStiAxis): boolean;
         calculateMinimumAndMaximumXAxis(axis: IStiAxis): void;
+        calculateMinimumAndMaximumYAxisLog(axis: IStiAxis): void;
         calculateMinimumAndMaximumYAxis(axis: IStiAxis): void;
         getArgumentLabel(line: StiStripLineXF, series: IStiSeries): string;
         switchOff(): void;
@@ -61367,6 +61399,10 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         private static getConditionValue;
         static processBackColor(defaultColor: Color, keyColumn: string, tableElement: StiTableElement, rowValues: any[], columnKeys: string[]): Promise<Color>;
         static processForeColor(defaultColor: Color, keyColumn: string, tableElement: StiTableElement, rowValues: any[], columnKeys: string[]): Promise<Color>;
+        static processForeAndBackColor(defaultForeColor: Color, defaultBackColor: Color, keyColumn: string, tableElement: StiTableElement, rowValues: any[], columnKeys: string[]): Promise<{
+            foreColor: Color;
+            backColor: Color;
+        }>;
         static processFontStyle(fontText: Font, keyColumn: string, tableElement: StiTableElement, rowValues: any[], columnKeys: string[]): Promise<FontStyle>;
         private static processFontStrikeout;
         private static processFontUnderline;
@@ -62376,6 +62412,7 @@ export namespace Stimulsoft.Dashboard.Render {
         protected renderElements(element: StiChartElement, chart: IStiChart, dataTable: StiDataTable): Promise<void>;
         protected renderSeries(element: StiChartElement, value: StiMeter, groupKey: string, chart: IStiChart): IStiSeries;
         protected renderSeriesInteraction(series: IStiSeries, element: StiChartElement, count: number, seriesKey: string): Promise<void>;
+        private getHyperlink2;
         protected getWeightIndex(table: StiDataTable, index: number): number;
         protected getWeightMeterIndexes(table: StiDataTable): List<number>;
         protected getWeightMeters(table: StiDataTable): List<StiWeightChartMeter>;
@@ -63327,6 +63364,7 @@ export namespace Stimulsoft.Viewer {
         }, totalFixedHeight: {
             ref: number;
         }, component?: StiComponent): void;
+        static applySignatures(report: StiReport, signatures: any[]): void;
         static applySorting(report: StiReport, parameters: any): void;
         static applyCollapsing(report: StiReport, parameters: any): void;
         static applyDrillDown(report: StiReport, renderedReport: StiReport, parameters: any, drillDownParameters: any): Promise<StiReport>;
@@ -63726,6 +63764,22 @@ export namespace Stimulsoft.Viewer {
     }
 }
 export namespace Stimulsoft.Viewer {
+    import Font = Stimulsoft.System.Drawing.Font;
+    import Color = Stimulsoft.System.Drawing.Color;
+    import StiReport = Stimulsoft.Report.StiReport;
+    class StiElectronicSignatureHelper {
+        static getSignatureData(report: StiReport, requestParams: StiRequestParams): any;
+        private static getSignatureComponents;
+        static getStylesForSignature(): any[];
+        static checkSignedReport(report: StiReport): boolean;
+        private static colorToString;
+        static stringToColor(colorStr: string): Color;
+        static jsonToFont(fontJson: any): Font;
+        private static imageToBase64;
+        static base64ToByteArray(base64String: string): number[];
+    }
+}
+export namespace Stimulsoft.Viewer {
     import StiPromise = Stimulsoft.System.StiPromise;
     import StiReport = Stimulsoft.Report.StiReport;
     import StiExportFormat = Stimulsoft.Report.StiExportFormat;
@@ -63740,6 +63794,11 @@ export namespace Stimulsoft.Viewer {
         private static getImageDashboardExportSettings;
         private static getHtmlDashboardExportSettings;
         static exportDashboardAsync(requestParams: any, report: StiReport, exportSettings: IStiDashboardExportSettings): StiPromise<number[]>;
+    }
+}
+export namespace Stimulsoft.Viewer {
+    class StiFontsHelper {
+        static getFontNames(): any[];
     }
 }
 export namespace Stimulsoft.Viewer {
@@ -63978,6 +64037,7 @@ export namespace Stimulsoft.Viewer {
         showSaveButton: boolean;
         showSendEmailButton: boolean;
         showFindButton: boolean;
+        showSignatureButton: boolean;
         showBookmarksButton: boolean;
         showParametersButton: boolean;
         showResourcesButton: boolean;
@@ -66485,6 +66545,8 @@ export namespace Stimulsoft.Designer {
         showSparkline: boolean;
         showMathFormula: boolean;
         showMap: boolean;
+        showElectronicSignature: boolean;
+        showPdfDigitalSignature: boolean;
     }
 }
 export namespace Stimulsoft.Designer {
