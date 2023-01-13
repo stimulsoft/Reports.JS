@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.1.3
-Build date: 2022.12.29
+Version: 2023.1.4
+Build date: 2023.01.12
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -7258,6 +7258,7 @@ export namespace Stimulsoft.Base.Drawing {
         get isEmpty(): boolean;
         isStartTag(tag: StiHtmlTag): boolean;
         isEndTag(tag: StiHtmlTag): boolean;
+        getAttribute(name: string): string;
         equals(tag2: StiHtmlTag2): boolean;
         toString(): string;
         constructor(tag?: StiHtmlTag, state?: StiHtmlTag2State);
@@ -7285,6 +7286,7 @@ export namespace Stimulsoft.Base.Drawing {
         indent: number;
         htmlStyle: string;
         href: string;
+        hrefTarget: string;
         styleAttributes: Hashtable;
         constructor(bold: any, italic?: boolean, underline?: boolean, strikeout?: boolean, fontSize?: number, fontName?: string, fontColor?: Color, backColor?: Color, superscript?: boolean, subscript?: boolean, letterSpacing?: number, wordSpacing?: number, lineHeight?: number, textAlign?: StiTextHorAlignment);
     }
@@ -20533,6 +20535,7 @@ export namespace Stimulsoft.Report {
         print(pagesRange?: StiPagesRange, exportMode?: StiHtmlExportMode): void;
         printToPdf(pagesRange?: StiPagesRange, element?: HTMLElement): void;
         reportFile: string;
+        reportFilePath: string;
         exportDocumentAsync(onExport: Function, exportFormat: StiExportFormat, exportService?: StiExportService, settings?: StiExportSettings): void;
         exportDocumentAsync2(exportFormat: StiExportFormat, exportService?: StiExportService, settings?: StiExportSettings): Promise<string | number[] | Buffer>;
         exportDocument(exportFormat: StiExportFormat, exportService?: StiExportService, settings?: StiExportSettings, onExport?: Function): string | number[] | Buffer;
@@ -20815,6 +20818,7 @@ export namespace StiOptions {
         useComponentStyleName: boolean;
         exportComponentsFromPageMargins: boolean;
         disableJavascriptInHyperlinks: boolean;
+        openLinksTarget: string;
     }
     class ExportExcel {
         AllowExportDateTime: boolean;
@@ -34198,6 +34202,7 @@ export namespace Stimulsoft.Report.Dictionary {
         createDatabases(loadData: boolean): void;
         createDatabasesAsync(loadData: boolean): StiPromise<void>;
         merge(dictionary: StiDictionary): void;
+        mergeFile(filePath: string): void;
         removeUnusedData(): void;
         removeUnusedDataSourcesV2(): void;
         retrievalData(REFusedRelations: any, REFusedDataSources: any, REFusedColumns: any): void;
@@ -38573,7 +38578,7 @@ export namespace Stimulsoft.Report.Export {
         private renderBookmarkTree;
         private addBookmarkNode;
         prepareTextForHtml(text: string, processWhiteSpaces: boolean, isJustify: boolean): string;
-        static convertTextWithHtmlTagsToHtmlText(stiText: StiText, text: string, zoom: number): string;
+        static convertTextWithHtmlTagsToHtmlText(stiText: StiText, text: string, zoom: number, htmlExport?: StiHtmlExportService): string;
         private static getParagraphString;
         renderWatermarkText(sWriter: StiHtmlTextWriter, page: StiPage, topPos?: number): void;
         renderWatermarkImage(sWriter: StiHtmlTextWriter, page: StiPage, topPos?: number): void;
@@ -62283,11 +62288,11 @@ export namespace Stimulsoft.Dashboard.Options {
     }
 }
 export namespace Stimulsoft.Dashboard.Render {
+    import Grouping = Stimulsoft.System.Collections.Grouping;
     import IStiChartStyle = Stimulsoft.Report.Chart.IStiChartStyle;
     import StiReport = Stimulsoft.Report.StiReport;
     import Point = Stimulsoft.System.Drawing.Point;
     import StiValueChartMeter = Stimulsoft.Dashboard.Components.Chart.StiValueChartMeter;
-    import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiMeter = Stimulsoft.Dashboard.Components.StiMeter;
     import IStiSeries = Stimulsoft.Report.Chart.IStiSeries;
@@ -62301,7 +62306,6 @@ export namespace Stimulsoft.Dashboard.Render {
         private proccessSelectArguments;
         static processTopNElements(element: StiChartElement, series: IStiSeries): Promise<void>;
         private static setStyle;
-        protected static getDetailRows(rows: List<any[]>, argument: any, argumentIndexes: List<number>): List<any[]>;
         protected renderSeries(element: StiChartElement, value: StiMeter, seriesKey: string, chart: IStiChart): IStiSeries;
         private static renderSeriesPie3d;
         private static renderSeriesYAxis;
@@ -62395,7 +62399,8 @@ export namespace Stimulsoft.Dashboard.Render {
         protected getValueMeterIndexes(table: StiDataTable): number[];
         protected getArgumentMeterIndexes(table: StiDataTable): List<number>;
         protected getSeriesMeterIndex(table: StiDataTable): number;
-        protected getArgumentKeys(element: IStiElement, table: StiDataTable): List<any>;
+        protected getArgumentKeys(argumentss: List<Grouping<any[], any[]>>): List<any>;
+        protected getArguments(table: StiDataTable): List<Grouping<any[], any[]>>;
         protected getValueMeters(table: StiDataTable): List<StiMeter>;
         protected getArgumentMeters(table: StiDataTable): List<StiMeter>;
     }
@@ -65564,6 +65569,7 @@ export namespace Stimulsoft.Designer {
         sender: "Designer";
         event: "SaveReport" | "SaveAsReport";
         preventDefault: boolean;
+        autoSave: boolean;
         fileName: string;
         report: StiReport;
     };
