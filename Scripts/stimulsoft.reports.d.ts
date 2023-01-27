@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.1.5
-Build date: 2023.01.17
+Version: 2023.1.6
+Build date: 2023.01.25
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -8579,7 +8579,7 @@ export namespace Stimulsoft.Data.Extensions {
     import DataTable = Stimulsoft.System.Data.DataTable;
     import StiDataTable = Stimulsoft.Data.Engine.StiDataTable;
     class StiDataTableExt {
-        static toNetTable(table: StiDataTable, onlyColumns?: boolean): DataTable;
+        static toNetTable(table: StiDataTable, onlyColumns?: boolean, convertsArray?: boolean): DataTable;
     }
 }
 export namespace Stimulsoft.Data.Engine {
@@ -11587,7 +11587,7 @@ export namespace Stimulsoft.Data.Extensions {
     import DataTable = Stimulsoft.System.Data.DataTable;
     import IStiMeter = Stimulsoft.Base.Meters.IStiMeter;
     class ListTableExt {
-        static toNetTable(source: List<any[]>, meters: List<IStiMeter>, onlyColumns?: boolean): DataTable;
+        static toNetTable(source: List<any[]>, meters: List<IStiMeter>, onlyColumns?: boolean, convertsArray?: boolean): DataTable;
         private static loadDataRow;
         private static findType;
         private static findTypeInRows;
@@ -26373,6 +26373,7 @@ export namespace Stimulsoft.Report.Chart {
         valuesCount: number;
         getDividerY(): number;
         switchOff(): any;
+        getArgumentLabel(line: IStiStripLineXF, series: IStiSeries): string;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -30957,6 +30958,7 @@ export namespace Stimulsoft.Report.Dashboard {
         private static parseOrDefaultAsync;
         private static tryParse;
         private static tryParseAsync;
+        private static prepareConstants;
         static getDataFieldValueProcessorAsync(sender: any, e: StiParserGetDataFieldValueEventArgs): Promise<void>;
         private static prepareExpression;
         private static getCacheKey;
@@ -51256,6 +51258,7 @@ export namespace Stimulsoft.Report.Chart {
         protected checkStripLinesAndMaximumMinimumXAxis(axis: IStiAxis3D): void;
         protected checkStripLinesAndMaximumMinimumYAxis(axis: IStiAxis3D): void;
         protected checkStripLinesAndMaximumMinimumZAxis(axis: IStiAxis3D): void;
+        getArgumentLabel(line: StiStripLineXF, series: IStiSeries): string;
         protected prepareRange(xAxis: IStiAxis3D, yAxis: IStiAxis3D, zAxis: IStiAxis3D): void;
         getDividerY(): number;
         private calculateDivider;
@@ -51350,7 +51353,8 @@ export namespace Stimulsoft.Report.Chart {
         private storedCulture;
         getAxisRect(context: StiContext, rect: Rectangle, includeAxisArrow: boolean, includeLabelsHeight: boolean, isDrawing: boolean, includeScrollBar: boolean): SizeF;
         private measureStripLines;
-        getLabelText(objectValue: any, value: number, series: IStiSeries): string;
+        getLabelText(line: StiStripLineXF, series: IStiSeries): string;
+        getLabelText2(objectValue: any, value: number, series: IStiSeries): string;
         render3D(context: StiContext, rect3D: StiRectangle3D, render: StiRender3D): StiCellGeom;
         private renderLabels;
         constructor(axis: IStiAxis3D);
@@ -57392,7 +57396,6 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         private static ImplementsStiDataBarsColumn;
         implements(): any[];
         meta(): StiMeta[];
-        getUniqueCode(): number;
         ident: StiMeterIdent;
         get localizedName(): string;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visibility?: StiTableColumnVisibility, visibilityExpression?: string, foreColor?: Color, showTotalSummary?: boolean, summaryType?: StiSummaryColumnType, summaryAlignment?: StiHorAlignment);
@@ -57520,6 +57523,7 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         size: StiTableColumnSize;
         private shouldSerializeSize;
         checkRules(): void;
+        getUniqueCode(): number;
         isDefault(): boolean;
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visibility?: StiTableColumnVisibility, visibilityExpression?: string, visible?: boolean, foreColor?: Color, showHyperlink?: boolean, hyperlinkPattern?: string, showTotalSummary?: boolean, summaryType?: StiSummaryColumnType, summaryAlignment?: StiHorAlignment, size?: StiTableColumnSize);
     }
@@ -61283,6 +61287,7 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         foreColor: Color;
         backColor: Color;
         isExpression: boolean;
+        isDefault(): boolean;
         static createFromJson(json: StiJson): StiTableElementCondition;
         static createFromXml(xmlNode: XmlNode): StiTableElementCondition;
         constructor(keyDataFieldMeters?: string[], keyDestinationMeters?: string[], dataType?: StiFilterDataType, condition?: StiFilterCondition, value?: string, permissions?: StiTableConditionPermissions, font?: Font, foreColor?: Color, backColor?: Color, isExpression?: boolean);
@@ -62288,7 +62293,7 @@ export namespace Stimulsoft.Dashboard.Options {
     }
 }
 export namespace Stimulsoft.Dashboard.Render {
-    import Grouping = Stimulsoft.System.Collections.Grouping;
+    import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
     import IStiChartStyle = Stimulsoft.Report.Chart.IStiChartStyle;
     import StiReport = Stimulsoft.Report.StiReport;
     import Point = Stimulsoft.System.Drawing.Point;
@@ -62306,6 +62311,7 @@ export namespace Stimulsoft.Dashboard.Render {
         private proccessSelectArguments;
         static processTopNElements(element: StiChartElement, series: IStiSeries): Promise<void>;
         private static setStyle;
+        protected static getDetailRows(rows: List<any[]>, argument: any, argumentIndexes: List<number>): List<any[]>;
         protected renderSeries(element: StiChartElement, value: StiMeter, seriesKey: string, chart: IStiChart): IStiSeries;
         private static renderSeriesPie3d;
         private static renderSeriesYAxis;
@@ -62399,8 +62405,7 @@ export namespace Stimulsoft.Dashboard.Render {
         protected getValueMeterIndexes(table: StiDataTable): number[];
         protected getArgumentMeterIndexes(table: StiDataTable): List<number>;
         protected getSeriesMeterIndex(table: StiDataTable): number;
-        protected getArgumentKeys(argumentss: List<Grouping<any[], any[]>>): List<any>;
-        protected getArguments(table: StiDataTable): List<Grouping<any[], any[]>>;
+        protected getArgumentKeys(element: IStiElement, table: StiDataTable): List<any>;
         protected getValueMeters(table: StiDataTable): List<StiMeter>;
         protected getArgumentMeters(table: StiDataTable): List<StiMeter>;
     }
