@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.1.6
-Build date: 2023.01.25
+Version: 2023.1.7
+Build date: 2023.02.10
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -13621,7 +13621,7 @@ export namespace Stimulsoft.Report.Components {
         static notCheckSizeMark: string;
         static checkSize(component: StiComponent): void;
         private static componentPlacedOnBand;
-        static checkContainerGrowToHeight(component: StiComponent): void;
+        static checkContainerGrowToHeight(component: StiComponent, force: boolean): void;
     }
 }
 export namespace Stimulsoft.Report.Components {
@@ -13807,6 +13807,7 @@ export namespace Stimulsoft.Report.Chart {
         editorType: StiChartEditorType;
         page: StiPage;
         previousAnimations: List<StiAnimation>;
+        sortAnimation: boolean;
         loadFromXml(xmlNode: XmlNode): any;
     }
 }
@@ -29957,6 +29958,7 @@ export namespace Stimulsoft.Report.Dashboard {
         roundValues: boolean;
         columnShape: StiColumnShape3D;
         previousAnimations: List<StiAnimation>;
+        sortAnimation: boolean;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -37478,7 +37480,7 @@ export namespace Stimulsoft.Base.Context.Animation {
         static isAnimationChangingValues(series: IStiSeries, pointsIds: string[], id?: any): boolean;
         private static getPreviousAnimation;
         private static getPointIndex;
-        applyPreviousAnimation(previousAnimations: List<StiAnimation>): void;
+        applyPreviousAnimation(previousAnimations: List<StiAnimation>, isSort: boolean): void;
         reverse(): void;
         constructor(pointsFrom: Point[], pointsTo: Point[], pointsIds: string[], duration: TimeSpan, beginTime: TimeSpan);
     }
@@ -43538,6 +43540,7 @@ export namespace Stimulsoft.Report.Components {
         isAnimationChangingValues: boolean;
         chartInfo: StiChartInfo;
         previousAnimations: List<StiAnimation>;
+        sortAnimation: boolean;
         constructor(rect?: RectangleD);
     }
 }
@@ -58926,6 +58929,7 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
         getChartSeriesTypes(seriesTypeStr: string): List<string>;
         getManuallyEnteredChartMeter(): IStiMeter;
         previousAnimations: List<StiAnimation>;
+        sortAnimation: boolean;
         addValue(cell: IStiAppDataCell): void;
         getValue2(cell: IStiAppDataCell): IStiMeter;
         getValue(meter: IStiMeter): IStiMeter;
@@ -63091,6 +63095,7 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
         private static getHeaderAlignment;
         private static renderFooter;
         static renderCell(destination: StiPanel, rect: Rectangle, table: StiTableElement, rowValues: any[], columnKeys: string[], column: StiTableColumn, zoom: number, value: any, min: number, max: number, isInterlaced: boolean, format: StiDashboardExportFormat, exportDataOnly: boolean): Promise<void>;
+        private static processRowValue;
         private static renderGraphicCell;
         private static drawColorScaleColumn;
         private static renderBoolCell2;
@@ -63437,6 +63442,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         static getFilterItems(report: StiReport, requestParams: any): any;
         private static getDataTable;
         static getViewData(report: StiReport, requestParams: any): Promise<any>;
+        private static processRowValue;
         private static removeSystemMeters;
         static getDataTableFilterQueryStringRepresentation(element: IStiElement): string;
         static getDrillDownFilters(drillDownElement: IStiDrillDownElement): any[];
@@ -66742,6 +66748,7 @@ export namespace Stimulsoft.Designer {
         static getActionRuleFromJSActionRuleObject(actionRuleObject: any): StiDataActionRule;
         static getViewQueryContent(report: StiReport, param: any, callbackResult: any): Promise<void>;
         private static getDataTableContent;
+        private static processRowValue;
         private static getDataValue;
         private static getSortLabels;
         private static getFilterLabels;
