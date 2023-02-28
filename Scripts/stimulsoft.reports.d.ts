@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.1.7
-Build date: 2023.02.10
+Version: 2023.1.8
+Build date: 2023.02.22
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -18260,6 +18260,7 @@ export namespace Stimulsoft.Report.Components {
         getHeaderText(): string;
         createNew: () => StiTableOfContents;
         getStylesList(): List<Stimulsoft.Report.Styles.StiStyle>;
+        wordWrap: boolean;
         get isFirstInReport(): boolean;
         styles: Styles.StiStylesCollection;
         indent: number;
@@ -20328,13 +20329,13 @@ export namespace Stimulsoft.Report {
         private prepareVariablesFromURL;
         private static getPrepareVariablesArgs;
         private static setPrepareVariablesArgs;
+        events: Hashtable<any, any>;
         onPrepareVariables: null | ((args: PrepareVariablesArgs, callback: PrepareVariablesContinuationCallback) => void);
         invokePrepareVariablesAsync(): Promise<unknown>;
         onBeginProcessData: (args: BeginProcessDataArgs, callback: (args: any) => void) => void;
         invokeBeginProcessData(args: any, callback: (args: BeginProcessDataArgs) => void): void;
         onEndProcessData: (args: EndProcessDataArgs) => void;
         invokeEndProcessData(args: Partial<EndProcessDataArgs>): void;
-        events: Hashtable;
         invokeRefreshPreview(): void;
         invokeRefreshViewer(): void;
         invokeClick(sender: any, e: EventArgs): void;
@@ -20349,9 +20350,12 @@ export namespace Stimulsoft.Report {
         get beginRenderEvent(): StiBeginRenderEvent;
         set beginRenderEvent(value: StiBeginRenderEvent);
         onRendering: () => void;
+        private static eventRendering;
         invokeRendering(): void;
+        private renderingEventScript;
+        get renderingEvent(): StiRenderingEvent;
+        set renderingEvent(value: StiRenderingEvent);
         onEndRender: () => void;
-        renderingEvent: StiRenderingEvent;
         private static eventEndRender;
         invokeEndRender(): void;
         private endRenderEventScript;
@@ -35711,6 +35715,8 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import FontStyle = Stimulsoft.System.Drawing.FontStyle;
+    import Font = Stimulsoft.System.Drawing.Font;
     import HatchStyle = Stimulsoft.System.Drawing.Drawing2D.HatchStyle;
     import StiHatchBrush = Stimulsoft.Base.Drawing.StiHatchBrush;
     import StiGlassBrush = Stimulsoft.Base.Drawing.StiGlassBrush;
@@ -35731,6 +35737,7 @@ export namespace Stimulsoft.Report.Dictionary {
         static glassBrushValue(color: any, drawHatch: boolean, blendFactor: number): StiGlassBrush;
         static hatchBrushValue(style: HatchStyle, foreColor: any, backColor: any): StiHatchBrush;
         private static getColor;
+        static fontValue(name: string, size: number, style?: FontStyle): Font;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -63383,7 +63390,7 @@ export namespace Stimulsoft.Viewer {
         static applySorting(report: StiReport, parameters: any): void;
         static applyCollapsing(report: StiReport, parameters: any): void;
         static applyDrillDown(report: StiReport, renderedReport: StiReport, parameters: any, drillDownParameters: any): Promise<StiReport>;
-        static applyDashboardDrillDown(report: StiReport, drillDownParameters: any): Promise<StiReport>;
+        static applyDashboardDrillDown(report: StiReport, drillDownParameters: any, action: string): Promise<StiReport>;
         private static addBookmarkNode;
         static getBookmarksContent(report: StiReport, viewerId: string, pageNumber: number): string;
         private static getBookmarksPageIndexes;
