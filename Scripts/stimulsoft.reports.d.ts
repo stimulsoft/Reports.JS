@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.2.1
-Build date: 2023.03.22
+Version: 2023.2.2
+Build date: 2023.04.05
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -1080,6 +1080,8 @@ export namespace Stimulsoft.System {
         private behindFunction;
         onBehindFunction(behindFunction: Function): void;
         promise(): Promise<T>;
+        static lock(lockObject: any): Promise<void>;
+        static unlock(lockObject: any): void;
         constructor();
     }
 }
@@ -3610,6 +3612,7 @@ export namespace Stimulsoft.System.Text {
     class StiReportObjectStringConverter {
         static convertStringToColorArray(str: string): Color[];
         static convertStringToColor(str: string): Color;
+        static convertStringToFont(str: string): Stimulsoft.System.Drawing.Font;
         private static getByName;
     }
 }
@@ -18515,37 +18518,41 @@ export namespace Stimulsoft.Report.Engine {
         Cast = 11,
         String = 12,
         Char = 13,
-        Dot = 14,
-        Comma = 15,
-        Colon = 16,
-        SemiColon = 17,
-        Shl = 18,
-        Shr = 19,
-        Assign = 20,
-        Equal = 21,
-        NotEqual = 22,
-        LeftEqual = 23,
-        Left = 24,
-        RightEqual = 25,
-        Right = 26,
-        Not = 27,
-        Or = 28,
-        And = 29,
-        Xor = 30,
-        DoubleOr = 31,
-        DoubleAnd = 32,
-        Question = 33,
-        Plus = 34,
-        Minus = 35,
-        Mult = 36,
-        Div = 37,
-        Percent = 38,
-        LParenthesis = 39,
-        RParenthesis = 40,
-        LBracket = 41,
-        RBracket = 42,
-        Identifier = 43,
-        Unknown = 44
+        RefVariable = 14,
+        New = 15,
+        CastAs = 16,
+        Dot = 17,
+        Comma = 18,
+        Colon = 19,
+        SemiColon = 20,
+        Shl = 21,
+        Shr = 22,
+        Assign = 23,
+        Equal = 24,
+        NotEqual = 25,
+        LeftEqual = 26,
+        Left = 27,
+        RightEqual = 28,
+        Right = 29,
+        Not = 30,
+        Or = 31,
+        And = 32,
+        Xor = 33,
+        DoubleOr = 34,
+        DoubleAnd = 35,
+        Question = 36,
+        DoubleQuestion = 37,
+        Plus = 38,
+        Minus = 39,
+        Mult = 40,
+        Div = 41,
+        Percent = 42,
+        LParenthesis = 43,
+        RParenthesis = 44,
+        LBracket = 45,
+        RBracket = 46,
+        Identifier = 47,
+        Unknown = 48
     }
     enum StiAsmCommandType {
         PushValue = 2000,
@@ -18583,7 +18590,8 @@ export namespace Stimulsoft.Report.Engine {
         Xor = 2041,
         Jump = 2042,
         JumpTrue = 2043,
-        JumpFalse = 2044
+        JumpFalse = 2044,
+        JumpNotNull = 2045
     }
     enum StiSystemVariableType {
         Column = 0,
@@ -18656,7 +18664,10 @@ export namespace Stimulsoft.Report.Engine {
         Rows = 33,
         Text = 34,
         Enabled = 35,
-        Skip = 36
+        Skip = 36,
+        Alias = 37,
+        Page = 38,
+        Pages = 39
     }
     enum StiFunctionType {
         NameSpace = 0,
@@ -19374,6 +19385,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
     class StiParser_Properties {
         protected get_category(par: any): number;
         protected report: StiReport;
+        protected syntaxCaseSensitive: boolean;
         protected expressionPosition: number;
         private static _typesList;
         static get typesList(): Hashtable;
@@ -19391,11 +19403,15 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         get componentsList(): Hashtable;
         private static _methodsHash;
         static get methodsHash(): Map<StiFunctionType, StiParserMethodInfo[]>;
+        get constantsList(): Hashtable;
         private static _constantsList;
-        static get constantsList(): Hashtable;
+        private static _constantsList_low;
+        static check_constantsList(): void;
         protected static namespaceObj: any;
         private static _namespacesList;
         static get namespacesList(): Hashtable;
+        private static _keywordsList;
+        static get keywordsList(): Hashtable;
         private lockUserFunctionsList;
         private _userFunctionsList;
         get userFunctionsList(): Hashtable;
@@ -20129,7 +20145,7 @@ export namespace Stimulsoft.Report.Dictionary {
         actions: List<StiDataActionRule>;
         clone(): StiDataTransformation;
         retrieveDataTable(option: StiDataRequestOption): Promise<DataTable>;
-        connectToData(): Promise<void>;
+        connectToData(option?: StiDataRequestOption): Promise<void>;
         getMeters(group?: string): List<IStiMeter>;
         getMeter(column: StiDataTransformationColumn): IStiMeter;
         get componentId(): StiComponentId;
@@ -20988,9 +21004,7 @@ export namespace StiOptions {
         allowImageTransparency: boolean;
         allowInheritedPageResources: boolean;
         allowExtGState: boolean;
-        private _creatorString;
-        get creatorString(): string;
-        set creatorString(value: string);
+        creatorString: string;
         keywordsString: string;
         defaultCoordinatesPrecision: number;
         defaultAutoPrintMode: StiPdfAutoPrintMode;
@@ -34367,6 +34381,7 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import StiDataRequestOption = Stimulsoft.Data.Engine.StiDataRequestOption;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import StiDataSource = Stimulsoft.Report.Dictionary.StiDataSource;
     import IStiAppDataColumn = Stimulsoft.Base.IStiAppDataColumn;
@@ -34456,7 +34471,7 @@ export namespace Stimulsoft.Report.Dictionary {
         connectV2(baseReport: StiReport): void;
         private checkColumnForDataSourceName;
         connectVirtualDataSourcesAsync(): StiPromise<void>;
-        connectDataTransformationsAsync(): StiPromise<void>;
+        connectDataTransformationsAsync(option?: StiDataRequestOption): StiPromise<void>;
         connectCrossTabDataSources(): void;
         disconnect(): void;
         private disconnectingDatabases;
@@ -39976,6 +39991,7 @@ export namespace Stimulsoft.Report.Helpers {
         static parseStringExpression(component: StiComponent, propName: string, allowDataLoading?: boolean): string;
         static parseColorExpression(component: StiComponent, propName: string, allowDataLoading?: boolean): Color;
         static parseBrushExpression(component: StiComponent, propName: string, allowDataLoading?: boolean): StiBrush;
+        static parseFontExpression(component: StiComponent, propName: string, allowDataLoading?: boolean): Stimulsoft.System.Drawing.Font;
         private static parseExpression;
         private static parseExpressionAsync;
     }
@@ -42018,6 +42034,7 @@ export namespace Stimulsoft.Report.Export {
         storeWysiwygSymbols(text: StiText, pageNumber?: number): void;
         private renderStartDoc;
         private renderEndDoc;
+        getCreatorString(): string;
         private renderPageHeader;
         private renderPageFooter;
         private renderFontTable;
@@ -42037,6 +42054,7 @@ export namespace Stimulsoft.Report.Export {
         private writeImageInfo;
         writeImageInfo2(pp: StiPdfData, imageResolutionX: number, imageResolutionY: number): void;
         renderImage(pp: StiPdfData, imageResolution: number, forceResolutionModeAuto?: boolean): void;
+        renderIcon(pp: StiPdfData): void;
         private renderWatermark;
         storeShadingData1(brush: StiBrush, pageNumber: number): void;
         storeShadingData2(x: number, y: number, width: number, height: number, brush: StiBrush, compAngle?: number): number;
@@ -42303,6 +42321,7 @@ export namespace Stimulsoft.Report.Export {
     }
 }
 export namespace Stimulsoft.Report.Export {
+    import Point = Stimulsoft.System.Drawing.Point;
     class StiPdfRenderText {
         private static hiToTwips;
         private static precision_digits_font;
@@ -42310,7 +42329,7 @@ export namespace Stimulsoft.Report.Export {
         private static boldFontStrokeWidthValue;
         private static italicAngleTanValue;
         private static charCode07;
-        static renderText(pp: StiPdfData): void;
+        static renderText(pp: StiPdfData, basePoint?: Point, clipMargins?: boolean): void;
         private static isWordWrapSymbol;
         private static getTabsSize;
         static renderTextFont(pp: StiPdfData): void;
@@ -62506,6 +62525,7 @@ export namespace Stimulsoft.Dashboard.Visuals.Cards {
         private getRectanglesVerticalOrientation;
         getContentRectangle(rect: Rectangle): Rectangle;
         private paintCardItem;
+        private processRowValue;
         private static measureItem;
         private static measureCards;
         static measureDataBarsCell(context: StiContext, cards: StiCardsElement, column: StiCardsColumn, rowValue: any, zoom: number): Size;
@@ -65163,6 +65183,19 @@ export namespace Stimulsoft.Report.Check {
         get longMessage(): string;
         status: StiCheckStatus;
         private check;
+        processCheck(report: StiReport, obj: any): any;
+    }
+}
+export namespace Stimulsoft.Report.Check {
+    class StiComponentExpressionCheck extends StiComponentCheck {
+        get previewVisible(): boolean;
+        get shortMessage(): string;
+        get longMessage(): string;
+        status: StiCheckStatus;
+        componentName: string;
+        propertyName: string;
+        message: string;
+        private checkExpression;
         processCheck(report: StiReport, obj: any): any;
     }
 }
