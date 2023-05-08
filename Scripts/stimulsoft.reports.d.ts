@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.2.2
-Build date: 2023.04.05
+Version: 2023.2.3
+Build date: 2023.05.08
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -2850,7 +2850,6 @@ export namespace Stimulsoft.System.Drawing.Imaging {
         height: number;
         horizontalResolution: number;
         verticalResolution: number;
-        needReconvert: boolean;
     };
     export class ImageFormat {
         private static _tiff;
@@ -2861,6 +2860,7 @@ export namespace Stimulsoft.System.Drawing.Imaging {
         static get Gif(): ImageFormat;
         private static _jpeg;
         static get Jpeg(): ImageFormat;
+        private static getBytes;
         private static getJpegInfo;
         private static _bmp;
         static get Bmp(): ImageFormat;
@@ -2870,8 +2870,11 @@ export namespace Stimulsoft.System.Drawing.Imaging {
         private header;
         private guid;
         private checkHeader;
-        getInfo(dataBytes: number[], base64?: string, svg?: string): ImageInfo;
-        needReconvert(dataBytes: number[]): boolean;
+        getInfo(data: {
+            bytes: number[];
+            base64: string;
+            svg: string;
+        }): ImageInfo;
         get mimeType(): string;
         toString(): string;
         constructor(guid: string);
@@ -7012,7 +7015,6 @@ export namespace Stimulsoft.Base.Drawing {
     import Image = Stimulsoft.System.Drawing.Image;
     class StiImageFromURL {
         static loadBitmap(url: string): Image;
-        static loadImage(url: string): Image;
     }
 }
 export namespace Stimulsoft.Base.Drawing {
@@ -7177,6 +7179,7 @@ export namespace Stimulsoft.Base.Drawing {
         private static get htmlEscapeSequence();
         private static convertStringToTag;
         static parseHtmlToStates(inputHtml: string, baseState: StiHtmlState, storeStack?: boolean): StiHtmlState[];
+        private static getMarginSize;
         static prepareStateText(stateText: StringBuilder): StringBuilder;
         static stateToHtml(state: StiHtmlState, state2: StiHtmlState, text: string, lineInfoIndent: number): string;
         private static getIndentString;
@@ -13540,6 +13543,7 @@ export namespace Stimulsoft.Report.Components {
         columnWidth: number;
         columns: number;
         minRowsInColumn: number;
+        gapAfterLastColumn: boolean;
         private _columnDirection;
         get columnDirection(): StiColumnDirection;
         set columnDirection(value: StiColumnDirection);
@@ -28195,6 +28199,7 @@ export namespace Stimulsoft.Report.Components {
         get componentId(): StiComponentId;
         get toolboxPosition(): number;
         get localizedName(): string;
+        private defaultSignaturePlaceholder;
         placeholder: string;
         createNew(): StiComponent;
         constructor(rect?: Rectangle);
@@ -42430,6 +42435,7 @@ export namespace Stimulsoft.Report.Export {
         signatures: StiPdfAnnotObjInfo[];
         tooltips: StiPdfAnnotObjInfo[];
         annotFontItems: StiPdfFontObjInfo[];
+        fontHelvetica: StiPdfObjInfo;
     }
     class StiPdfStructure {
         root: StiPdfObjInfo;
@@ -62652,6 +62658,9 @@ export namespace Stimulsoft.Dashboard.Visuals.Indicator {
         private drawMultiModePresent;
         private drawMultiModeWithTarget;
         private getInteractionDataGeom;
+        private getToolTip;
+        private getHyperlink;
+        private parseConstants;
         private getMaxValue;
         getTargetValues(): List<number>;
         private drawTextIcon;
@@ -63566,8 +63575,8 @@ export namespace Stimulsoft.Dashboard.Export.Painters.Table {
     import StiTableElementStyle = Stimulsoft.Report.Dashboard.Styles.StiTableElementStyle;
     import StiSvgGeomWriter = Stimulsoft.Report.Export.StiSvgGeomWriter;
     class StiDataBarsCellPainter {
-        static draw(writer: StiSvgGeomWriter, rect: RectangleD, table: StiTableElement, column: StiTableColumn, zoom: number, value: number, min: number, max: number, isInterlaced: boolean, isSelected: boolean, drawText?: boolean, direction?: StiDataBarsDirection, brushType?: StiDataBarsBrushType): void;
-        static draw2(writer: StiSvgGeomWriter, rect: RectangleD, value: number, min: number, max: number, zoom: number, text: string, table: StiTableElement, column: StiTableColumn, isInterlaced: boolean, isSelected: boolean, drawText?: boolean, direction?: StiDataBarsDirection, brushType?: StiDataBarsBrushType): void;
+        static draw(writer: StiSvgGeomWriter, rect: RectangleD, table: StiTableElement, rowValues: any[], columnKeys: any[], column: StiTableColumn, zoom: number, value: number, min: number, max: number, isInterlaced: boolean, isSelected: boolean, drawText?: boolean, direction?: StiDataBarsDirection, brushType?: StiDataBarsBrushType): Promise<void>;
+        static draw2(writer: StiSvgGeomWriter, rect: RectangleD, value: number, min: number, max: number, zoom: number, text: string, table: StiTableElement, rowValues: any[], columnKeys: any[], column: StiTableColumn, isInterlaced: boolean, isSelected: boolean, drawText?: boolean, direction?: StiDataBarsDirection, brushType?: StiDataBarsBrushType): Promise<void>;
         private static getOverlappedColor;
         private static getColorPositive;
         private static getNegativeColor;
@@ -63881,6 +63890,11 @@ export namespace Stimulsoft.Viewer {
     enum StiToolbarDisplayMode {
         Simple = 0,
         Separated = 1
+    }
+    enum StiWebUIIconSet {
+        Auto = 0,
+        Monoline = 1,
+        Regular = 2
     }
 }
 export namespace Stimulsoft.Viewer {
@@ -64366,16 +64380,16 @@ export namespace Stimulsoft.Viewer {
 export namespace Stimulsoft.Viewer {
     class StiThemesHelper {
         static getThemeName(themeType: {}, themeValue: number): string;
-        static getThemeName2(themeName: string): string;
         static getAccentTheme(themeType: {}, themeValue: number): string;
         private static replaceStyleConstants;
         static applyTheme(themeName: string, accentName: string, appName: string): void;
         static getImage(obj: any, path: string[]): any;
-        static getImageSource(sourceObject: any, name: string, scale: number): {
+        static getImageSource(sourceObject: any, options: any, name: string): {
             data: string;
             scale: number;
         };
-        static setImageSource(htmlImage: any, sourceObject: any, scale: number, name: string, transform?: boolean): void;
+        private static getImageSourceInternal;
+        static setImageSource(sourceObject: any, htmlImage: any, options: any, name: string, transform: boolean): void;
     }
 }
 export namespace Stimulsoft.Viewer {
@@ -64599,6 +64613,7 @@ export namespace Stimulsoft.Viewer {
         combineReportPages: boolean;
         htmlRenderMode: StiHtmlExportMode;
         theme: StiViewerTheme;
+        iconSet: StiWebUIIconSet;
     }
 }
 export namespace Stimulsoft.Viewer {
@@ -66221,7 +66236,6 @@ export namespace Stimulsoft.Designer {
         private viewState;
         undoLevel: number;
         private callbackResult;
-        private viewerOptions;
         viewer: StiViewer;
         onPrepareVariables: (args: PrepareVariablesArgs, callback: PrepareVariablesContinuationCallback) => void;
         onBeginProcessData: (args: BeginProcessDataArgs, callback: (args: BeginProcessDataArgs) => void) => void;
@@ -67118,6 +67132,7 @@ export namespace Stimulsoft.Report.Web {
 }
 export namespace Stimulsoft.Designer {
     import StiReportUnitType = Stimulsoft.Report.StiReportUnitType;
+    import StiWebUIIconSet = Stimulsoft.Viewer.StiWebUIIconSet;
     class StiAppearanceOptions {
         private showOnlyAliasForVariable;
         private showPropertiesWhichUsedFromStyles;
@@ -67151,6 +67166,7 @@ export namespace Stimulsoft.Designer {
         get zoom(): number;
         set zoom(value: number);
         theme: StiDesignerTheme;
+        iconSet: StiWebUIIconSet;
     }
 }
 export namespace Stimulsoft.Designer {
