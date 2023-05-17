@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.2.3
-Build date: 2023.05.08
+Version: 2023.2.4
+Build date: 2023.05.17
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -7189,6 +7189,8 @@ export namespace Stimulsoft.Base.Drawing {
         private static stackToString;
         private static listLevelsToString;
         private static parseHtmlTag;
+        private static pushPopStack;
+        private static correctFontName;
         private static parseTagIntoPairs;
         private static parseMarkerTypeAttribute;
         private static parseStyleAttributes;
@@ -28138,17 +28140,20 @@ export namespace Stimulsoft.Report.Components {
     }
 }
 export namespace Stimulsoft.Report.Components {
+    import Image = Stimulsoft.System.Drawing.Image;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import StiBorder = Stimulsoft.Base.Drawing.StiBorder;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
-    class StiSignature extends StiComponent implements IStiBorder, IStiBrush, IStiJsonReportObject {
+    class StiSignature extends StiComponent implements IStiBorder, IStiExportImageExtended, IStiBrush, IStiJsonReportObject {
         private _implementsStiSignature;
         implements(): any[];
         meta(): StiMeta[];
         clone(cloneProperties: boolean): any;
         helpUrl: string;
+        getImage(REFzoom: any, format?: StiExportFormat): Image;
+        isExportAsImage(format: StiExportFormat): boolean;
         brush: StiBrush;
         private shouldSerializeBrush;
         border: StiBorder;
@@ -38712,6 +38717,7 @@ export namespace Stimulsoft.Report.Export {
         private static writeBorder1;
         private static writeBorder2;
         private static writeElectronicSignature;
+        private static writePdfDigitalSignature;
         private static writeText2;
         private static writeText;
         static getStyleString(font: Font, textColor: Color): string;
@@ -39005,6 +39011,7 @@ export namespace Stimulsoft.Report.Export {
         useEscapeCodes: boolean;
         escapeCodesCollectionName: string;
         protected _returnType: StringConstructor;
+        toParameters(): any;
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -64482,6 +64489,7 @@ export namespace Stimulsoft.Viewer {
         static fillDialogInfoItems(report: StiReport): Promise<void>;
         private static getVariableAlias;
         private static getItems;
+        private static isBindingVariable;
         private static containsBindingVariableValue;
         private static getDateTimeObject;
         private static getTimeSpanStringValue;
