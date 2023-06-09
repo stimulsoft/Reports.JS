@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.2.5
-Build date: 2023.05.20
+Version: 2023.2.6
+Build date: 2023.06.09
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -18129,8 +18129,6 @@ export namespace Stimulsoft.Report.Components.Table {
         clone(cloneProperties: boolean): StiTableCellImage;
         get locked(): boolean;
         get linked(): boolean;
-        get canShrink(): boolean;
-        set canShrink(value: boolean);
         get canGrow(): boolean;
         set canGrow(value: boolean);
         cellDockStyle: StiDockStyle;
@@ -18175,15 +18173,19 @@ export namespace Stimulsoft.Report.Components.Table {
 export namespace Stimulsoft.Report.Components.Table {
     class StiColumnSize {
         private _widths;
-        private _fixedColumn;
+        private _fixedColumns;
+        private _minWidths;
         setFixedColumn(indexCol: number, width: number): void;
         add(indexCol: number, width: number): void;
         addLastNotFixed(width: number): void;
-        subtract(indexCol: number, width: number): void;
+        subtract(indexCol: number, width: number, checkMin?: boolean): void;
         setWidth(indexCol: number, width: number): void;
+        setMinWidths(indexCol: number, minWidth: number): void;
         getFixed(index: number): boolean;
         get length(): number;
         getCountNotFixedColumn(): number;
+        getCountNotFixedColumnAndWidth(): number;
+        getCountNotFixedColumnAndNotMinSize(): number;
         getWidth(indexCol: number): number;
         normalize(): void;
         constructor(size: number);
@@ -28582,8 +28584,6 @@ export namespace Stimulsoft.Report.Components.Table {
         set canGrow(value: boolean);
         get autoWidth(): boolean;
         set autoWidth(value: boolean);
-        get canShrink(): boolean;
-        set canShrink(value: boolean);
         cellDockStyle: StiDockStyle;
         parentJoinCell: StiComponent;
         _joinCells: number[];
@@ -28690,8 +28690,6 @@ export namespace Stimulsoft.Report.Components.Table {
         clone(cloneProperties: boolean): StiTableCellRichText;
         get locked(): boolean;
         get linked(): boolean;
-        get canShrink(): boolean;
-        set canShrink(value: boolean);
         get canGrow(): boolean;
         set canGrow(value: boolean);
         cellDockStyle: StiDockStyle;
@@ -66467,9 +66465,10 @@ export namespace Stimulsoft.Designer {
         private static tableItem;
         private static functionItem;
         private static functionsCategoryItem;
-        static resourceItem(resource: StiResource): any;
+        static resourceItem(resource: StiResource, report: StiReport): any;
         private static imagesGalleryItem;
         private static richTextGalleryItem;
+        private static getDictionaryRestrictions;
         static getGroupColumnsProperty(dataSource: StiVirtualSource): string;
         static getResultsProperty(dataSource: StiVirtualSource): string;
         private static setGroupColumnsAndResultsProperty;
