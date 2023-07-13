@@ -31,6 +31,7 @@
         "React.js reporting tool"
     ],
     "dependencies": {
+        "canvas": "^2.11.2",
         "jimp": "^0.16.2",
         "sync-request": "^6.1.0",
         "node-machine-id": "^1.1.12",
