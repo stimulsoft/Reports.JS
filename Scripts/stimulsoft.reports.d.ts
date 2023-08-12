@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.3.1
-Build date: 2023.07.24
+Version: 2023.3.2
+Build date: 2023.08.12
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -1724,7 +1724,6 @@ export namespace Stimulsoft.System.Crypt {
     class AES {
         private key;
         private data;
-        private nDataBytes;
         private blockSize;
         private iv;
         private prevBlock;
@@ -6010,8 +6009,8 @@ export namespace Stimulsoft.Base.Drawing {
         private _shadowBrush;
         get shadowBrush(): StiBrush;
         set shadowBrush(value: StiBrush);
-        get shadowSize(): StiPenStyle;
-        set shadowSize(value: StiPenStyle);
+        get shadowSize(): number;
+        set shadowSize(value: number);
         get dropShadow(): boolean;
         set dropShadow(value: boolean);
         get topmost(): boolean;
@@ -7229,6 +7228,11 @@ export namespace Stimulsoft.Base.Drawing {
         private static isNotWordWrapSymbol2;
         private static isCJKWordWrap;
         private static isCJKSymbol;
+        private static arabics;
+        private static romans;
+        private static subs;
+        private static toRoman;
+        static toABC(value: number): string;
     }
     class StiFontState {
         fontName: string;
@@ -7538,7 +7542,7 @@ export namespace Stimulsoft.Base.StiJsonReportObjectHelper {
         static fonSegoeUI20(font: Font): string;
         static font(font: Font, defaultFamily?: string, defaultEmSize?: number, defaultStyle?: FontStyle, defaultUnit?: GraphicsUnit): string;
         static rectangleD(rect: Rectangle): string;
-        static sizeD(size: Size | Size): string;
+        static sizeD(size: Size): string;
         static jColor(color: Color, defColor?: Color): string;
         static colorArray(array: Color[]): StiJson;
         static stringArray(array: string[]): StiJson;
@@ -7618,7 +7622,8 @@ export namespace Stimulsoft.Base.Licenses {
 }
 export namespace Stimulsoft.Base.Licenses {
     class StiCryptHelper {
-        static decrypt(str: string, password: string): string;
+        private static encryptionKey;
+        static decrypt(str: string, password?: string): string;
         static encrypt(str: string, password?: string): string;
         static recrypt(str: string, oldPassword: string, newPassword: string): string;
     }
@@ -23863,11 +23868,11 @@ export namespace Stimulsoft.Report.BarCodes {
         constructor(width: number, height: number);
         getHeight(): number;
         getWidth(): number;
-        get(x: number, y: number): Stimulsoft.System.SByte;
-        getArray(): Stimulsoft.System.SByte[][];
-        set(x: number, y: number, value: Stimulsoft.System.SByte): void;
+        get(x: number, y: number): number;
+        getArray(): number[][];
+        set(x: number, y: number, value: number): void;
         set2(x: number, y: number, value: number): void;
-        clear(value: Stimulsoft.System.SByte): void;
+        clear(value: number): void;
     }
 }
 export namespace Stimulsoft.Report.BarCodes {
@@ -34996,6 +35001,10 @@ export namespace Stimulsoft.Report.Dictionary {
     class StiODataAdapterService extends StiSqlAdapterService {
         get serviceName(): string;
         get name(): string;
+        headers: {
+            key: string;
+            value: string;
+        }[];
         getDataSourceType(): Stimulsoft.System.Type;
         connectDataSourceToDataAsync(dictionary: StiDictionary, dataSource: StiSqlSource, loadData: boolean): StiPromise<void>;
         connectDataSourceToData(dictionary: StiDictionary, dataSource: StiSqlSource, loadData: boolean): void;
@@ -35696,6 +35705,12 @@ export namespace Stimulsoft.Report.Dictionary {
     class StiJsonDatabase extends StiFileDatabase {
         meta(): StiMeta[];
         relationDirection: StiRelationDirection;
+        headers: {
+            key: string;
+            value: string;
+        }[];
+        get headersString(): string;
+        set headersString(value: string);
         get serviceName(): string;
         createNew(): StiDatabase;
         createConnector(connectionString?: string): StiDataConnector;
@@ -35849,9 +35864,17 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import Type = Stimulsoft.System.Type;
     class StiODataDatabase extends StiSqlDatabase {
+        meta(): StiMeta[];
         createNew(): StiDatabase;
+        headers: {
+            key: string;
+            value: string;
+        }[];
+        get headersString(): string;
+        set headersString(value: string);
         get serviceName(): string;
         get componentId(): StiComponentId;
         createDataSource(nameInSource: string, name: string): StiSqlSource;
@@ -39529,6 +39552,7 @@ export namespace Stimulsoft.Report.Export {
     import ImageFormat = Stimulsoft.System.Drawing.Imaging.ImageFormat;
     class StiExportImageHelper {
         static convertAllImages(renderedReport: StiReport, imageFormat: ImageFormat, flate?: boolean, format?: StiExportFormat): Promise<void>;
+        static restoreImagesWithMask(renderedReport: StiReport): Promise<void>;
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -40209,7 +40233,7 @@ export namespace Stimulsoft.Report {
     import Size = Stimulsoft.System.Drawing.Size;
     class StiFontIconsHelper {
         static convertFontIconToImage(icon: StiFontIcons, color: Color, width: number, height: number, dy?: string): Image;
-        static writeFontIconImage(writer: XmlTextWriter, color: Color, icon: StiFontIcons, width: number, height: number, dy?: string): void;
+        static writeFontIconImage(writer: XmlTextWriter, color: Color, icon: StiFontIcons, width: number, height: number, dy?: string, x?: number, y?: number): void;
         static convertFontIconToImageAsync(icon: StiFontIcons, color: Color, width: number, height: number, dy?: string, horAlign?: StiHorAlignment): Promise<Image>;
         static getIconPadding(fontIcons: StiFontIcons): number[];
         static getContent(fontIcons: StiFontIcons): string;
@@ -64099,6 +64123,15 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
 }
 export namespace Stimulsoft.Dashboard.Export.Tools {
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    import StiDashboardExportSettings = Stimulsoft.Dashboard.Export.Settings.StiDashboardExportSettings;
+    import StiPanel = Stimulsoft.Report.Components.StiPanel;
+    import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
+    class StiOnlineMapElementExportTool extends StiElementExportTool {
+        render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
+    }
+}
+export namespace Stimulsoft.Dashboard.Export.Tools {
+    import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import StiPanel = Stimulsoft.Report.Components.StiPanel;
     import StiDashboardExportSettings = Stimulsoft.Dashboard.Export.Settings.StiDashboardExportSettings;
     import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
@@ -66952,6 +66985,8 @@ export namespace Stimulsoft.Designer {
         static getGroupColumnsProperty(dataSource: StiVirtualSource): string;
         static getResultsProperty(dataSource: StiVirtualSource): string;
         private static setGroupColumnsAndResultsProperty;
+        private static headersToJson;
+        private static jsonToHeaders;
         private static getDataParameterTypes;
         private static getItemType;
         private static getItemKeyObject;
