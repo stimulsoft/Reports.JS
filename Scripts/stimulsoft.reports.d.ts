@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.3.2
-Build date: 2023.08.12
+Version: 2023.3.3
+Build date: 2023.08.23
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -2976,6 +2976,7 @@ export namespace Stimulsoft.System.Drawing {
         static get empty(): Rectangle;
         static union(a: Rectangle, b: Rectangle): Rectangle;
         static convertFromXml(text: string): Rectangle;
+        static round(value: Rectangle): Rectangle;
         clone(): Rectangle;
         inflate(width: number, height: number): Rectangle;
         normalize(): Rectangle;
@@ -4359,6 +4360,7 @@ export namespace Stimulsoft.Base {
 export namespace Stimulsoft.Base {
     class StiObjectConverter {
         static convertToNumber(value: any): number;
+        private static normalizeFloatingPointValue;
     }
 }
 export namespace Stimulsoft.Base {
@@ -29091,6 +29093,7 @@ export namespace Stimulsoft.Report.CrossTab.Core {
         private align;
         private getCellTotalWidth;
         private getCellTotalHeight;
+        hasRightCrossTitle(): boolean;
         doAutoSize(): void;
         private getFieldWidth;
         private getFieldHeight;
@@ -29121,6 +29124,7 @@ export namespace Stimulsoft.Report.CrossTab.Core {
         private columnsCell;
         private rowsCell;
         private invokeEvents2;
+        hasRightCrossTitle(): boolean;
         private invokeEvents;
         private addRowTotal;
         private addColTotal;
@@ -38072,7 +38076,7 @@ export namespace Stimulsoft.Report.Export.Services.Helpers {
         private static dx;
         private static dy;
         private static listTransformGeom;
-        static writeGeoms(writer: XmlTextWriter, context: StiContext, needAnimation: boolean, correctionText?: boolean): void;
+        static writeGeoms(writer: XmlTextWriter, context: StiContext, needAnimation: boolean): void;
         private static writeClipPath;
         private static writeRect;
         private static writeCicledRectPath;
@@ -45665,6 +45669,7 @@ export namespace Stimulsoft.Report.Chart {
         get localizedName(): string;
         private singleSizeConst;
         getSingleSize(context: StiContext): SizeD;
+        private showEmptyGeom;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, seriesArray: IStiSeries[]): void;
         roundPictirialValue(currentFactorValue: number, deltaValue: number): number;
         getSeriesBrush(colorIndex: number, colorCount: number): StiBrush;
@@ -45679,6 +45684,7 @@ export namespace Stimulsoft.Report.Chart {
         private correctionAlfa;
         applyStyle(style: IStiChartStyle, color: Color): void;
         renderSeries(context: StiContext, rect: Rectangle, geom: StiAreaGeom, seriesCollection: IStiSeries[]): void;
+        private isNotNullValues;
         private correctionMainPoint;
         private getArgumentText;
         private getRectangle;
@@ -48052,6 +48058,25 @@ export namespace Stimulsoft.Report.Chart {
     }
 }
 export namespace Stimulsoft.Report.Chart {
+    import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
+    import StiStringFormatGeom = Stimulsoft.Base.Context.StiStringFormatGeom;
+    import StiContext = Stimulsoft.Base.Context.StiContext;
+    import StiFontIcons = Stimulsoft.Report.Helpers.StiFontIcons;
+    import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    import List = Stimulsoft.System.Collections.List;
+    import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
+    class StiPictorialEmptySeriesElementGeom extends StiSeriesElementGeom {
+        animation: StiAnimation;
+        drawRectangles: List<Rectangle>;
+        clipRectangles: List<Rectangle>;
+        icon: StiFontIcons;
+        contains(x: number, y: number): boolean;
+        draw(context: StiContext): void;
+        protected getStringFormatGeom(context: StiContext): StiStringFormatGeom;
+        constructor(areaGeom: StiAreaGeom, value: number, index: number, seriesBrush: StiBrush, series: IStiSeries, icon: StiFontIcons, drawRectangles: List<Rectangle>, clipRectangles: List<Rectangle>, clientRectangle: Rectangle, animation: StiAnimation);
+    }
+}
+export namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
     import RectangleD = Stimulsoft.System.Drawing.Rectangle;
@@ -48068,6 +48093,26 @@ export namespace Stimulsoft.Report.Chart {
         draw(context: StiContext): void;
         getStringFormatGeom(context: StiContext): StiStringFormatGeom;
         constructor(areaGeom: StiAreaGeom, value: number, index: number, seriesBrush: StiBrush, series: IStiSeries, icon: StiFontIcons, drawRectangles: RectangleD[], clipRectangles: RectangleD[], clientRectangle: RectangleD, animation: StiAnimation);
+    }
+}
+export namespace Stimulsoft.Report.Chart {
+    import StiFontGeom = Stimulsoft.Base.Context.StiFontGeom;
+    import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
+    import StiStringFormatGeom = Stimulsoft.Base.Context.StiStringFormatGeom;
+    import StiContext = Stimulsoft.Base.Context.StiContext;
+    import StiFontIcons = Stimulsoft.Report.Helpers.StiFontIcons;
+    import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    import StiAnimation = Stimulsoft.Base.Context.Animation.StiAnimation;
+    class StiPictorialStackedEmptySeriesElementGeom extends StiSeriesElementGeom {
+        animation: StiAnimation;
+        clipRectangle: Rectangle;
+        icon: StiFontIcons;
+        contains(x: number, y: number): boolean;
+        draw(context: StiContext): void;
+        getFontGeom(context: StiContext): StiFontGeom;
+        measureFontSize(context: StiContext, rect: Rectangle, font: StiFontGeom): number;
+        protected getStringFormatGeom(context: StiContext): StiStringFormatGeom;
+        constructor(areaGeom: StiAreaGeom, value: number, index: number, seriesBrush: StiBrush, series: IStiSeries, icon: StiFontIcons, clientRectangle: Rectangle, clipRectangle: Rectangle, animation: StiAnimation);
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -48434,6 +48479,13 @@ export namespace Stimulsoft.Report.Chart {
     }
 }
 export namespace Stimulsoft.Report.Chart {
+    import StiContext = Stimulsoft.Base.Context.StiContext;
+    class StiSunburstEmptySeriesElementGeom extends StiCellGeom {
+        draw(context: StiContext): void;
+        private drawSunburst;
+    }
+}
+export namespace Stimulsoft.Report.Chart {
     import StiSegmentGeom = Stimulsoft.Base.Context.StiSegmentGeom;
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import TimeSpan = Stimulsoft.System.TimeSpan;
@@ -48457,6 +48509,12 @@ export namespace Stimulsoft.Report.Chart {
         draw(context: StiContext): void;
         private getAnimation;
         constructor(areaGeom: StiAreaGeom, value: number, index1: number, index2: number, index3: number, series: IStiSeries, clientRectangle: RectangleD, clientRectangleDt: RectangleD, path: List<StiSegmentGeom>, borderColor: Color, brush: StiBrush, startAngle: number, endAngle: number, radiusFrom: number, radiusTo: number, beginTime: TimeSpan);
+    }
+}
+export namespace Stimulsoft.Report.Chart {
+    import StiContext = Stimulsoft.Base.Context.StiContext;
+    class StiTreemapEmptySeriesElementGeom extends StiCellGeom {
+        draw(context: StiContext): void;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -62921,7 +62979,6 @@ export namespace Stimulsoft.Dashboard.Helpers {
             ref: Point;
         }): void;
         static getFontSize(context: StiContext, rect: Rectangle, text: string, font: Font): number;
-        static getFontSize2(context: StiContext, font: Font, rect: Rectangle, text: string): number;
     }
 }
 export namespace Stimulsoft.Dashboard.Visuals.Cards {
@@ -66716,6 +66773,8 @@ export namespace Stimulsoft.Designer {
         SetZoomBy(param: string): any;
         GetCookie(name: string): any;
         isDarkModeOS(): any;
+        MessageFormForSave(): any;
+        ActionSaveReport(nextFunc?: any, autoSave?: boolean): any;
         constructor(parameters: any);
     }
     type ExitEventArgs = {
