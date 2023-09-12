@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.3.3
-Build date: 2023.08.23
+Version: 2023.3.4
+Build date: 2023.09.12
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -1481,7 +1481,10 @@ export namespace Stimulsoft.System.Collections {
 export namespace Stimulsoft.System.Collections {
     class Hashtable<K = any, V = any> {
         private ignoreCase;
-        private data;
+        entries: Map<string | K, {
+            key: K;
+            value: V;
+        }>;
         get keys(): LinqHelper<K>;
         get values(): LinqHelper<V>;
         [Symbol.iterator](): Iterator<{
@@ -15563,6 +15566,7 @@ export namespace Stimulsoft.Report.Engine {
         private static renderInternalSubReportAsync;
         private static renderInternalSubReport;
         static renderExternalSubReportsWithoutHelpOfUnlimitedHeightPagesOldMode: boolean;
+        static StiSubReportIdObject: any;
         private static renderExternalSubReportAsync;
         private static renderExternalSubReport;
         static renderDataBandsInContainerAsync(containerOfDataBands: StiContainer, container: StiContainer, skipStaticBands?: boolean): Promise<void>;
@@ -20624,6 +20628,7 @@ export namespace Stimulsoft.Report {
         subReports: StiReportsCollection;
         key: string;
         reportGuid: string;
+        tag: any;
         imageCache: Hashtable;
         parentReport: StiReport;
         globalizationManager: IStiGlobalizationManager;
@@ -20992,6 +20997,7 @@ export namespace StiOptions {
         lineSpacing: number;
         divideBigCells: boolean;
         restrictEditing: StiWord2007RestrictEditing;
+        watermarkOnlyBehind: boolean;
     }
     class ExportWriter {
         removeEmptySpaceAtBottom: boolean;
@@ -41997,10 +42003,17 @@ export namespace Stimulsoft.Report.Export {
         private headersRels;
         private footersData;
         private footersRels;
+        private shiftHeader;
+        private shiftFooter;
+        private hasHeader;
+        private hasFooter;
+        private additionalIndex;
+        private spriteIndex;
         private docCompanyString;
         private docLastModifiedString;
         private static fontsToCorrectHeight;
         private static checkFontsToCorrectHeight;
+        private getImageExt;
         private getLineStyle;
         private getColorString;
         private getStyleNumber;
@@ -42029,6 +42042,7 @@ export namespace Stimulsoft.Report.Export {
         private writeEndNotes;
         private writeHeader;
         private writeFooter;
+        private writeWatermark;
         private writeContentTypes;
         private writeMainRels;
         private writeDocPropsApp;
@@ -42040,7 +42054,6 @@ export namespace Stimulsoft.Report.Export {
         private writeHeaderFooterRels;
         private writeStyles;
         private writeImage;
-        private writeAdditionalData;
         exportWord(report: StiReport, stream: MemoryStream, settings: StiWord2007ExportSettings): void;
     }
 }
