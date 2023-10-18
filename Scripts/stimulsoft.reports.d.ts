@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.4.1
-Build date: 2023.10.06
+Version: 2023.4.2
+Build date: 2023.10.18
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -557,6 +557,7 @@ export namespace Stimulsoft.System {
         static saveAs(data: any, fileName: string, type?: string): void;
         private static isObject;
         static mergeDeep(target: any, ...sources: any[]): any;
+        static stimulsoft: symbol;
         static init(): void;
         constructor(value: any);
     }
@@ -678,23 +679,18 @@ export namespace Stimulsoft.System {
 }
 interface Object {
     //StiObject;
-    stimulsoft(): Stimulsoft.System.StiObject;
 }
 interface String {
     //StiString;
-    stimulsoft(): Stimulsoft.System.StiString;
 }
 interface Number {
     //StiNumber;
-    stimulsoft(): Stimulsoft.System.StiNumber;
 }
 interface Boolean {
     //StiBoolean;
-    stimulsoft(): Stimulsoft.System.StiBoolean;
 }
 interface Array<T> {
     //StiArray;
-    stimulsoft(): Stimulsoft.System.StiArray;
 }
 export namespace Stimulsoft.System {
     class EventHandler {
@@ -1910,6 +1906,7 @@ export namespace Stimulsoft.System.Crypt {
         static signature: string;
         static hex(data: string): string;
         hex(data: string): string;
+        bytes(data: number[]): number[];
         private getMD;
         private rotl;
         private round;
@@ -13467,6 +13464,7 @@ export namespace Stimulsoft.Report.Components {
     }
 }
 export namespace Stimulsoft.Report.Components {
+    import StiCornerRadius = Stimulsoft.Base.Drawing.StiCornerRadius;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import Font = Stimulsoft.System.Drawing.Font;
     import IStiGetFonts = Stimulsoft.Base.IStiGetFonts;
@@ -13479,7 +13477,7 @@ export namespace Stimulsoft.Report.Components {
     import SizeD = Stimulsoft.System.Drawing.Size;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import Point = Stimulsoft.System.Drawing.Point;
-    class StiContainer extends StiComponent implements IStiBorder, IStiBrush, IStiBreakable, IStiIgnoryStyle, IStiJsonReportObject, IStiGetFonts {
+    class StiContainer extends StiComponent implements IStiBorder, IStiBrush, IStiBreakable, IStiIgnoryStyle, IStiJsonReportObject, IStiGetFonts, IStiCornerRadius {
         private static ImplementsStiContainer;
         implements(): any[];
         meta(): StiMeta[];
@@ -13514,6 +13512,7 @@ export namespace Stimulsoft.Report.Components {
         private _components;
         get components(): StiComponentsCollection;
         set components(value: StiComponentsCollection);
+        cornerRadius: StiCornerRadius;
         protected static propertyBlocked: string;
         get blocked(): boolean;
         set blocked(value: boolean);
@@ -39072,7 +39071,7 @@ export namespace Stimulsoft.Report.Maps.Helpers {
         static init(report: StiReport): void;
         static isCustom(mapIdent: string): boolean;
         static getContainer(report: StiReport, mapIdent: string): StiMapSvgContainer;
-        static stiPopulateObject(json: any, object: any): void;
+        static stiPopulateObject(json: object, obj: StiMapSvgContainer | StiMapSvg): void;
         static StiCustomMapFinder(): void;
     }
 }
@@ -42433,6 +42432,7 @@ export namespace Stimulsoft.Report.Export {
 }
 export namespace Stimulsoft.Report.Export {
     import MemoryStream = Stimulsoft.System.IO.MemoryStream;
+    import XmlTextWriter = Stimulsoft.System.Xml.XmlTextWriter;
     class StiWord2007ExportService extends StiExportService implements IStiWord2007ExportService {
         implements(): any[];
         get exportFormat(): StiExportFormat;
@@ -42458,6 +42458,7 @@ export namespace Stimulsoft.Report.Export {
         private lineSpace2;
         private usePageHeadersAndFooters;
         private restrictEditing;
+        private protectionPassword;
         private headersData;
         private headersRels;
         private footersData;
@@ -42484,6 +42485,10 @@ export namespace Stimulsoft.Report.Export {
         private convertHiToTwips;
         private convertTwipsToEmu;
         private convertStringToBookmark;
+        private initialCodeArray;
+        private encryptionMatrix;
+        private concatByteArrays;
+        generateDocumentProtection(writer: XmlTextWriter, strPassword: string): void;
         private writeFromMatrix;
         private writeCellContent;
         private writeTableInfo;
@@ -42526,6 +42531,7 @@ export namespace Stimulsoft.Report.Export {
     }
 }
 export namespace Stimulsoft.Report.Export {
+    import StiCornerRadius = Stimulsoft.Base.Drawing.StiCornerRadius;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import Color = Stimulsoft.System.Drawing.Color;
     import MemoryStream = Stimulsoft.System.IO.MemoryStream;
@@ -42684,6 +42690,7 @@ export namespace Stimulsoft.Report.Export {
         info: StiPdfStructure;
         private haveDigitalSignature;
         private pdfSecurity;
+        tempGeomWriter: StiPdfGeomWriter;
         printScaling: boolean;
         private static regexEscape;
         stringReplace(st: string, oldValue: string, newValue: string): string;
@@ -42701,7 +42708,7 @@ export namespace Stimulsoft.Report.Export {
         get gsTable(): string[][];
         pushColorToStack(): void;
         popColorFromStack(): void;
-        fillRectBrush(brush: StiBrush, rect: Rectangle): void;
+        fillRectBrush(brush: StiBrush, rect: Rectangle, cornerRadius?: StiCornerRadius): void;
         private storeStringLine;
         storeString(st: string): void;
         private convertToHexString;
@@ -42867,6 +42874,7 @@ export namespace Stimulsoft.Report.Export {
     import List = Stimulsoft.System.Collections.List;
     import Point = Stimulsoft.System.Drawing.Point;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    import StringBuilder = Stimulsoft.System.Text.StringBuilder;
     import MemoryStream = Stimulsoft.System.IO.MemoryStream;
     import Color = Stimulsoft.System.Drawing.Color;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
@@ -42887,13 +42895,14 @@ export namespace Stimulsoft.Report.Export {
         private lastPoint;
         private makepath;
         private pathClosed;
-        private path;
-        private pageStream;
+        path: StringBuilder;
+        pageStream: MemoryStream;
         private pdfService;
         assembleData: boolean;
         pageNumber: number;
         matrixCache: Matrix[];
         componentAngle: number;
+        forceNewPoint: boolean;
         private xmin;
         private xmax;
         private ymin;
@@ -42988,6 +42997,8 @@ export namespace Stimulsoft.Report.Export {
     class StiPdfRenderPrimitives {
         static renderBorder1(pp: StiPdfData): void;
         static renderBorder2(pp: StiPdfData): void;
+        private static renderBorderWithCorners2;
+        private static writeBorderWithCorners2;
         private static storeBorderSideData;
         static getPenStyleDashString(style: StiPenStyle, step: number, pp: StiPdfData): string;
         static checkShape(shape: StiShape): boolean;
