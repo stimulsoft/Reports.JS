@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.4.2
-Build date: 2023.10.18
+Version: 2023.4.3
+Build date: 2023.11.02
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -14875,6 +14875,7 @@ export namespace Stimulsoft.Report.Components {
         getTextWithoutZero(text: string): string;
         setText(getValue?: any, value?: string): void;
         private setTextTo;
+        static processEndRenderSetText(report: StiReport): void;
         linesOfUnderline: StiPenStyle;
         get linesOfUnderlining(): boolean;
         set linesOfUnderlining(value: boolean);
@@ -42383,8 +42384,6 @@ export namespace Stimulsoft.Report.Export {
         exportTo(report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
         exportToAsync(onExport: Function, report: StiReport, stream: MemoryStream, settings: StiExportSettings): void;
         private report;
-        private fileName;
-        private sendEMail;
         private imageListOffset;
         private imageResolution;
         private imageQuality;
@@ -42394,12 +42393,10 @@ export namespace Stimulsoft.Report.Export {
         private xmlIndentation;
         private currentCulture;
         private newCulture;
+        private imageResolutionMode;
         private getLineStyle;
         private stringToUrl;
         private wrongUrlSymbols;
-        private HiToTwips;
-        private convert;
-        private convertTwipsToEmu;
         private convertToEmu;
         private writeColor;
         private writeContentTypes;
@@ -42420,9 +42417,11 @@ export namespace Stimulsoft.Report.Export {
         private writeSlide;
         private writeStiTextbox;
         private writeStiImage;
+        private writeStiImageAuto;
         private writeSpPr;
         private writeBorder;
         private writeLine;
+        private writeRoundRectangle;
         private capStyleToPptStyle;
         private writeWatermark;
         private writeHyperlinkInfo;
@@ -42691,7 +42690,7 @@ export namespace Stimulsoft.Report.Export {
         private haveDigitalSignature;
         private pdfSecurity;
         tempGeomWriter: StiPdfGeomWriter;
-        printScaling: boolean;
+        static printScaling: boolean;
         private static regexEscape;
         stringReplace(st: string, oldValue: string, newValue: string): string;
         getHatchNumber(brush: StiHatchBrush): number;
@@ -64004,6 +64003,8 @@ export namespace Stimulsoft.Dashboard.Render {
         protected static renderTrendLines(series: IStiSeries, element: StiChartElement, valueMeter: StiMeter): void;
         private static getTrendLine;
         private renderSeriesLabels;
+        private static renderLabelsShowZeros;
+        private static renderLabelsShowNulls;
         private static applyPropertiesToSeriesLabels;
         private static renderPieLabelsAutoRotate;
         private static renderLabelsColor;
@@ -65309,9 +65310,9 @@ export namespace Stimulsoft.Viewer {
         onBeginProcessData: (args: BeginProcessDataArgs, callback: (result: any) => void) => void;
         onEndProcessData: (args: EndProcessDataArgs) => void;
         onPrintReport: (args: PrintReportEventArgs, callback: () => void) => void;
-        onBeginExportReport: (args: BeginExportReportArgs, callback: (args: BeginExportReportArgs) => void) => void;
-        onEndExportReport: (args: EndExportReportArgs) => void;
-        onInteraction: (args: InteractionArgs, callback: (args: InteractionArgs) => (void | Promise<void>)) => void;
+        onBeginExportReport: (args: BeginExportReportArgs, callback: () => void) => void;
+        onEndExportReport: (args: EndExportReportArgs, callback: () => void) => void;
+        onInteraction: (args: InteractionArgs, callback: () => void) => void;
         onEmailReport: (args: EmailReportArgs) => void;
         onDesignReport: (args: DesignReportArgs) => void;
         onShowReport: (args: ShowReportArgs, callback: () => void) => void;
