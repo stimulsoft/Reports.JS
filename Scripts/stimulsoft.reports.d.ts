@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2023.4.3
-Build date: 2023.11.02
+Version: 2023.4.4
+Build date: 2023.11.21
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -39380,6 +39380,8 @@ export namespace Stimulsoft.Report.Export {
         renderAsDocument: boolean;
         removeEmptySpaceAtBottom: boolean;
         pageHorAlignment: StiHorAlignment;
+        private static tr_Angle;
+        private static tr_Opacity;
         static fontScale: Hashtable;
         static getFontScale(fontName: string, fontSize: number): number;
         private addCoord;
