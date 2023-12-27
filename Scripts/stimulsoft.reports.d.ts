@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.1.1
-Build date: 2023.12.08
+Version: 2024.1.2
+Build date: 2023.12.21
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -18731,7 +18731,7 @@ export namespace Stimulsoft.Report.Components {
         private getCacheIndexFromPageHash;
         private deserializePage;
         private saveQuickPagesToCache;
-        private flush;
+        flush(final?: boolean): void;
         checkCacheL2(): void;
         private savePageToCache;
         private loadPageFromCache;
@@ -19626,9 +19626,10 @@ export namespace Stimulsoft.Report.Engine {
         ToLongDateString = 1025,
         ToLongTimeString = 1026,
         GetCurrentConditionValue = 1027,
-        Add = 1028,
-        Subtract = 1029,
-        MethodNameSpace = 1030
+        GetValueOrDefault = 1028,
+        Add = 1029,
+        Subtract = 1030,
+        MethodNameSpace = 1031
     }
     enum StiParameterNumber {
         Param1 = 1,
@@ -19725,6 +19726,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         protected getTypeName(value: any): string;
         report: StiReport;
         protected checkParserMethodInfo(type: StiFunctionType, args: any[]): number;
+        protected checkParserMethodInfo2(type: StiFunctionType, args: any[], asmCommand: StiAsmCommand): number;
         getParserMethodInfo(type: StiFunctionType, args: Type[], argValues?: object[]): StiParserMethodInfo;
     }
 }
@@ -19791,7 +19793,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
 }
 export namespace Stimulsoft.Report.Engine.StiParser {
     class StiParser_AsmMethods extends StiParser_AsmProperties {
-        protected call_method(name: any, argsList: any[]): any;
+        protected call_method(name: any, argsList: any[], asmCommand: StiAsmCommand): any;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -19826,7 +19828,7 @@ export namespace Stimulsoft.Report.Dictionary {
 }
 export namespace Stimulsoft.Report.Engine.StiParser {
     class StiParser_AsmFunctions extends StiParser_AsmMethods {
-        protected call_func(name: any, argsList: any[]): any;
+        protected call_func(name: any, argsList: any[], asmCommand: StiAsmCommand): any;
     }
 }
 export namespace Stimulsoft.Report.Engine.StiParser {
@@ -19873,6 +19875,7 @@ export namespace Stimulsoft.Report.Engine {
         ignoreGlobalizedName: boolean;
         constants: Hashtable;
         useAliases: boolean;
+        variablesRecursionCheck: Hashtable;
     }
 }
 export namespace Stimulsoft.Report.Engine.StiParser {
@@ -19881,6 +19884,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import StiText = Stimulsoft.Report.Components.StiText;
     import StiVariable = Stimulsoft.Report.Dictionary.StiVariable;
+    import Type = Stimulsoft.System.Type;
     class StiParserData {
         data: any;
         asmList: StiAsmCommand[];
@@ -19895,6 +19899,16 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         equals(obj: any): boolean;
         constructor(component: StiComponent, expression: string);
     }
+    class StiParserDataSourceFieldInfo {
+        path: string[];
+        objects: any[];
+        constructor();
+    }
+    class StiParserCheckMethodInfo {
+        lastOverload: number;
+        lastArgsTypes: Type[];
+        constructor(lastOverload: number, lastArgsTypes: Type[]);
+    }
     class StiToken {
         type: StiTokenType;
         value: string;
@@ -19906,11 +19920,13 @@ export namespace Stimulsoft.Report.Engine.StiParser {
     }
     class StiAsmCommand {
         type: StiAsmCommandType;
+        argsCount: number;
         parameter1: any;
         parameter2: any;
         position: number;
         length: number;
-        constructor(type: StiAsmCommandType, parameter1?: any, parameter2?: any);
+        resultType: Type;
+        constructor(type: StiAsmCommandType, parameter1?: any, argsCount?: number, parameter2?: any);
         toString(): string;
     }
     class StiParserGetDataFieldValueEventArgs {
@@ -19923,8 +19939,12 @@ export namespace Stimulsoft.Report.Engine.StiParser {
     }
     class StiParser extends StiParser_Parser {
         private sender;
+        private parameters;
         executeAsm(objectAsmList: any): any;
+        private getDataSourceField;
         private getVariableValue;
+        private checkVariableRecursion;
+        private removeRecursionCheck;
         private call_arrayElement;
         protected get_systemVariable(name: any): any;
         static parseTextValue2(inputExpression: string, component: StiComponent, sender?: any, parameters?: StiParserParameters): any;
@@ -19934,7 +19954,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         static checkExpression(inputExpression: string, component: StiComponent, useAliases?: boolean): StiParserException;
         static checkForDataBandsUsedInPageTotals(stiText: StiText, report?: StiReport): void;
         static prepareReportVariables(report: StiReport): void;
-        static prepareVariableValue(varr: StiVariable, report: StiReport, textBox?: StiText, fillItems?: boolean): any;
+        static prepareVariableValue(varr: StiVariable, report: StiReport, textBox?: StiText, fillItems?: boolean, parameters?: StiParserParameters, processReadOnly?: boolean): any;
         private static getExpressionValue;
     }
 }
@@ -63514,6 +63534,7 @@ export namespace Stimulsoft.Dashboard.Helpers {
     class StiAutoSizeTextHelper {
         static toAlignment(alignment: StiHorAlignment): StiTextHorAlignment;
         static measure(g: Graphics, text: string, font: Font): Size;
+        static measure2(g: Graphics, text: string, font: Font, width: number): Size;
         static measureFontSize(g: Graphics, text: string, rect: Rectangle, font: Font): number;
     }
 }
@@ -65723,6 +65744,7 @@ export namespace Stimulsoft.Viewer {
         parametersPanelPosition: StiParametersPanelPosition;
         parametersPanelMaxHeight: number;
         parametersPanelColumnsCount: number;
+        minParametersCountForMultiColumns: number;
         parametersPanelDateFormat: string;
         parametersPanelSortDataItems: boolean;
         interfaceType: StiInterfaceType;
