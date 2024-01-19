@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.1.2
-Build date: 2023.12.21
+Version: 2024.1.3
+Build date: 2024.01.18
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -13308,7 +13308,10 @@ export namespace Stimulsoft.Report.Components {
         private static eventBeforePrint;
         protected onBeforePrint(e: EventArgs): void;
         invokeBeforePrint(sender: StiComponent, e: EventArgs): void;
-        applyConditions(sender: StiComponent, conditions: any[], e: EventArgs): void;
+        applyConditions(sender: StiComponent, conditions: {
+            key: StiCondition;
+            value: string;
+        }[], e: EventArgs): void;
         get beforePrintEvent(): StiBeforePrintEvent;
         set beforePrintEvent(value: StiBeforePrintEvent);
         private static eventAfterPrint;
@@ -15812,7 +15815,8 @@ export namespace Stimulsoft.Report.CrossTab.Core {
         Max = 4,
         Count = 5,
         CountDistinct = 6,
-        Image = 7
+        Image = 7,
+        Median = 8
     }
     enum StiSummaryValues {
         AllValues = 0,
@@ -17485,6 +17489,8 @@ export namespace Stimulsoft.Report.Dictionary {
         createConnectionInDataStore(dictionary: StiDictionary, database: StiSqlDatabase): void;
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
         getNetType(dbType: string): Stimulsoft.System.Type;
+        getSqlType(type: System.Type, source: StiSqlSource): number;
+        private getSqlType2;
         retrieveDataAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString: string): StiPromise<DataTable>;
         constructor();
     }
@@ -19450,98 +19456,100 @@ export namespace Stimulsoft.Report.Engine {
         Substring = 515,
         ToCurrencyWords = 516,
         ToCurrencyWordsAr = 517,
-        ToCurrencyWordsEnGb = 518,
-        ToCurrencyWordsEnIn = 519,
-        ToCurrencyWordsEs = 520,
-        ToCurrencyWordsFr = 521,
-        ToCurrencyWordsNl = 522,
-        ToCurrencyWordsPl = 523,
-        ToCurrencyWordsPt = 524,
-        ToCurrencyWordsPtBr = 525,
-        ToCurrencyWordsRu = 526,
-        ToCurrencyWordsThai = 527,
-        ToCurrencyWordsTr = 528,
-        ToCurrencyWordsUa = 529,
-        ToCurrencyWordsZh = 530,
-        ToLowerCase = 531,
-        ToProperCase = 532,
-        ToUpperCase = 533,
-        ToWords = 534,
-        ToWordsAr = 535,
-        ToWordsEs = 536,
-        ToWordsEnIn = 537,
-        ToWordsFa = 538,
-        ToWordsPl = 539,
-        ToWordsPt = 540,
-        ToWordsRu = 541,
-        ToWordsTr = 542,
-        ToWordsUa = 543,
-        Trim = 544,
-        TryParseDateTime = 545,
-        TryParseDecimal = 546,
-        TryParseDouble = 547,
-        TryParseLong = 548,
-        Arabic = 549,
-        Persian = 550,
-        ToOrdinal = 551,
-        Left = 552,
-        Mid = 553,
-        Right = 554,
-        StrToDateTime = 555,
-        StrToNullableDateTime = 556,
-        IsNull = 557,
-        Next = 558,
-        NextIsNull = 559,
-        Previous = 560,
-        PreviousIsNull = 561,
-        VLookup = 562,
-        VLookupStr = 563,
-        GetCrossTabColumnValue = 564,
-        GetCrossTabRowValue = 565,
-        IIF = 566,
-        Choose = 567,
-        Switch = 568,
-        Rand = 569,
-        ToString = 570,
-        Format = 571,
-        SystemConvertToBoolean = 572,
-        SystemConvertToByte = 573,
-        SystemConvertToChar = 574,
-        SystemConvertToDateTime = 575,
-        SystemConvertToDecimal = 576,
-        SystemConvertToDouble = 577,
-        SystemConvertToInt16 = 578,
-        SystemConvertToInt32 = 579,
-        SystemConvertToInt64 = 580,
-        SystemConvertToSByte = 581,
-        SystemConvertToSingle = 582,
-        SystemConvertToString = 583,
-        SystemConvertToUInt16 = 584,
-        SystemConvertToUInt32 = 585,
-        SystemConvertToUInt64 = 586,
-        MathRound = 587,
-        MathPow = 588,
-        AddAnchor = 589,
-        GetAnchorPageNumber = 590,
-        GetAnchorPageNumberThrough = 591,
-        ConvertRtf = 592,
-        GetLabel = 593,
-        GetParam = 594,
-        Parse_Int = 595,
-        Parse_Double = 596,
-        Parse_Decimal = 597,
-        Parse_DateTime = 598,
-        Parse_TimeSpan = 599,
-        ParseLong = 600,
-        ParseDouble = 601,
-        ParseDecimal = 602,
-        ParseDateTime = 603,
-        StringIsNullOrEmpty = 604,
-        StringIsNullOrWhiteSpace = 605,
-        EngineHelperJoinColumnContent = 606,
-        EngineHelperToQueryString = 607,
-        EngineHelperGetRealPageNumber = 608,
-        NewType = 609,
+        ToCurrencyWordsBg = 518,
+        ToCurrencyWordsEnGb = 519,
+        ToCurrencyWordsEnIn = 520,
+        ToCurrencyWordsEs = 521,
+        ToCurrencyWordsFr = 522,
+        ToCurrencyWordsNl = 523,
+        ToCurrencyWordsPl = 524,
+        ToCurrencyWordsPt = 525,
+        ToCurrencyWordsPtBr = 526,
+        ToCurrencyWordsRu = 527,
+        ToCurrencyWordsThai = 528,
+        ToCurrencyWordsTr = 529,
+        ToCurrencyWordsUa = 530,
+        ToCurrencyWordsZh = 531,
+        ToLowerCase = 532,
+        ToProperCase = 533,
+        ToUpperCase = 534,
+        ToWords = 535,
+        ToWordsAr = 536,
+        ToWordsBg = 537,
+        ToWordsEs = 538,
+        ToWordsEnIn = 539,
+        ToWordsFa = 540,
+        ToWordsPl = 541,
+        ToWordsPt = 542,
+        ToWordsRu = 543,
+        ToWordsTr = 544,
+        ToWordsUa = 545,
+        Trim = 546,
+        TryParseDateTime = 547,
+        TryParseDecimal = 548,
+        TryParseDouble = 549,
+        TryParseLong = 550,
+        Arabic = 551,
+        Persian = 552,
+        ToOrdinal = 553,
+        Left = 554,
+        Mid = 555,
+        Right = 556,
+        StrToDateTime = 557,
+        StrToNullableDateTime = 558,
+        IsNull = 559,
+        Next = 560,
+        NextIsNull = 561,
+        Previous = 562,
+        PreviousIsNull = 563,
+        VLookup = 564,
+        VLookupStr = 565,
+        GetCrossTabColumnValue = 566,
+        GetCrossTabRowValue = 567,
+        IIF = 568,
+        Choose = 569,
+        Switch = 570,
+        Rand = 571,
+        ToString = 572,
+        Format = 573,
+        SystemConvertToBoolean = 574,
+        SystemConvertToByte = 575,
+        SystemConvertToChar = 576,
+        SystemConvertToDateTime = 577,
+        SystemConvertToDecimal = 578,
+        SystemConvertToDouble = 579,
+        SystemConvertToInt16 = 580,
+        SystemConvertToInt32 = 581,
+        SystemConvertToInt64 = 582,
+        SystemConvertToSByte = 583,
+        SystemConvertToSingle = 584,
+        SystemConvertToString = 585,
+        SystemConvertToUInt16 = 586,
+        SystemConvertToUInt32 = 587,
+        SystemConvertToUInt64 = 588,
+        MathRound = 589,
+        MathPow = 590,
+        AddAnchor = 591,
+        GetAnchorPageNumber = 592,
+        GetAnchorPageNumberThrough = 593,
+        ConvertRtf = 594,
+        GetLabel = 595,
+        GetParam = 596,
+        Parse_Int = 597,
+        Parse_Double = 598,
+        Parse_Decimal = 599,
+        Parse_DateTime = 600,
+        Parse_TimeSpan = 601,
+        ParseLong = 602,
+        ParseDouble = 603,
+        ParseDecimal = 604,
+        ParseDateTime = 605,
+        StringIsNullOrEmpty = 606,
+        StringIsNullOrWhiteSpace = 607,
+        EngineHelperJoinColumnContent = 608,
+        EngineHelperToQueryString = 609,
+        EngineHelperGetRealPageNumber = 610,
+        NewType = 611,
         m_Substring = 1000,
         m_ToString = 1001,
         m_ToLower = 1002,
@@ -19863,6 +19871,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
 export namespace Stimulsoft.Report.Engine {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import StiParser = Stimulsoft.Report.Engine.StiParser.StiParser;
+    import StiParserGetDataFieldValueEventArgs = Stimulsoft.Report.Engine.StiParser.StiParserGetDataFieldValueEventArgs;
     class StiParserParameters {
         storeToPrint: boolean;
         executeIfStoreToPrint: boolean;
@@ -19873,7 +19882,8 @@ export namespace Stimulsoft.Report.Engine {
         conversionStore: Hashtable;
         globalizedNameExt: string;
         ignoreGlobalizedName: boolean;
-        constants: Hashtable;
+        constants: Hashtable<string, any>;
+        getDataFieldValue: (sender: any, args: StiParserGetDataFieldValueEventArgs) => void;
         useAliases: boolean;
         variablesRecursionCheck: Hashtable;
     }
@@ -19935,10 +19945,12 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         processed: boolean;
         value: any;
         asmCommand: StiAsmCommand;
-        constructor(dataSourceName: string, dataColumnName: string);
+        path: string[];
+        constructor(dataSourceName: string, dataColumnName: string, path?: string[]);
     }
     class StiParser extends StiParser_Parser {
         private sender;
+        private getDataFieldValue;
         private parameters;
         executeAsm(objectAsmList: any): any;
         private getDataSourceField;
@@ -29347,6 +29359,7 @@ export namespace Stimulsoft.Report.CrossTab {
     import StiSummaryType = Stimulsoft.Report.CrossTab.Core.StiSummaryType;
     import StiSummaryValues = Stimulsoft.Report.CrossTab.Core.StiSummaryValues;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
+    import Hashtable = Stimulsoft.System.Collections.Hashtable;
     class StiCrossSummary extends StiCrossCell implements IStiJsonReportObject {
         private static ImplementsStiCrossSummary;
         implements(): any[];
@@ -29360,9 +29373,12 @@ export namespace Stimulsoft.Report.CrossTab {
         imageVertAlignment: StiVertAlignment;
         crossColumnValue: string;
         crossRowValue: string;
+        arguments: Hashtable<string, string>;
+        complexExpression: boolean;
         indexOfSelectValue: number;
         get cellText(): string;
         summary: StiSummaryType;
+        summaryForFieldsInExpression: boolean;
         summaryValues: StiSummaryValues;
         useStyleOfSummaryInRowTotal: boolean;
         useStyleOfSummaryInColumnTotal: boolean;
@@ -29447,6 +29463,7 @@ export namespace Stimulsoft.Report.CrossTab.Core {
         private createColTotals2;
         private getDataFromDataRow;
         private getValueFromDataRow;
+        private getValueFromDataRow2;
         private allowTotal;
         private getRow;
         private getColumn;
@@ -29463,10 +29480,18 @@ export namespace Stimulsoft.Report.CrossTab.Core {
         private convertToDecimal;
         private isAllowConvertToDecimal;
         private getSummary2;
+        private getSummary3;
         private getSummaryResult;
+        private getsSummaryResultImageAndNone;
+        private getSummaryResultSum;
+        private getsSummaryResultMax;
+        private getsSummaryResultMin;
+        private getsSummaryResultCount;
+        private getSummaryResultAverage;
+        private getSummaryResultCountDistinct;
         private copySummaries;
         private copySummary;
-        private getSummary;
+        private copyArguments;
         private isHideZeros;
         private isDateTime;
         private static convertValueToString;
@@ -29687,12 +29712,15 @@ export namespace Stimulsoft.Report.CrossTab.Core {
     }
 }
 export namespace Stimulsoft.Report.CrossTab.Core {
+    import Hashtable = Stimulsoft.System.Collections.Hashtable;
     class StiSummary {
         sums: any[][];
+        arguments: Hashtable<number, Hashtable<string, any[]>>;
         hyperlinkValues: any[];
         tagValues: any[];
         toolTipValues: any[];
         drillDownParameters: any[];
+        complexExpression: boolean;
         constructor(level: number);
     }
 }
@@ -29702,6 +29730,7 @@ export namespace Stimulsoft.Report.CrossTab.Core {
         private level;
         private dataCol;
         getSummary(col: StiColumn, row: StiRow, create?: boolean): StiSummary;
+        getArguments(argValues: Hashtable<string, string>): Hashtable<string, any[]>;
         getDataCol(): Hashtable;
         constructor(level: number);
     }
@@ -35264,6 +35293,7 @@ export namespace Stimulsoft.Report.Dictionary {
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
         retrieveDataAsync(report: StiReport, dataSource: StiNoSqlSource, connectionString: string): StiPromise<DataTable>;
         getNetType(dbType: string): Stimulsoft.System.Type;
+        private prepareVariables;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -36604,30 +36634,6 @@ export namespace Stimulsoft.Report.Dictionary {
         static dateToStrRu(value: DateTime, upperCase?: boolean): string;
         static toCurrencyWordsRu(value: number, cents?: boolean, currency?: string, uppercase?: boolean): string;
         static toCurrencyWordsThai(value: number): string;
-        private static SP_STRtNumToMny;
-        private static SP_XCGtNumToMny;
-        private static reverseString;
-        private static tC_0;
-        private static tC_1;
-        private static tC_2;
-        private static tC_3;
-        private static tC_4;
-        private static tC_5;
-        private static tC_6;
-        private static tC_7;
-        private static tC_8;
-        private static tC_9;
-        private static tC_01;
-        private static tC_10;
-        private static tC_20;
-        private static tC_100;
-        private static tC_1000;
-        private static tC_10000;
-        private static tC_100000;
-        private static tC_1000000;
-        private static tC_Baht;
-        private static tC_Satang;
-        private static tC_Complete;
         static toWordsUa(value: number, uppercase?: boolean, gender?: Stimulsoft.Report.Func.Gender): string;
         static dateToStrUa(value: DateTime, upperCase?: boolean): string;
         static toCurrencyWordsUa(value: number, cents?: boolean, currency?: string, uppercase?: boolean): string;
@@ -36656,6 +36662,8 @@ export namespace Stimulsoft.Report.Dictionary {
         static toWordsAr(value: number): string;
         static toCurrencyWordsAr(value: number, currencyBasicUnit: string, currencyFractionalUnit: string): string;
         static convertToBase64String(value: string): string;
+        static toWordsBg(value: number, upperCase: boolean): string;
+        static toCurrencyWordsBg(value: number, currencyISO: string, showCents?: boolean, upperCase?: boolean): string;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -36761,6 +36769,8 @@ export namespace Stimulsoft.Report.Engine {
     }
 }
 export namespace Stimulsoft.Report.Engine {
+    import StiDataBand = Stimulsoft.Report.Components.StiDataBand;
+    import StiEmptyBand = Stimulsoft.Report.Components.StiEmptyBand;
     import StiContainer = Stimulsoft.Report.Components.StiContainer;
     import StiComponentsCollection = Stimulsoft.Report.Components.StiComponentsCollection;
     class StiEmptyBandsHelper {
@@ -36770,12 +36780,14 @@ export namespace Stimulsoft.Report.Engine {
         clear(): void;
         private createEmptyBandContainerAsync;
         private createEmptyBandContainer;
+        findDataBand(emptyBand: StiEmptyBand): StiDataBand;
         renderAsync(containerForRender: StiContainer, selectedContainer: StiContainer): Promise<void>;
         render(containerForRender: StiContainer, selectedContainer: StiContainer): void;
         constructor(engine: StiEngine);
     }
 }
 export namespace Stimulsoft.Report.Engine {
+    import StiCondition = Stimulsoft.Report.Components.StiCondition;
     import StiBookmark = Stimulsoft.Report.Components.StiBookmark;
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import StiFooterBand = Stimulsoft.Report.Components.StiFooterBand;
@@ -36843,8 +36855,14 @@ export namespace Stimulsoft.Report.Engine {
         anchorsArguments: Hashtable;
         private needResetPageNumberForNewPage;
         private _parserConversionStore;
-        get parserConversionStore(): Hashtable;
-        set parserConversionStore(value: Hashtable);
+        get parserConversionStore(): Hashtable<string, {
+            key: StiCondition;
+            value: string;
+        }[] | any>;
+        set parserConversionStore(value: Hashtable<string, {
+            key: StiCondition;
+            value: string;
+        }[] | any>);
         hashParentStyles: Hashtable;
         private _hashUseParentStyles;
         get hashUseParentStyles(): Hashtable;
@@ -36859,6 +36877,7 @@ export namespace Stimulsoft.Report.Engine {
         private componentPlacementRemakeTable;
         hashCheckSize: Hashtable;
         hashDataSourceReferencesCounter: Hashtable;
+        hashDataBandLastLine: Hashtable;
         offsetNewColumnY: number;
         latestProgressValue: number;
         newListAsync(skipStaticBands?: boolean): Promise<void>;
@@ -40313,6 +40332,16 @@ export namespace Stimulsoft.Report.Func {
     }
 }
 export namespace Stimulsoft.Report.Func {
+    class Bg {
+        private static num0;
+        private static num100;
+        private static num2bgtext;
+        private static ucfirst;
+        static numToStr(num: number, upperCase?: boolean): string;
+        static currToStr(num: number, isoCode?: string, showCents?: boolean, upperCase?: boolean): string;
+    }
+}
+export namespace Stimulsoft.Report.Func {
     import DateTime = Stimulsoft.System.DateTime;
     class En {
         private static months;
@@ -40469,6 +40498,34 @@ export namespace Stimulsoft.Report.Func {
         static decline2(value: number, one: string, two: string, five: string): string;
         static decline(value: number, currency: string, cents?: boolean): string;
         static dateToStr(date: DateTime, uppercase?: boolean): string;
+    }
+}
+export namespace Stimulsoft.Report.Func {
+    class Thai {
+        private static tC_0;
+        private static tC_1;
+        private static tC_2;
+        private static tC_3;
+        private static tC_4;
+        private static tC_5;
+        private static tC_6;
+        private static tC_7;
+        private static tC_8;
+        private static tC_9;
+        private static tC_01;
+        private static tC_10;
+        private static tC_20;
+        private static tC_100;
+        private static tC_1000;
+        private static tC_10000;
+        private static tC_100000;
+        private static tC_1000000;
+        private static tC_Baht;
+        private static tC_Satang;
+        private static tC_Complete;
+        static currToStr(value: number): string;
+        private static SP_XCGtNumToMny;
+        private static reverseString;
     }
 }
 export namespace Stimulsoft.Report.Func {
@@ -40663,6 +40720,7 @@ export namespace Stimulsoft.Base.Context {
     }
 }
 export namespace Stimulsoft.Report {
+    import StiInteractionDataGeom = Stimulsoft.Base.Context.StiInteractionDataGeom;
     import StiHorAlignment = Stimulsoft.Base.Drawing.StiHorAlignment;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import Color = Stimulsoft.System.Drawing.Color;
@@ -40686,7 +40744,7 @@ export namespace Stimulsoft.Report {
         static getFontIcons1(iconGroup: StiFontIconGroup): List<StiFontIcons>;
         static getIconFontSize(context: StiContext, size: Size, text: string): number;
         static drawFillIcons(context: StiContext, brush: object, rect: Rectangle, singleSize: Size, icon: StiFontIcons, toolTip: string): void;
-        static drawDirectionIcons(context: StiContext, brush: object, rect: Rectangle, singleSize: Size, icon: StiFontIcons, toolTip: string, verticalDirection: boolean, roundValues?: boolean): void;
+        static drawDirectionIcons(context: StiContext, brush: object, rect: Rectangle, singleSize: Size, icon: StiFontIcons, toolTip: string, interaction: StiInteractionDataGeom, verticalDirection: boolean, roundValues?: boolean): void;
         private static getStringFormatGeom;
     }
 }
@@ -45754,6 +45812,9 @@ export namespace Stimulsoft.Report.Chart {
     import PointD = Stimulsoft.System.Drawing.Point;
     import Color = Stimulsoft.System.Drawing.Color;
     import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
+    import IStiBaseLineSeries = Stimulsoft.Report.Chart.IStiBaseLineSeries;
+    import IStiAxisArea = Stimulsoft.Report.Chart.IStiAxisArea;
+    import List = Stimulsoft.System.Collections.List;
     import StiSeriesInteractionData = Stimulsoft.Base.Context.StiSeriesInteractionData;
     class StiBaseLineSeriesCoreXF extends StiSeriesCoreXF implements IStiApplyStyleSeries {
         private static implementsStiBaseLineSeriesCoreXF;
@@ -45765,8 +45826,8 @@ export namespace Stimulsoft.Report.Chart {
         renderLines(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         renderAreas(context: StiContext, geom: StiAreaGeom, pointsInfo: StiSeriesPointsInfo): void;
         renderSeries(context: StiContext, rect: RectangleD, geom: StiAreaGeom, series: IStiSeries[]): void;
-        private getPointsZeroConnect;
-        private getPointsNullConnect;
+        protected getPointsZeroConnect(series: IStiBaseLineSeries, values: number[], axisArea: IStiAxisArea): List<PointD>;
+        protected getPointsNullConnect(series: IStiBaseLineSeries, values: number[], axisArea: IStiAxisArea): List<PointD>;
         private getPointConnect;
         private getPointValue2;
         private getPointValue;
@@ -59413,9 +59474,11 @@ export namespace Stimulsoft.Dashboard.Components.Cards {
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiHorAlignment = Stimulsoft.Base.Drawing.StiHorAlignment;
     import IStiDataBarsColumn = Stimulsoft.Base.Meters.IStiDataBarsColumn;
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     class StiDataBarsCardsColumn extends StiMeasureCardsColumn implements IStiDataBarsColumn, IStiJsonReportObject {
         private static ImplementsStiDataBarsCardsColumnn;
         implements(): any[];
+        meta(): StiMeta[];
         ident: StiMeterIdent;
         width: number;
         positiveColor: Color;
@@ -62685,6 +62748,8 @@ export namespace Stimulsoft.Dashboard.Components.Progress {
         color: Color;
         trackColor: Color;
         font: Font;
+        private shouldSerializeFont;
+        isDefault: () => boolean;
         static createFromJson(json: StiJson): StiProgressElementCondition;
         static createFromXml(xmlNode: XmlNode): StiProgressElementCondition;
         constructor(field?: StiProgressFieldCondition, condition?: StiFilterCondition, value?: string, permissions?: StiProgressConditionPermissions, font?: Font, textColor?: Color, color?: Color, trackColor?: Color);
@@ -63211,6 +63276,7 @@ export namespace Stimulsoft.Dashboard.Components.Text {
         private shouldSerializeCornerRadius;
         text: string;
         getSimpleText(): string;
+        rightToLeft: boolean;
         group: string;
         foreColor: Color;
         crossFiltering: boolean;
@@ -64033,8 +64099,8 @@ export namespace Stimulsoft.Dashboard.Render {
         private static renderSeriesPie3d;
         private static renderSeriesYAxis;
         static renderSeriesLine(valueMeter: StiValueChartMeter, series: IStiSeries): void;
-        private static renderSeriesShowZeros;
-        private static renderSeriesShowNulls;
+        protected static renderSeriesShowZeros(valueMeter: StiValueChartMeter, series: IStiSeries): void;
+        protected static renderSeriesShowNulls(valueMeter: StiValueChartMeter, series: IStiSeries): void;
         private static renderSeriesLighting;
         private static renderSeriesIcon;
         renderMarker(element: StiChartElement, series: IStiSeries): void;
@@ -65610,6 +65676,7 @@ export namespace Stimulsoft.Viewer {
         private static getTimeSpanStringValue;
         private static getBasicType;
         private static getStiType;
+        private static storeDataSourcesSqlCommand;
         static applyReportParameters(report: StiReport, values: any): void;
         static transferParametersValuesToReport(report: StiReport, values: any): void;
         static applyReportBindingVariables(report: StiReport, values: any): void;
@@ -68334,6 +68401,7 @@ export namespace Stimulsoft.Designer {
         wizardTypeRunningAfterLoad: StiWizardType;
         allowWordWrapTextEditors: boolean;
         allowLoadingCustomFontsToClientSide: boolean;
+        formatForDateControls: string;
         private _zoom;
         get zoom(): number;
         set zoom(value: number);
