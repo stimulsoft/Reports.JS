@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.1.3
-Build date: 2024.01.18
+Version: 2024.1.4
+Build date: 2024.02.14
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -106,7 +106,9 @@ export namespace Stimulsoft.System {
     class NodeJs {
         private static isInitialize;
         static initialize(onResult?: Function): void;
-        private static convertAsync;
+        private static convertInternal;
+        private static getEmbeddedFonts;
+        private static convertSvgToPng;
         static platform(): any;
         static sendAsync(method: string, url: string, body?: string, headers?: {
             key: string;
@@ -2858,7 +2860,7 @@ export namespace Stimulsoft.System.Drawing {
         static addCustomFontFileAsync(callback: () => {}, filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontBytes(data: any, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         private static getFontMimeType;
-        static getCustomFontsCss(base64Data?: boolean): string;
+        static getCustomFontsCss(embeddedData?: boolean): string;
         static getCustomFontName(fontName: string, fontStyle: FontStyle): string;
         static allowStyle(fontName: string, fontStyle: FontStyle): boolean;
         private static measureDiv;
@@ -2941,7 +2943,8 @@ export namespace Stimulsoft.System.Drawing {
         static fromBytes(bytes: number[]): Image;
         static fromBase64(base64: string): Image;
         private setData;
-        convertAsync(imageFormat: ImageFormat, flate?: boolean, rect?: Rectangle, reconvert?: boolean, hashTable?: Hashtable): Promise<Image>;
+        convertAsync(imageFormat: ImageFormat, flate?: boolean, rect?: Rectangle, reconvert?: boolean, hashTable?: Hashtable): Promise<void>;
+        private static convertInternal;
         tryConvertSync(imageFormat: ImageFormat): boolean;
         private getHash;
         dispose(): void;
@@ -7622,10 +7625,10 @@ export namespace Stimulsoft.Base.Helpers {
         static bingKeysUrl: string;
         private static defaultBingKey;
         private static Script;
-        static get BingKey(): string;
+        static getBingKey(userBingKey: string): string;
         static getImage(size: Size, map: {
             mapImage: string;
-        }, pushPins?: List<string>): Promise<string>;
+        }, userBingKey: String, pushPins?: List<string>): Promise<string>;
         private static base64ArrayBuffer;
         private static getBingUrl;
         static getScript(mapData: {
@@ -15987,9 +15990,9 @@ export namespace Stimulsoft.Report.CrossTab {
         get crossTabStyle(): string;
         set crossTabStyle(value: string);
         setComponentStyle(value: string): void;
-        updateStyles(): void;
+        updateStyles(rewriteDefaultStyle?: boolean): void;
         getCellColor(): Color;
-        applyFieldStyle(field: StiCrossField): void;
+        applyFieldStyle(field: StiCrossField, rewriteDefaultStyle?: boolean): void;
         horAlignment: StiCrossHorAlignment;
         printTitleOnAllPages: boolean;
         summaryDirection: StiSummaryDirection;
@@ -21156,6 +21159,7 @@ export namespace StiOptions {
     class CrossTab {
         defaultWidth: number;
         defaultHeight: number;
+        memoryOptimization: boolean;
     }
     class Globalization {
         allowUseText: boolean;
@@ -29336,6 +29340,7 @@ export namespace Stimulsoft.Report.CrossTab {
         get localizedName(): string;
         enumeratorType: StiEnumeratorType;
         enumeratorSeparator: string;
+        keepMergedCellsTogether: boolean;
         getCrossRowTitle(): StiCrossTitle;
         getCrossRowTotal(): StiCrossRowTotal;
         createNew(): StiComponent;
@@ -29424,7 +29429,7 @@ export namespace Stimulsoft.Report.CrossTab.Core {
         doAutoSize(): void;
         private getFieldWidth;
         private getFieldHeight;
-        setCell(cellX: number, cellY: number, cellWidth: number, cellHeight: number, index: number, text: any, value: any, field: StiCrossField, isNumeric: boolean, hyperlink: any, toolTip: any, tag: any, drillDownParameters: any, level?: number, parentGuid?: string, guid?: string, type?: StiCellType): StiCell;
+        setCell(cellX: number, cellY: number, cellWidth: number, cellHeight: number, index: number, text: any, value: any, field: StiCrossField, isNumeric: boolean, hyperlink: any, toolTip: any, tag: any, drillDownParameters: any, level?: number, parentGuid?: string, guid?: string, keepMergedCellsTogether?: boolean, type?: StiCellType): StiCell;
         private cellExists;
         setCellField(cellX: number, cellY: number, field: StiCrossField): void;
         init(colCount: number, rowCount: number): void;
@@ -31175,6 +31180,7 @@ export namespace Stimulsoft.Report.Dashboard {
         iconColor: Color;
         customIcon: number[];
         onePointZoom: number;
+        userBingKey: string;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -39066,6 +39072,7 @@ export namespace Stimulsoft.Report.Maps {
         get businessObjectGuid(): string;
         set businessObjectGuid(value: string);
         countData: number;
+        userBingKey: string;
         pushPins: string;
         first(): void;
         prior(): void;
@@ -39356,6 +39363,7 @@ export namespace Stimulsoft.Report.Export {
         private static writeBrush;
         private static writeRoundedRectanglePrimitive;
         private static getClipPathName;
+        private static getUniqueName;
         private static writeIndicator;
         private static writeIconSetIndicatorTypePainter;
         private static writeDataBarIndicator;
@@ -62312,6 +62320,7 @@ export namespace Stimulsoft.Dashboard.Components.OnlineMap {
         private _onePointZoom;
         get onePointZoom(): number;
         set onePointZoom(value: number);
+        userBingKey: string;
         latitude: StiLatitudeMapMeter;
         longitude: StiLongitudeMapMeter;
         location: StiLocationMapMeter;
@@ -68606,6 +68615,7 @@ export namespace Stimulsoft.Designer {
         private convertColumnTotal;
         private convertRowTotal;
         private killRightTitle;
+        private orderRows;
         constructor(crossTab: StiCrossTab);
     }
 }
