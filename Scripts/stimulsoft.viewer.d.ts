@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.1.4
-Build date: 2024.02.14
+Version: 2024.2.1
+Build date: 2024.03.04
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export * from './stimulsoft.dashboards';
