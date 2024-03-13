@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.2.1
-Build date: 2024.03.04
+Version: 2024.2.2
+Build date: 2024.03.11
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -4645,6 +4645,10 @@ export namespace Stimulsoft.Base.Dashboard {
         static ComboBox: {
             ItemHeight: number;
         };
+        static Highlight: {
+            Color: Color;
+            DarkColor: Color;
+        };
         static ListBox: {
             ItemHeight: number;
             CheckBoxWidth: number;
@@ -7767,7 +7771,11 @@ export namespace Stimulsoft.Base.Licenses {
         FormsWin = 25,
         FormsWeb = 26,
         FormsJs = 27,
-        FormsPhp = 28
+        Blazor = 28,
+        DbsBlazor = 29,
+        Avalonia = 30,
+        Python = 36,
+        DbsPython = 37
     }
     enum StiActivationType {
         Server = 1,
@@ -28990,7 +28998,8 @@ export namespace Stimulsoft.Report.Dashboard {
         TableColumn = 11,
         Text = 12,
         Cards = 13,
-        Shape = 14
+        Shape = 14,
+        Filter = 15
     }
     enum StiAvailableInteractionOnHover {
         ShowToolTip = 1,
@@ -31965,6 +31974,9 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         static getStyleForeColor(element: IStiElement): Color;
         static getForeColor2(ident: StiElementStyleIdent): Color;
         static getNativeForeColor(element?: IStiElement): Color;
+        static getStyleForDataViewTable(element: IStiElement): StiTableElementStyle;
+        private static tryGetAccentColorFromStyle;
+        private static isColorLight;
         static getSelectedForeColor(element: IStiControlElement): Color;
         static getSelectedBackColor(element: IStiControlElement): Color;
         static getGlyphColor2(element: IStiControlElement): Color;
@@ -59848,7 +59860,26 @@ export namespace Stimulsoft.Dashboard.Components.Chart.Design {
     class StiYChartAxisConverter {
     }
 }
+export namespace Stimulsoft.Dashboard.Interactions {
+    import List = Stimulsoft.System.Collections.List;
+    import StiDashboardDrillDownParameter = Stimulsoft.Dashboard.Interactions.StiDashboardDrillDownParameter;
+    import StiInteractionOnClick = Stimulsoft.Report.Dashboard.StiInteractionOnClick;
+    import StiInteractionOnHover = Stimulsoft.Report.Dashboard.StiInteractionOnHover;
+    import StiAvailableInteractionOnDataManipulation = Stimulsoft.Report.Dashboard.StiAvailableInteractionOnDataManipulation;
+    import StiAvailableInteractionOnClick = Stimulsoft.Report.Dashboard.StiAvailableInteractionOnClick;
+    import StiAvailableInteractionOnHover = Stimulsoft.Report.Dashboard.StiAvailableInteractionOnHover;
+    import StiInteractionIdent = Stimulsoft.Report.Dashboard.StiInteractionIdent;
+    class StiFilterDashboardInteraction extends StiDashboardInteraction {
+        ident: StiInteractionIdent;
+        availableOnHover: StiAvailableInteractionOnHover;
+        availableOnClick: StiAvailableInteractionOnClick;
+        availableOnDataManipulation: StiAvailableInteractionOnDataManipulation;
+        constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, toolTip?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>);
+    }
+}
 export namespace Stimulsoft.Dashboard.Components.ComboBox {
+    import IStiDashboardInteraction = Stimulsoft.Report.Dashboard.IStiDashboardInteraction;
+    import IStiElementInteraction = Stimulsoft.Report.Dashboard.IStiElementInteraction;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import StiCornerRadius = Stimulsoft.Base.Drawing.StiCornerRadius;
     import IStiCornerRadius = Stimulsoft.Report.Components.IStiCornerRadius;
@@ -59871,7 +59902,7 @@ export namespace Stimulsoft.Dashboard.Components.ComboBox {
     import IStiFixedHeightElement = Stimulsoft.Report.Dashboard.IStiFixedHeightElement;
     import IStiComboBoxElement = Stimulsoft.Report.Dashboard.IStiComboBoxElement;
     import IStiAppDataCell = Stimulsoft.Base.IStiAppDataCell;
-    class StiComboBoxElement extends StiElement implements IStiSimpleShadow, IStiCornerRadius, IStiComboBoxElement, IStiFixedHeightElement, IStiJsonReportObject {
+    class StiComboBoxElement extends StiElement implements IStiSimpleShadow, IStiCornerRadius, IStiComboBoxElement, IStiFixedHeightElement, IStiJsonReportObject, IStiElementInteraction {
         private static ImplementsStiComboBoxElement;
         implements(): any[];
         meta(): StiMeta[];
@@ -59886,6 +59917,7 @@ export namespace Stimulsoft.Dashboard.Components.ComboBox {
         transformSorts: List<StiDataSortRule>;
         dataTransformation: {};
         dataFilters: List<StiDataFilterRule>;
+        dashboardInteraction: IStiDashboardInteraction;
         private _style;
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
@@ -60734,6 +60766,8 @@ export namespace Stimulsoft.Dashboard.Components.Indicator {
     }
 }
 export namespace Stimulsoft.Dashboard.Components.ListBox {
+    import IStiDashboardInteraction = Stimulsoft.Report.Dashboard.IStiDashboardInteraction;
+    import IStiElementInteraction = Stimulsoft.Report.Dashboard.IStiElementInteraction;
     import StiListBoxSelectionType = Stimulsoft.Report.Dashboard.StiListBoxSelectionType;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiCornerRadius = Stimulsoft.Report.Components.IStiCornerRadius;
@@ -60759,7 +60793,7 @@ export namespace Stimulsoft.Dashboard.Components.ListBox {
     import IStiTitleElement = Stimulsoft.Report.Dashboard.IStiTitleElement;
     import IStiListBoxElement = Stimulsoft.Report.Dashboard.IStiListBoxElement;
     import IStiGlobalizationProvider = Stimulsoft.Report.IStiGlobalizationProvider;
-    class StiListBoxElement extends StiElement implements IStiListBoxElement, IStiSimpleShadow, IStiCornerRadius, IStiTitleElement, IStiJsonReportObject, IStiGlobalizationProvider {
+    class StiListBoxElement extends StiElement implements IStiListBoxElement, IStiSimpleShadow, IStiCornerRadius, IStiTitleElement, IStiJsonReportObject, IStiGlobalizationProvider, IStiElementInteraction {
         private static ImplementsStiListBoxElement;
         implements(): any[];
         clone(cloneProperties: boolean): any;
@@ -60802,6 +60836,7 @@ export namespace Stimulsoft.Dashboard.Components.ListBox {
         transformSorts: List<StiDataSortRule>;
         dataTransformation: {};
         dataFilters: List<StiDataFilterRule>;
+        dashboardInteraction: IStiDashboardInteraction;
         font: Font;
         foreColor: Color;
         textFormat: StiFormatService;
@@ -63420,7 +63455,7 @@ export namespace Stimulsoft.Dashboard.Drawing.Painters {
         static measureCommonCell(g: Graphics, table: StiTableElement, column: StiTableColumn, rowValue: any, columnWidth: number, zoom: number): Size;
         static measureHeader(table: StiTableElement, column: StiTableColumn): Size;
         private static measureHeader2;
-        static measureCell(caption: string, baseFont: Font): Size;
+        static measureCell(caption: string, baseFont: Font, column: StiTableColumn): Size;
         private static measureCell2;
         static measureHeaders(columns: List<StiTableColumn>, baseFont: Font): number;
         private static captionSizeCache;
@@ -63477,6 +63512,25 @@ export namespace Stimulsoft.Dashboard.Export.Painters.Table {
     class StiSparklinesCellPainter {
         static draw(writer: StiSvgGeomWriter, rect: RectangleD, column: StiSparklinesColumn, value: any, style: StiTableElementStyle): void;
         static castToArray(value: any): any[];
+    }
+}
+export namespace Stimulsoft.Dashboard.Export.Painters.Table {
+    import StiTableColumn = Stimulsoft.Dashboard.Components.Table.StiTableColumn;
+    import Font = Stimulsoft.System.Drawing.Font;
+    class StiTableColumnSizeHelper {
+        Width: number;
+        MinWidth: number;
+        MaxWidth: number;
+        MaxHeight: number;
+        WordWrap: boolean;
+        FontUniqueCode: number;
+        Column: StiTableColumn;
+        IsMeasurable: boolean;
+        getUniqueCode(): number;
+        getColumnWidth(width: number, skipDefaultWidth?: boolean): number;
+        getColumnHeight(height: number): number;
+        static isWordWrap(column: StiTableColumn): boolean;
+        constructor(font: Font, column: StiTableColumn);
     }
 }
 export namespace Stimulsoft.Dashboard.Export.Settings {
@@ -63999,6 +64053,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         static isStringColumnType(element: IStiElement): boolean;
         static isBlankData(data: any): boolean;
         static resetAllFilters(report: StiReport, pageNumber: number): Promise<void>;
+        private static applyFilterParameters;
         static filterRuleItem(filterRule: StiDataFilterRule): KeyObjectType;
         private static sortFilterMenuItem;
         static getFilterItemsHelper(query: IStiQueryObject, meters: List<IStiMeter>, columnIndex: number, sorts: List<StiDataSortRule>, filters: List<StiDataFilterRule>, element?: IStiElement): any;
@@ -64063,13 +64118,14 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     }
 }
 export namespace Stimulsoft.Viewer.Helpers.Dashboards {
+    import StiTableElementStyle = Stimulsoft.Report.Dashboard.Styles.StiTableElementStyle;
     import StiReport = Stimulsoft.Report.StiReport;
     import KeyObjectType = Stimulsoft.System.KeyObjectType;
     import IStiTableElement = Stimulsoft.Report.Dashboard.IStiTableElement;
     class StiTableElementViewHelper {
         static getTableData(tableElement: IStiTableElement): Promise<KeyObjectType[][]>;
         static getTableHiddenData(tableElement: IStiTableElement): Promise<KeyObjectType[][]>;
-        static getTableSettings(tableElement: IStiTableElement): KeyObjectType;
+        static getTableSettings(tableElement: IStiTableElement, tableStyle?: StiTableElementStyle): KeyObjectType;
         private static getColumnVisibilityState;
         private static getCellForeColor;
         private static getHeaderForeColor;
