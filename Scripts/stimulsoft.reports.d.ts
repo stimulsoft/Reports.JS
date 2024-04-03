@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.2.2
-Build date: 2024.03.11
+Version: 2024.2.3
+Build date: 2024.04.02
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -4318,6 +4318,11 @@ export namespace Stimulsoft.Base {
 export namespace Stimulsoft.Base {
     class StiGuidUtils {
         static newGuid(): string;
+    }
+}
+export namespace Stimulsoft.Base {
+    class StiImportExcelNotSupportedException {
+        get message(): string;
     }
 }
 export namespace Stimulsoft.Base {
@@ -26106,7 +26111,7 @@ export namespace Stimulsoft.Report.Chart {
         toolTipCornerRadius: StiCornerRadius;
         toolTipBorder: StiSimpleBorder;
         fillColumn(context: StiContext, rect: RectangleD, brush: StiBrush, interaction: StiInteractionDataGeom): any;
-        fillCicledColumn(context: StiContext, rect: RectangleD, cornerRadius: StiCornerRadius, brush: StiBrush, interaction: StiInteractionDataGeom): any;
+        fillCicledColumn(context: StiContext, rect: RectangleD, cornerRadius: StiCornerRadius, brush: StiBrush, interaction: StiInteractionDataGeom, tooltip: string): any;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -36923,6 +36928,7 @@ export namespace Stimulsoft.Report.Export {
 export namespace Stimulsoft.Report.Export {
     import XmlTextWriter = Stimulsoft.System.Xml.XmlTextWriter;
     import RectangleD = Stimulsoft.System.Drawing.Rectangle;
+    import Color = Stimulsoft.System.Drawing.Color;
     class StiBrushSvgHelper {
         static hatchData: string[];
         static writeHatchBrush(writer: XmlTextWriter, brush: any): string;
@@ -36930,6 +36936,7 @@ export namespace Stimulsoft.Report.Export {
         static writeGlareBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
         static writeGradientBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
         static writeGlassBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
+        static getFillColor(color: Color): string;
     }
 }
 export namespace Stimulsoft.Report {
@@ -37021,7 +37028,8 @@ export namespace Stimulsoft.Base.Context {
         interaction: StiInteractionDataGeom;
         type: StiGeomType;
         cornerRadius: StiCornerRadius;
-        constructor(background: any, backgroundMouseOver: any, borderPen: StiPenGeom, rect: Rectangle, cornerRadius: StiCornerRadius, interaction: StiInteractionDataGeom);
+        toolTip: string;
+        constructor(background: any, backgroundMouseOver: any, borderPen: StiPenGeom, rect: Rectangle, cornerRadius: StiCornerRadius, interaction: StiInteractionDataGeom, tooltip: string);
     }
 }
 export namespace Stimulsoft.Base.Context.Animation {
@@ -37562,6 +37570,8 @@ export namespace Stimulsoft.Report.Export.Services.Helpers {
     import TimeSpan = Stimulsoft.System.TimeSpan;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     class StiContextSvgHelper {
+        private static simpleGuid;
+        private static getSimpleGuid;
         private static isAddStimulsoftIconFont;
         private static dx;
         private static dy;
@@ -37675,7 +37685,7 @@ export namespace Stimulsoft.Base.Context {
         fillRectangle(brush: any, rect: Rectangle, interaction: StiInteractionDataGeom): void;
         fillRectangle2(brush: any, x: number, y: number, width: number, height: number, interaction: StiInteractionDataGeom): void;
         fillRectangle3(brush: any, brushMouseOver: any, rect: Rectangle, interaction: StiInteractionDataGeom): void;
-        fillCicledRectangle(brush: any, rect: Rectangle, cornerRadius: StiCornerRadius, interaction: StiInteractionDataGeom): void;
+        fillCicledRectangle(brush: any, rect: Rectangle, cornerRadius: StiCornerRadius, interaction: StiInteractionDataGeom, tooltip: string): void;
         pushSmoothingModeToAntiAlias(): void;
         popSmoothingMode(): void;
         pushTextRenderingHintToAntiAlias(): void;
@@ -46308,7 +46318,7 @@ export namespace Stimulsoft.Report.Chart {
         get styleColors(): Color[];
         get basicStyleColor(): Color;
         fillColumn(context: StiContext, rect: RectangleD, brush: StiBrush, interaction: StiInteractionDataGeom): void;
-        fillCicledColumn(context: StiContext, rect: RectangleD, cornerRadius: StiCornerRadius, brush: StiBrush, interaction: StiInteractionDataGeom): void;
+        fillCicledColumn(context: StiContext, rect: RectangleD, cornerRadius: StiCornerRadius, brush: StiBrush, interaction: StiInteractionDataGeom, tooltip: string): void;
         getAreaBrush(color: Color): StiBrush;
         getColumnBrush(color: Color): StiBrush;
         getColumnBorder(color: Color): Color;
@@ -64107,6 +64117,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     import IStiDatePickerElement = Stimulsoft.Report.Dashboard.IStiDatePickerElement;
     class StiDatePickerElementViewHelper {
         private static storedCulture;
+        private static dateTimeFormat;
         static getAutoRangeValues(datePickerElement: IStiDatePickerElement): Promise<any>;
         static getVariableRangeValues(datePickerElement: IStiDatePickerElement): Promise<any>;
         static getVariableValue(datePickerElement: IStiDatePickerElement): Promise<string>;
@@ -66443,6 +66454,12 @@ export namespace Stimulsoft.Designer.Dashboards {
         constructor(indicatorElement: IStiIndicatorElement);
     }
 }
+export namespace Stimulsoft.Designer.Dashboards {
+    class StiManuallyDataHelper {
+        static convertJSDataToPackedString(jsData: string): string;
+        static convertPackedStringToJSData(content: string): string;
+    }
+}
 export namespace Stimulsoft.Designer {
     import StiResource = Stimulsoft.Report.Dictionary.StiResource;
     import StiVirtualSource = Stimulsoft.Report.Dictionary.StiVirtualSource;
@@ -66506,6 +66523,8 @@ export namespace Stimulsoft.Designer {
         private static getVariableCategory;
         private static getUniqueName;
         static removeTempSampleData(report: StiReport, dataGuid: string): void;
+        private static unPackGraphSqlConnectionString;
+        private static packGraphSqlConnectionString;
         private static applyParametersToSqlSourse;
         private static restoreParametersToSqlSourse;
         private static applyDataSourceProps;
@@ -68044,12 +68063,6 @@ export namespace Stimulsoft.Designer.Dashboards {
         private setDataColumn;
         private setPropertyValue;
         constructor(listBoxElement: IStiListBoxElement);
-    }
-}
-export namespace Stimulsoft.Designer.Dashboards {
-    class StiManuallyDataHelper {
-        static convertJSDataToPackedString(jsData: string): string;
-        static convertPackedStringToJSData(content: string): string;
     }
 }
 export namespace Stimulsoft.Designer.Dashboards {
