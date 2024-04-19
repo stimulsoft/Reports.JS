@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.2.3
-Build date: 2024.04.02
+Version: 2024.2.4
+Build date: 2024.04.18
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -14490,6 +14490,7 @@ export namespace Stimulsoft.Report.CrossTab {
         meta(): StiMeta[];
         loadFromXml(xmlNode: XmlNode): void;
         protected get defaultHorAlignment(): StiTextHorAlignment;
+        setName(value: string): void;
         get locked(): boolean;
         set locked(value: boolean);
         get linked(): boolean;
@@ -21278,6 +21279,7 @@ export namespace Stimulsoft.Report.Engine {
         renderReportSummariesAsync(masterDataBand: StiDataBand): Promise<void>;
         renderReportSummaries(masterDataBand: StiDataBand): void;
         checkKeepReportSummaryTogether(masterDataBand: StiDataBand): boolean;
+        checkKeepFooterTogether(masterDataBand: StiDataBand): boolean;
         block(masterDataBand: StiDataBand): void;
         unBlock(masterDataBand: StiDataBand): void;
         checkHierarchicalHeadersAsync(masterDataBand: StiDataBand): Promise<void>;
@@ -32033,7 +32035,7 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
     import Color = Stimulsoft.System.Drawing.Color;
     class StiCardsElementStyle extends StiElementStyle {
         get localizedName(): string;
-        cellBackColor: Stimulsoft.System.Drawing.Color;
+        cellBackColor: Color;
         lineColor: Color;
         cellForeColor: Color;
         backColor: Color;
@@ -42685,6 +42687,8 @@ export namespace Stimulsoft.Report.Chart {
         private static checkParetoValues;
         private static checkValueNaN;
         private static checkArgumentsDateTimeStep;
+        private static ceilDateTimeByStep;
+        private static roundDateTimeByStep;
         static checkWaterfallTotals(chart: IStiChart): void;
         private static createTopN;
         private static createValuesTopN;
