@@ -30,14 +30,7 @@
         "Vue.js reporting tool",
         "React.js reporting tool"
     ],
-    "dependencies": {
-        "svg2img": "^1.0.0-beta.2",
-        "jimp-compact": "^0.16.1-2",
-        "sync-request": "^6.1.0",
-        "node-machine-id": "^1.1.12",
-        "xmldoc": "^1.2.0",
-        "stimulsoft-data-adapter": "2024.2.4"
-    },
+    "dependencies": {},
     "files": [
         "THIRD-PARTY.md",
         "LICENSE.md",
