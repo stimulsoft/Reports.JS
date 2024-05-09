@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.2.4
-Build date: 2024.04.18
+Version: 2024.2.5
+Build date: 2024.05.06
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -233,29 +233,13 @@ export namespace Stimulsoft.System {
         private static ticksPerMinute;
         private static ticksPerHour;
         private static ticksPerDay;
-        private static millisPerSecond;
-        private static millisPerMinute;
-        private static millisPerHour;
-        private static millisPerDay;
         private static daysPerYear;
         private static daysPer4Years;
         private static daysPer100Years;
         private static daysPer400Years;
-        private static daysTo1601;
-        private static daysTo1899;
         private static daysTo10000;
         private static minTicks;
         private static maxTicks;
-        private static maxMillis;
-        private static fileTimeOffset;
-        private static doubleDateOffset;
-        private static oADateMinAsTicks;
-        private static oADateMinAsDouble;
-        private static oADateMaxAsDouble;
-        private static datePartYear;
-        private static datePartDayOfYear;
-        private static datePartMonth;
-        private static DatePartDay;
         private static daysToMonth365;
         private static daysToMonth366;
         static minValue: DateTime;
@@ -301,7 +285,6 @@ export namespace Stimulsoft.System {
         static isLeapYear(year: number): boolean;
         static daysInMonth(year: number, month: number): number;
         static compare(t1: DateTime, t2: DateTime): number;
-        private static doubleDateToTicks;
         static ticksNetToTicksJs(ticks: number): number;
         static dateToNetTicks(date: Date): number;
         negate(): DateTime;
@@ -549,7 +532,6 @@ export namespace Stimulsoft.System {
         static keys(obj: any): string[];
         static getOwnPropertyNames(obj: any): string[];
         static saveAs(data: any, fileName: string, type?: string): void;
-        private static isObject;
         static mergeDeep(target: any, ...sources: any[]): any;
         static stimulsoft: symbol;
         static init(): void;
@@ -1100,7 +1082,6 @@ export namespace Stimulsoft.System {
 export namespace Stimulsoft.System {
     class SwitchSymbolFormatter {
         private numberSymbol;
-        private isValid;
         formatValue(format: string, source: any): string;
         constructor(numberSymbol?: string);
     }
@@ -1118,9 +1099,6 @@ export namespace Stimulsoft.System {
         static ticksPerDay: number;
         private static daysPerTick;
         private static millisPerSecond;
-        private static millisPerMinute;
-        private static millisPerHour;
-        private static millisPerDay;
         static maxSeconds: number;
         static minSeconds: number;
         static maxMilliSeconds: number;
@@ -1768,8 +1746,6 @@ export namespace Stimulsoft.System.Crypt {
     class BigInteger {
         private static BI_RM;
         private static BI_RC;
-        private static canary;
-        private static j_lm;
         private static dbits;
         private static lowprimes;
         private static lplim;
@@ -1816,8 +1792,6 @@ export namespace Stimulsoft.System.Crypt {
         modPowInt(e: number, m: BigInteger): BigInteger;
         private clone;
         private intValue;
-        private byteValue;
-        private shortValue;
         private chunkSize;
         private signum;
         private toRadix;
@@ -1839,7 +1813,6 @@ export namespace Stimulsoft.System.Crypt {
         multiply(a: BigInteger): BigInteger;
         square(): BigInteger;
         divide(a: any): BigInteger;
-        private remainder;
         private multiply2;
         addOffset2(n: number, w: number): void;
         multiplyLowerTo(a: BigInteger, n: number, r: BigInteger): void;
@@ -1922,7 +1895,6 @@ export namespace Stimulsoft.System.Crypt {
         private fromBigEndian32;
         private toBigEndian32;
         private unpack;
-        private pack;
     }
 }
 export namespace Stimulsoft.System.Crypt {
@@ -2120,8 +2092,6 @@ export namespace Stimulsoft.System.Data {
         addArray(row: DataRow): number;
         removeArray(row: DataRow): void;
         copyTo(array: any[], startIndex: number): void;
-        private replaceValues;
-        private quickSort;
         sort(...parameters: any[]): any;
         gett(rowIndex: number, columnIndex: number): any;
         constructor(table: DataTable);
@@ -2213,9 +2183,6 @@ export namespace Stimulsoft.System.Data {
         readJson(param: string | number[] | Uint8Array | any, jsonRelationDirection?: JsonRelationDirection): void;
         private fillCollection;
         private processObject2;
-        private processObject;
-        private processTable;
-        private processArray;
         readXmlAsJson(param: string | number[] | Uint8Array | any, relationDirection: JsonRelationDirection): void;
         private static convertXmlToJsObject;
         readXmlFile(filePath: string): void;
@@ -2796,7 +2763,6 @@ export namespace Stimulsoft.System.Drawing {
         private static family_Helvetica;
         private static family_Courier;
         private static family_Times_Roman;
-        private static fontName;
     }
 }
 export namespace Stimulsoft.System.Drawing {
@@ -2897,6 +2863,10 @@ export namespace Stimulsoft.System.Drawing.Imaging {
         static get Jpeg(): ImageFormat;
         private static getBytes;
         private static getJpegInfo;
+        private static parseTiffHeaderForOrientation;
+        private static readTagValue;
+        private static readWord;
+        private static readDWord;
         private static _bmp;
         static get Bmp(): ImageFormat;
         private static _svg;
@@ -3508,50 +3478,17 @@ export namespace Stimulsoft.System.IO {
 export namespace Stimulsoft.System.Text {
     class Encoding {
         private static CodePageDefault;
-        private static CodePageNoOEM;
-        private static CodePageNoMac;
-        private static CodePageNoThread;
-        private static CodePageNoSymbol;
         private static CodePageUnicode;
         private static CodePageBigEndian;
         private static CodePageWindows1250;
         private static CodePageWindows1251;
         private static CodePageWindows1252;
         private static CodePageWindows1256;
-        private static CodePageMacGB2312;
-        private static CodePageGB2312;
-        private static CodePageMacKorean;
-        private static CodePageDLLKorean;
-        private static ISO2022JP;
-        private static ISO2022JPESC;
-        private static ISO2022JPSISO;
-        private static ISOKorean;
-        private static ISOSimplifiedCN;
-        private static EUCJP;
-        private static ChineseHZ;
-        private static DuplicateEUCCN;
-        private static EUCCN;
-        private static EUCKR;
         private static CodePageASCII;
         private static CodePageISO_8859_1;
-        private static ISCIIAssemese;
-        private static ISCIIBengali;
-        private static ISCIIDevanagari;
-        private static ISCIIGujarathi;
-        private static ISCIIKannada;
-        private static ISCIIMalayalam;
-        private static ISCIIOriya;
-        private static ISCIIPanjabi;
-        private static ISCIITamil;
-        private static ISCIITelugu;
-        private static GB18030;
-        private static ISO_8859_8I;
-        private static ISO_8859_8_Visual;
-        private static ENC50229;
         private static CodePageUTF7;
         private static CodePageUTF8;
         private static CodePageUTF32;
-        private static CodePageUTF32BE;
         static ASCII: Encoding;
         static BigEndianUnicode: Encoding;
         static Default: Encoding;
@@ -3609,7 +3546,6 @@ export namespace Stimulsoft.System.Text {
         charAt(index: number): string;
         charCodeAt(index: number): number;
         setByIndex(index: number, value: string): void;
-        private formatError;
         replace(searchValue: string, replaceValue: string): StringBuilder;
         constructor(value?: string);
     }
@@ -3739,24 +3675,14 @@ export namespace Stimulsoft.System.Xml {
     import TextWriter = Stimulsoft.System.IO.TextWriter;
     class XmlTextEncoder {
         private textWriter;
-        private inAttribute;
         quoteChar: string;
         private attrValue;
         private cacheAttrValue;
-        private xmlCharType;
-        private surHighStart;
-        private surHighEnd;
-        private surLowStart;
-        private surLowEnd;
         startAttribute(cacheAttrValue: boolean): void;
         endAttribute(): void;
         get attributeValue(): string;
-        private writeSurrogateChar;
         write(text: string): void;
         writeRawWithSurrogateChecking(text: string): void;
-        private writeStringFragment;
-        private writeCharEntityImpl;
-        private writeEntityRefImpl;
         constructor(textWriter: TextWriter);
     }
 }
@@ -4341,13 +4267,6 @@ export namespace Stimulsoft.Base {
         static isEqualKeys(key1: string, key2: string): boolean;
         static getOrGeneratedKey(key: string): string;
         static getOrGeneratedKey2(key1: string, key2: string): string;
-    }
-}
-export namespace Stimulsoft.Base {
-    class StiKeyObject {
-        key: string;
-        isStored: string;
-        constructor();
     }
 }
 export namespace Stimulsoft.Base {
@@ -5590,6 +5509,28 @@ export namespace Stimulsoft.Base {
     }
 }
 export namespace Stimulsoft.Base {
+    class StiTableName {
+        static getName(schema: string, table: string): string;
+    }
+}
+export namespace Stimulsoft.Base {
+    class StiTableQuery {
+        private correctName;
+        getName(schema: string, table: string): string;
+        getSelectQuery(table: string): string;
+        getSelectQuery2(schema: string, table: string): string;
+        getExecuteQuery(table: string): string;
+        getExecuteQuery2(schema: string, table: string): string;
+        getCallQuery(table: string): string;
+        getCallQuery2(schema: string, table: string): string;
+        getProcQuery(table: string): string;
+        getProcQuery2(schema: string, table: string): string;
+        static get(connector: any): StiTableQuery;
+        private connector;
+        constructor(connector: any);
+    }
+}
+export namespace Stimulsoft.Base {
     import DataSet = Stimulsoft.System.Data.DataSet;
     class StiFileDataConnector extends StiDataConnector {
         fileType: StiFileType;
@@ -5974,10 +5915,10 @@ export namespace Stimulsoft.Base {
         columns: StiDataColumnSchema[];
         parameters: StiDataParameterSchema[];
         query: string;
-        static newTableOrView(name: string): StiDataTableSchema;
-        static newTable(name: string): StiDataTableSchema;
-        static newView(name: string): StiDataTableSchema;
-        static newProcedure(name: string): StiDataTableSchema;
+        static newTableOrView(name: string, connector?: any, query?: string): StiDataTableSchema;
+        static newTable(name: string, connector?: any, query?: string): StiDataTableSchema;
+        static newView(name: string, connector?: any, query?: string): StiDataTableSchema;
+        static newProcedure(name: string, connector?: any, query?: string): StiDataTableSchema;
         constructor(name?: string, query?: string);
     }
 }
@@ -7782,10 +7723,6 @@ export namespace Stimulsoft.Base.Licenses {
         Python = 36,
         DbsPython = 37
     }
-    enum StiActivationType {
-        Server = 1,
-        Developer = 2
-    }
 }
 export namespace Stimulsoft.Base.Licenses {
     class StiCryptHelper {
@@ -7855,12 +7792,6 @@ export namespace Stimulsoft.Base.Licenses {
         exception: string;
         resultSuccess: boolean;
         resultNotice: StiNotice;
-    }
-}
-export namespace Stimulsoft.Base.Licenses {
-    class StiLicenseKeyContainer extends StiKeyObject {
-        checkSum: string;
-        license: number[];
     }
 }
 export namespace Stimulsoft.Base.Licenses {
@@ -20154,6 +20085,7 @@ export namespace Stimulsoft.Report {
         saveEditableFields(): string;
         loadEditableFieldsFile(path: string): StiReport;
         loadEditableFields(param: string | XmlNode): StiReport;
+        mergeDocumentAsync(report: StiReport, needRendering?: boolean): Promise<void>;
         private clear;
         getDictionary(): IStiAppDictionary;
         getKey(): string;
@@ -20443,6 +20375,253 @@ export namespace Stimulsoft.Report {
     }
     export {};
 }
+export namespace Stimulsoft.Report.BarCodes {
+    enum CodeSet {
+        None = 0,
+        A = 1,
+        B = 2,
+        C = 3
+    }
+    enum ControlCodes {
+        FNC1 = 129,
+        FNC2 = 130,
+        FNC3 = 131,
+        FNC4 = 132,
+        CodeA = 133,
+        CodeB = 134,
+        CodeC = 135,
+        Shift = 136
+    }
+    enum BarcodeCommands {
+        FNC1 = 102,
+        FNC2 = 97,
+        FNC3 = 96,
+        FNC4A = 101,
+        FNC4B = 100,
+        CodeA = 101,
+        CodeB = 100,
+        CodeC = 99,
+        Shift = 98,
+        StartA = 103,
+        StartB = 104,
+        StartC = 105,
+        Stop = 106
+    }
+    enum StiCheckSum {
+        Yes = 0,
+        No = 1
+    }
+    enum StiPlesseyCheckSum {
+        None = 0,
+        Modulo10 = 1,
+        Modulo11 = 2
+    }
+    enum StiDataMatrixSize {
+        Automatic = -1,
+        s10x10 = 0,
+        s12x12 = 1,
+        s8x18 = 2,
+        s14x14 = 3,
+        s8x32 = 4,
+        s16x16 = 5,
+        s12x26 = 6,
+        s18x18 = 7,
+        s20x20 = 8,
+        s12x36 = 9,
+        s22x22 = 10,
+        s16x36 = 11,
+        s24x24 = 12,
+        s26x26 = 13,
+        s16x48 = 14,
+        s32x32 = 15,
+        s36x36 = 16,
+        s40x40 = 17,
+        s44x44 = 18,
+        s48x48 = 19,
+        s52x52 = 20,
+        s64x64 = 21,
+        s72x72 = 22,
+        s80x80 = 23,
+        s88x88 = 24,
+        s96x96 = 25,
+        s104x104 = 26,
+        s120x120 = 27,
+        s132x132 = 28,
+        s144x144 = 29
+    }
+    enum StiDataMatrixEncodingType {
+        Ascii = 0,
+        C40 = 1,
+        Text = 2,
+        X12 = 3,
+        Edifact = 4,
+        Binary = 5
+    }
+    enum StiPdf417EncodingMode {
+        Text = 0,
+        Numeric = 1,
+        Byte = 2
+    }
+    enum StiPdf417ErrorsCorrectionLevel {
+        Automatic = -1,
+        Level0 = 0,
+        Level1 = 1,
+        Level2 = 2,
+        Level3 = 3,
+        Level4 = 4,
+        Level5 = 5,
+        Level6 = 6,
+        Level7 = 7,
+        Level8 = 8
+    }
+    enum StiEanSupplementType {
+        None = 0,
+        TwoDigit = 1,
+        FiveDigit = 2
+    }
+    enum StiCode11CheckSum {
+        None = 0,
+        OneDigit = 1,
+        TwoDigits = 2,
+        Auto = 3
+    }
+    enum StiQRCodeSize {
+        Automatic = 0,
+        v1 = 1,
+        v2 = 2,
+        v3 = 3,
+        v4 = 4,
+        v5 = 5,
+        v6 = 6,
+        v7 = 7,
+        v8 = 8,
+        v9 = 9,
+        v10 = 10,
+        v11 = 11,
+        v12 = 12,
+        v13 = 13,
+        v14 = 14,
+        v15 = 15,
+        v16 = 16,
+        v17 = 17,
+        v18 = 18,
+        v19 = 19,
+        v20 = 20,
+        v21 = 21,
+        v22 = 22,
+        v23 = 23,
+        v24 = 24,
+        v25 = 25,
+        v26 = 26,
+        v27 = 27,
+        v28 = 28,
+        v29 = 29,
+        v30 = 30,
+        v31 = 31,
+        v32 = 32,
+        v33 = 33,
+        v34 = 34,
+        v35 = 35,
+        v36 = 36,
+        v37 = 37,
+        v38 = 38,
+        v39 = 39,
+        v40 = 40
+    }
+    enum StiQRCodeErrorCorrectionLevel {
+        Level1 = 0,
+        Level2 = 1,
+        Level3 = 2,
+        Level4 = 3
+    }
+    enum StiQRCodeECIMode {
+        ISO_8859_1 = 3,
+        Windows_1250 = 21,
+        Windows_1251 = 22,
+        Windows_1252 = 23,
+        Windows_1256 = 24,
+        UTF_8 = 26
+    }
+    enum StiMaxicodeMode {
+        Mode2 = 2,
+        Mode3 = 3,
+        Mode4 = 4,
+        Mode5 = 5,
+        Mode6 = 6
+    }
+    enum StiAztecSize {
+        Automatic = 0,
+        Compact1 = -1,
+        Compact2 = -2,
+        Compact3 = -3,
+        Compact4 = -4,
+        v1 = 1,
+        v2 = 2,
+        v3 = 3,
+        v4 = 4,
+        v5 = 5,
+        v6 = 6,
+        v7 = 7,
+        v8 = 8,
+        v9 = 9,
+        v10 = 10,
+        v11 = 11,
+        v12 = 12,
+        v13 = 13,
+        v14 = 14,
+        v15 = 15,
+        v16 = 16,
+        v17 = 17,
+        v18 = 18,
+        v19 = 19,
+        v20 = 20,
+        v21 = 21,
+        v22 = 22,
+        v23 = 23,
+        v24 = 24,
+        v25 = 25,
+        v26 = 26,
+        v27 = 27,
+        v28 = 28,
+        v29 = 29,
+        v30 = 30,
+        v31 = 31,
+        v32 = 32
+    }
+    enum StiQRCodeBodyShapeType {
+        Square = 0,
+        RoundedSquare = 1,
+        Dot = 2,
+        Circle = 3,
+        Diamond = 4,
+        Star = 5,
+        ZebraHorizontal = 6,
+        ZebraVertical = 7,
+        ZebraCross1 = 8,
+        ZebraCross2 = 9,
+        Circular = 10,
+        DockedDiamonds = 11
+    }
+    enum StiQRCodeEyeFrameShapeType {
+        Square = 0,
+        Dots = 1,
+        Circle = 2,
+        Round = 3,
+        Round1 = 4,
+        Round3 = 5
+    }
+    enum StiQRCodeEyeBallShapeType {
+        Square = 0,
+        Dots = 1,
+        Circle = 2,
+        Round = 3,
+        Round1 = 4,
+        Round3 = 5,
+        Star = 6,
+        ZebraHorizontal = 7,
+        ZebraVertical = 8
+    }
+}
 export namespace StiOptions {
     import StiParserType = Stimulsoft.Report.StiParserType;
     import IStiGaugeStyle = Stimulsoft.Report.Gauge.IStiGaugeStyle;
@@ -20472,6 +20651,7 @@ export namespace StiOptions {
         styleColors: Color[];
     }
     class Designer {
+        static maxLevelOfDictionaryObjects: number;
         static useComponentPlacementOptimization: boolean;
         static autoCorrectDataSourceName: boolean;
         static autoCorrectDataRelationName: boolean;
@@ -20581,6 +20761,7 @@ export namespace StiOptions {
         static filterDataInDataSourceBeforeSorting: boolean;
         static allowConvertingInFormatting: boolean;
         static negativeColor: Color;
+        static barcodeQRCodeDefaultByteModeEncoding: Stimulsoft.Report.BarCodes.StiQRCodeECIMode;
         static barcodeQRCodeAllowUnicodeBOM: boolean;
         static retrieveSchemaNamePostgreSql: string;
         static hideExceptions: boolean;
@@ -21756,266 +21937,6 @@ export namespace Stimulsoft.Report {
         private static restoreState;
         private static storeCachedValue;
         private static getCachedValue;
-    }
-}
-export namespace Stimulsoft.Report.BarCodes {
-    enum CodeSet {
-        None = 0,
-        A = 1,
-        B = 2,
-        C = 3
-    }
-    enum ControlCodes {
-        FNC1 = 129,
-        FNC2 = 130,
-        FNC3 = 131,
-        FNC4 = 132,
-        CodeA = 133,
-        CodeB = 134,
-        CodeC = 135,
-        Shift = 136
-    }
-    enum BarcodeCommands {
-        FNC1 = 102,
-        FNC2 = 97,
-        FNC3 = 96,
-        FNC4A = 101,
-        FNC4B = 100,
-        CodeA = 101,
-        CodeB = 100,
-        CodeC = 99,
-        Shift = 98,
-        StartA = 103,
-        StartB = 104,
-        StartC = 105,
-        Stop = 106
-    }
-    enum StiCheckSum {
-        Yes = 0,
-        No = 1
-    }
-    enum StiPlesseyCheckSum {
-        None = 0,
-        Modulo10 = 1,
-        Modulo11 = 2
-    }
-    enum StiDataMatrixSize {
-        Automatic = -1,
-        s10x10 = 0,
-        s12x12 = 1,
-        s8x18 = 2,
-        s14x14 = 3,
-        s8x32 = 4,
-        s16x16 = 5,
-        s12x26 = 6,
-        s18x18 = 7,
-        s20x20 = 8,
-        s12x36 = 9,
-        s22x22 = 10,
-        s16x36 = 11,
-        s24x24 = 12,
-        s26x26 = 13,
-        s16x48 = 14,
-        s32x32 = 15,
-        s36x36 = 16,
-        s40x40 = 17,
-        s44x44 = 18,
-        s48x48 = 19,
-        s52x52 = 20,
-        s64x64 = 21,
-        s72x72 = 22,
-        s80x80 = 23,
-        s88x88 = 24,
-        s96x96 = 25,
-        s104x104 = 26,
-        s120x120 = 27,
-        s132x132 = 28,
-        s144x144 = 29
-    }
-    enum StiDataMatrixEncodingType {
-        Ascii = 0,
-        C40 = 1,
-        Text = 2,
-        X12 = 3,
-        Edifact = 4,
-        Binary = 5
-    }
-    enum StiPdf417EncodingMode {
-        Text = 0,
-        Numeric = 1,
-        Byte = 2
-    }
-    enum StiPdf417ErrorsCorrectionLevel {
-        Automatic = -1,
-        Level0 = 0,
-        Level1 = 1,
-        Level2 = 2,
-        Level3 = 3,
-        Level4 = 4,
-        Level5 = 5,
-        Level6 = 6,
-        Level7 = 7,
-        Level8 = 8
-    }
-    enum StiEanSupplementType {
-        None = 0,
-        TwoDigit = 1,
-        FiveDigit = 2
-    }
-    enum StiCode11CheckSum {
-        None = 0,
-        OneDigit = 1,
-        TwoDigits = 2,
-        Auto = 3
-    }
-    enum StiQRCodeSize {
-        Automatic = 0,
-        v1 = 1,
-        v2 = 2,
-        v3 = 3,
-        v4 = 4,
-        v5 = 5,
-        v6 = 6,
-        v7 = 7,
-        v8 = 8,
-        v9 = 9,
-        v10 = 10,
-        v11 = 11,
-        v12 = 12,
-        v13 = 13,
-        v14 = 14,
-        v15 = 15,
-        v16 = 16,
-        v17 = 17,
-        v18 = 18,
-        v19 = 19,
-        v20 = 20,
-        v21 = 21,
-        v22 = 22,
-        v23 = 23,
-        v24 = 24,
-        v25 = 25,
-        v26 = 26,
-        v27 = 27,
-        v28 = 28,
-        v29 = 29,
-        v30 = 30,
-        v31 = 31,
-        v32 = 32,
-        v33 = 33,
-        v34 = 34,
-        v35 = 35,
-        v36 = 36,
-        v37 = 37,
-        v38 = 38,
-        v39 = 39,
-        v40 = 40
-    }
-    enum StiQRCodeErrorCorrectionLevel {
-        Level1 = 0,
-        Level2 = 1,
-        Level3 = 2,
-        Level4 = 3
-    }
-    enum StiQRCodeECIMode {
-        Cp437 = 2,
-        ISO_8859_1 = 3,
-        ISO_8859_2 = 4,
-        ISO_8859_3 = 5,
-        ISO_8859_4 = 6,
-        ISO_8859_5 = 7,
-        ISO_8859_6 = 8,
-        ISO_8859_7 = 9,
-        ISO_8859_8 = 10,
-        ISO_8859_9 = 11,
-        ISO_8859_11 = 13,
-        ISO_8859_13 = 15,
-        ISO_8859_15 = 17,
-        Shift_JIS = 20,
-        Windows_1250 = 21,
-        Windows_1251 = 22,
-        Windows_1252 = 23,
-        Windows_1256 = 24,
-        UTF_8 = 26
-    }
-    enum StiMaxicodeMode {
-        Mode2 = 2,
-        Mode3 = 3,
-        Mode4 = 4,
-        Mode5 = 5,
-        Mode6 = 6
-    }
-    enum StiAztecSize {
-        Automatic = 0,
-        Compact1 = -1,
-        Compact2 = -2,
-        Compact3 = -3,
-        Compact4 = -4,
-        v1 = 1,
-        v2 = 2,
-        v3 = 3,
-        v4 = 4,
-        v5 = 5,
-        v6 = 6,
-        v7 = 7,
-        v8 = 8,
-        v9 = 9,
-        v10 = 10,
-        v11 = 11,
-        v12 = 12,
-        v13 = 13,
-        v14 = 14,
-        v15 = 15,
-        v16 = 16,
-        v17 = 17,
-        v18 = 18,
-        v19 = 19,
-        v20 = 20,
-        v21 = 21,
-        v22 = 22,
-        v23 = 23,
-        v24 = 24,
-        v25 = 25,
-        v26 = 26,
-        v27 = 27,
-        v28 = 28,
-        v29 = 29,
-        v30 = 30,
-        v31 = 31,
-        v32 = 32
-    }
-    enum StiQRCodeBodyShapeType {
-        Square = 0,
-        RoundedSquare = 1,
-        Dot = 2,
-        Circle = 3,
-        Diamond = 4,
-        Star = 5,
-        ZebraHorizontal = 6,
-        ZebraVertical = 7,
-        ZebraCross1 = 8,
-        ZebraCross2 = 9,
-        Circular = 10,
-        DockedDiamonds = 11
-    }
-    enum StiQRCodeEyeFrameShapeType {
-        Square = 0,
-        Dots = 1,
-        Circle = 2,
-        Round = 3,
-        Round1 = 4,
-        Round3 = 5
-    }
-    enum StiQRCodeEyeBallShapeType {
-        Square = 0,
-        Dots = 1,
-        Circle = 2,
-        Round = 3,
-        Round1 = 4,
-        Round3 = 5,
-        Star = 6,
-        ZebraHorizontal = 7,
-        ZebraVertical = 8
     }
 }
 export namespace Stimulsoft.Report.BarCodes {
@@ -23521,7 +23442,6 @@ export namespace Stimulsoft.Report.BarCodes {
 export namespace Stimulsoft.Report.BarCodes {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     class CharacterSetECI {
-        private static lockNAME_TO_ECI;
         private static _name_to_eci;
         static get NAME_TO_ECI(): Hashtable;
         static set NAME_TO_ECI(value: Hashtable);
@@ -23536,7 +23456,7 @@ export namespace Stimulsoft.Report.BarCodes {
         private static addCharacterSet;
         static getCharacterSetECIByName(name: string): CharacterSetECI;
         static getCharacterSetECIByCodepage(codepage: number): CharacterSetECI;
-        static getEncodingByNumber(number: number, defaultEncoding: string): string;
+        static getEncodingCodePageByNumber(encodingNumber: number, defaultEncoding: number): number;
     }
 }
 export namespace Stimulsoft.Report.BarCodes {
@@ -26539,6 +26459,7 @@ export namespace Stimulsoft.Report.Components {
         otmsUnderscoreSize: number;
         otmsUnderscorePosition: number;
         BaseFont: Font;
+        private fontScale;
         Widths: number[];
         GetWidth(sym: number): number;
         constructor();
@@ -27331,6 +27252,13 @@ export namespace Stimulsoft.Report.Components {
     let IStiKeepReportSummaryTogether: System.Interface<IStiKeepReportSummaryTogether>;
     interface IStiKeepReportSummaryTogether {
         keepReportSummaryTogether: boolean;
+    }
+}
+export namespace Stimulsoft.Report.Components {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
+    let IStiNumberFormat: System.Interface<IStiNumberFormat>;
+    interface IStiNumberFormat {
+        valueFormat: StiFormatService;
     }
 }
 export namespace Stimulsoft.Report.Components {
@@ -30482,6 +30410,7 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import IStiManuallyEnteredData = Stimulsoft.Report.Dashboard.IStiManuallyEnteredData;
     import IStiCrossFiltering = Stimulsoft.Data.Engine.IStiCrossFiltering;
     import IStiAppDataCell = Stimulsoft.Base.IStiAppDataCell;
@@ -30509,6 +30438,7 @@ export namespace Stimulsoft.Report.Dashboard {
         showBubble: boolean;
         shortValue: boolean;
         showZeros: boolean;
+        valueFormat: StiFormatService;
         showName: StiDisplayNameType;
         language: string;
         labels: StiMapLabels;
@@ -38118,6 +38048,7 @@ export namespace Stimulsoft.Report.Maps {
     }
 }
 export namespace Stimulsoft.Report.Maps {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import List = Stimulsoft.System.Collections.List;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
@@ -38211,6 +38142,7 @@ export namespace Stimulsoft.Report.Maps {
         mapImage: string;
         dataTable: StiDataTable;
         showBubble: boolean;
+        valueFormat: StiFormatService;
         private _isHashDataEmpty;
         get isHashDataEmpty(): boolean;
         private _hashData;
@@ -60350,7 +60282,8 @@ export namespace Stimulsoft.Dashboard.Components.Gauge {
     import IStiGlobalizationProvider = Stimulsoft.Report.IStiGlobalizationProvider;
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiGaugeLabels = Stimulsoft.Dashboard.Components.Gauge.StiGaugeLabels;
-    class StiGaugeElement extends StiElement implements IStiGaugeElement, IStiSimpleShadow, IStiCornerRadius, IStiTitleElement, IStiFont, IStiForeColor, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider, IStiShowBlanks {
+    import IStiNumberFormat = Stimulsoft.Report.Components.IStiNumberFormat;
+    class StiGaugeElement extends StiElement implements IStiGaugeElement, IStiSimpleShadow, IStiCornerRadius, IStiTitleElement, IStiFont, IStiForeColor, IStiNumberFormat, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider, IStiShowBlanks {
         private static ImplementsStiGaugeElement;
         implements(): any[];
         clone(cloneProperties: boolean): any;
@@ -60415,7 +60348,6 @@ export namespace Stimulsoft.Dashboard.Components.Gauge {
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
         valueFormat: StiFormatService;
-        private static getValueFormatDefault;
         shortValue: boolean;
         labels: StiGaugeLabels;
         targetSettings: StiGaugeTarget;
@@ -61585,7 +61517,9 @@ export namespace Stimulsoft.Dashboard.Components.RegionMap {
     import IStiSkipOwnFilter = Stimulsoft.Report.Dashboard.IStiSkipOwnFilter;
     import IStiRegionMapElement = Stimulsoft.Report.Dashboard.IStiRegionMapElement;
     import IStiFont = Stimulsoft.Report.Components.IStiFont;
-    class StiRegionMapElement extends StiElement implements IStiRegionMapElement, IStiSimpleShadow, IStiCornerRadius, IStiSkipOwnFilter, IStiTitleElement, IStiElementLayout, IStiJsonReportObject, IStiGlobalizationProvider, IStiElementInteraction, IStiFont {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
+    import IStiNumberFormat = Stimulsoft.Report.Components.IStiNumberFormat;
+    class StiRegionMapElement extends StiElement implements IStiRegionMapElement, IStiSimpleShadow, IStiCornerRadius, IStiSkipOwnFilter, IStiTitleElement, IStiElementLayout, IStiJsonReportObject, IStiGlobalizationProvider, IStiElementInteraction, IStiFont, IStiNumberFormat {
         private static ImplementsStiRegionMapElement;
         implements(): any[];
         clone(cloneProperties: boolean): any;
@@ -61602,6 +61536,7 @@ export namespace Stimulsoft.Dashboard.Components.RegionMap {
         title: StiTitle;
         get font(): Font;
         set font(value: Font);
+        valueFormat: StiFormatService;
         layout: StiElementLayout;
         private _style;
         get style(): StiElementStyleIdent;
