@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.2.5
-Build date: 2024.05.06
+Version: 2024.2.6
+Build date: 2024.05.20
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -12106,6 +12106,7 @@ export namespace Stimulsoft.Report.Dictionary {
         get cachedBusinessObjects(): Hashtable;
         getByName(name: string): StiBusinessObject;
         setByName(name: string, value: StiBusinessObject): void;
+        findByName(name: string): StiBusinessObject;
         clone(): any;
         sort(order?: StiSortOrder, sortColumns?: boolean): void;
         connect(): void;
@@ -13207,6 +13208,7 @@ export namespace Stimulsoft.Report.Components {
         remove(component: StiComponent, clearParent?: boolean): void;
         getByName(name: string): StiComponent;
         setByName(name: string, component: StiComponent): void;
+        findByName(name: string): StiComponent;
         sortByPriority(): void;
         sortByTopPosition(): void;
         sortByBottomPosition(): void;
@@ -14107,7 +14109,7 @@ export namespace Stimulsoft.Report.Components.TextFormats {
         fillLocalSetting(format: NumberFormatInfo): void;
         format(arg: any): string;
         format2(stringFormat: string, arg: any): string;
-        constructor(negativePattern?: number, decimalPlaces?: number, decimalSeparator?: string, decimalDigits?: number, groupSeparator?: string, groupSize?: number, useGroupSeparator?: boolean, useLocalSetting?: boolean, nullDisplay?: string, state?: StiTextFormatState);
+        constructor();
     }
 }
 export namespace Stimulsoft.Report.Components.TextFormats {
@@ -14123,7 +14125,7 @@ export namespace Stimulsoft.Report.Components.TextFormats {
         format(arg: any): string;
         format2(stringFormat: string, arg: any): string;
         private formatAsCurrency;
-        constructor(positivePattern?: number, negativePattern?: number, decimalPlaces?: number, decimalSeparator?: string, decimalDigits?: number, groupSeparator?: string, groupSize?: number, symbol?: string, useGroupSeparator?: boolean, useLocalSetting?: boolean, nullDisplay?: string, state?: StiTextFormatState);
+        constructor();
     }
 }
 export namespace Stimulsoft.Report.Components.TextFormats {
@@ -14132,7 +14134,7 @@ export namespace Stimulsoft.Report.Components.TextFormats {
         meta(): StiMeta[];
         format(arg: any): string;
         format2(stringFormat: string, arg: any): string;
-        constructor(positivePattern?: number, negativePattern?: number, decimalPlaces?: number, decimalSeparator?: string, decimalDigits?: number, groupSeparator?: string, groupSize?: number, symbol?: string, useGroupSeparator?: boolean, useLocalSetting?: boolean, nullDisplay?: string, state?: StiTextFormatState);
+        constructor();
     }
 }
 export namespace Stimulsoft.Report.Components.TextFormats {
@@ -15843,6 +15845,7 @@ export namespace Stimulsoft.Report.Dictionary {
         remove(param: StiDatabase | string | any): void;
         getByName(name: string): StiDatabase;
         setByName(name: string, value: StiDatabase): void;
+        findByName(name: string): StiDatabase;
         clone(): StiDatabaseCollection;
         memberwiseClone(): StiDatabaseCollection;
         private dictionary;
@@ -16050,6 +16053,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getByName(name: string): StiDataSource;
         getByXmlRef(xmlRef: string): StiDataSource;
         setByName(name: string, value: StiDataSource): void;
+        findByName(name: string): StiDataSource;
         clone(): any;
         sort(order?: StiSortOrder, sortColumns?: boolean): void;
         clearParametersExpression(): void;
@@ -16081,6 +16085,7 @@ export namespace Stimulsoft.Report.Dictionary {
         setByIndex(index: number, value: StiDataRelation): void;
         getByName(name: string): StiDataRelation;
         setByName(name: string, value: StiDataRelation): void;
+        findByName(name: string): StiDataRelation;
         constructor(dictionary: StiDictionary);
     }
 }
@@ -16108,6 +16113,7 @@ export namespace Stimulsoft.Report.Dictionary {
         remove(data: string | StiVariable): void;
         getByName(name: string): StiVariable;
         setByName(name: string, value: StiVariable): void;
+        findByName(name: string): StiVariable;
         clone(): any;
         moveCategoryTo(fromCategory: string, toCategory: string): void;
         getFirstCategoryIndex(category: string): number;
@@ -17282,6 +17288,7 @@ export namespace Stimulsoft.Report.Styles {
         setByIndex(index: number, style: StiBaseStyle): void;
         getByName(name: string): StiBaseStyle;
         setByName(name: string, value: StiBaseStyle): void;
+        findByName(name: string): StiBaseStyle;
         private updateHash;
         getCustomChartStyle(customStyleName: string): IStiCustomStyle;
         getCustomGaugeStyle(customStyleName: string): IStiGaugeStyle;
@@ -17988,6 +17995,7 @@ export namespace Stimulsoft.Report.Components {
         getPageWithoutCache(pageIndex: number): StiPage;
         getByName(name: string): StiPage;
         setByName(name: string, page: StiPage): void;
+        findByName(name: string): StiPage;
         getComponentByName(componentName: string): StiComponent;
         getComponentByGuid(guid: string): StiComponent;
         private static setParent;
@@ -26390,6 +26398,7 @@ export namespace Stimulsoft.Report.Components {
         loadFromXml(xmlNode: XmlNode): void;
         indexOf(param: StiBookmark | string | any): number;
         getByName(name: string): StiBookmark;
+        findByName(name: string): StiBookmark;
     }
 }
 export namespace Stimulsoft.Report.Components {
@@ -26507,6 +26516,7 @@ export namespace Stimulsoft.Report.Components {
         remove2(parameter: StiParameter): void;
         getByName(name: string): StiParameter;
         setByName(name: string, value: any): void;
+        findByName(name: string): StiParameter;
         copyTo(array: any[], index: number): void;
         constructor();
     }
@@ -33807,6 +33817,7 @@ export namespace Stimulsoft.Report.Dictionary {
     class StiDataCollection extends CollectionBase<StiData> {
         getByName(name: string): StiData;
         setByName(name: string, value: StiData): void;
+        findByName(name: string): StiData;
         regData(name: string, alias: string, data: any, jsonRelationDirection?: JsonRelationDirection): void;
         private regDataDataTable;
         private regDataDataSet;
@@ -33857,6 +33868,7 @@ export namespace Stimulsoft.Report.Dictionary {
         remove(column: StiDataColumn): void;
         getByName(name: string): StiDataColumn;
         setByName(name: string, value: StiDataColumn): void;
+        findByName(name: string): StiDataColumn;
         sort(order: StiSortOrder): void;
         constructor(source?: StiBusinessObject | StiDataSource | StiDataColumn[] | DataColumn[]);
     }
@@ -33917,6 +33929,7 @@ export namespace Stimulsoft.Report.Dictionary {
         clear(): void;
         getByName(name: string): StiDataParameter;
         setByName(name: string, value: StiDataParameter): void;
+        findByName(name: string): StiDataParameter;
         constructor(dataSource?: StiDataSource);
     }
 }
@@ -34220,6 +34233,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getByName(name: string): StiResource;
         getByAlias(alias: string): StiResource;
         setByName(name: string, value: StiResource): void;
+        findByName(name: string): StiResource;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -38143,6 +38157,7 @@ export namespace Stimulsoft.Report.Maps {
         dataTable: StiDataTable;
         showBubble: boolean;
         valueFormat: StiFormatService;
+        private static getValueFormatDefault;
         private _isHashDataEmpty;
         get isHashDataEmpty(): boolean;
         private _hashData;
@@ -44798,6 +44813,7 @@ export namespace Stimulsoft.Report.Chart {
         private static getInterval1;
         static getInterval(minValue: number, maxValue: number, num: number): number;
         static getStripLines(minValue: number, maxValue: number, step: number, asDateTimeValue: boolean): StiStripLinesXF;
+        static getScatterXDateStripLines(minValue: number, maxValue: number, step: number): StiStripLinesXF;
         private static getCountAfterComma;
         static getStripLinesLogScale(minValue: number, maxValue: number): StiStripLinesXF;
     }
@@ -60348,6 +60364,7 @@ export namespace Stimulsoft.Dashboard.Components.Gauge {
         helpUrl: string;
         dashboardInteraction: IStiDashboardInteraction;
         valueFormat: StiFormatService;
+        private static getValueFormatDefault;
         shortValue: boolean;
         labels: StiGaugeLabels;
         targetSettings: StiGaugeTarget;
@@ -61537,6 +61554,7 @@ export namespace Stimulsoft.Dashboard.Components.RegionMap {
         get font(): Font;
         set font(value: Font);
         valueFormat: StiFormatService;
+        private static getValueFormatDefault;
         layout: StiElementLayout;
         private _style;
         get style(): StiElementStyleIdent;
