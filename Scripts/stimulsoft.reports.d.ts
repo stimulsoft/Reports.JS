@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.3.1
-Build date: 2024.06.13
+Version: 2024.3.2
+Build date: 2024.07.09
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -651,7 +651,7 @@ export namespace Stimulsoft.System {
     class StiNumber extends StiObject implements IAsIs {
         value: number;
         getHashCode(...args: any[]): number;
-        is(type: any): boolean;
+        is<T>(type: any): this is T;
         as(type: any): any;
         memberwiseClone(isBase?: boolean): any;
         compareTo(value: any): number;
@@ -669,7 +669,7 @@ export namespace Stimulsoft.System {
     }
     class StiString extends StiObject implements IAsIs {
         value: string;
-        is(type: any): boolean;
+        is<T>(type: any): this is T;
         as(type: any): any;
         memberwiseClone(isBase?: boolean): any;
         replaceAll(searchValue: string, replaceValue: string, startIndex?: number, count?: number): string;
@@ -711,7 +711,7 @@ export namespace Stimulsoft.System {
         static fromBytesArray(bytes: number[]): string;
     }
     class StiBoolean extends StiObject implements IAsIs {
-        is(type: any): boolean;
+        is<T>(type: any): this is T;
         as(type: any): any;
         memberwiseClone(isBase?: boolean): any;
         getHashCode(...args: any[]): number;
@@ -764,7 +764,7 @@ export namespace Stimulsoft.System {
         constructor(value: any);
     }
     class StiDate extends StiObject implements IAsIs {
-        is(type: any): boolean;
+        is<T>(type: any): this is T;
         as(type: any): any;
     }
 }
@@ -2227,14 +2227,14 @@ export namespace Stimulsoft.System.Data {
         private correctJsonString;
         private correctArray;
         private correctJson;
-        readJsonFile(filePath: string, jsonRelationDirection?: JsonRelationDirection): void;
-        readJson(param: string | number[] | Uint8Array | any, jsonRelationDirection?: JsonRelationDirection): void;
+        readJsonFile(filePath: string, jsonRelationDirection?: JsonRelationDirection, maxDataRows?: number): void;
+        readJson(param: string | number[] | Uint8Array | any, jsonRelationDirection?: JsonRelationDirection, maxDataRows?: number): void;
         private fillCollection;
         private processObject2;
-        readXmlAsJson(param: string | number[] | Uint8Array | any, relationDirection: JsonRelationDirection): void;
+        readXmlAsJson(param: string | number[] | Uint8Array | any, relationDirection: JsonRelationDirection, maxDataRows?: number): void;
         private static convertXmlToJsObject;
-        readXmlFile(filePath: string): void;
-        readXml(param: string | number[] | Uint8Array | any): void;
+        readXmlFile(filePath: string, maxDataRows?: number): void;
+        readXml(param: string | number[] | Uint8Array | any, maxDataRows?: number): void;
         readXmlSchemaFile(filePath: string): void;
         readXmlSchema(param: string | number[] | any): void;
         private fillDataSet;
@@ -4222,7 +4222,14 @@ export namespace Stimulsoft.Base {
 export namespace Stimulsoft.Base.Localization {
     class StiLocalization {
         private static enLanguage;
-        static languages: any;
+        static languages: {
+            [key: string]: {
+                language: string;
+                cultureName: string;
+                filePath?: string;
+                jsonString?: string;
+            };
+        };
         static setLocalization(localizationXml: string, onlyThis?: boolean): void;
         private static _cultureName;
         static get cultureName(): string;
@@ -4230,7 +4237,7 @@ export namespace Stimulsoft.Base.Localization {
         static addLocalizationFile(filePath: string, load?: boolean, language?: string): string;
         static setLocalizationFile(filePath: string, onlyThis?: boolean): void;
         static getJsonStringLocalization(): string;
-        static loadLocalization(localizationXml: any, extension?: boolean): string;
+        static loadLocalization(localizationXml: string): string;
         static loadLocalizationFile(filePath: string): string;
         private static loadLocalizationXmlInternal;
         static get(category: string, key: string): string;
@@ -4289,10 +4296,10 @@ export namespace Stimulsoft.Base {
 export namespace Stimulsoft.Base {
     import DataSet = Stimulsoft.System.Data.DataSet;
     class StiGisToDataSetConverter {
-        static getDataSetFromWkt(content: number[] | string | Uint8Array, separator: string): DataSet;
+        static getDataSetFromWkt(content: number[] | string | Uint8Array, separator: string, maxDataRows?: number): DataSet;
         private static getDataSetFromWkt2;
-        static getDataSetFromGeoJson(content: number[] | string | Uint8Array): DataSet;
-        static getDataSetFromGeoJson2(jObject: {}): DataSet;
+        static getDataSetFromGeoJson(content: number[] | string | Uint8Array, maxDataRows?: number): DataSet;
+        static getDataSetFromGeoJson2(jObject: {}, maxDataRows?: number): DataSet;
     }
 }
 export namespace Stimulsoft.Base {
@@ -5698,7 +5705,7 @@ export namespace Stimulsoft.Base {
     import DataSet = Stimulsoft.System.Data.DataSet;
     class StiExcelHelper {
         static typeFromAllRows: boolean;
-        static getDataSetFromExcelDocument(content: number[], firstRowIsHeader: boolean): DataSet;
+        static getDataSetFromExcelDocument(content: number[], firstRowIsHeader: boolean, maxDataRows?: number): DataSet;
         private static getNumber;
         private static getType;
         private static getTypeCell;
@@ -5720,12 +5727,12 @@ export namespace Stimulsoft.Base {
         content: number[] | Uint8Array | string;
         dataSet: DataSet;
         headers: Header[];
+        maxDataRows: number;
         constructor(content: number[] | string | Uint8Array);
     }
 }
 export namespace Stimulsoft.Base {
     class StiCsvOptions extends StiFileDataOptions {
-        maxDataRows: number;
         path: string;
         tableName: string;
         codePage: number;
@@ -5735,7 +5742,6 @@ export namespace Stimulsoft.Base {
 }
 export namespace Stimulsoft.Base {
     class StiDBaseOptions extends StiFileDataOptions {
-        maxDataRows: number;
         path: string;
         tableName: string;
         codePage: number;
@@ -7536,6 +7542,8 @@ export namespace Stimulsoft.Base.Drawing {
         isStartTag(tag: StiHtmlTag): boolean;
         isEndTag(tag: StiHtmlTag): boolean;
         getAttribute(name: string): string;
+        getAttributePair(name: string): TagPair;
+        hasAttribute(name: string): boolean;
         equals(tag2: StiHtmlTag2): boolean;
         toString(): string;
         constructor(tag?: StiHtmlTag, state?: StiHtmlTag2State);
@@ -7582,6 +7590,7 @@ export namespace Stimulsoft.Base.Drawing {
         key: string;
         keyBase: string;
         value: string;
+        constructor(key?: string, keyBase?: string, value?: string);
     }
 }
 export namespace Stimulsoft.Base {
@@ -7800,8 +7809,8 @@ export namespace Stimulsoft.Base {
     import DataSet = Stimulsoft.System.Data.DataSet;
     import JsonRelationDirection = Stimulsoft.System.Data.JsonRelationDirection;
     class StiJsonToDataSetConverter {
-        static getDataSet(param: string | number[] | any, jsonRelationDirection?: JsonRelationDirection): DataSet;
-        static getDataSetFromXml(param: any, relationDirection?: StiRelationDirection): DataSet;
+        static getDataSet(param: string | number[] | any, jsonRelationDirection?: JsonRelationDirection, maxDataRows?: number): DataSet;
+        static getDataSetFromXml(param: any, relationDirection?: StiRelationDirection, maxDataRows?: number): DataSet;
     }
 }
 export namespace Stimulsoft.Base.Licenses {
@@ -15779,11 +15788,6 @@ export namespace Stimulsoft.Report.Dictionary {
         Asc = 0,
         Desc = 1
     }
-    enum StiAutoSynchronizeMode {
-        None = 0,
-        IfDictionaryEmpty = 1,
-        Always = 2
-    }
     enum StiRestrictionTypes {
         None = 0,
         DenyEdit = 1,
@@ -16644,7 +16648,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getNetType(dbType: string): Stimulsoft.System.Type;
         getSqlType(type: System.Type, source: StiSqlSource): number;
         private getSqlType2;
-        retrieveDataAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString: string): StiPromise<DataTable>;
+        retrieveDataAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString: string, maxDataRows: number): StiPromise<DataTable>;
         constructor();
     }
 }
@@ -19778,6 +19782,7 @@ export namespace Stimulsoft.Report {
             value: string | number;
         }[];
         escapeQueryParameters: boolean;
+        maxDataRows: number;
     };
     export type ProcessExcelDataCommand = ProcessDataCommand & {
         pathData: string;
@@ -20412,7 +20417,6 @@ export namespace StiOptions {
     import PaperSizeCollection = Stimulsoft.System.Drawing.Printing.PrinterSettings.PaperSizeCollection;
     import StiTextQuality = Stimulsoft.Report.Components.StiTextQuality;
     import StiNamingRule = Stimulsoft.Report.StiNamingRule;
-    import StiAutoSynchronizeMode = Stimulsoft.Report.Dictionary.StiAutoSynchronizeMode;
     import StiPropertiesProcessingType = Stimulsoft.Report.Dictionary.StiPropertiesProcessingType;
     import StiFieldsProcessingType = Stimulsoft.Report.Dictionary.StiFieldsProcessingType;
     import StiExcelRestrictEditing = Stimulsoft.Report.Export.StiExcelRestrictEditing;
@@ -20450,6 +20454,7 @@ export namespace StiOptions {
         private static _styles;
         static get styles(): Stimulsoft.Report.Styles.StiStylesCollection;
         static CrossTab: CrossTab2;
+        static maxDataRowsOfDashboardElementInDesigner: number;
     }
     class Image {
         absolutePathOfImages: string;
@@ -20577,7 +20582,6 @@ export namespace StiOptions {
         static showOnlyAliasForDataColumn: boolean;
         static showOnlyAliasForDataRelation: boolean;
         static hideRelationExceptions: boolean;
-        static autoSynchronize: StiAutoSynchronizeMode;
         static useAdvancedDataSearch: boolean;
         static showOnlyAliasForComponents: boolean;
         static showOnlyAliasForDataSource: boolean;
@@ -25054,6 +25058,7 @@ export namespace Stimulsoft.Report.Chart {
         values: number[];
         arguments: any[];
         originalArguments: any[];
+        originalTopNValues: any[];
         toolTips: string[];
         tags: any[];
         hyperlinks: string[];
@@ -25304,7 +25309,7 @@ export namespace Stimulsoft.Report.Chart {
 }
 export namespace Stimulsoft.Report.Chart {
     let IStiFullStackedAreaSeries: System.Interface<IStiFullStackedAreaSeries>;
-    interface IStiFullStackedAreaSeries extends IStiStackedAreaSeries {
+    interface IStiFullStackedAreaSeries extends IStiStackedAreaSeries, IStiShowNullsSeries {
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -25319,7 +25324,7 @@ export namespace Stimulsoft.Report.Chart {
 }
 export namespace Stimulsoft.Report.Chart {
     let IStiFullStackedSplineAreaSeries: System.Interface<IStiFullStackedSplineAreaSeries>;
-    interface IStiFullStackedSplineAreaSeries extends IStiStackedSplineAreaSeries {
+    interface IStiFullStackedSplineAreaSeries extends IStiStackedSplineAreaSeries, IStiShowNullsSeries {
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -28426,6 +28431,7 @@ export namespace Stimulsoft.Report.CrossTab.Core {
         guid: string;
         isCrossSummary: boolean;
         keepMergedCellsTogether: boolean;
+        fieldCloned: boolean;
         cellType: StiCellType;
         drillDownParameters: any;
         constructor();
@@ -29384,6 +29390,7 @@ export namespace Stimulsoft.Report.Dashboard {
         removeXValue(index: number): any;
         removeAllXValues(): any;
         createNewXValue(): IStiMeter;
+        fetchAllXValues(): List<IStiMeter>;
         addYValue(cell: IStiAppDataCell): any;
         getYValue2(cell: IStiAppDataCell): IStiMeter;
         getYValue(meter: IStiMeter): IStiMeter;
@@ -29392,6 +29399,7 @@ export namespace Stimulsoft.Report.Dashboard {
         removeYValue(index: number): any;
         removeAllYValues(): any;
         createNewYValue(): IStiMeter;
+        fetchAllYValues(): List<IStiMeter>;
         addArgument(cell: IStiAppDataCell): any;
         getArgument2(cell: IStiAppDataCell): IStiMeter;
         getArgument(meter: IStiMeter): IStiMeter;
@@ -33907,9 +33915,6 @@ export namespace Stimulsoft.Report.Dictionary {
         cachedUserNamesAndPasswords: Hashtable;
         useInternalData: boolean;
         restrictions: StiRestrictions;
-        static get autoSynchronize(): StiAutoSynchronizeMode;
-        static set autoSynchronize(value: StiAutoSynchronizeMode);
-        static doAutoSynchronize(report: StiReport): void;
         cacheDataSet: DataSet;
         report: StiReport;
         dataStore: StiDataCollection;
@@ -34173,7 +34178,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getDataAdapter(): StiSqlAdapterService;
         create(dictionary: StiDictionary, addToDictionary?: boolean): StiDataSource;
         callRemoteApi(command: ProcessSqlDataCommand, timeout: number): StiPromise<string>;
-        retrieveDataAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString: string): StiPromise<DataTable>;
+        retrieveDataAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString: string, maxDataRows: number): StiPromise<DataTable>;
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
         constructor();
     }
@@ -34240,7 +34245,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getColumnsFromDataAsync(data: StiData, dataSource: StiSqlSource, connectionString: string): StiPromise<StiDataColumnsCollection>;
         connectDataSourceToDataAsync(dictionary: StiDictionary, dataSource: StiDataSource, loadData: boolean): StiPromise<void>;
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
-        retrieveDataAsync(report: StiReport, dataSource: StiNoSqlSource, connectionString: string): StiPromise<DataTable>;
+        retrieveDataAsync(report: StiReport, dataSource: StiNoSqlSource, connectionString: string, maxDataRows: number): StiPromise<DataTable>;
         getNetType(dbType: string): Stimulsoft.System.Type;
         private prepareVariables;
     }
@@ -34802,6 +34807,11 @@ export namespace Stimulsoft.Report.Dictionary {
         getSampleConnectionString(): string;
         getDatasourceType(): Type;
         constructor(name?: string, alias?: string, connectionString?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
+    class StiMaxDataRowsHelper {
+        static get(report: StiReport, isSchema?: boolean): number;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -38040,8 +38050,8 @@ export namespace Stimulsoft.Report.Export {
     import Image = Stimulsoft.System.Drawing.Image;
     class StiMapSvgHelper {
         static getImage(svgData: StiSvgData, scale?: number): Image;
-        static drawMap(xmlsWriter: XmlTextWriter, map: StiMap, x: number, y: number, width: number, height: number, animated: boolean): void;
-        static render(map: StiMap, xmlsWriter: XmlTextWriter, animated: boolean, sScale: number): void;
+        static drawMap(xmlsWriter: XmlTextWriter, map: StiMap, x: number, y: number, width: number, height: number, animated: boolean, dontConnectToData: boolean): void;
+        static render(map: StiMap, xmlsWriter: XmlTextWriter, animated: boolean, sScale: number, dontConnectToData: boolean): void;
         private static addToolTipStyle;
         private static getPathText;
         private static getPathRect;
@@ -38710,7 +38720,6 @@ export namespace Stimulsoft.Report.Export {
 }
 export namespace Stimulsoft.Report.Export {
     class StiSvgExportSettings extends StiImageExportSettings {
-        protected _returnType: StringConstructor;
         constructor();
     }
 }
@@ -40336,13 +40345,15 @@ export namespace Stimulsoft.Report.Painters {
         noneInfo: NoneInfo;
         hashGroup: any;
         colorsContainer: StiStyleColorsContainer;
-        private _mapData;
-        get mapData(): List<StiMapData>;
-        set mapData(value: List<StiMapData>);
+        private cacheDataColumns;
+        mapData: List<StiMapData>;
         mapStyle: StiMapStyle;
         dataTable: StiDataTable;
+        dontConnectToData: boolean;
         getValues(meter: IStiMeter): List<any>;
+        private getCacheName;
         prepareDataColumns(): void;
+        private applyColumns;
         getGeomBrush(data: StiMapData): Brush;
         updateHeatmapWithGroup(): void;
         updateGroupedData(): void;
@@ -41963,9 +41974,9 @@ export namespace Stimulsoft.Report.Export {
         private fontsCounter;
         private bookmarksCounter;
         private linksCounter;
-        private annotsCounter;
+        annotsCounter: number;
         annotsCurrent: number;
-        private annots2Counter;
+        annots2Counter: number;
         private annots2Current;
         private unsignedSignaturesCounter;
         shadingCurrent: number;
@@ -43514,6 +43525,7 @@ export namespace Stimulsoft.Report.Chart {
         get valuesString(): string;
         set valuesString(value: string);
         originalArguments: any[];
+        originalTopNValues: any[];
         private _arguments;
         get arguments(): any[];
         set arguments(value: any[]);
@@ -50403,7 +50415,7 @@ export namespace Stimulsoft.Report.Chart {
 export namespace Stimulsoft.Report.Chart {
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import ICloneable = Stimulsoft.System.ICloneable;
-    class StiFullStackedAreaSeries extends StiStackedAreaSeries implements IStiStackedAreaSeries, IStiStackedBaseLineSeries, IStiSeries, IStiJsonReportObject, IStiFullStackedAreaSeries, IStiStackedLineSeries, ICloneable, IStiAllowApplyBrushNegative {
+    class StiFullStackedAreaSeries extends StiStackedAreaSeries implements IStiFullStackedAreaSeries, IStiStackedAreaSeries, IStiStackedBaseLineSeries, IStiShowNullsSeries, IStiSeries, IStiJsonReportObject, IStiStackedLineSeries, ICloneable, IStiAllowApplyBrushNegative {
         private static implementsStiFullStackedAreaSeries;
         implements(): any[];
         getDefaultAreaType(): Stimulsoft.System.Type;
@@ -50492,7 +50504,7 @@ export namespace Stimulsoft.Report.Chart {
 export namespace Stimulsoft.Report.Chart {
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import ICloneable = Stimulsoft.System.ICloneable;
-    class StiFullStackedSplineAreaSeries extends StiStackedSplineAreaSeries implements IStiStackedSplineSeries, IStiFullStackedSplineAreaSeries, IStiStackedBaseLineSeries, IStiStackedSplineAreaSeries, IStiJsonReportObject, IStiSeries, ICloneable, IStiAllowApplyBrushNegative {
+    class StiFullStackedSplineAreaSeries extends StiStackedSplineAreaSeries implements IStiFullStackedSplineAreaSeries, IStiShowNullsSeries, IStiStackedSplineSeries, IStiStackedBaseLineSeries, IStiStackedSplineAreaSeries, IStiJsonReportObject, IStiSeries, ICloneable, IStiAllowApplyBrushNegative {
         private static implementsStiFullStackedSplineAreaSeries;
         implements(): any[];
         getDefaultAreaType(): Stimulsoft.System.Type;
@@ -59564,6 +59576,8 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
         getY(cell: IStiAppDataCell): IStiMeter;
         getX(cell: IStiAppDataCell): IStiMeter;
         fetchAllValues(): List<IStiMeter>;
+        fetchAllXValues(): List<IStiMeter>;
+        fetchAllYValues(): List<IStiMeter>;
         getValueByIndex(index: number): IStiMeter;
         insertValue(index: number, meter: IStiMeter): void;
         removeValue(index: number): void;
@@ -64139,6 +64153,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         static getConstants(value: string, cells: any): Hashtable;
         static parseDashboardDrillDownParameters(drillDownParameters: any[], report: StiReport): Promise<void>;
         private static imageToBase64;
+        private static getTopN;
     }
 }
 export namespace Stimulsoft.Viewer.Helpers.Dashboards {
@@ -64222,6 +64237,8 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         private static getSortDirection;
         private static fetchAllArguments;
         private static fetchAllValues;
+        private static fetchAllXValues;
+        private static fetchAllYValues;
         private static getSeries;
         private static getSortBy;
         private static getManualDataTable;
@@ -64572,6 +64589,7 @@ export namespace Stimulsoft.Viewer {
 export namespace Stimulsoft.Viewer {
     class StiCollectionsHelper {
         static getLocalizationItems(): any;
+        static getPaperSizesItems(): any[];
     }
 }
 export namespace Stimulsoft.Viewer {
@@ -65032,13 +65050,21 @@ export namespace Stimulsoft.Report.Check {
 }
 export namespace Stimulsoft.Report.Check {
     class StiLocalizationExt {
-        static languages: any;
+        private static enLanguage;
+        static languages: {
+            [key: string]: {
+                language: string;
+                cultureName: string;
+                filePath?: string;
+                jsonString?: string;
+            };
+        };
         private static _cultureName;
         static get cultureName(): string;
         static set cultureName(value: string);
         static addLocalizationFile(filePath: string, load?: boolean, language?: string): string;
         static setLocalizationFile(filePath: string, onlyThis?: boolean): void;
-        static loadLocalization(localizationXml: any, extension?: boolean): string;
+        static loadLocalization(localizationXml: string): string;
         static loadLocalizationFile(filePath: string): string;
         private static loadLocalizationXmlInternal;
         static get(category: string, key: string): string;
@@ -67776,7 +67802,6 @@ export namespace Stimulsoft.Designer {
         private getComponent;
         private getReportInfo;
         static applyParamsToReport(report: StiReport, designer: StiDesigner): void;
-        static doAutoSynchronize(report: StiReport, autoSynchronize: string): void;
         static checkAndCorrectDuplicatePageNames(report: StiReport): void;
         static checkEvalEvents(report: StiReport, designer: StiDesigner, callback: (result: boolean) => void): void;
         constructor(report: StiReport);
