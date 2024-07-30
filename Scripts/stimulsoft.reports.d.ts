@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.3.2
-Build date: 2024.07.09
+Version: 2024.3.3
+Build date: 2024.07.25
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -3967,7 +3967,8 @@ export namespace Stimulsoft.Base {
     interface IStiAppDataSource extends IStiAppCell {
         getNameInSource(): string;
         getName(): string;
-        getDataTable2(allowConnectToData: boolean): Promise<DataTable>;
+        getDataTable2(allowConnectToData: boolean): DataTable;
+        getDataTable2Async(allowConnectToData: boolean): Promise<DataTable>;
         getDictionary(): IStiAppDictionary;
         fetchColumns(): List<IStiAppDataColumn>;
         getConnection(): IStiAppConnection;
@@ -9668,14 +9669,18 @@ export namespace Stimulsoft.Data.Engine {
     class StiDataPicker {
         private static lockObject;
         private static cache;
-        static fetch(query: IStiQueryObject, group: string, option?: StiDataRequestOption, filterNames?: List<string>, links?: List<StiDataLink>): Promise<List<DataTable>>;
+        static fetchAsync(query: IStiQueryObject, group: string, option?: StiDataRequestOption, filterNames?: List<string>, links?: List<StiDataLink>): Promise<List<DataTable>>;
         private static getRelationLevel;
         static retrieveUsedDataSources(query: IStiQueryObject, group: string, filterNames: List<string>): List<IStiAppDataSource>;
-        static fetch2(app: IStiApp, dataSourceName: string, option?: StiDataRequestOption): Promise<DataTable>;
-        static fetch3(app: IStiApp, dataSource: IStiAppDataSource, option?: StiDataRequestOption): Promise<DataTable>;
+        static fetch2(app: IStiApp, dataSourceName: string, option?: StiDataRequestOption): DataTable;
+        static fetch2Async(app: IStiApp, dataSourceName: string, option?: StiDataRequestOption): Promise<DataTable>;
+        static fetch3(app: IStiApp, dataSource: IStiAppDataSource, option?: StiDataRequestOption): DataTable;
+        static fetch3Async(app: IStiApp, dataSource: IStiAppDataSource, option?: StiDataRequestOption): Promise<DataTable>;
         static isAllBICached(query: IStiQueryObject, group: string, option?: StiDataRequestOption): boolean;
-        static getDataTable(app: IStiApp, dataSource: IStiAppDataSource, option?: StiDataRequestOption): Promise<DataTable>;
-        static getDataTable2(option: StiDataRequestOption, dataSource: IStiAppDataSource): Promise<DataTable>;
+        static getDataTable(app: IStiApp, dataSource: IStiAppDataSource, option?: StiDataRequestOption): DataTable;
+        static getDataTableAsync(app: IStiApp, dataSource: IStiAppDataSource, option?: StiDataRequestOption): Promise<DataTable>;
+        static getDataTable2(option: StiDataRequestOption, dataSource: IStiAppDataSource): DataTable;
+        static getDataTable2Async(option: StiDataRequestOption, dataSource: IStiAppDataSource): Promise<DataTable>;
         static processCalculatedColumns(dataTable: DataTable, dataSource: IStiAppDataSource): DataTable;
         static processCalculatedColumnsAsync(dataTable: DataTable, dataSource: IStiAppDataSource): Promise<DataTable>;
         static addTableNameToColumnNames(table: DataTable, dataSource: IStiAppDataSource): void;
@@ -15404,8 +15409,10 @@ export namespace Stimulsoft.Report.Dictionary {
         loadFromXml(xmlNode: XmlNode): void;
         getNameInSource(): string;
         getName(): string;
-        getDataTable2(allowConnectToData: boolean): Promise<DataTable>;
+        getDataTable2(allowConnectToData: boolean): DataTable;
+        getDataTable2Async(allowConnectToData: boolean): Promise<DataTable>;
         private connectSqlSource;
+        private connectSqlSourceAsync;
         getDictionary(): IStiAppDictionary;
         fetchColumns(): List<IStiAppDataColumn>;
         getConnection(): IStiAppConnection;
@@ -15477,6 +15484,7 @@ export namespace Stimulsoft.Report.Dictionary {
         protected invokeDisconnecting(): void;
         connectAsync(datas: StiDataCollection, loadData: boolean): StiPromise<void>;
         connect(datas: StiDataCollection, loadData: boolean): void;
+        getParsedSqlCommand(): string;
         protected getDataAdapterType(): Type;
         fillColumns(): void;
         getDataAdapter(): StiDataAdapterService;
@@ -18779,6 +18787,11 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         protected static namespaceObj: any;
         private static _namespacesList;
         static get namespacesList(): Hashtable;
+        get operatorsList(): Hashtable;
+        private static _operatorsList;
+        private static _operatorsList_low;
+        private static _operatorsList_vb;
+        static check_operatorsList(): void;
         private static _keywordsList;
         static get keywordsList(): Hashtable;
         private lockUserFunctionsList;
@@ -19516,7 +19529,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getDataSources(dataNames: List<string>): List<IStiAppDataSource>;
         getKey(): string;
         isDataSource: true;
-        getDataTable2(allowConnectToData: boolean): Promise<DataTable>;
+        getDataTable2Async(allowConnectToData: boolean): Promise<DataTable>;
         getDataAdapterType(): Type;
         sorts: List<StiDataSortRule>;
         filters: List<StiDataFilterRule>;
@@ -21599,7 +21612,9 @@ export namespace Stimulsoft.Report.Dictionary {
         updateParametersAsync(): Promise<void>;
         updateParameters(): void;
         retrieveDataAsync(schemaOnly?: boolean): StiPromise<void>;
+        getSqlFilterQuery(): string;
         getFinalSqlCommand(): string;
+        getSqlCommandWithFilterQuery(): string;
         constructor(nameInSource?: string, name?: string, alias?: string, sqlCommand?: string, connectOnStart?: boolean, reconnectOnEachRow?: boolean, commandTimeout?: number, key?: string);
     }
 }
@@ -26387,6 +26402,12 @@ export namespace Stimulsoft.Report.Components {
     }
 }
 export namespace Stimulsoft.Report.Components {
+    class StiDataBandSQLFilterHelper {
+        static getFilter(band: StiDataBand, useDataSourceNames: boolean): string;
+        private static getFilterExpression;
+    }
+}
+export namespace Stimulsoft.Report.Components {
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import RectangleD = Stimulsoft.System.Drawing.Rectangle;
@@ -28037,6 +28058,15 @@ export namespace Stimulsoft.Report {
         footerColor: Color;
         footerForeground: Color;
         gridColor: Color;
+        dataBarsOverlapped: Color;
+        dataBarsPositive: Color;
+        dataBarsNegative: Color;
+        winLossPositive: Color;
+        winLossNegative: Color;
+        sparkline: Color;
+        indicatorPositive: Color;
+        indicatorNegative: Color;
+        indicatorNeutral: Color;
         private getColor;
         getStyleFromComponent(component: StiComponent, styleElements: StiStyleElements): void;
         setStyleToComponent(component: StiComponent): void;
@@ -30576,6 +30606,7 @@ export namespace Stimulsoft.Report.Dashboard {
         private static tryParse;
         private static tryParseAsync;
         private static prepareConstants;
+        static getDataFieldValueProcessor(sender: any, e: StiParserGetDataFieldValueEventArgs): void;
         static getDataFieldValueProcessorAsync(sender: any, e: StiParserGetDataFieldValueEventArgs): Promise<void>;
         private static prepareExpression;
         private static getCacheKey;
@@ -33105,8 +33136,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         headerForeColor: Color;
         hotHeaderBackColor: Color;
         lineColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
         backColor: Color;
         cellDataBarsOverlapped: Color;
         cellDataBarsPositive: Color;
@@ -33130,8 +33161,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         alternatingCellForeColor: Color;
         headerBackColor: Color;
         headerForeColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
         selectedCellBackColor: Color;
         selectedCellForeColor: Color;
         hotHeaderBackColor: Color;
@@ -33155,8 +33186,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         alternatingCellBackColor: Color;
         headerBackColor: Color;
         headerForeColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
         cellForeColor: Color;
         selectedCellBackColor: Color;
         selectedCellForeColor: Color;
@@ -33181,8 +33212,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         alternatingCellForeColor: System.Drawing.Color;
         headerBackColor: System.Drawing.Color;
         headerForeColor: System.Drawing.Color;
-        footerColor: System.Drawing.Color;
-        footerForeground: System.Drawing.Color;
+        footerBackColor: System.Drawing.Color;
+        footerForeColor: System.Drawing.Color;
         selectedCellBackColor: System.Drawing.Color;
         selectedCellForeColor: System.Drawing.Color;
         hotHeaderBackColor: System.Drawing.Color;
@@ -33201,8 +33232,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         alternatingCellForeColor: Color;
         headerBackColor: Color;
         headerForeColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
         selectedCellBackColor: Color;
         selectedCellForeColor: Color;
         hotHeaderBackColor: Color;
@@ -33228,8 +33259,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         alternatingCellForeColor: Color;
         headerBackColor: Color;
         headerForeColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
         selectedCellBackColor: Color;
         selectedCellForeColor: Color;
         hotHeaderBackColor: Color;
@@ -33255,8 +33286,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         alternatingCellForeColor: Color;
         headerBackColor: Color;
         headerForeColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
         selectedCellBackColor: Color;
         selectedCellForeColor: Color;
         hotHeaderBackColor: Color;
@@ -33306,8 +33337,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         selectedCellBackColor: Color;
         headerBackColor: Color;
         hotHeaderBackColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
     }
 }
 export namespace Stimulsoft.Report.Dashboard.Styles {
@@ -33320,8 +33351,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         selectedCellBackColor: Color;
         headerBackColor: Color;
         hotHeaderBackColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
     }
 }
 export namespace Stimulsoft.Report.Dashboard.Styles {
@@ -33361,8 +33392,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         alternatingCellForeColor: Color;
         headerBackColor: Color;
         headerForeColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
         selectedCellBackColor: Color;
         selectedCellForeColor: Color;
         hotHeaderBackColor: Color;
@@ -33387,8 +33418,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         alternatingCellForeColor: System.Drawing.Color;
         headerBackColor: System.Drawing.Color;
         headerForeColor: System.Drawing.Color;
-        footerColor: System.Drawing.Color;
-        footerForeground: System.Drawing.Color;
+        footerBackColor: System.Drawing.Color;
+        footerForeColor: System.Drawing.Color;
         selectedCellBackColor: System.Drawing.Color;
         selectedCellForeColor: System.Drawing.Color;
         hotHeaderBackColor: System.Drawing.Color;
@@ -33406,8 +33437,8 @@ export namespace Stimulsoft.Report.Dashboard.Styles {
         selectedCellBackColor: Color;
         headerBackColor: Color;
         hotHeaderBackColor: Color;
-        footerColor: Color;
-        footerForeground: Color;
+        footerBackColor: Color;
+        footerForeColor: Color;
     }
 }
 export namespace Stimulsoft.Report.Dashboard.Visuals {
@@ -34548,6 +34579,7 @@ export namespace Stimulsoft.Report.Dictionary {
         results: string[];
         sort: string[];
         connectToDataAsync(allowConnect?: boolean): StiPromise<void>;
+        connectToData2(allowConnect?: boolean): void;
         connectToDataAsync2(allowConnect?: boolean): Promise<void>;
         private connectToDataInternal;
         private compare;
@@ -34811,7 +34843,7 @@ export namespace Stimulsoft.Report.Dictionary {
 }
 export namespace Stimulsoft.Report.Dictionary {
     class StiMaxDataRowsHelper {
-        static get(report: StiReport, isSchema?: boolean): number;
+        static get(report: StiReport): number;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -38922,9 +38954,9 @@ export namespace Stimulsoft.Report.Export {
         static leftBracketsList: string;
         static rightBracketsList: string;
         static charCode07: string;
-        static convertString(input: string, rightToLeft: boolean, modePdf?: boolean): string;
+        static convertString(input: string, rightToLeft: boolean, modePdf?: boolean, paddingWithSpaces?: boolean): string;
         static logicalToVisual(input: string, rightToLeft: boolean, lineBreaks?: number[], parts?: string[]): string;
-        static convertArabicHebrew(inputSB: string): string;
+        static convertArabicHebrew(inputSB: string, keepSize?: boolean): string;
         static classifyCharacters(text: string, refTypesList: {
             ref: number[];
         }): void;
@@ -63125,6 +63157,7 @@ export namespace Stimulsoft.Dashboard.Render {
         private getToolTip;
         getToolTipStyle(style: IStiChartStyle): Promise<string>;
         private getHyperlink;
+        private getIdentFromArgument;
         getTitle(meter: StiMeter): string;
         protected getSeriesTitle(element: StiChartElement, seriesKey: string, meter: StiMeter): string;
         protected getArgumentIndex(dataTable: StiDataTable, index: number): number;
@@ -63637,8 +63670,8 @@ export namespace Stimulsoft.Dashboard.Export.Painters.Table {
     import StringAlignment = Stimulsoft.System.Drawing.StringAlignment;
     import StiSvgGeomWriter = Stimulsoft.Report.Export.StiSvgGeomWriter;
     class StiIndicatorCellPainter {
-        static draw(writer: StiSvgGeomWriter, rect: RectangleD, table: StiTableElement, column: StiIndicatorColumn, zoom: number, value: number, style: StiTableElementStyle, drawText?: boolean): void;
-        static draw2(writer: StiSvgGeomWriter, rect: RectangleD, table: StiTableElement, column: StiIndicatorColumn, zoom: number, value: number, style: StiTableElementStyle, str: string, drawText?: boolean): void;
+        static draw(writer: StiSvgGeomWriter, rect: RectangleD, table: StiTableElement, rowValues: any[], columnKeys: string[], column: StiIndicatorColumn, zoom: number, value: number, style: StiTableElementStyle, drawText?: boolean): Promise<void>;
+        static draw2(writer: StiSvgGeomWriter, rect: RectangleD, table: StiTableElement, rowValues: any[], columnKeys: string[], column: StiIndicatorColumn, zoom: number, value: number, style: StiTableElementStyle, str: string, drawText?: boolean): Promise<void>;
         private static drawIndicator;
         private static drawText;
         static measureText(zoom: number, text: string, baseFont: Font): number;
@@ -64708,7 +64741,6 @@ export namespace Stimulsoft.Viewer {
         private static getBasicType;
         private static getStiType;
         private static getDateTimeType;
-        private static storeDataSourcesSqlCommand;
         static applyReportParameters(report: StiReport, values: any): void;
         static transferParametersValuesToReport(report: StiReport, values: any): void;
         static applyReportBindingVariables(report: StiReport, values: any): void;
@@ -67525,6 +67557,7 @@ export namespace Stimulsoft.Designer {
         set zoom(value: number);
         theme: StiDesignerTheme;
         iconSet: StiWebUIIconSet;
+        addCustomAttribute: boolean;
     }
 }
 export namespace Stimulsoft.Designer {
