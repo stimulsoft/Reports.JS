@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.3.3
-Build date: 2024.07.25
+Version: 2024.3.4
+Build date: 2024.08.14
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -329,7 +329,8 @@ export namespace Stimulsoft.System {
 }
 export namespace Stimulsoft.System {
     import DateTime = Stimulsoft.System.DateTime;
-    class DateOnly {
+    class DateOnly implements IComparable<DateOnly> {
+        implements(): any[];
         private internalValue;
         static get now(): DateOnly;
         static get minValue(): DateOnly;
@@ -346,6 +347,9 @@ export namespace Stimulsoft.System {
         static tryParse(s: string, refResult: {
             ref: DateOnly;
         }): boolean;
+        compareTo(other: DateOnly): number;
+        equals(date: any): boolean;
+        getHashCode(): number;
         constructor(dateTime: DateTime);
     }
 }
@@ -1105,7 +1109,8 @@ export namespace Stimulsoft.System {
 }
 export namespace Stimulsoft.System {
     import DateTime = Stimulsoft.System.DateTime;
-    class TimeOnly {
+    class TimeOnly implements IComparable<TimeOnly> {
+        implements(): any[];
         private internalValue;
         static get now(): TimeOnly;
         get hour(): number;
@@ -1119,6 +1124,9 @@ export namespace Stimulsoft.System {
         static tryParse(s: string, refResult: {
             ref: TimeOnly;
         }): boolean;
+        compareTo(other: TimeOnly): number;
+        equals(time: any): boolean;
+        getHashCode(): number;
         constructor(param: number | DateTime);
     }
 }
@@ -1169,6 +1177,7 @@ export namespace Stimulsoft.System {
         negate(): TimeSpan;
         static parse(s: string): TimeSpan;
         static compare(t1: TimeSpan, t2: TimeSpan): number;
+        compareTo(value: TimeSpan): number;
         private static timeToTicks;
         static create(days?: number, hours?: number, minutes?: number, seconds?: number, milliseconds?: number): TimeSpan;
         constructor(param1?: number, minutes?: number, seconds?: number, milliseconds?: number);
@@ -5922,7 +5931,6 @@ export namespace Stimulsoft.Base {
 }
 export namespace Stimulsoft.Base {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
-    import List = Stimulsoft.System.Collections.List;
     import DataTable = Stimulsoft.System.Data.DataTable;
     class StiGraphQLHelper {
         private getDefaultWebClient;
@@ -5935,8 +5943,8 @@ export namespace Stimulsoft.Base {
         getConnectionStringKey(key: string, splitter: string): string;
         private getQuery;
         retrieveSchema(): StiDataSchema;
-        getColumns(table: DataTable): List<StiDataColumnSchema>;
-        getColumnsByTableName(tableName: string): List<StiDataColumnSchema>;
+        getColumns(table: DataTable): StiDataColumnSchema[];
+        getColumnsByTableName(tableName: string): StiDataColumnSchema[];
         connectionString: string;
         variables: Hashtable<string, object>;
         get endPoint(): string;
@@ -7339,6 +7347,8 @@ export namespace Stimulsoft.Base.Drawing {
         private static correctFontSize;
         static splitTextWordwrap(text: string, g: Graphics, font: Font, rect: Rectangle, textOptions: StiTextOptions, ha: StiTextHorAlignment, typographic: boolean): List<LineInfo>;
         static splitTextWordwrap2(text: string, g: Graphics, font: Font, rect: Rectangle, sf: StringFormat, horAlignWidth?: boolean): List<LineInfo>;
+        private static isWordWrapSymbol;
+        private static makeLineInfoNotGdi;
         static splitTextWordwrapWidth(text: string, g: Graphics, font: Font, rect: Rectangle): List<string>;
         private static getAdditionalSpaceSize;
         private static makeLineInfo;
@@ -16402,6 +16412,7 @@ export namespace Stimulsoft.Report {
     import Range = Stimulsoft.Report.Range;
     import CultureInfo = Stimulsoft.System.Globalization.CultureInfo;
     class RangeConverter {
+        private currentCulture;
         get getPropertiesSupported(): boolean;
         static rangeToString(range: Range): string;
         static stringToRange(str: string): Range;
