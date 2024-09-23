@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.3.5
-Build date: 2024.09.04
+Version: 2024.3.6
+Build date: 2024.09.19
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -7736,6 +7736,7 @@ export namespace Stimulsoft.Base.Helpers {
     import Guid = Stimulsoft.System.Guid;
     import DateTime = Stimulsoft.System.DateTime;
     import TimeSpan = Stimulsoft.System.TimeSpan;
+    import DateTimeOffset = Stimulsoft.System.DateTimeOffset;
     import DateOnly = Stimulsoft.System.DateOnly;
     import TimeOnly = Stimulsoft.System.TimeOnly;
     class StiValueHelper {
@@ -7745,13 +7746,17 @@ export namespace Stimulsoft.Base.Helpers {
         static tryToNumber(value: any): number;
         static tryToBool(value: any): boolean;
         static tryToDateTime(value: any): DateTime;
+        static tryToDateTimeOffset(value: any): DateTimeOffset;
         static tryToTimeSpan(value: any): TimeSpan;
+        static tryToDateOnly(value: any): DateOnly;
+        static tryToTimeOnly(value: any): TimeOnly;
+        static tryToGuid(value: any): Guid;
         static tryToNullableNumber(value: any): number | null;
         static tryToNullableDateTime(value: any): DateTime | null;
-        static tryToNullableDateOnly(value: any): DateOnly | null;
+        static tryToNullableDateTimeOffset(value: any): DateTimeOffset | null;
         static tryToNullableTimeSpan(value: any): TimeSpan | null;
+        static tryToNullableDateOnly(value: any): DateOnly | null;
         static tryToNullableTimeOnly(value: any): TimeOnly | null;
-        static tryToGuid(value: any): Guid;
         static parseNumber(value: string): number;
         private static normalizeFloatingPointValue;
     }
@@ -51801,6 +51806,7 @@ export namespace Stimulsoft.Report.Chart {
         private calculateStepY;
         private calculateStepZ;
         calculatePositions(axis: IStiAxis3D, REFcollection: any, step: number, calculationForTicks?: boolean): void;
+        private getPrePositionZ;
         private getPositionZ;
         private renderSeries;
         private renderGridLinesHorZY;
