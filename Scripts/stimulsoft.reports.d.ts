@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.4.1
-Build date: 2024.10.08
+Version: 2024.4.2
+Build date: 2024.10.16
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -2753,6 +2753,7 @@ export namespace Stimulsoft.System.Drawing {
         static fromArgb3(alpha: number, color: Color): Color;
         changeAlpha(alpha: number): Color;
         toArgb(): number;
+        getBrightness(): number;
         getHashCode(): number;
         is(type: any): this is Color;
         is2(type: any): boolean;
@@ -4705,21 +4706,24 @@ export namespace Stimulsoft.Base {
         TeradataDataSource = 14,
         VistaDbDataSource = 15,
         UniversalDevartDataSource = 16,
-        ODataDataSource = 17,
-        CsvDataSource = 18,
-        DBaseDataSource = 19,
-        DynamicsNavDataSource = 20,
-        ExcelDataSource = 21,
-        JsonDataSource = 22,
-        GisDataSource = 23,
-        XmlDataSource = 24,
-        DropboxCloudStorage = 25,
-        GoogleDriveCloudStorage = 26,
-        OneDriveCloudStorage = 27,
-        SharePointCloudStorage = 28,
-        DataWorldDataSource = 29,
-        QuickBooksDataSource = 30,
-        Unspecified = 31
+        MariaDbDataSource = 17,
+        SnowflakeDataSource = 18,
+        ClickHouseDataSource = 19,
+        ODataDataSource = 20,
+        CsvDataSource = 21,
+        DBaseDataSource = 22,
+        DynamicsNavDataSource = 23,
+        ExcelDataSource = 24,
+        JsonDataSource = 25,
+        GisDataSource = 26,
+        XmlDataSource = 27,
+        DropboxCloudStorage = 28,
+        GoogleDriveCloudStorage = 29,
+        OneDriveCloudStorage = 30,
+        SharePointCloudStorage = 31,
+        DataWorldDataSource = 32,
+        QuickBooksDataSource = 33,
+        Unspecified = 34
     }
     enum StiConnectionOrder {
         MsSqlDataSource = 10,
@@ -4739,6 +4743,9 @@ export namespace Stimulsoft.Base {
         TeradataDataSource = 140,
         VistaDbDataSource = 150,
         UniversalDevartDataSource = 160,
+        MariaDbDataSource = 165,
+        SnowflakeDataSource = 166,
+        ClickHouseDataSource = 167,
         ODataDataSource = 170,
         ExcelDataSource = 180,
         JsonDataSource = 190,
@@ -5455,6 +5462,79 @@ export namespace Stimulsoft.Base.Data.StiDbType {
     enum Pdo {
         String = 0
     }
+    enum MariaDb {
+        Binary = 1,
+        Bit = 2,
+        Blob = 3,
+        Byte = 4,
+        Date = 5,
+        DateTime = 6,
+        Decimal = 7,
+        Double = 8,
+        Enum = 9,
+        Float = 10,
+        Geometry = 11,
+        Guid = 12,
+        Int16 = 13,
+        Int24 = 14,
+        Int32 = 15,
+        Int64 = 16,
+        LongBlob = 17,
+        LongText = 18,
+        MediumBlob = 19,
+        MediumText = 20,
+        Newdate = 21,
+        NewDecimal = 22,
+        Set = 23,
+        String = 24,
+        Text = 25,
+        Time = 26,
+        TimeStamp = 27,
+        TinyBlob = 28,
+        TinyText = 29,
+        UByte = 30,
+        UInt16 = 31,
+        UInt24 = 32,
+        UInt32 = 33,
+        UInt64 = 34,
+        VarBinary = 35,
+        VarChar = 36,
+        VarString = 37,
+        Year = 38
+    }
+    enum Snowflake {
+        None = 1,
+        Fixed = 2,
+        Real = 3,
+        Text = 4,
+        Date = 5,
+        Variant = 6,
+        Timestamp_ltz = 7,
+        Timestamp_ntz = 8,
+        Timestamp_tz = 9,
+        Object = 10,
+        Binary = 11,
+        Time = 12,
+        Boolean = 13,
+        Array = 14
+    }
+    enum ClickHouse {
+        Int8 = 1,
+        UInt8 = 2,
+        Int16 = 3,
+        UInt16 = 4,
+        Int32 = 5,
+        UInt32 = 6,
+        Int64 = 7,
+        UInt64 = 8,
+        Float32 = 9,
+        Float64 = 10,
+        Decimal = 11,
+        Boolean = 12,
+        String = 13,
+        DateTime = 14,
+        UUID = 15
+    }
 }
 export namespace Stimulsoft.ExternalLibrary.XLSX {
     interface IProperties {
@@ -5581,8 +5661,11 @@ export namespace Stimulsoft.Base {
             msSql: string;
             sqLite: string;
             sybase: string;
+            snowflake: string;
+            clickHouse: string;
             sybaseAds: string;
             teradata: string;
+            mariaDb: string;
             vistaDb: string;
             googleAnalytics: string;
             azureTableStorage: string;
@@ -7793,6 +7876,8 @@ export namespace Stimulsoft.Base.StiJsonReportObjectHelper {
     import StiSimpleBorder = Stimulsoft.Base.Drawing.StiSimpleBorder;
     class Serialize {
         static fontArial8(font: Font): string;
+        static fontArial10(font: Font): string;
+        static fontArial13(font: Font): string;
         static fonSegoeUI20(font: Font): string;
         static font(font: Font, defaultFamily?: string, defaultEmSize?: number, defaultStyle?: FontStyle, defaultUnit?: GraphicsUnit): string;
         static rectangleD(rect: Rectangle): string;
@@ -15899,6 +15984,10 @@ export namespace Stimulsoft.Report.Dictionary {
         Nothing = 1,
         First = 2
     }
+    enum StiColumnTypeProcessing {
+        LeaveUnprocessed = 0,
+        CastToColumnType = 1
+    }
 }
 export namespace Stimulsoft.Report.Dictionary {
     import Type = Stimulsoft.System.Type;
@@ -16150,6 +16239,7 @@ export namespace Stimulsoft.Report.Dictionary {
         Alias = 200,
         ConnectionString = 300,
         FirstRowIsHeader = 350,
+        CastToColumnType = 370,
         PathSchema = 400,
         PathData = 500,
         XmlType = 600,
@@ -16189,6 +16279,7 @@ export namespace Stimulsoft.Report.Dictionary {
         get connectionType(): StiConnectionType;
         get canBeTypeChangeResult(): boolean;
         allowException: boolean;
+        castToColumnType: StiColumnTypeProcessing;
         copyDataSourceFrom(dataSourceToCopy: StiDataSource): StiDataSource;
         applyDatabaseInformation(information: StiDatabaseInformation, report: StiReport, informationAll?: StiDatabaseInformation): void;
         getDatabaseInformationAsync(report: StiReport): StiPromise<StiDatabaseInformation>;
@@ -19366,6 +19457,7 @@ export namespace Stimulsoft.Report.Dictionary {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import StiComponent = Stimulsoft.Report.Components.StiComponent;
     import List = Stimulsoft.System.Collections.List;
+    import DataTable = Stimulsoft.System.Data.DataTable;
     class StiDataSourceHelper {
         static getDatabaseFromDataSource(dataSource: StiDataSource): StiDatabase;
         static getDatabaseFromDataSource2(dataSource: StiDataSource): StiDatabase;
@@ -19378,6 +19470,7 @@ export namespace Stimulsoft.Report.Dictionary {
         private static addRelation;
         private static addSort;
         static getDataSourcesUsedInRequestFromUsersVariables(report: StiReport): Hashtable;
+        static convertDataColumnType(dataSource: StiDataSource, dataTable: DataTable): void;
     }
 }
 export namespace Stimulsoft.Report.Engine {
@@ -21868,7 +21961,7 @@ export namespace Stimulsoft.Report.BarCodes {
         protected draw2DBarCode(context: any, rect: RectangleD, barCode: StiBarCode, zoom: number): void;
         protected drawMaxicode(context: any, rect: RectangleD, barCode: StiBarCode, zoom: number): void;
         protected drawBarCodeError(context: any, rect: RectangleD, barCode: StiBarCode): void;
-        protected drawBarCodeError2(context: any, rect: RectangleD, barCode: StiBarCode, message: string): void;
+        protected drawBarCodeError2(context: any, rect: RectangleD, barCode: StiBarCode, message: string, drawMessage?: boolean): void;
         draw(context: any, barCode: StiBarCode, rect: RectangleD, zoom: number): void;
         protected translateRect(context: any, rect: RectangleD, barCode: StiBarCode): void;
         protected rollbackTransform(context: any): void;
@@ -30209,6 +30302,17 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
+    let IStiPivotTableCells: System.Interface<IStiTableSection>;
+    let ImplementsIStiPivotTableCells: any[];
+    interface IStiPivotTableCells {
+        getColumns(): IStiTableSection;
+        getRows(): IStiTableSection;
+        getData(): IStiTableSection;
+        getTotals(): IStiTableSection;
+    }
+}
+export namespace Stimulsoft.Report.Dashboard {
+    import IStiPivotTableCells = Stimulsoft.Report.Dashboard.IStiPivotTableCells;
     import StiDataTopNMode = Stimulsoft.Data.Engine.StiDataTopNMode;
     import StiConditionPermissions = Stimulsoft.Report.Components.StiConditionPermissions;
     import StiFontIcons = Stimulsoft.Report.Helpers.StiFontIcons;
@@ -30254,6 +30358,7 @@ export namespace Stimulsoft.Report.Dashboard {
         getAllMeters(): List<IStiMeter>;
         addPivotTableCondition(keyValueMeter: string, destinationValueMeter: string, dataType: Stimulsoft.Report.Components.StiFilterDataType, condition: Stimulsoft.Report.Components.StiFilterCondition, value: string, font: Font, textColor: Color, backColor: Color, permissions: StiConditionPermissions, icon: StiFontIcons, iconAlignment: StiIconAlignment, customIcon: number[], iconColor: Color, conditionType: StiPivotTableConditionType, topNMode: StiDataTopNMode, topNCount: number, measureField: string, topNConditionCell: boolean, topNConditionHeader: boolean, topNConditionTotal: boolean): any;
         getUsedMeters(): List<IStiMeter>;
+        getCells(): IStiPivotTableCells;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -30451,6 +30556,15 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
+    let IStiTableCells: System.Interface<IStiTableSection>;
+    let ImplementsIStiTableCells: any[];
+    interface IStiTableCells {
+        getColumns(): IStiTableSection;
+        getData(): IStiTableSection;
+        getTotals(): IStiTableSection;
+    }
+}
+export namespace Stimulsoft.Report.Dashboard {
     import StiTableColumnSize = Stimulsoft.Report.Dashboard.StiTableColumnSize;
     let IStiTableColumnSize: System.Interface<IStiTitle>;
     let ImplementsIStiTableColumnSize: any[];
@@ -30510,6 +30624,7 @@ export namespace Stimulsoft.Report.Dashboard {
         tableConditions: List<IStiTableElementCondition>;
         currentPageIndex: number;
         addTableCondition(keyDataFieldMeters: string[], keyDestinationMeters: string[], dataType: Stimulsoft.Report.Components.StiFilterDataType, condition: Stimulsoft.Report.Components.StiFilterCondition, value: string, permissions: StiTableConditionPermissions, font: Font, foreColor: Color, backColor: Color, isExpression: boolean): any;
+        getCells(): IStiTableCells;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -30538,6 +30653,17 @@ export namespace Stimulsoft.Report.Dashboard {
         foreColor: Color;
         backColor: Color;
         isExpression: boolean;
+    }
+}
+export namespace Stimulsoft.Report.Dashboard {
+    import Color = Stimulsoft.System.Drawing.Color;
+    import Font = Stimulsoft.System.Drawing.Font;
+    let IStiTableSection: System.Interface<IStiTableSection>;
+    let ImplementsIStiTableSection: any[];
+    interface IStiTableSection {
+        backColor: Color;
+        foreColor: Color;
+        font: Font;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -34965,6 +35091,13 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    class StiClickHouseSource extends StiSqlSource {
+        getDataAdapterType(): Stimulsoft.System.Type;
+        getParameterTypesEnum(): any;
+        constructor(nameInSource?: string, name?: string, alias?: string, sqlCommand?: string, connectOnStart?: boolean, reconnectOnEachRow?: boolean, commandTimeout?: number, key?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
     class StiDB2Source extends StiSqlSource {
         getDataAdapterType(): Stimulsoft.System.Type;
         getParameterTypesEnum(): any;
@@ -35007,6 +35140,13 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    class StiMariaDbSource extends StiMySqlSource {
+        getDataAdapterType(): Stimulsoft.System.Type;
+        getParameterTypesEnum(): any;
+        constructor(nameInSource?: string, name?: string, alias?: string, sqlCommand?: string, connectOnStart?: boolean, reconnectOnEachRow?: boolean, commandTimeout?: number, key?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
     class StiOdbcSource extends StiSqlSource {
         getDataAdapterType(): Stimulsoft.System.Type;
         getParameterTypesEnum(): any;
@@ -35029,6 +35169,13 @@ export namespace Stimulsoft.Report.Dictionary {
 }
 export namespace Stimulsoft.Report.Dictionary {
     class StiSQLiteSource extends StiSqlSource {
+        getDataAdapterType(): Stimulsoft.System.Type;
+        getParameterTypesEnum(): any;
+        constructor(nameInSource?: string, name?: string, alias?: string, sqlCommand?: string, connectOnStart?: boolean, reconnectOnEachRow?: boolean, commandTimeout?: number, key?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
+    class StiSnowflakeSource extends StiSqlSource {
         getDataAdapterType(): Stimulsoft.System.Type;
         getParameterTypesEnum(): any;
         constructor(nameInSource?: string, name?: string, alias?: string, sqlCommand?: string, connectOnStart?: boolean, reconnectOnEachRow?: boolean, commandTimeout?: number, key?: string);
@@ -35528,6 +35675,16 @@ export namespace Stimulsoft.Report.Dictionary {
 }
 export namespace Stimulsoft.Report.Dictionary {
     import Type = Stimulsoft.System.Type;
+    class StiClickHouseDatabase extends StiSqlDatabase {
+        get serviceName(): string;
+        getSampleConnectionString(): string;
+        getDataAdapterType(): Stimulsoft.System.Type;
+        getDatasourceType(): Type;
+        constructor(name?: string, alias?: string, connectionString?: string, promptUserNameAndpassword?: boolean, key?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
+    import Type = Stimulsoft.System.Type;
     class StiDB2Database extends StiSqlDatabase {
         get serviceName(): string;
         getSampleConnectionString(): string;
@@ -35569,6 +35726,16 @@ export namespace Stimulsoft.Report.Dictionary {
 export namespace Stimulsoft.Report.Dictionary {
     import Type = Stimulsoft.System.Type;
     class StiMSAccessDatabase extends StiSqlDatabase {
+        get serviceName(): string;
+        getSampleConnectionString(): string;
+        getDataAdapterType(): Stimulsoft.System.Type;
+        getDatasourceType(): Type;
+        constructor(name?: string, alias?: string, connectionString?: string, promptUserNameAndpassword?: boolean, key?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
+    import Type = Stimulsoft.System.Type;
+    class StiMariaDbDatabase extends StiSqlDatabase {
         get serviceName(): string;
         getSampleConnectionString(): string;
         getDataAdapterType(): Stimulsoft.System.Type;
@@ -35638,6 +35805,16 @@ export namespace Stimulsoft.Report.Dictionary {
 export namespace Stimulsoft.Report.Dictionary {
     import Type = Stimulsoft.System.Type;
     class StiSQLiteDatabase extends StiSqlDatabase {
+        get serviceName(): string;
+        getSampleConnectionString(): string;
+        getDataAdapterType(): Stimulsoft.System.Type;
+        getDatasourceType(): Type;
+        constructor(name?: string, alias?: string, connectionString?: string, promptUserNameAndpassword?: boolean, key?: string);
+    }
+}
+export namespace Stimulsoft.Report.Dictionary {
+    import Type = Stimulsoft.System.Type;
+    class StiSnowflakeDatabase extends StiSqlDatabase {
         get serviceName(): string;
         getSampleConnectionString(): string;
         getDataAdapterType(): Stimulsoft.System.Type;
@@ -39766,6 +39943,13 @@ export namespace Stimulsoft.Report.Export {
     import StiPagesCollection = Stimulsoft.Report.Components.StiPagesCollection;
     class StiSegmentPagesDivider {
         static divide(pages: StiPagesCollection, service?: StiExportService): StiPagesCollection;
+    }
+}
+export namespace Stimulsoft.Report.Extensions {
+    import DataColumn = Stimulsoft.System.Data.DataColumn;
+    import Type = Stimulsoft.System.Type;
+    class DataColumnExt {
+        static tryConvertColumnType(column: DataColumn, newType: Type): boolean;
     }
 }
 export namespace Stimulsoft.Report.Func {
@@ -61399,6 +61583,7 @@ export namespace Stimulsoft.Dashboard.Interactions {
         availableOnHover: StiAvailableInteractionOnHover;
         availableOnDataManipulation: StiAvailableInteractionOnDataManipulation;
         allowUserSorting: boolean;
+        allowUserDrillDown: boolean;
         showFullScreenButton: boolean;
         showSaveButton: boolean;
         showViewDataButton: boolean;
@@ -62283,6 +62468,83 @@ export namespace Stimulsoft.Dashboard.Components.OnlineMap {
         constructor(rect?: Rectangle);
     }
 }
+export namespace Stimulsoft.Dashboard.Components.Table {
+    import IStiTableSection = Stimulsoft.Report.Dashboard.IStiTableSection;
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import ICloneable = Stimulsoft.System.ICloneable;
+    import IStiGetFonts = Stimulsoft.Base.IStiGetFonts;
+    import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
+    import IStiTableCells = Stimulsoft.Report.Dashboard.IStiTableCells;
+    import Font = Stimulsoft.System.Drawing.Font;
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
+    import StiJson = Stimulsoft.Base.StiJson;
+    class StiTableCells implements IStiTableCells, ICloneable, IStiJsonReportObject, IStiGetFonts {
+        private static ImplementsStiTableCells;
+        implements(): any[];
+        meta(): StiMeta[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(j: StiJson): void;
+        loadFromXml(xn: XmlNode): void;
+        static createFromJsonObject(jObject: StiJson): StiTableCells;
+        static createFromXml(xmlNode: XmlNode): StiTableCells;
+        clone(): any;
+        isDefault(): boolean;
+        getFonts(): Font[];
+        getColumns(): IStiTableSection;
+        getData(): IStiTableSection;
+        getTotals(): IStiTableSection;
+        private _columns;
+        get columns(): StiTableSection;
+        set columns(value: StiTableSection);
+        private shouldSerializeColumns;
+        private _data;
+        get data(): StiTableSection;
+        set data(value: StiTableSection);
+        private shouldSerializeData;
+        private _totals;
+        get totals(): StiTableSection;
+        set totals(value: StiTableSection);
+        private shouldSerializeTotals;
+        private _element;
+        get element(): StiElement;
+        set element(value: StiElement);
+        constructor();
+    }
+}
+export namespace Stimulsoft.Dashboard.Components.Table {
+    import IStiTableSection = Stimulsoft.Report.Dashboard.IStiTableSection;
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import ICloneable = Stimulsoft.System.ICloneable;
+    import IStiGetFonts = Stimulsoft.Base.IStiGetFonts;
+    import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
+    import IStiPivotTableCells = Stimulsoft.Report.Dashboard.IStiPivotTableCells;
+    import Font = Stimulsoft.System.Drawing.Font;
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
+    import StiJson = Stimulsoft.Base.StiJson;
+    class StiPivotTableCells extends StiTableCells implements IStiPivotTableCells, ICloneable, IStiJsonReportObject, IStiGetFonts {
+        private static ImplementsStiPivotTableCells;
+        implements(): any[];
+        meta(): StiMeta[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(j: StiJson): void;
+        loadFromXml(xn: XmlNode): void;
+        static createFromJsonObject(jObject: StiJson): StiPivotTableCells;
+        static createFromXml(xmlNode: XmlNode): StiPivotTableCells;
+        clone(): any;
+        isDefault(): boolean;
+        getFonts(): Font[];
+        getRows(): IStiTableSection;
+        private _rows;
+        get rows(): StiTableSection;
+        set rows(value: StiTableSection);
+        private shouldSerializeRows;
+        get element(): StiElement;
+        set element(value: StiElement);
+        constructor();
+    }
+}
 export namespace Stimulsoft.Dashboard.Components.PivotTable {
     import IStiPivotItem = Stimulsoft.Report.Dashboard.IStiPivotItem;
     import IStiReport = Stimulsoft.Base.IStiReport;
@@ -62334,6 +62596,8 @@ export namespace Stimulsoft.Dashboard.Interactions {
     }
 }
 export namespace Stimulsoft.Dashboard.Components.PivotTable {
+    import IStiPivotTableCells = Stimulsoft.Report.Dashboard.IStiPivotTableCells;
+    import StiPivotTableCells = Stimulsoft.Dashboard.Components.Table.StiPivotTableCells;
     import StiPivotTableConditionType = Stimulsoft.Report.Dashboard.StiPivotTableConditionType;
     import StiDataTopNMode = Stimulsoft.Data.Engine.StiDataTopNMode;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
@@ -62420,12 +62684,14 @@ export namespace Stimulsoft.Dashboard.Components.PivotTable {
         getAllMeters(): List<IStiMeter>;
         fetchPivotTableConditions(): List<IStiPivotTableElementCondition>;
         clearPivotTableConditions(): void;
+        getFonts(): Font[];
         convertFrom(element: IStiElement): void;
         setString(propertyName: string, value: string): void;
         cloneMeter(meter: StiMeter, keys: object): StiMeter;
         findKey(key: string, keys: object): string;
         getString(propertyName: string): string;
         getAllStrings(): string[];
+        getCells(): IStiPivotTableCells;
         get toolboxPosition(): number;
         get localizedName(): string;
         helpUrl: string;
@@ -62434,6 +62700,12 @@ export namespace Stimulsoft.Dashboard.Components.PivotTable {
         rows: List<StiPivotRow>;
         summaries: List<StiPivotSummary>;
         totalLabel: string;
+        get foreColor(): Color;
+        set foreColor(value: Color);
+        private _cells;
+        get cells(): StiPivotTableCells;
+        set cells(value: StiPivotTableCells);
+        private shouldSerializeCells;
         pivotTableConditions: List<IStiPivotTableElementCondition>;
         getFormatObjects(): List<any>;
         getPushCommands(expression: string): List<string>;
@@ -63016,6 +63288,8 @@ export namespace Stimulsoft.Dashboard.Components.Table {
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Table {
+    import IStiTableCells = Stimulsoft.Report.Dashboard.IStiTableCells;
+    import StiTableCells = Stimulsoft.Dashboard.Components.Table.StiTableCells;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiCornerRadius = Stimulsoft.Report.Components.IStiCornerRadius;
     import StiCornerRadius = Stimulsoft.Base.Drawing.StiCornerRadius;
@@ -63063,6 +63337,8 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         getMeasure(cell: IStiAppDataCell): IStiMeter;
         getDimension(cell: IStiAppDataCell): IStiMeter;
         shadow: StiSimpleShadow;
+        getFonts(): Font[];
+        getCells(): IStiTableCells;
         cornerRadius: StiCornerRadius;
         convertFrom(element: IStiElement): void;
         fetchAllMeters(): List<IStiMeter>;
@@ -63073,8 +63349,10 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         layout: StiElementLayout;
         group: string;
         get allowSkipOwnFilter(): boolean;
-        foreColor: Color;
-        font: Font;
+        get foreColor(): Color;
+        set foreColor(value: Color);
+        get font(): Font;
+        set font(value: Font);
         private _style;
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
@@ -63088,6 +63366,10 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         dataFilters: List<StiDataFilterRule>;
         tableConditions: List<IStiTableElementCondition>;
         crossFiltering: boolean;
+        private _cells;
+        get cells(): StiTableCells;
+        set cells(value: StiTableCells);
+        private shouldSerializeCells;
         setString(propertyName: string, value: string): void;
         getString(propertyName: string): string;
         getAllStrings(): string[];
@@ -63101,10 +63383,14 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         rowsPerPage: number;
         pageTurnTime: number;
         currentPageIndex: number;
-        headerForeColor: Color;
-        headerFont: Font;
-        footerForeColor: Color;
-        footerFont: Font;
+        get headerForeColor(): Color;
+        set headerForeColor(value: Color);
+        get headerFont(): Font;
+        set headerFont(value: Font);
+        get footerForeColor(): Color;
+        set footerForeColor(value: Color);
+        get footerFont(): Font;
+        set footerFont(value: Font);
         getNestedPages(): List<StiPage>;
         getFormatObjects(): List<any>;
         constructor(rect?: Rectangle);
@@ -63128,6 +63414,43 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         private static processFontUnderline;
         private static processFontItalic;
         private static processFontBold;
+    }
+}
+export namespace Stimulsoft.Dashboard.Components.Table {
+    import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import StiJson = Stimulsoft.Base.StiJson;
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import IStiTableSection = Stimulsoft.Report.Dashboard.IStiTableSection;
+    import Font = Stimulsoft.System.Drawing.Font;
+    import Color = Stimulsoft.System.Drawing.Color;
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
+    class StiTableSection implements IStiTableSection, IStiJsonReportObject {
+        private static ImplementsStiTableSection;
+        implements(): any[];
+        meta(): StiMeta[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(j: StiJson): void;
+        loadFromXml(xn: XmlNode): void;
+        static createFromJsonObject(jObject: StiJson): StiTableSection;
+        static createFromXml(xmlNode: XmlNode): StiTableSection;
+        clone(): any;
+        isDefault(): boolean;
+        private _backColor;
+        get backColor(): Color;
+        set backColor(value: Color);
+        private shouldSerializeBackColor;
+        private _foreColor;
+        get foreColor(): Color;
+        set foreColor(value: Color);
+        private shouldSerializeForeColor;
+        private _font;
+        get font(): Font;
+        set font(value: Font);
+        private shouldSerializeFont;
+        element: StiElement;
+        private clearElementCache;
+        constructor(font?: Font, foreColor?: Color, backColor?: Color);
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Table.Design {
@@ -63638,6 +63961,8 @@ export namespace Stimulsoft.Dashboard.Visuals.Cards {
         dataTable: StiDataTable;
         draw(context: StiContext, rect: Rectangle): Promise<void>;
         private paintCards;
+        private unionRectangles;
+        private zoomAndMoveUp;
         private getCardRectanglesList;
         private getRectanglesHorizontalOrientation;
         private getRectanglesVerticalOrientation;
@@ -63847,6 +64172,10 @@ export namespace Stimulsoft.Dashboard.Helpers {
     }
 }
 export namespace Stimulsoft.Dashboard.Helpers {
+    import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
+    import StiPivotTableCells = Stimulsoft.Dashboard.Components.Table.StiPivotTableCells;
+    import Color = Stimulsoft.System.Drawing.Color;
+    import StiPivotElementStyle = Stimulsoft.Report.Dashboard.Styles.StiPivotElementStyle;
     import StiCrossTab = Stimulsoft.Report.CrossTab.StiCrossTab;
     import StiDataTable = Stimulsoft.Data.Engine.StiDataTable;
     import StiPivotTableElement = Stimulsoft.Dashboard.Components.PivotTable.StiPivotTableElement;
@@ -63861,6 +64190,9 @@ export namespace Stimulsoft.Dashboard.Helpers {
         static getViewerData(pivotElement: IStiPivotTableElement): Promise<any>;
         private static cellItem;
         static applyStyle(pivot: StiPivotTableElement, crossTab: StiCrossTab, exportDataOnly: boolean): void;
+        static getBackColor(element: IStiElement, cells: StiPivotTableCells, style: StiPivotElementStyle, isInterlaced: boolean): Color;
+        static getForeColor(element: IStiElement, cells: StiPivotTableCells, style: StiPivotElementStyle, isInterlaced: boolean): Color;
+        private static getColor;
         static buildCross(masterCrossTab: StiCrossTab, dataTable: StiDataTable, pivot: StiPivotTableElement, zoom?: number): void;
         static convertToCrossTab(pivot: StiPivotTableElement, dataTable: StiDataTable, zoom?: number): Promise<StiCrossTab>;
         static updateCrossTab(crossTab: StiCrossTab, pivot: StiPivotTableElement, dataTable: StiDataTable, zoom: number, build?: boolean): Promise<void>;
@@ -64706,6 +65038,8 @@ export namespace Stimulsoft.Dashboard.Export.Painters.Table {
     }
 }
 export namespace Stimulsoft.Dashboard.Drawing.Painters {
+    import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
+    import StiTableCells = Stimulsoft.Dashboard.Components.Table.StiTableCells;
     import List = Stimulsoft.System.Collections.List;
     import Size = Stimulsoft.System.Drawing.Size;
     import Font = Stimulsoft.System.Drawing.Font;
@@ -64715,7 +65049,7 @@ export namespace Stimulsoft.Dashboard.Drawing.Painters {
     import Color = Stimulsoft.System.Drawing.Color;
     import StiTableElementStyle = Stimulsoft.Report.Dashboard.Styles.StiTableElementStyle;
     class StiTableElementGdiPainter {
-        static getBackgroundColor(style: StiTableElementStyle, isInterlaced: boolean): Color;
+        static getBackgroundColor(element: IStiElement, cells: StiTableCells, style: StiTableElementStyle, isInterlaced: boolean): Color;
         private static measureColumn;
         private static getArrowSize;
         private static getRightImageRect;
@@ -64949,8 +65283,10 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
         private static renderBoolCell;
         private static getColumnVisibilityState;
         private static getForeColor;
+        private static getHeaderBackColor;
         private static getHeaderForeColor;
         private static getFooterForeColor;
+        private static getFooterBackColor;
         private static getBorderSides;
     }
 }
@@ -65396,14 +65732,24 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     import StiReport = Stimulsoft.Report.StiReport;
     import KeyObjectType = Stimulsoft.System.KeyObjectType;
     import IStiTableElement = Stimulsoft.Report.Dashboard.IStiTableElement;
+    import IStiTableColumn = Stimulsoft.Base.Meters.IStiTableColumn;
+    import Color = Stimulsoft.System.Drawing.Color;
     class StiTableElementViewHelper {
         static getTableData(tableElement: IStiTableElement): Promise<KeyObjectType[][]>;
         static getTableHiddenData(tableElement: IStiTableElement): Promise<KeyObjectType[][]>;
         static getTableSettings(tableElement: IStiTableElement, tableStyle?: StiTableElementStyle): KeyObjectType;
-        private static getColumnVisibilityState;
-        private static getCellForeColor;
+        private static getHighlightedColor;
+        private static getCellBackColor;
+        static getCellForeColor(tableElement: IStiTableElement, column: IStiTableColumn, isInterlacedForeColor?: boolean): Color;
+        private static getCellBackColorInterlaced;
+        private static getCellSelectedBackColor;
+        private static getCellSelectedForeColor;
+        private static getHeaderBackColor;
+        private static getHeaderSelectedBackColor;
         private static getHeaderForeColor;
+        private static getFooterBackColor;
         private static getFooterForeColor;
+        private static getColumnVisibilityState;
         private static getCellAlignment;
         private static getSortLabel;
         private static getFilterLabel;
@@ -65842,8 +66188,23 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     import IStiPivotTableElement = Stimulsoft.Report.Dashboard.IStiPivotTableElement;
     class StiPivotTableElementViewHelper {
         static getPivotTableData(pivotElement: IStiPivotTableElement): Promise<any>;
-        static getPivotTableSettings(tableElement: IStiPivotTableElement): KeyObjectType;
-        private static getCellAlignment;
+        static getPivotTableSettings(pivotElement: IStiPivotTableElement): KeyObjectType;
+        private static getCellBackColor;
+        private static getSelectedCellBackColor;
+        private static getAlternatingCellBackColor;
+        private static getCellForeColor;
+        private static getSelectedCellForeColor;
+        private static getAlternatingCellForeColor;
+        private static getColumnHeaderBackColor;
+        private static getColumnHeaderForeColor;
+        private static getHotColumnHeaderBackColor;
+        private static getRowHeaderBackColor;
+        private static getHotRowHeaderBackColor;
+        private static getRowHeaderForeColor;
+        private static getTotalsBackColor;
+        private static getAlternatingTotalsBackColor;
+        private static getTotalsForeColor;
+        private static getAlternatingTotalsForeColor;
     }
 }
 export namespace Stimulsoft.Viewer.Helpers.Dashboards {
@@ -67505,7 +67866,7 @@ export namespace Stimulsoft.Designer {
         SendCommandUpdateCache(): any;
         SendCommandLoadReportToViewer(): any;
         SendCommandCloseViewer(): any;
-        SendCommandOpenReport(fileContent: any, fileName: string, reportParams: any, filePath?: string, fileSize?: number, addToRecent?: boolean): any;
+        SendCommandOpenReport(fileContent: any, fileName: string, reportParams: any, filePath?: string, fileSize?: number, addToRecent?: boolean, cloudPath?: string): any;
         ExecuteCommandFromStack(): any;
         Sen(evt: any): any;
         ActionExitDesigner(): any;
@@ -67535,7 +67896,7 @@ export namespace Stimulsoft.Designer {
         assignReportCompleted(): any;
         BackToSelectedComponent(selectedObjectName: string): any;
         SendCommandSaveBlockly(blocklyContent: any, eventName: any): any;
-        SaveFileToRecentArray(fileName: any, onlyPath: any, containsDashboard: any, cookieKey?: any): any;
+        SaveFileToRecentArray(fileName: any, onlyPath: any, containsDashboard: any, cookieKey?: any, cloudPath?: any): any;
         SendCommandDownloadResource(resourceName: string): any;
         SendCommandDownloadImageContent(imageData: string): any;
         OnSetTheme?: () => any;
