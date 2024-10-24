@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.4.2
-Build date: 2024.10.16
+Version: 2024.4.3
+Build date: 2024.10.23
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -36022,12 +36022,12 @@ export namespace Stimulsoft.Report.Dictionary {
         static dateToStrUa(value: DateTime, upperCase?: boolean): string;
         static toCurrencyWordsUa(value: number, cents?: boolean, currency?: string, uppercase?: boolean): string;
         static toWordsPt(value: number, upperCase: boolean): string;
-        static toCurrencyWordsPt(value: number, upperCase: boolean, showCents: boolean): string;
-        static toCurrencyWordsPtBr(value: number): string;
+        static toCurrencyWordsPt(value: number, upperCase: boolean, showCents: boolean, dollars?: string, cents?: string | number): string;
+        static toCurrencyWordsPtBr(value: number, uppercase?: boolean, dollars?: string, cents?: string): string;
         static DateToStrPt(value: DateTime): string;
         static dateToStrPtBr(value: DateTime): string;
         static toCurrencyWordsFr(numberr: number, currencyISO: string, decimals: number): string;
-        static toCurrencyWordsEs(numberr: number, currencyISO: string, decimals: number): string;
+        static toCurrencyWordsEs(numberr: number, currencyISO: string, decimals: number, female?: boolean): string;
         static toWordsEs(value: number, upperCase: boolean, female?: boolean): string;
         static toWordsEs2(value: number, upperCase: boolean, female: boolean): string;
         static toCurrencyWordsNl(numberr: number, currencyISO: string, decimals: number): string;
@@ -37287,22 +37287,6 @@ export namespace Stimulsoft.Report.Export {
         static getImage(svgData: StiSvgData, imageFormat?: ImageFormat): Image;
     }
 }
-export namespace Stimulsoft.Report.Export {
-    import StiLinearGradientBrush = Stimulsoft.Base.Drawing.StiLinearGradientBrush;
-    import XmlTextWriter = Stimulsoft.System.Xml.XmlTextWriter;
-    import RectangleD = Stimulsoft.System.Drawing.Rectangle;
-    import Color = Stimulsoft.System.Drawing.Color;
-    class StiBrushSvgHelper {
-        static hatchData: string[];
-        static writeHatchBrush(writer: XmlTextWriter, brush: any): string;
-        private static hexToByteString;
-        static writeGlareBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
-        static writeGradientBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
-        static writeLinearGradientBrush(writer: XmlTextWriter, brush: StiLinearGradientBrush, rect: RectangleD): string;
-        static writeGlassBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
-        static getFillColor(color: Color): string;
-    }
-}
 export namespace Stimulsoft.Report {
     import PointD = Stimulsoft.System.Drawing.Point;
     class StiCurveHelper {
@@ -37986,8 +37970,25 @@ export namespace Stimulsoft.Report.Export.Services.Helpers {
         private static calculateCurveBezierEndPoints;
         private static writeBrush;
         private static checkPenGeom;
-        private static p;
+        static p(f: number): string;
         static writeStimulsoftIconFont(): void;
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import StiLinearGradientBrush = Stimulsoft.Base.Drawing.StiLinearGradientBrush;
+    import XmlTextWriter = Stimulsoft.System.Xml.XmlTextWriter;
+    import RectangleD = Stimulsoft.System.Drawing.Rectangle;
+    import Color = Stimulsoft.System.Drawing.Color;
+    class StiBrushSvgHelper {
+        static hatchData: string[];
+        static writeHatchBrush(writer: XmlTextWriter, brush: any): string;
+        private static hexToByteString;
+        static writeGlareBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
+        static writeGradientBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
+        static writeLinearGradientBrush(writer: XmlTextWriter, brush: StiLinearGradientBrush, rect: RectangleD): string;
+        static writeGlassBrush(writer: XmlTextWriter, brush: any, rect: RectangleD): string;
+        static getFillColor(color: Color): string;
+        private static getGradientInfo;
     }
 }
 export namespace Stimulsoft.Base.Context {
@@ -40016,7 +40017,7 @@ export namespace Stimulsoft.Report.Func {
         static lessTwenty: string[];
         static tens: string[];
         static currencies: string[][];
-        static convertToWord(numberr: number, currencyISO: string, decimals: number): string;
+        static convertToWord(numberr: number, currencyISO: string, decimals: number, female?: boolean): string;
         private static determinateCurrenciesEurUsd;
         static numToStr(numberr: number, uppercase: boolean): string;
         static numToStr2(numberr: number, uppercase: boolean, female: boolean): string;
@@ -40095,7 +40096,8 @@ export namespace Stimulsoft.Report.Func {
         private static addTens;
         private static decline;
         private static decline2;
-        static currToStr(value: number, uppercase: boolean, showCents: boolean): string;
+        static currToStr2(value: number, uppercase: boolean, showCents: boolean, currencyISO: string, decimals: number): string;
+        static currToStr(value: number, uppercase: boolean, showCents: boolean, dollars?: string, cents?: string, decimals?: number): string;
         static dateToStr(value: DateTime): string;
     }
 }
@@ -40104,7 +40106,7 @@ export namespace Stimulsoft.Report.Func {
         private static unid;
         private static dezena;
         private static centena;
-        static numToStr(value: number): string;
+        static numToStr(value: number, uppercase?: boolean, dollars?: string, cents?: string): string;
     }
 }
 export namespace Stimulsoft.Report.Func {
@@ -58812,7 +58814,9 @@ export namespace Stimulsoft.Dashboard.Components.Cards {
     import IStiTextFormat = Stimulsoft.Report.Components.IStiTextFormat;
     import IStiHorAlignment = Stimulsoft.Report.Components.IStiHorAlignment;
     import IStiWordWrap = Stimulsoft.Report.Components.IStiWordWrap;
-    class StiCardsColumn extends StiMeter implements IStiCardsColumn, IStiHorAlignment, IStiVertAlignment, IStiForeColor, IStiTextFormat, IStiFont, IStiWordWrap, IStiElementInteraction {
+    import IStiDataTopN = Stimulsoft.Data.Engine.IStiDataTopN;
+    import StiDataTopN = Stimulsoft.Data.Engine.StiDataTopN;
+    class StiCardsColumn extends StiMeter implements IStiCardsColumn, IStiHorAlignment, IStiVertAlignment, IStiForeColor, IStiTextFormat, IStiFont, IStiWordWrap, IStiElementInteraction, IStiDataTopN {
         private static ImplementsStiCardsColumn;
         implements(): any[];
         meta(): StiMeta[];
@@ -58820,6 +58824,7 @@ export namespace Stimulsoft.Dashboard.Components.Cards {
         horAlignment: StiHorAlignment;
         vertAlignment: StiVertAlignment;
         textFormat: StiFormatService;
+        topN: StiDataTopN;
         font: Font;
         foreColor: Color;
         dashboardInteraction: IStiDashboardInteraction;
@@ -58829,7 +58834,7 @@ export namespace Stimulsoft.Dashboard.Components.Cards {
         wordWrap: boolean;
         visibility: StiCardsColumnVisibility;
         visibilityExpression: string;
-        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, vertAlignment?: StiVertAlignment, height?: number, textFormat?: StiFormatService, visibility?: StiCardsColumnVisibility, visibilityExpression?: string, foreColor?: Color, wrapLine?: boolean, wordWrap?: boolean, interaction?: StiCardsColumnDashboardInteraction);
+        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, vertAlignment?: StiVertAlignment, height?: number, textFormat?: StiFormatService, visibility?: StiCardsColumnVisibility, visibilityExpression?: string, foreColor?: Color, wrapLine?: boolean, wordWrap?: boolean, interaction?: StiCardsColumnDashboardInteraction, topN?: StiDataTopN);
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Cards {
@@ -58970,13 +58975,16 @@ export namespace Stimulsoft.Dashboard.Components.Table {
     import IStiTableColumn = Stimulsoft.Base.Meters.IStiTableColumn;
     import IStiTextFormat = Stimulsoft.Report.Components.IStiTextFormat;
     import IStiHorAlignment = Stimulsoft.Report.Components.IStiHorAlignment;
-    class StiTableColumn extends StiMeter implements IStiHorAlignment, IStiTextFormat, IStiDataFormat, IStiTableColumn, IStiForeColor, IStiJsonReportObject, IStiElementInteraction {
+    import IStiDataTopN = Stimulsoft.Data.Engine.IStiDataTopN;
+    import StiDataTopN = Stimulsoft.Data.Engine.StiDataTopN;
+    class StiTableColumn extends StiMeter implements IStiHorAlignment, IStiTextFormat, IStiDataFormat, IStiTableColumn, IStiForeColor, IStiJsonReportObject, IStiElementInteraction, IStiDataTopN {
         private static ImplementsStiTableColumn;
         implements(): any[];
         meta(): StiMeta[];
         clone(): any;
         horAlignment: StiHorAlignment;
         textFormat: StiFormatService;
+        topN: StiDataTopN;
         getDataFormat(): StiDataFormatKind;
         foreColor: Color;
         dashboardInteraction: IStiDashboardInteraction;
@@ -58989,7 +58997,7 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         summaryType: StiSummaryColumnType;
         summaryAlignment: StiHorAlignment;
         headerAlignment: StiHorAlignment;
-        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visibility?: StiTableColumnVisibility, visibilityExpression?: string, foreColor?: Color, showTotalSummary?: boolean, summaryType?: StiSummaryColumnType, summaryAlignment?: StiHorAlignment, headerAlignment?: StiHorAlignment, interaction?: StiTableColumnDashboardInteraction);
+        constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, textFormat?: StiFormatService, visibility?: StiTableColumnVisibility, visibilityExpression?: string, foreColor?: Color, showTotalSummary?: boolean, summaryType?: StiSummaryColumnType, summaryAlignment?: StiHorAlignment, headerAlignment?: StiHorAlignment, interaction?: StiTableColumnDashboardInteraction, topN?: StiDataTopN);
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Table {
@@ -63871,11 +63879,11 @@ export namespace Stimulsoft.Dashboard.Helpers {
     }
 }
 export namespace Stimulsoft.Dashboard.Helpers {
+    import List = Stimulsoft.System.Collections.List;
     import StiCardsColumn = Stimulsoft.Dashboard.Components.Cards.StiCardsColumn;
-    import StiDataTable = Stimulsoft.Data.Engine.StiDataTable;
     class StiCardsElementHelper {
-        static minDataColumnValue(column: StiCardsColumn, dataTable: StiDataTable, columnIndex: number): number;
-        static maxDataColumnValue(column: StiCardsColumn, dataTable: StiDataTable, columnIndex: number): number;
+        static minDataColumnValue(column: StiCardsColumn, rows: List<any[]>, columnIndex: number): number;
+        static maxDataColumnValue(column: StiCardsColumn, rows: List<any[]>, columnIndex: number): number;
     }
 }
 export namespace Stimulsoft.Dashboard.Visuals {
@@ -63950,6 +63958,7 @@ export namespace Stimulsoft.Dashboard.Visuals.Cards {
     import Size = Stimulsoft.System.Drawing.Size;
     import StiSparklinesCardsColumn = Stimulsoft.Dashboard.Components.Cards.StiSparklinesCardsColumn;
     import StiCardsColumn = Stimulsoft.Dashboard.Components.Cards.StiCardsColumn;
+    import List = Stimulsoft.System.Collections.List;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import StiDataTable = Stimulsoft.Data.Engine.StiDataTable;
@@ -63961,6 +63970,8 @@ export namespace Stimulsoft.Dashboard.Visuals.Cards {
         dataTable: StiDataTable;
         draw(context: StiContext, rect: Rectangle): Promise<void>;
         private paintCards;
+        private static processTopNElements;
+        processColumnsWithTopN(columns: List<StiCardsColumn>): List<any[]>;
         private unionRectangles;
         private zoomAndMoveUp;
         private getCardRectanglesList;
@@ -65252,6 +65263,7 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
 }
 export namespace Stimulsoft.Dashboard.Export.Tools {
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    import StiDataTable = Stimulsoft.Data.Engine.StiDataTable;
     import IStiTableElement = Stimulsoft.Report.Dashboard.IStiTableElement;
     import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
     import StiDashboardExportSettings = Stimulsoft.Dashboard.Export.Settings.StiDashboardExportSettings;
@@ -65262,6 +65274,8 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
         render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
         static renderCellsForViewer(element: IStiTableElement): Promise<any[]>;
         private static renderCells;
+        static processDataTableWithTopN(dataTable: StiDataTable): StiDataTable;
+        private static processTopNElements;
         private static measureSparklinesCell;
         private static measureHeader;
         private static measureFooter;
@@ -65298,6 +65312,7 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
     class StiTextElementExportTool extends StiElementExportTool {
         render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
         private changeFontSize;
+        private static isExpressionWithVariables;
     }
 }
 export namespace Stimulsoft.Dashboard.Export.Tools {
@@ -65740,7 +65755,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         static getTableSettings(tableElement: IStiTableElement, tableStyle?: StiTableElementStyle): KeyObjectType;
         private static getHighlightedColor;
         private static getCellBackColor;
-        static getCellForeColor(tableElement: IStiTableElement, column: IStiTableColumn, isInterlacedForeColor?: boolean): Color;
+        static getCellForeColor(tableElement: IStiTableElement, column: IStiTableColumn, isInterlacedForeColor?: boolean, tableStyle?: StiTableElementStyle): Color;
         private static getCellBackColorInterlaced;
         private static getCellSelectedBackColor;
         private static getCellSelectedForeColor;
@@ -68816,7 +68831,7 @@ export namespace Stimulsoft.Report.Web {
     import StiUserFunctionsCollection = Stimulsoft.Report.Dictionary.StiUserFunctionsCollection;
     class StiFunctionBlocksParser {
         static getInitFunctionBlocks(userFunctions: StiUserFunctionsCollection): string;
-        static getFunctionsGrouppedInCategoriesBlocks(): string;
+        static getFunctionsGrouppedInCategoriesBlocks(userFunctions: StiUserFunctionsCollection): string;
     }
 }
 export namespace Stimulsoft.Report.Web {
@@ -68824,7 +68839,7 @@ export namespace Stimulsoft.Report.Web {
     class StiBlocklyHelper {
         static get isAssemblyLoaded(): boolean;
         static getResourceFileText(filename: string): string;
-        static getToolboxXML(showCurrentValue: boolean, userFunction: StiUserFunction): string;
+        static getToolboxXML(report: StiReport, showCurrentValue: boolean, userFunction: StiUserFunction): string;
         static getBlockyWorkspaceXML(eventValue: string): string;
         static getSampleXML(): string;
         static getBlocklyInitParameters(report: StiReport, param: any, callbackResult: any): void;
