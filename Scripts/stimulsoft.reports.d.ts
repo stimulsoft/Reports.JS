@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.4.3
-Build date: 2024.10.23
+Version: 2024.4.4
+Build date: 2024.11.13
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -13126,7 +13126,6 @@ export namespace Stimulsoft.Report.Components {
         set printOnAllPages(value: boolean);
         printIfDetailEmpty: boolean;
         get isDataSourceEmpty(): boolean;
-        private _dataSource;
         get dataSource(): StiDataSource;
         private _dataSourceName;
         get dataSourceName(): string;
@@ -19964,6 +19963,7 @@ export namespace Stimulsoft.Report {
         textFormatTypes: string[];
         refNames: string[];
         clean(): void;
+        linkComponents(report: StiReport): void;
     }
     export class StiReport implements IStiUnitConvert, IStiReport, IStiApp, IStiAppCell, IStiGetFonts {
         implements(): any[];
@@ -23054,7 +23054,9 @@ export namespace Stimulsoft.Report.BarCodes {
 }
 export namespace Stimulsoft.Report.BarCodes {
     import RectangleD = Stimulsoft.System.Drawing.Rectangle;
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     class StiMsiBarCodeType extends StiPlesseyBarCodeType {
+        meta(): StiMeta[];
         get serviceName(): string;
         get defaultCodeValue(): string;
         get visibleProperties(): boolean[];
@@ -24060,7 +24062,8 @@ export namespace Stimulsoft.Report.Chart {
     enum StiChartConditionalField {
         Value = 0,
         Argument = 1,
-        Series = 2
+        Series = 2,
+        EndValue = 3
     }
     enum StiShowEmptyCellsAs {
         Gap = 0,
@@ -36123,8 +36126,6 @@ export namespace Stimulsoft.Report.Dictionary {
         scriptVB: string;
         scriptJS: string;
         scriptBlockly: string;
-        get script(): string;
-        set script(value: string);
         getFullScript(language: StiReportLanguageType): string;
         constructor(name?: string, category?: StiFunctionCategory, returnType?: StiUserFunctionArgumentType);
     }
@@ -38638,6 +38639,8 @@ export namespace Stimulsoft.Report.Export {
         static getImage(svgData: StiSvgData, scale?: number): Image;
         static drawMap(xmlsWriter: XmlTextWriter, map: StiMap, x: number, y: number, width: number, height: number, animated: boolean, dontConnectToData: boolean): void;
         static render(map: StiMap, xmlsWriter: XmlTextWriter, animated: boolean, sScale: number, dontConnectToData: boolean): void;
+        private static getValues;
+        private static getKeysFromMapKeys;
         private static addToolTipStyle;
         private static getPathText;
         private static getPathRect;
@@ -40451,7 +40454,7 @@ export namespace Stimulsoft.Report.Helpers {
         getIsoAlpha3FromName(name: string, mapId: string, lang: string, report?: StiReport): string;
         convertMapKeysToIsoAlpha2(mapKeys: List<string>, mapId: string, lang: string, report?: StiReport): List<string>;
         getMapKeysFromNames(values: List<any>, mapId: string, lang: string, report?: StiReport): List<string>;
-        private getMapKeyFromName;
+        getMapKeyFromName(name: string, mapId: string, lang: string, report?: StiReport): string;
         static simplify(key: string): string;
     }
 }
@@ -64201,8 +64204,8 @@ export namespace Stimulsoft.Dashboard.Helpers {
         static getViewerData(pivotElement: IStiPivotTableElement): Promise<any>;
         private static cellItem;
         static applyStyle(pivot: StiPivotTableElement, crossTab: StiCrossTab, exportDataOnly: boolean): void;
-        static getBackColor(element: IStiElement, cells: StiPivotTableCells, style: StiPivotElementStyle, isInterlaced: boolean): Color;
-        static getForeColor(element: IStiElement, cells: StiPivotTableCells, style: StiPivotElementStyle, isInterlaced: boolean): Color;
+        static getBackColor(element: IStiElement, cells: StiPivotTableCells, style: StiPivotElementStyle, isInterlaced: boolean, isTotal: boolean): Color;
+        static getForeColor(element: IStiElement, cells: StiPivotTableCells, style: StiPivotElementStyle, isInterlaced: boolean, isTotal: boolean): Color;
         private static getColor;
         static buildCross(masterCrossTab: StiCrossTab, dataTable: StiDataTable, pivot: StiPivotTableElement, zoom?: number): void;
         static convertToCrossTab(pivot: StiPivotTableElement, dataTable: StiDataTable, zoom?: number): Promise<StiCrossTab>;
@@ -64449,6 +64452,7 @@ export namespace Stimulsoft.Dashboard.Render {
         private static renderLegendLabelsColor;
         protected static renderConditions(seriesKey: string, series: IStiSeries, element: StiChartElement, valueMeter: StiMeter): Promise<void>;
         private static renderValueConditions;
+        private static renderEndValueConditions;
         private static renderArgumentConditions;
         private static renderSeriesConditions;
         private static getConditionResult;
@@ -66216,10 +66220,10 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         private static getRowHeaderBackColor;
         private static getHotRowHeaderBackColor;
         private static getRowHeaderForeColor;
-        private static getTotalsBackColor;
-        private static getAlternatingTotalsBackColor;
-        private static getTotalsForeColor;
-        private static getAlternatingTotalsForeColor;
+        private static getTotalBackColor;
+        private static getAlternatingTotalBackColor;
+        private static getTotalForeColor;
+        private static getAlternatingTotalForeColor;
     }
 }
 export namespace Stimulsoft.Viewer.Helpers.Dashboards {
@@ -67537,7 +67541,31 @@ export namespace Stimulsoft.Report.Check {
     }
 }
 export namespace Stimulsoft.Report.Check {
+    class StiUserFunctionCSharpScriptValueCheck extends StiUserFunctionCheck {
+        get shortMessage(): string;
+        get longMessage(): string;
+        status: StiCheckStatus;
+        processCheck(report: StiReport, obj: any): any;
+    }
+}
+export namespace Stimulsoft.Report.Check {
+    class StiUserFunctionJSScriptValueCheck extends StiUserFunctionCheck {
+        get shortMessage(): string;
+        get longMessage(): string;
+        status: StiCheckStatus;
+        processCheck(report: StiReport, obj: any): any;
+    }
+}
+export namespace Stimulsoft.Report.Check {
     class StiUserFunctionScriptAtInterpretationCheck extends StiUserFunctionCheck {
+        get shortMessage(): string;
+        get longMessage(): string;
+        status: StiCheckStatus;
+        processCheck(report: StiReport, obj: any): any;
+    }
+}
+export namespace Stimulsoft.Report.Check {
+    class StiUserFunctionVBScriptValueCheck extends StiUserFunctionCheck {
         get shortMessage(): string;
         get longMessage(): string;
         status: StiCheckStatus;
