@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2024.4.4
-Build date: 2024.11.13
+Version: 2024.4.5
+Build date: 2024.11.22
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -7501,7 +7501,7 @@ export namespace Stimulsoft.Base.Drawing {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     class StiTextRenderer {
         private static precisionDigits;
-        private static defaultParagraphLineHeight;
+        static defaultParagraphLineHeight: number;
         static precisionModeFactor: number;
         static precisionModeEnabled: boolean;
         static correctionEnabled: boolean;
@@ -8416,6 +8416,12 @@ export namespace Stimulsoft.Base.Meters {
 export namespace Stimulsoft.Base.Meters {
     let IStiTargetMeter: System.Interface<IStiTargetMeter>;
     interface IStiTargetMeter {
+    }
+}
+export namespace Stimulsoft.Base.Meters {
+    import IStiMeter = Stimulsoft.Base.Meters.IStiMeter;
+    let IStiTextMeasureMeter: System.Interface<IStiTextMeasureMeter>;
+    interface IStiTextMeasureMeter extends IStiMeter {
     }
 }
 export namespace Stimulsoft.Base.Meters {
@@ -30670,6 +30676,9 @@ export namespace Stimulsoft.Report.Dashboard {
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
+    import IStiAppDataCell = Stimulsoft.Base.IStiAppDataCell;
+    import List = Stimulsoft.System.Collections.List;
+    import IStiTextMeasureMeter = Stimulsoft.Base.Meters.IStiTextMeasureMeter;
     import StiTextSizeMode = Stimulsoft.Report.Dashboard.StiTextSizeMode;
     import IStiCrossFiltering = Stimulsoft.Data.Engine.IStiCrossFiltering;
     let IStiTextElement: System.Interface<IStiTextElement>;
@@ -30680,6 +30689,12 @@ export namespace Stimulsoft.Report.Dashboard {
         getSimpleText(): string;
         crossFiltering: boolean;
         style: string;
+        getMeasures(): List<IStiTextMeasureMeter>;
+        addMeasure(): any;
+        getMeasure(cell: IStiAppDataCell): IStiTextMeasureMeter;
+        removeMeasure(index: number): any;
+        removeAllMeasures(): any;
+        insertMeasure(index: number, meter: IStiTextMeasureMeter): any;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -39718,6 +39733,7 @@ export namespace Stimulsoft.Report.Export {
         id: string;
         interaction: string;
         collapsed: string;
+        parentIndex: string;
         sortDirection: string;
         dataBandSort: string;
         pageGuid: string;
@@ -58162,7 +58178,8 @@ export namespace Stimulsoft.Dashboard.Components {
         ValueDatePickerMeter = 60,
         ValueNumberBoxMeter = 61,
         TextMeter = 62,
-        ImageMeter = 63
+        TextMeasureMeter = 63,
+        ImageMeter = 64
     }
 }
 export namespace Stimulsoft.Dashboard.Components {
@@ -59775,7 +59792,23 @@ export namespace Stimulsoft.Dashboard.Components.Cards {
         constructor(key?: string, expression?: string, label?: string, horAlignment?: StiHorAlignment, vertAlignment?: StiVertAlignment, height?: number, textFormat?: StiFormatService, type?: Stimulsoft.Dashboard.Components.Table.StiSparklinesType, showHighLowPoints?: boolean, showFirstLastPoints?: boolean, visibility?: StiCardsColumnVisibility, visibilityExpression?: string, foreColor?: Color, allowCustomColors?: boolean, positiveColor?: Color, negativeColor?: Color, wrapLine?: boolean);
     }
 }
+export namespace Stimulsoft.Dashboard.Components.Text {
+    import IStiTextMeasureMeter = Stimulsoft.Base.Meters.IStiTextMeasureMeter;
+    import Dictionary = Stimulsoft.System.Collections.Dictionary;
+    import List = Stimulsoft.System.Collections.List;
+    import IStiValueMeter = Stimulsoft.Base.Meters.IStiValueMeter;
+    class StiTextMeasureMeter extends StiMeasureMeter implements IStiValueMeter, IStiTextMeasureMeter {
+        private static ImplementsStiTextMeasureMeter;
+        implements(): any[];
+        ident: StiMeterIdent;
+        getUniqueName(): string;
+        static getUniqueNames(measures: List<StiTextMeasureMeter>): Dictionary<string, StiTextMeasureMeter>;
+        get localizedName(): string;
+        constructor(key?: string, expression?: string, label?: string);
+    }
+}
 export namespace Stimulsoft.Dashboard.Helpers {
+    import StiTextMeasureMeter = Stimulsoft.Dashboard.Components.Text.StiTextMeasureMeter;
     import StiYChartMeter = Stimulsoft.Dashboard.Components.Chart.StiYChartMeter;
     import StiXChartMeter = Stimulsoft.Dashboard.Components.Chart.StiXChartMeter;
     import StiValueNumberBoxMeter = Stimulsoft.Dashboard.Components.NumberBox.StiValueNumberBoxMeter;
@@ -59980,6 +60013,10 @@ export namespace Stimulsoft.Dashboard.Helpers {
         static getBubble(tableColumn: StiTableColumn, dashboard: IStiDashboard): StiBubbleColumn;
         static getIndicator(tableColumn: StiTableColumn, dashboard: IStiDashboard): StiIndicatorColumn;
     }
+    class Text {
+        static getMeter(meter: StiMeter): StiTextMeasureMeter;
+        static getMeter2(cell: IStiAppDataCell): StiTextMeasureMeter;
+    }
     class Cards {
         static getColumn(meter: StiMeter): StiCardsColumn;
         static getDimension(cardsColumn: StiCardsColumn): StiDimensionCardsColumn;
@@ -60017,6 +60054,7 @@ export namespace Stimulsoft.Dashboard.Helpers {
         static Cards: typeof Cards;
         static TreeView: typeof TreeView;
         static TreeViewBox: typeof TreeViewBox;
+        static Text: typeof Text;
         static toTotalExpression2(cell: IStiAppDataCell): string;
         static toTotalExpression(meter: StiMeter): string;
         static toTotalExpression3(meter: StiMeter, dashboard: IStiDashboard): string;
@@ -61786,6 +61824,16 @@ export namespace Stimulsoft.Dashboard.Components.Gauge.Design {
     class StiGaugeRangeConverter {
     }
 }
+export namespace Stimulsoft.Dashboard.Components.Text {
+    import IStiValueMeter = Stimulsoft.Base.Meters.IStiValueMeter;
+    class StiTextMeter extends StiDimensionMeter implements IStiValueMeter {
+        private static ImplementsStiTextMeter;
+        implements(): any[];
+        ident: StiMeterIdent;
+        get localizedName(): string;
+        constructor(key?: string, expression?: string, label?: string);
+    }
+}
 export namespace Stimulsoft.Dashboard.Components.Helpers {
     class StiMeterCreator {
         static neww(identName: string): StiMeter;
@@ -63499,6 +63547,9 @@ export namespace Stimulsoft.Dashboard.Interactions {
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Text {
+    import StiTextMeasureMeter = Stimulsoft.Dashboard.Components.Text.StiTextMeasureMeter;
+    import IStiAppDataCell = Stimulsoft.Base.IStiAppDataCell;
+    import IStiTextMeasureMeter = Stimulsoft.Base.Meters.IStiTextMeasureMeter;
     import StiTextSizeMode = Stimulsoft.Report.Dashboard.StiTextSizeMode;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiCornerRadius = Stimulsoft.Report.Components.IStiCornerRadius;
@@ -63540,6 +63591,12 @@ export namespace Stimulsoft.Dashboard.Components.Text {
         text: string;
         getSimpleText(): string;
         rightToLeft: boolean;
+        getMeasures(): List<IStiTextMeasureMeter>;
+        addMeasure(): void;
+        getMeasure(cell: IStiAppDataCell): IStiTextMeasureMeter;
+        removeMeasure(index: number): void;
+        removeAllMeasures(): void;
+        insertMeasure(index: number, meter: IStiTextMeasureMeter): void;
         group: string;
         foreColor: Color;
         crossFiltering: boolean;
@@ -63565,19 +63622,10 @@ export namespace Stimulsoft.Dashboard.Components.Text {
         defaultClientRectangle: Rectangle;
         helpUrl: string;
         sizeMode: StiTextSizeMode;
+        measures: List<StiTextMeasureMeter>;
         getNestedPages(): List<StiPage>;
         getHtmlTextHelper(): IStiHtmlTextHelper;
         constructor(rect?: Rectangle);
-    }
-}
-export namespace Stimulsoft.Dashboard.Components.Text {
-    import IStiValueMeter = Stimulsoft.Base.Meters.IStiValueMeter;
-    class StiTextMeter extends StiDimensionMeter implements IStiValueMeter {
-        private static ImplementsStiTextMeter;
-        implements(): any[];
-        ident: StiMeterIdent;
-        get localizedName(): string;
-        constructor(key: string, expression: string, label: string);
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Text.Design {
@@ -67111,6 +67159,16 @@ export namespace Stimulsoft.Report.Check {
     }
 }
 export namespace Stimulsoft.Report.Check {
+    class StiTextTextFormatFieldCheck extends StiComponentCheck {
+        get previewVisible(): boolean;
+        get shortMessage(): string;
+        get longMessage(): string;
+        status: StiCheckStatus;
+        check(): boolean;
+        processCheck(report: StiReport, obj: any): any;
+    }
+}
+export namespace Stimulsoft.Report.Check {
     class StiUndefinedComponentCheck extends StiComponentCheck {
         get previewVisible(): boolean;
         get shortMessage(): string;
@@ -68513,6 +68571,9 @@ export namespace Stimulsoft.Designer.Dashboards {
     }
 }
 export namespace Stimulsoft.Designer.Dashboards {
+    import IStiMeter = Stimulsoft.Base.Meters.IStiMeter;
+    import IStiDashboard = Stimulsoft.Report.Dashboard.IStiDashboard;
+    import List = Stimulsoft.System.Collections.List;
     import Font = Stimulsoft.System.Drawing.Font;
     import IStiTextElement = Stimulsoft.Report.Dashboard.IStiTextElement;
     import StiReport = Stimulsoft.Report.StiReport;
@@ -68522,6 +68583,18 @@ export namespace Stimulsoft.Designer.Dashboards {
         private getTextElementJSProperties;
         executeJSCommand(parameters: any, callbackResult: any): void;
         private setProperty;
+        static getMeasureItems(textElement: IStiTextElement): any[];
+        private static getMeasureMeterItem;
+        static getMeterFunctions(meter: IStiMeter, dashboard: IStiDashboard): List<string>;
+        private setPropertyMeasure;
+        private newMeter;
+        private insertMeters;
+        private moveMeter;
+        private removeMeter;
+        private renameMeter;
+        private removeAllMeters;
+        private duplicateMeter;
+        private setFunction;
         private static removeTagsFromText;
         static checkFontProperties(textElement: IStiTextElement): void;
         static setFontProperties(textElement: IStiTextElement, fontAttrs: any): void;
