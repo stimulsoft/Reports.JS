@@ -31,7 +31,9 @@
         "React.js reporting tool"
     ],
     "dependencies": {
-        "svg2img": "^1.0.0-beta.2",
+        "@napi-rs/canvas": "^0.1.65",
+        "@xmldom/xmldom": "^0.9.6",
+        "canvg": "^4.0.2",
         "jimp-compact": "^0.16.1-2",
         "sync-request": "^6.1.0",
         "node-machine-id": "^1.1.12",
