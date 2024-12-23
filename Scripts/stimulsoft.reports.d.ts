@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.1.1
-Build date: 2024.12.12
+Version: 2025.1.2
+Build date: 2024.12.19
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -983,7 +983,7 @@ export namespace Stimulsoft.System {
         static consoleMessageLog: boolean;
         private static lastErrorMessage;
         static errorMessageForm: any;
-        static showError(e: Exception | string): void;
+        static showError(e: Exception | string, showForm?: boolean, infoForm?: boolean): void;
     }
 }
 export namespace Stimulsoft.System {
@@ -30403,7 +30403,7 @@ export namespace Stimulsoft.Report.Dashboard {
     import StiTableColumnVisibility = Stimulsoft.Base.Drawing.StiTableColumnVisibility;
     let IStiPivotItem: System.Interface<IStiPivotItem>;
     let ImplementsIStiPivotItem: any[];
-    interface IStiPivotItem {
+    interface IStiPivotItem extends IStiElementInteraction {
         visibility: StiTableColumnVisibility;
         visibilityExpression: string;
     }
@@ -44437,7 +44437,6 @@ export namespace Stimulsoft.Report.Chart {
         static getValuesFromString(list: string): number[];
         static getStringsFromString(list: string): string[];
         static getArgumentsFromString(list: string): any[];
-        protected getOffsetForValues(): number;
         getDefaultAreaType(): Stimulsoft.System.Type;
         getDefaultLegendType(): Stimulsoft.System.Type;
         newAutoSeries: Function;
@@ -45090,7 +45089,6 @@ export namespace Stimulsoft.Report.Chart {
         private isArgumentDateTime;
         private isXAxisAutoRange;
         protected prepareRange(specXAxis: IStiAxis, specXTopAxis: IStiAxis, specYAxis: IStiAxis, specYRightAxis: IStiAxis): void;
-        calculateMinimumAndMaximumXAxis(axis: IStiAxis): void;
         protected checkStripLinesAndMaximumMinimumXAxis(axis: IStiAxis): void;
         protected createStripLinesXAxis(axis: IStiAxis): void;
         protected createStripLinesYAxis(axis: IStiAxis, isDateTimeValues: boolean): void;
@@ -62995,6 +62993,7 @@ export namespace Stimulsoft.Dashboard.Components.PivotTable {
     import IStiPivotTableElement = Stimulsoft.Report.Dashboard.IStiPivotTableElement;
     import IStiTitleElement = Stimulsoft.Report.Dashboard.IStiTitleElement;
     import StiFontIcons = Stimulsoft.Report.Helpers.StiFontIcons;
+    import StiPage = Stimulsoft.Report.Components.StiPage;
     class StiPivotTableElement extends StiElement implements IStiPivotTableElement, IStiSimpleShadow, IStiCornerRadius, IStiTitleElement, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider {
         private static ImplementsStiPivotTableElement;
         implements(): any[];
@@ -63076,6 +63075,7 @@ export namespace Stimulsoft.Dashboard.Components.PivotTable {
         getTotalFont(): Font;
         pivotTableConditions: List<IStiPivotTableElementCondition>;
         getFormatObjects(): List<any>;
+        getNestedPages(): List<StiPage>;
         getPushCommands(expression: string): List<string>;
         constructor(rect?: Rectangle);
     }
@@ -64583,6 +64583,7 @@ export namespace Stimulsoft.Dashboard.Helpers {
         static buildCross(masterCrossTab: StiCrossTab, dataTable: StiDataTable, pivot: StiPivotTableElement, zoom?: number): void;
         static convertToCrossTab(pivot: StiPivotTableElement, dataTable: StiDataTable, zoom?: number): Promise<StiCrossTab>;
         static updateCrossTab(crossTab: StiCrossTab, pivot: StiPivotTableElement, dataTable: StiDataTable, zoom: number, build?: boolean): Promise<void>;
+        private static fillInteraction;
         private static changeFontSize;
         private static getCondition;
         private static setupTitle;
