@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.1.3
-Build date: 2025.01.09
+Version: 2025.1.4
+Build date: 2025.01.24
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -117,8 +117,8 @@ export namespace Stimulsoft.System {
         }>;
         static callRemoteApi(command: any, timeout: number): StiPromise<string>;
         static stripBom(data: any): any;
-        static getFile(filePath: string, binary?: boolean, contentType?: string, headers?: Header[]): any;
-        static getFileHttp(filePath: string, binary?: boolean, contentType?: string, headers?: Header[]): any;
+        static getFile(filePath: string, binary: boolean, contentType: string, headers: Header[], disableCache?: boolean, withCredentials?: boolean, allowException?: boolean): any;
+        static getFileHttp(filePath: string, binary: boolean, contentType: string, headers: Header[], disableCache?: boolean, withCredentials?: boolean, allowException?: boolean): any;
         static send(method: string, url: string, body: string, headers?: Header[]): {
             status: number;
             responseText: string;
@@ -4027,7 +4027,7 @@ export namespace Stimulsoft.Base {
         openConnections(connections: List<IStiAppConnection>): List<IStiAppConnection>;
         closeConnections(connections: List<IStiAppConnection>): void;
         existsUserFunction(functionName: string): boolean;
-        invokeUserFunction(functionName: string, args: List<any>): any;
+        invokeUserFunction(functionName: string, args: any[]): any;
     }
 }
 export namespace Stimulsoft.Base {
@@ -4037,11 +4037,10 @@ export namespace Stimulsoft.Base {
     }
 }
 export namespace Stimulsoft.Base {
-    import List = Stimulsoft.System.Collections.List;
     let IStiAppFunction: System.Interface<IStiAppFunction>;
     interface IStiAppFunction extends IStiAppCell {
         getName(): string;
-        invoke(arguments: List<any>): any;
+        invoke(arguments: any[]): any;
     }
 }
 export namespace Stimulsoft.Base {
@@ -9445,8 +9444,8 @@ export namespace Stimulsoft.Data.Functions {
         static getSystemVariable(variable: StiSystemVariableObject, line: number): any;
         static existsCustomFunction(funcName: string): boolean;
         static getCustomFunctions(funcName: string): List<IStiAppFunction>;
-        static getCustomFunction(funcName: string, argumentTypes: List<Type>): IStiAppFunction;
-        static invokeCustomFunction(funcName: string, argumentss: List<any>): any;
+        static getCustomFunction(funcName: string, argumentTypes: Type[]): IStiAppFunction;
+        static invokeCustomFunction(funcName: string, argumentss: any[]): any;
         static skipNulls(values: List<any>): List<any>;
         static optionalSkipNulls(values: List<object>): List<object>;
         private static arabics;
@@ -12470,6 +12469,7 @@ export namespace Stimulsoft.Report.Dictionary {
 export namespace Stimulsoft.Report.Events {
     class StiEventHandler {
         static run(event: StiEvent, report: StiReport, args?: any[]): any;
+        static run2(script: string, report: StiReport, argsName?: string[], argsValue?: any[]): any;
         private static fixName;
     }
 }
@@ -20747,6 +20747,7 @@ export namespace StiOptions {
         static loadDataOnce: boolean;
         static useNewHtmlEngine: boolean;
         static htmlAllowListItemSecondLineIndent: boolean;
+        static disconnectFromDataBeforeEndRender: boolean;
     }
     class Print {
         static customPaperSizes: PaperSizeCollection;
@@ -34583,7 +34584,7 @@ export namespace Stimulsoft.Report.Dictionary {
         openConnections(connections: List<IStiAppConnection>): List<IStiAppConnection>;
         closeConnections(connections: List<IStiAppConnection>): void;
         existsUserFunction(functionName: string): boolean;
-        invokeUserFunction(functionName: string, args: List<any>): any;
+        invokeUserFunction(functionName: string, args: any[]): any;
         reconnectListForRequestFromUserVariables: string[];
         cachedUserNamesAndPasswords: Hashtable;
         useInternalData: boolean;
@@ -34628,7 +34629,7 @@ export namespace Stimulsoft.Report.Dictionary {
         connectV2Async(baseReport: StiReport): Promise<void>;
         connectV2(baseReport: StiReport): void;
         private checkColumnForDataSourceName;
-        connectVirtualDataSourcesAsync(): StiPromise<void>;
+        connectVirtualDataSourcesAsync(secondPass?: boolean): StiPromise<void>;
         connectDataTransformationsAsync(option?: StiDataRequestOption): StiPromise<void>;
         connectCrossTabDataSources(): void;
         disconnect(): void;
@@ -36062,7 +36063,6 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
-    import List = Stimulsoft.System.Collections.List;
     import IStiAppFunction = Stimulsoft.Base.IStiAppFunction;
     import IComparable = Stimulsoft.System.IComparable;
     import Type = Stimulsoft.System.Type;
@@ -36075,7 +36075,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getKey(): string;
         setKey(key: string): void;
         getName(): string;
-        invoke(args: List<any>): any;
+        invoke(args: any[]): any;
         key: string;
         useFullPath: boolean;
         category: string;
