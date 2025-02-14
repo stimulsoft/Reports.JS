@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.1.4
-Build date: 2025.01.24
+Version: 2025.1.5
+Build date: 2025.02.11
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -12984,15 +12984,14 @@ export namespace Stimulsoft.Report.Components {
         private getSizesTable;
         private getNodeSize;
         private getContainerInRect2Private;
-        getContainerInRect2(rect: Rectangle, component: StiComponent, hash: Hashtable): StiContainer;
+        getContainerInRect2(rect: Rectangle, component: StiComponent, hash: Hashtable<StiComponent, Rectangle>): StiContainer;
         private getIncorrect2;
         correct2(onlySelect: boolean): void;
         getIncorrect(onlySelect?: boolean): StiComponentsCollection;
         correct(onlySelect?: boolean): void;
         checkLargeHeight(needFullCalculation?: boolean): void;
         resetSelection(): void;
-        getSelectedComponents(): StiComponentsCollection;
-        getSelectedComponents2(REFcomps: any): void;
+        getSelectedComponents(comps?: StiComponentsCollection): StiComponentsCollection;
         getSelectedRectangle(): Rectangle;
         makeHorizontalSpacingEqual(): void;
         makeVerticalSpacingEqual(): void;
@@ -13006,8 +13005,7 @@ export namespace Stimulsoft.Report.Components {
         private containerToPageRectangle;
         private containerToPagePoint;
         pageToContainer(value: Point | Rectangle): any;
-        getComponents(): StiComponentsCollection;
-        getComponents2(REFcomps: any): void;
+        getComponents(comps?: StiComponentsCollection): StiComponentsCollection;
         getComponentsList(): StiComponent[];
         moveComponentsToPage(): void;
         constructor(rect?: Rectangle, isSuper?: boolean);
@@ -19434,7 +19432,9 @@ export namespace Stimulsoft.Report.BarCodes {
         autoScale: boolean;
         showLabelText: boolean;
         showQuietZones: boolean;
-        barCodeType: StiBarCodeTypeService;
+        private _barCodeType;
+        get barCodeType(): StiBarCodeTypeService;
+        set barCodeType(value: StiBarCodeTypeService);
         getBarCodeString(): string;
         private _font;
         get font(): Font;
@@ -19446,7 +19446,9 @@ export namespace Stimulsoft.Report.BarCodes {
         get vertAlignment(): StiVertAlignment;
         set vertAlignment(value: StiVertAlignment);
         codeValue: string;
-        code: string;
+        private _code;
+        get code(): string;
+        set code(value: string);
         getFonts(): Font[];
         invokeEvents(): void;
         getBarCodeEvent: StiEvent;
@@ -68360,6 +68362,7 @@ export namespace Stimulsoft.Designer {
         GetFontNamesItems(): any;
         AddCustomFontsCss(customFontsCss: string): any;
         InitializeSelectDataForm(func: any): any;
+        OverrideTextBoxWithOpenDialog(): any;
         InitializeImageForm(func: any): any;
         RunWizard(wizardType: string): any;
         InitializeFileMenu(): any;
