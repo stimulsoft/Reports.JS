@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.1.5
-Build date: 2025.02.11
+Version: 2025.1.6
+Build date: 2025.02.28
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -101,11 +101,11 @@ export namespace Stimulsoft.System {
         static stripBom<T extends string | number[]>(data: T): T;
     }
 }
-declare let __require__: any;
 export namespace Stimulsoft.System {
     class NodeJs {
         private static isInitialize;
         static initialize(onResult?: Function): void;
+        static require(module: string): any;
         private static convertInternal;
         private static getEmbeddedFonts;
         private static convertSvgToPng;
@@ -16802,8 +16802,8 @@ export namespace Stimulsoft.Report.Dictionary {
         static getStringCommand(command: any): string;
         static encodeCommand(command: any): string;
         static decodeCommandResult(value: string): any;
-        testConnectionAsync(report: StiReport, connectionString: string): StiPromise<string>;
-        testConnectionAsync2(report: StiReport, connectionString: string): Promise<string>;
+        testConnectionAsync(report: StiReport, connectionString: string, connectionName: string): StiPromise<string>;
+        testConnectionAsync2(report: StiReport, connectionString: string, connectionName: string): Promise<string>;
         createConnectionInDataStore(dictionary: StiDictionary, database: StiSqlDatabase): void;
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
         getNetType(dbType: string): Stimulsoft.System.Type;
@@ -34906,7 +34906,7 @@ export namespace Stimulsoft.Report.Dictionary {
     };
     class StiNoSqlAdapterService extends StiDataStoreAdapterService {
         getDataCategoryName(data: StiData): string;
-        testConnectionAsync(report: StiReport, connectionString: string): StiPromise<string>;
+        testConnectionAsync(report: StiReport, connectionString: string, connectionName: string): StiPromise<string>;
         createConnectionInDataStore(dictionary: StiDictionary, database: StiNoSqlDatabase): void;
     }
 }
@@ -35041,7 +35041,7 @@ export namespace Stimulsoft.Report.Dictionary {
         getDataSourceType(): Stimulsoft.System.Type;
         connectDataSourceToDataAsync(dictionary: StiDictionary, dataSource: StiSqlSource, loadData: boolean): StiPromise<void>;
         connectDataSourceToData(dictionary: StiDictionary, dataSource: StiSqlSource, loadData: boolean): void;
-        testConnectionAsync(report: StiReport, connectionString: string): StiPromise<string>;
+        testConnectionAsync(report: StiReport, connectionString: string, connectionName: string): StiPromise<string>;
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
         getColumnsFromDataAsync(data: StiData, dataSource: StiSqlSource, connectionString: string): StiPromise<StiDataColumnsCollection>;
     }
