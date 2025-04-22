@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.2.2
-Build date: 2025.04.08
+Version: 2025.2.3
+Build date: 2025.04.18
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -4098,6 +4098,7 @@ export namespace Stimulsoft.Base {
         fetchParentColumns(): List<string>;
         fetchChildColumns(): List<string>;
         getActiveState(): boolean;
+        getJoinType(): StiDataJoinType;
     }
 }
 export namespace Stimulsoft.Base {
@@ -7736,6 +7737,7 @@ export namespace Stimulsoft.Base.Drawing {
         glyphIndexList: number[];
         scaleList: number[];
         href: string;
+        textAlign: StiTextHorAlignment;
     }
     enum StiHtmlTag {
         None = 0,
@@ -9834,6 +9836,7 @@ export namespace Stimulsoft.Data.Engine {
     }
 }
 export namespace Stimulsoft.Data.Engine {
+    import StiDataJoinType = Stimulsoft.Base.StiDataJoinType;
     import List = Stimulsoft.System.Collections.List;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
@@ -9854,12 +9857,13 @@ export namespace Stimulsoft.Data.Engine {
         get childKeys(): List<string>;
         key: string;
         active: boolean;
+        joinType: StiDataJoinType;
         static loadFromJson(json: StiJson): StiDataLink;
         static loadFromXml(xmlNode: XmlNode): StiDataLink;
         toString(): string;
         private nullStr;
         private nullStr2;
-        constructor(parentTable?: string, childTable?: string, parentColumns?: List<string>, childColumns?: List<string>, active?: boolean, key?: string);
+        constructor(parentTable?: string, childTable?: string, parentColumns?: List<string>, childColumns?: List<string>, active?: boolean, joinType?: StiDataJoinType, key?: string);
     }
 }
 export namespace Stimulsoft.Data.Engine {
@@ -9914,6 +9918,7 @@ export namespace Stimulsoft.Data.Engine {
         private leftJoinRowsV1V4;
         private leftJoinRowsV5;
         private leftJoinRowsV2V3;
+        private rightJoinRows;
         private calculateIndexes;
         private isNumericType;
         private crossJoinRows;
@@ -30899,6 +30904,7 @@ export namespace Stimulsoft.Report.Dashboard {
         getSimpleText(): string;
         crossFiltering: boolean;
         style: string;
+        rightToLeft: boolean;
         getMeasures(): List<IStiTextMeasureMeter>;
         addMeasure(): any;
         getMeasure(cell: IStiAppDataCell): IStiTextMeasureMeter;
@@ -34631,6 +34637,7 @@ export namespace Stimulsoft.Report.Dictionary {
         fetchParentColumns(): List<string>;
         fetchChildColumns(): List<string>;
         getActiveState(): boolean;
+        getJoinType(): StiDataJoinType;
         getKey(): string;
         setKey(key: string): void;
         clone(): any;
@@ -39232,7 +39239,7 @@ export namespace Stimulsoft.Report.Export {
         private static writeIndicator;
         private static writeIconSetIndicatorTypePainter;
         private static writeDataBarIndicator;
-        static saveComponentToString(component: StiComponent, imageResolution?: number, isDesigner?: boolean, ignoreIsImage?: boolean): string;
+        static saveComponentToString(component: StiComponent, imageResolution?: number, isDesigner?: boolean, ignoreIsImage?: boolean, scaleCorrection?: number): string;
         static saveToString(report: StiReport, page: StiPage, standalone?: boolean, imageResolution?: number): string;
         static writeCheckBox(writer: XmlTextWriter, svgData: StiSvgData, checkedValue: any): void;
         private static getCheckBoxData;
