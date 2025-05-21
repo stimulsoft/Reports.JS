@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.2.3
-Build date: 2025.04.18
+Version: 2025.2.4
+Build date: 2025.05.19
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -4068,9 +4068,11 @@ export namespace Stimulsoft.Base {
     }
 }
 export namespace Stimulsoft.Base {
+    import List = Stimulsoft.System.Collections.List;
     let IStiAppConnection: System.Interface<IStiAppConnection>;
     interface IStiAppConnection extends IStiAppCell {
         getName(): string;
+        fetchSiblingDataSources(dictionary: IStiAppDictionary): List<IStiAppDataSource>;
     }
 }
 export namespace Stimulsoft.Base {
@@ -10003,10 +10005,12 @@ export namespace Stimulsoft.Data.Engine {
     }
 }
 export namespace Stimulsoft.Data.Engine {
+    import IStiAppDictionary = Stimulsoft.Base.IStiAppDictionary;
     import List = Stimulsoft.System.Collections.List;
     import IStiAppDataSource = Stimulsoft.Base.IStiAppDataSource;
     class StiDataSourcePicker {
         static fetch(query: IStiQueryObject, group: string, dataNames: List<string>, dataSources: List<IStiAppDataSource>): List<IStiAppDataSource>;
+        static fetchSiblingDataSources(dataSources: List<IStiAppDataSource>, dictionary: IStiAppDictionary): List<IStiAppDataSource>;
     }
 }
 export namespace Stimulsoft.Data.Engine {
@@ -16315,6 +16319,9 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import List = Stimulsoft.System.Collections.List;
+    import IStiAppDataSource = Stimulsoft.Base.IStiAppDataSource;
+    import IStiAppDictionary = Stimulsoft.Base.IStiAppDictionary;
     import StiDataConnector = Stimulsoft.Base.StiDataConnector;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiAppCell = Stimulsoft.Base.IStiAppCell;
@@ -16350,6 +16357,7 @@ export namespace Stimulsoft.Report.Dictionary {
         inherited: boolean;
         clone(cloneProperties?: boolean, cloneComponents?: boolean, base?: boolean): StiDatabase;
         getName(): string;
+        fetchSiblingDataSources(dictionary: IStiAppDictionary): List<IStiAppDataSource>;
         getKey(): string;
         setKey(key: string): void;
         get serviceCategory(): string;
@@ -19792,6 +19800,9 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import List = Stimulsoft.System.Collections.List;
+    import IStiAppDictionary = Stimulsoft.Base.IStiAppDictionary;
+    import IStiAppDataSource = Stimulsoft.Base.IStiAppDataSource;
     import StiDataSource = Stimulsoft.Report.Dictionary.StiDataSource;
     import Type = Stimulsoft.System.Type;
     import StiPromise = Stimulsoft.System.StiPromise;
@@ -19819,6 +19830,7 @@ export namespace Stimulsoft.Report.Dictionary {
         protected getConnectorOptions(report: StiReport, isShema: boolean): StiFileDataOptions;
         protected getConnectorOptionsAsync(report: StiReport, isShema: boolean): Promise<StiFileDataOptions>;
         getDatasourceType(): Type;
+        fetchSiblingDataSources(dictionary: IStiAppDictionary): List<IStiAppDataSource>;
         constructor(name?: string, pathData?: string, key?: string);
     }
 }
@@ -21017,7 +21029,7 @@ export namespace Stimulsoft {
         Services: {
             readonly components: Stimulsoft.System.Type[];
             readonly aggregateFunctions: Stimulsoft.Report.Dictionary.StiAggregateFunctionService[];
-            readonly databases: Stimulsoft.Report.Dictionary.StiDatabase[];
+            databases: Stimulsoft.Report.Dictionary.StiDatabase[];
             dataAdapters: Stimulsoft.Report.Dictionary.StiDataAdapterService[];
             readonly dataSource: Stimulsoft.Report.Dictionary.StiDataSource[];
             readonly formats: Stimulsoft.Report.Components.TextFormats.StiFormatService[];
@@ -42865,6 +42877,7 @@ export namespace Stimulsoft.Report.Export {
         private docCompanyString;
         private docLastModifiedString;
         private static fontsToCorrectHeight;
+        private static defaultFontHeightCorrection;
         private static checkFontsToCorrectHeight;
         private getLineStyle;
         private getColorString;
