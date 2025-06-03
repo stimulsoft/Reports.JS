@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.2.4
-Build date: 2025.05.19
+Version: 2025.2.5
+Build date: 2025.06.02
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -3003,7 +3003,7 @@ export namespace Stimulsoft.System.Drawing {
         static addCustomFontFile(filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontFileAsync(callback: () => void, filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontBytes(data: ArrayBuffer, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
-        private static getFontMimeType;
+        static getFontMimeType(data: any): string;
         static getCustomFontsCss(embeddedData?: boolean): string;
         static getCustomFontName(fontName: string, fontStyle: FontStyle): string;
         static allowStyle(fontName: string, fontStyle: FontStyle): boolean;
@@ -19959,6 +19959,7 @@ export namespace Stimulsoft.Report.Engine {
     }
 }
 export namespace Stimulsoft.Report {
+    import IStiGaugeStyle = Stimulsoft.Report.Gauge.IStiGaugeStyle;
     import StiDatabase = Stimulsoft.Report.Dictionary.StiDatabase;
     import DataSet = Stimulsoft.System.Data.DataSet;
     import DataTable = Stimulsoft.System.Data.DataTable;
@@ -20105,6 +20106,7 @@ export namespace Stimulsoft.Report {
         dialogInfo: StiDialogInfo[];
         barcodeTypes: Stimulsoft.Report.BarCodes.StiBarCodeTypeService[];
         textFormatTypes: string[];
+        gaugeStyles: IStiGaugeStyle[];
         refNames: string[];
         clean(): void;
         linkComponents(report: StiReport): void;
