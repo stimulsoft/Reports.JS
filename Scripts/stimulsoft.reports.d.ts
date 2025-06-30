@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.2.5
-Build date: 2025.06.02
+Version: 2025.3.1
+Build date: 2025.06.25
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -703,6 +703,11 @@ export namespace Stimulsoft.System {
     }
 }
 export namespace Stimulsoft.System {
+    interface IRefOut<T> {
+        arg: T;
+    }
+}
+export namespace Stimulsoft.System {
     class JSON2 {
         static decode(text: string): any;
         static encode(value: any): string;
@@ -723,8 +728,27 @@ interface ObjectConstructor {
 }
 export namespace Stimulsoft.System {
 }
+export namespace Stimulsoft.System.Reflection {
+    enum BindingFlags {
+        Default = 0,
+        IgnoreCase = 1,
+        DeclaredOnly = 2,
+        Instance = 4,
+        Static = 8,
+        Public = 16,
+        NonPublic = 32,
+        FlattenHierarchy = 64,
+        InvokeMethod = 256,
+        CreateInstance = 512,
+        GetField = 1024,
+        SetField = 2048,
+        GetProperty = 4096,
+        SetProperty = 8192
+    }
+}
 export namespace Stimulsoft.System {
     import IAsIs = Stimulsoft.System.IAsIs;
+    import BindingFlags = Stimulsoft.System.Reflection.BindingFlags;
     const compactBase64: (value: string) => string;
     const decompressLiteral: (value: any) => any;
     function applyMixins(dest: any, mixins: any[]): any;
@@ -754,6 +778,7 @@ export namespace Stimulsoft.System {
         static disableAllEnumerable(prototype: any, obj: any): void;
         static keys(obj: any): string[];
         static getOwnPropertyNames(obj: any): string[];
+        getMethods(bindingAttr: BindingFlags): string[];
         static saveAs(data: any, fileName: string, type?: string): void;
         static mergeDeep(target: any, ...sources: any[]): any;
         static stimulsoft: symbol;
@@ -766,7 +791,7 @@ export namespace Stimulsoft.System {
         is<T>(type: any): this is T;
         as(type: any): any;
         memberwiseClone(isBase?: boolean): any;
-        compareTo(value: any): number;
+        compareTo(value: number): number;
         toShort(): number;
         toStringFormat(formatString: string): string;
         getType(): Stimulsoft.System.Type;
@@ -1267,14 +1292,17 @@ export namespace Stimulsoft.System {
         get seconds(): number;
         get totalDays(): number;
         get totalHours(): number;
-        get totalMilliseconds(): number;
         get totalMinutes(): number;
         get totalSeconds(): number;
+        get totalMilliseconds(): number;
         static fromString(value: string, format?: string): TimeSpan;
         private static interval;
         static fromTicks(value: number): TimeSpan;
         static fromSeconds(value: number): TimeSpan;
         static fromMilliseconds(value: number): TimeSpan;
+        static fromDays(value: number): TimeSpan;
+        static fromHours(value: number): TimeSpan;
+        static fromMinutes(value: number): TimeSpan;
         add(value: number): TimeSpan;
         add2(value: TimeSpan): TimeSpan;
         toString(format?: string): string;
@@ -1383,6 +1411,7 @@ export namespace Stimulsoft.System {
     class ULong {
     }
     class Nullable {
+        static getUnderlyingType(nullableType: Type): Type;
     }
     class NullableBoolean extends Nullable {
         static getTypeName(): string;
@@ -3966,41 +3995,57 @@ export namespace Stimulsoft.Base {
         Shl = 5,
         Shr = 6,
         Assign = 7,
-        Equal = 8,
-        NotEqual = 9,
-        LeftEqual = 10,
-        Left = 11,
-        RightEqual = 12,
-        Right = 13,
-        Or = 14,
-        And = 15,
-        Not = 16,
-        DoubleOr = 17,
-        DoubleAnd = 18,
-        Copyright = 19,
-        Question = 20,
-        Plus = 21,
-        Minus = 22,
-        Mult = 23,
-        Div = 24,
-        Splash = 25,
-        Percent = 26,
-        Ampersand = 27,
-        Sharp = 28,
-        Dollar = 29,
-        Euro = 30,
-        DoublePlus = 31,
-        DoubleMinus = 32,
-        LPar = 33,
-        RPar = 34,
-        LBrace = 35,
-        RBrace = 36,
-        LBracket = 37,
-        RBracket = 38,
-        Value = 39,
-        Ident = 40,
-        Unknown = 41,
-        EOF = 42
+        PlusAssign = 8,
+        MinusAssign = 9,
+        MultAssign = 10,
+        DivAssign = 11,
+        ModAssign = 12,
+        AndAssign = 13,
+        OrAssign = 14,
+        XorAssign = 15,
+        ShlAssign = 16,
+        ShrAssign = 17,
+        NullCoalescingAssign = 18,
+        Equal = 19,
+        NotEqual = 20,
+        LeftEqual = 21,
+        Left = 22,
+        RightEqual = 23,
+        Right = 24,
+        Or = 25,
+        Xor = 26,
+        And = 27,
+        Not = 28,
+        DoubleOr = 29,
+        DoubleXor = 30,
+        DoubleAnd = 31,
+        Copyright = 32,
+        Question = 33,
+        DoubleQuestion = 34,
+        Plus = 35,
+        Minus = 36,
+        Mult = 37,
+        Div = 38,
+        Splash = 39,
+        Percent = 40,
+        Ampersand = 41,
+        Sharp = 42,
+        Dollar = 43,
+        Euro = 44,
+        DoublePlus = 45,
+        DoubleMinus = 46,
+        LPar = 47,
+        RPar = 48,
+        LBrace = 49,
+        RBrace = 50,
+        LBracket = 51,
+        RBracket = 52,
+        Value = 53,
+        Ident = 54,
+        Keyword = 55,
+        Unknown = 56,
+        EOF = 57,
+        InterpolatedString = 58
     }
     enum StiLevel {
         Basic = 0,
@@ -4392,7 +4437,7 @@ export namespace Stimulsoft.Base {
     import Exception = Stimulsoft.System.Exception;
     class StiChartNotSupportedException extends Exception {
         static message: string;
-        static getTextJson(chartJson: StiJson): StiJson;
+        static getTextJson(chartJson: StiJson, message?: string): StiJson;
         static getTextXml(chartXml: XmlNode, message?: string): XmlNode;
         get message(): string;
     }
@@ -4497,15 +4542,20 @@ export namespace Stimulsoft.Base {
 }
 export namespace Stimulsoft.Base {
     class StiLexer {
+        private static readonly CR;
+        private static readonly LF;
+        private static readonly TAB;
+        private static _keywords;
+        private static _typeKeywords;
+        isScript: boolean;
         private _text;
         get text(): string;
         set text(value: string);
         baseText: string;
-        private positions;
         positionInText: number;
+        private positions;
         savePosToken(): void;
         getPosition(positionInText: number): StiPosition;
-        skip(): void;
         waitLparen2(): boolean;
         waitComma2(): boolean;
         waitAssign2(): boolean;
@@ -4517,14 +4567,19 @@ export namespace Stimulsoft.Base {
         scanIdent(): StiToken;
         scanString(): StiToken;
         scanChar(): StiToken;
+        private isIdentifierPart;
         ungetToken(): void;
         getToken(): StiToken;
         reset(): void;
+        scanInterpolatedString(): StiToken;
+        static isKeyword(ident: string, includingTypes?: boolean): boolean;
         static replaceWithPrefix(textValue: string, prefix: string, oldValue: string, newValue: string): string;
         replaceWithPrefix(prefix: string, oldValue: string, newValue: string): void;
         replaceWithNotEqualPrefix(prefix: StiTokenType, oldValue: string, newValue: string): void;
         static identExists(str: string, name: string, caseSensitive: boolean): boolean;
         static getAllTokens(str: string): StiToken[];
+        private handleError;
+        skipWhitespaceAndComments(): void;
         constructor(textValue: string);
     }
 }
@@ -4582,7 +4637,20 @@ export namespace Stimulsoft.Base {
         length: number;
         type: StiTokenType;
         data: string;
+        static EOF: StiToken;
+        isKeyword(keyword?: string): boolean;
+        isIdent(ident?: string): boolean;
+        isIdentOrKeyword(): boolean;
+        isAssign(): boolean;
+        isDot(): boolean;
+        isLBrace(): boolean;
+        isRBrace(): boolean;
+        isLBracket(): boolean;
+        isRBracket(): boolean;
+        isLPar(): boolean;
+        isRPar(): boolean;
         toString(): string;
+        get dataAsString(): string;
         constructor(type: StiTokenType, index?: number, length?: number, obj?: any);
     }
 }
@@ -7902,16 +7970,12 @@ export namespace Stimulsoft.Base.Helpers {
         static bingMapKey: string;
         static bingKeysUrl: string;
         private static defaultBingKey;
-        private static Script;
         static getBingKey(userBingKey: string): string;
         static getImage(size: Size, map: {
             mapImage: string;
         }, userBingKey: string, pushPins?: string[]): Promise<string>;
         private static base64ArrayBuffer;
         private static getBingUrl;
-        static getScript(mapData: {
-            [key: string]: string;
-        }): string;
     }
 }
 export namespace Stimulsoft.Base.Helpers {
@@ -7921,15 +7985,6 @@ export namespace Stimulsoft.Base.Helpers {
         private static lockCompletedProgressHandler;
         static currentValue: number;
         static add(comp: IStiAppComponent): void;
-    }
-}
-export namespace Stimulsoft.Base.Helpers {
-    class StiOnlineMapRepaintHelper {
-        timerInterval: number;
-        browserLifetime: number;
-        static init(): void;
-        static fetchAllComponents(report: IStiReport): IStiAppComponent[];
-        static clean(reportKey: string): void;
     }
 }
 export namespace Stimulsoft.Base {
@@ -7967,6 +8022,8 @@ export namespace Stimulsoft.Base.Helpers {
         static isZero(value: any): boolean;
         static equalDecimal(value1: any, value2: any): boolean;
         static tryToString(value: any): string;
+        static tryToChar(value: any): string;
+        static tryToInt(value: any): number;
         static tryToNumber(value: any): number;
         static tryToBool(value: any): boolean;
         static tryToDateTime(value: any): DateTime;
@@ -8677,6 +8734,193 @@ export namespace Stimulsoft.Base {
         customMessage: string;
     }
 }
+export namespace Stimulsoft.Base {
+    import StiToken = Stimulsoft.Base.StiToken;
+    import IRefOut = Stimulsoft.System.IRefOut;
+    interface IExternalObjectsProvider {
+        containsObject(name: string): boolean;
+        isReadOnlyObject(name: string): boolean;
+        getObject(name: string): any;
+        isObjectSupportsNesting(value: any): boolean;
+        containsNestedObject(value: any, path: string): boolean;
+        getNestedObject(value: any, path: string, result: IRefOut<any>): boolean;
+        setObject(name: string, value: any): void;
+        containsFunction(name: string, parameterTypes: any[]): boolean;
+        invokeFunction(name: string, parameters: any[], parameterTypes: any[]): any;
+    }
+    class TokenPosition {
+        line: number;
+        column: number;
+        constructor(line: number, column: number);
+        toString(): string;
+    }
+    export class StiCSharpScriptParser {
+        private thisObject;
+        private executionStart;
+        private timeoutMilliseconds;
+        private externalObjects;
+        private namespaces;
+        private functions;
+        private variables;
+        private nameToType;
+        private currentToken;
+        private currentTokenIndex;
+        private tokens;
+        private tokenPositions;
+        result: any;
+        allowUsingDirective: boolean;
+        static execute(script: string): any;
+        execute(timeoutMilliseconds?: number): any;
+        private checkTimeout;
+        private parsePropertyChain;
+        private parseAssignPropertyChain;
+        setThisObject(thisObject: any): void;
+        private parseExpression;
+        private setElementExpression;
+        private parseTypeExpression;
+        private parseLogicalOrExpression;
+        private parseLogicalAndExpression;
+        private parseDoublePlusOrMinusExpression;
+        private parseDoubleMinusExpression;
+        private parseDoublePlusExpression;
+        private parseEqualityExpression;
+        private parseIsOperatorExpression;
+        private parseAsOperatorExpression;
+        private parseComparisonExpression;
+        private parseAdditionExpression;
+        private parseMultiplicationExpression;
+        private parseUnaryExpression;
+        private parsePrimaryExpression;
+        private convertKeywordTypeToStandardType;
+        private processInterpolatedString;
+        private tryExtractFormatSpecifier;
+        private parseAnonymousTypeExpression;
+        private parseFunctionCallExpression;
+        private parseNestedExpression;
+        private skipExpression;
+        private parseArrayIndexingExpression;
+        private parseTypeOfExpression;
+        private parseTypeExplicitCastExpression;
+        private isExplicitCastExpression;
+        private parseArrayCreationExpression;
+        private parseArrayInitialization;
+        private parseObjectCreationExpression;
+        private parseObjectInitialization;
+        setExternalObjectsProvider(provider: IExternalObjectsProvider): void;
+        registerFunction(name: string, func: (...args: any[]) => any): void;
+        private initializeStandardFunctions;
+        private setArrayElement;
+        private setIntegerIndexerElement;
+        private setStringIndexerElement;
+        private hasStringIndexer;
+        private hasIntegerIndexer;
+        private getStringIndexerValue;
+        private getIntegerIndexerValue;
+        private setStringIndexerValue;
+        private setIntegerIndexerValue;
+        private checkIndexRange;
+        registerNamespace(name: string): void;
+        private addDefaultNamespaces;
+        private parseAssignOperation;
+        private isAssignOperation;
+        private compareOperation;
+        private bitwiseUnaryOperation;
+        private bitwiseAndOperation;
+        private bitwiseOrOperation;
+        private bitwiseXorOperation;
+        private addOperation;
+        private subtractOperation;
+        private multiplyOperation;
+        private divideOperation;
+        private moduloOperation;
+        private equalsOperation;
+        private parsePropertyOrMethodCall;
+        private parseMethodCall;
+        private parseMethodArguments;
+        private invokeMethod;
+        private setPropertyOrField;
+        private getPropertyOrField;
+        private setChainedPropertyOrField;
+        private parseStatement;
+        private parseKeywordOrIdentStatement;
+        private parseKeywordStatement;
+        private parseFunctionOrVariableDeclarationStatement;
+        private parseStaticObjectStatement;
+        private parseIdentStatement;
+        private parseUsingStatement;
+        private processBreakStatement;
+        private parseContinueStatement;
+        private skipBlockStatement;
+        private parseVariableDeclarationStatement;
+        private parseBlockStatement;
+        private parseThisStatement;
+        private parseIfStatement;
+        private parseWhileStatement;
+        private parseDoWhileStatement;
+        private parseForStatement;
+        private parseForeachStatement;
+        private parseReturnStatement;
+        private parseFunctionDeclarationStatement;
+        private skipStatement;
+        private loadTokensWithPositions;
+        private getTokenAfterFullIdent;
+        private getTokenPosition;
+        private saveState;
+        private restoreState;
+        private nextToken;
+        private moveNext;
+        private moveNextIfSemiColon;
+        private moveNextIfRPar;
+        private savePosition;
+        private restorePosition;
+        private waitAssign;
+        private waitColon;
+        private waitComma;
+        private waitSemiColon;
+        private waitLeft;
+        private waitRight;
+        private waitLBracket;
+        private waitRBracket;
+        private waitLBrace;
+        private waitRBrace;
+        private waitLPar;
+        private waitRPar;
+        private waitAnyIdentOrKeyword;
+        private waitAnyIdent;
+        private waitIdent;
+        private waitDot;
+        private waitKeyword;
+        private waitIdentOrKeywordType;
+        getTokens(): StiToken[];
+        getTokenPositions(): TokenPosition[];
+        private isIntegerType;
+        private isFloatingType;
+        private createArray;
+        private convertToType;
+        private convertToReturnType;
+        private getType;
+        private getGenericCollectionType;
+        private getStandardType;
+        private getNameToTypeCache;
+        setExternalTypesCache(nameToType: {
+            [key: string]: any;
+        }): void;
+        setVariable(name: string, value: any): void;
+        private setVariableByPath;
+        private tryGetVariable;
+        getVariable(name: string): any;
+        getVariableAsBool(name: string): boolean | null;
+        getVariableAsInt(name: string): number | null;
+        getVariableAsLong(name: string): number | null;
+        getVariableAsFloat(name: string): number | null;
+        getVariableAsDouble(name: string): number | null;
+        getVariableAsDecimal(name: string): number | null;
+        private externalVariablesContains;
+        constructor(scriptText: string);
+        constructor(script: string, cachedTokens?: StiToken[], cachedPositions?: TokenPosition[]);
+    }
+    export {};
+}
 export namespace Stimulsoft.Base.Services {
     import XmlNode = Stimulsoft.System.Xml.XmlNode;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
@@ -9038,6 +9282,7 @@ export namespace Stimulsoft.Data.Helpers {
         static fetchBlocksFromExpression(inputExpression: string): List<string>;
         static replaceExpressionBlocksByValues(inputExpression: string, values: List<string>): string;
         static isTimeExpression(str: string): boolean;
+        static isThisExpression(str: string): boolean;
         static isExpression(str: string): boolean;
     }
 }
@@ -16656,6 +16901,7 @@ export namespace Stimulsoft.Report.Dictionary {
         meta(): StiMeta[];
         loadFromJsonObject(jObject: StiJson, report?: StiReport): void;
         static loadFromXml(xmlNode: XmlNode, report: StiReport): StiVariable;
+        private static decodeVariableValue;
         static convertFromStringToDialogInfo(str: string, report: StiReport): StiDialogInfo;
         private static parseStringArray;
         private static parseBoolArray;
@@ -16698,6 +16944,7 @@ export namespace Stimulsoft.Report.Dictionary {
         selection: StiSelectionMode;
         key: string;
         private getRangeValues;
+        private static isNullValue;
         static getValue(str: string, type: Type): any;
         private setValue;
         getNativeValue(): string;
@@ -18276,15 +18523,19 @@ export namespace Stimulsoft.Report.Engine {
         Position = 31,
         Line = 32,
         Rows = 33,
-        Text = 34,
-        Value = 35,
-        Enabled = 36,
-        Skip = 37,
-        Alias = 38,
-        Page = 39,
-        Pages = 40,
-        CrossColumnValue = 41,
-        CrossRowValue = 42
+        SelectedIndex = 34,
+        SelectedValue = 35,
+        SelectedKey = 36,
+        SelectedLabel = 37,
+        Text = 38,
+        Value = 39,
+        Enabled = 40,
+        Skip = 41,
+        Alias = 42,
+        Page = 43,
+        Pages = 44,
+        CrossColumnValue = 45,
+        CrossRowValue = 46
     }
     enum StiFunctionType {
         NameSpace = 0,
@@ -19195,6 +19446,7 @@ export namespace Stimulsoft.Report.Dictionary {
         static toJapaneseDateString(date: DateTime, format?: string): string;
         private static japaneseEras;
         private static japaneseErasName;
+        static toOADate(date: DateTime): number;
     }
 }
 export namespace Stimulsoft.Report.Engine.StiParser {
@@ -20807,6 +21059,7 @@ export namespace Stimulsoft {
             dontSaveDataSourceBeforeChartRendering: boolean;
             wordWrapAxisLabelsForPlacementAutoRotation: boolean;
             measureTrailingSpaces: boolean;
+            allowClipChartArea: boolean;
             renderExternalSubReportsWithHelpOfUnlimitedHeightPages: boolean;
             escapeQueryParameters: boolean;
             optimizeDetailDataFiltering: boolean;
@@ -20854,6 +21107,7 @@ export namespace Stimulsoft {
                 showZoomPanel: boolean;
             };
             allowOpenDocumentWithEvent: boolean;
+            parametersNotAssignedString: string;
         };
         Print: {
             customPaperSizes: PaperSizeCollection;
@@ -21022,6 +21276,7 @@ export namespace Stimulsoft {
                 HorAlignment: StiTextHorAlignment;
                 VertAlignment: StiVertAlignment;
             };
+            useCacheModeForStiMatrix: boolean;
             optimizeDataOnlyMode: boolean;
             checkBoxTextForTrue: string;
             checkBoxTextForFalse: string;
@@ -24106,7 +24361,8 @@ export namespace Stimulsoft.Report.Chart {
         ValueArgument = 5,
         ArgumentValue = 6,
         SeriesTitleValue = 7,
-        SeriesTitleArgument = 8
+        SeriesTitleArgument = 8,
+        Total = 9
     }
     enum StiMarkerType {
         Rectangle = 0,
@@ -24251,6 +24507,13 @@ export namespace Stimulsoft.Report.Chart {
     enum StiChartEditorType {
         Simple = 0,
         Advanced = 1
+    }
+    enum StiDateTimeStepAggregation {
+        Average = 0,
+        Sum = 1,
+        Min = 2,
+        Max = 3,
+        Count = 4
     }
     enum StiSeriesAnimationType {
         None = 0,
@@ -24726,6 +24989,7 @@ export namespace Stimulsoft.Report.Chart {
         step: StiTimeDateStep;
         numberOfValues: number;
         interpolation: boolean;
+        aggregation: StiDateTimeStepAggregation;
         loadFromXml(xmlNode: XmlNode): any;
     }
 }
@@ -26400,6 +26664,8 @@ export namespace Stimulsoft.Report.Chart {
 }
 export namespace Stimulsoft.Report.Chart {
     import Size = Stimulsoft.System.Drawing.Size;
+    import StiContext = Stimulsoft.Base.Context.StiContext;
+    import StiStringFormatGeom = Stimulsoft.Base.Context.StiStringFormatGeom;
     let IStiAxisCoreXF3D: System.Interface<IStiAxisCoreXF3D>;
     interface IStiAxisCoreXF3D {
         getFontGeom(context: Base.Context.StiContext): Base.Context.StiFontGeom;
@@ -26407,6 +26673,7 @@ export namespace Stimulsoft.Report.Chart {
         render3D(context: Base.Context.StiContext, rect3D: IStiRectangle3D, render3d: IStiRender3D): IStiCellGeom;
         applyStyle(style: IStiChartStyle): any;
         getAxisTitleSize(context: Base.Context.StiContext): Size;
+        getStringFormatGeom(context: StiContext, wordWrap: boolean): StiStringFormatGeom;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -26439,6 +26706,9 @@ export namespace Stimulsoft.Report.Chart {
         format: string;
         formatService: StiFormatService;
         calculatedStep: number;
+        angle: number;
+        width: number;
+        wordWrap: boolean;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -29193,6 +29463,31 @@ export namespace Stimulsoft.Report.Dashboard {
         Postcode3 = 8,
         Postcode4 = 9
     }
+    enum StiGeoMapProviderType {
+        OpenStreetMap = 0,
+        Bing = 1,
+        OpenCycleMap = 2,
+        OpenCycleMapLandscape = 3,
+        OpenCycleMapTransport = 4,
+        Wikimapia = 5,
+        BingSatellite = 6,
+        BingHybrid = 7,
+        BingOS = 8,
+        Google = 9,
+        GoogleSatellite = 10,
+        GoogleTerrain = 11,
+        GoogleChina = 12,
+        GoogleChinaSatellite = 13,
+        GoogleChinaTerrain = 14,
+        YandexMap = 15,
+        YandexSatelliteMap = 16,
+        Czech = 17,
+        CzechSatellite = 18,
+        CzechTurist = 19,
+        CzechTuristWinter = 20,
+        CzechGeographic = 21,
+        ArcGISStreetMapWorld2D = 22
+    }
     enum StiOnlineMapLocationColorType {
         Single = 0,
         ColorEach = 1,
@@ -29305,6 +29600,12 @@ export namespace Stimulsoft.Report.Dashboard {
         Target = 2,
         Percentage = 3
     }
+    enum StiProgressValueType {
+        None = 0,
+        Percentage = 1,
+        Value = 2,
+        ValueTarget = 3
+    }
     enum StiProgressConditionPermissions {
         None = 0,
         Font = 1,
@@ -29348,6 +29649,10 @@ export namespace Stimulsoft.Report.Dashboard {
     enum StiTargetMode {
         Percentage = 0,
         Variation = 1
+    }
+    enum StiIndicatorValueType {
+        Value = 0,
+        ValueTarget = 1
     }
     enum StiChartTrendLineType {
         None = 0,
@@ -29571,6 +29876,10 @@ export namespace Stimulsoft.Report.Dashboard {
         setParentKey(key: string): any;
         applyDefaultFilters(): Promise<void>;
         getIdentityFilters(): List<StiDataFilterRule>;
+        selectedValue: any;
+        selectedKey: string;
+        selectedLabel: string;
+        selectedIndex: number;
         inclusionMode: StiFilterInclusionMode;
     }
 }
@@ -30298,6 +30607,7 @@ export namespace Stimulsoft.Report.Dashboard {
         iconRangeMode: StiIndicatorIconRangeMode;
         showBlanks: boolean;
         targetFormat: StiFormatService;
+        valueType: StiIndicatorValueType;
         getIconRanges(): List<IStiIndicatorIconRange>;
         addRange(): IStiIndicatorIconRange;
         removeRange(index: number): any;
@@ -30481,6 +30791,7 @@ export namespace Stimulsoft.Report.Dashboard {
         customIcon: number[];
         onePointZoom: number;
         userBingKey: string;
+        provider: StiGeoMapProviderType;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -30677,6 +30988,7 @@ export namespace Stimulsoft.Report.Dashboard {
         mode: StiProgressElementMode;
         font: Font;
         showBlanks: boolean;
+        valueType: StiProgressValueType;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -34967,13 +35279,17 @@ export namespace Stimulsoft.Report.Dictionary {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import Type = Stimulsoft.System.Type;
     class StiType {
         name: string;
         type: Stimulsoft.System.Type;
         static getTypes(): StiTypesCollection;
         static getBaseTypes(): StiTypesCollection;
-        static getTypeModeFromType(type: Stimulsoft.System.Type, REFtypeMode: any): StringConstructor | BooleanConstructor | System.Type | typeof System.DateTime | typeof System.DateOnly | typeof System.Guid | typeof System.TimeOnly | typeof System.TimeSpan | typeof System.Byte | typeof System.Single;
+        static getTypeModeFromType(type: Stimulsoft.System.Type, REFtypeMode: any): StringConstructor | BooleanConstructor | Type | typeof System.DateTime | typeof System.DateOnly | typeof System.Guid | typeof System.TimeOnly | typeof System.TimeSpan | typeof System.Byte | typeof System.Single;
         static getTypeFromTypeMode(type: Stimulsoft.System.Type, typeMode: StiTypeMode): Stimulsoft.System.Type;
+        static isDateTimeType(type: Type): boolean;
+        static isIntegerType(type: Type): boolean;
+        static isFloatType(type: Type): boolean;
         toString(): string;
         constructor(name: string, type: Stimulsoft.System.Type);
     }
@@ -35014,6 +35330,7 @@ export namespace Stimulsoft.Report {
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
+    import TimeSpan = Stimulsoft.System.TimeSpan;
     import DateTimeOffset = Stimulsoft.System.DateTimeOffset;
     import DateTime = Stimulsoft.System.DateTime;
     import DateOnly = Stimulsoft.System.DateOnly;
@@ -35023,10 +35340,12 @@ export namespace Stimulsoft.Report.Dictionary {
         static getDateTimeOffsetFromValue(value: string): DateTimeOffset;
         static getDateOnlyFromValue(value: string): DateOnly;
         static getTimeOnlyFromValue(value: string): TimeOnly;
+        static getTimeSpanFromValue(value: string): TimeSpan;
         static getValueFromDateTime(value: Stimulsoft.System.DateTime): string;
         static getValueFromDateTimeOffset(value: Stimulsoft.System.DateTimeOffset): string;
         static getValueFromDateOnly(value: DateOnly): string;
         static getValueFromTimeOnly(value: TimeOnly): string;
+        static getValueFromTimeSpan(value: TimeSpan): string;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -36350,6 +36669,9 @@ export namespace Stimulsoft.Report.Dictionary {
     class StiFunctionsMath {
         private static isCreated;
         static create(): void;
+        static div(value1: number, value2: number): number;
+        static divZeroResult(value1: number, value2: number, zeroResult: number): number;
+        static truncate(value: number): number;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -38785,6 +39107,7 @@ export namespace Stimulsoft.Report.Export {
         private static calculateCurveBezierEndPoints;
         static writeFillBrush(writer: XmlTextWriter, brush: Color | StiBrush, rect: Rectangle): string;
         private static writeBorderStroke;
+        private static getOpacityString;
         private static rectToRectangle;
     }
 }
@@ -38796,8 +39119,6 @@ export namespace Stimulsoft.Report.Painters {
         key: string;
         getImage(map: StiMap, zoom: number, x?: number, y?: number, width?: number, height?: number): Promise<string>;
         paintOnlineMap(rect: Rectangle, map: StiMap): Promise<string>;
-        tryToDecimal(value: any): number;
-        constructor();
     }
 }
 export namespace Stimulsoft.Report.Maps {
@@ -39960,12 +40281,18 @@ export namespace Stimulsoft.Report.Export {
     class StiCell {
         clone(): StiCell;
         forceExportAsImage(exportImage: any): boolean;
-        exportFormat: StiExportFormat;
+        private _exportFormat;
+        get exportFormat(): StiExportFormat;
+        set exportFormat(value: StiExportFormat);
         private _component;
         get component(): StiComponent;
         set component(value: StiComponent);
-        exportImage: IStiExportImage;
-        cellStyle: StiCellStyle;
+        private _exportImage;
+        get exportImage(): IStiExportImage;
+        set exportImage(value: IStiExportImage);
+        private _cellStyle;
+        get cellStyle(): StiCellStyle;
+        set cellStyle(value: StiCellStyle);
         left: number;
         top: number;
         width: number;
@@ -39975,6 +40302,26 @@ export namespace Stimulsoft.Report.Export {
         set height(value: number);
         text: string;
         constructor(exportFormat?: StiExportFormat);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import IStiExportImage = Stimulsoft.Report.Components.IStiExportImage;
+    import StiComponent = Stimulsoft.Report.Components.StiComponent;
+    class StiCell2 extends StiCell {
+        clone(): StiCell;
+        private isExportImageNull;
+        private matrix;
+        get exportFormat(): StiExportFormat;
+        get component(): StiComponent;
+        set component(value: StiComponent);
+        get exportImage(): IStiExportImage;
+        set exportImage(value: IStiExportImage);
+        pageId: number;
+        componentId: number;
+        cellStyleId: number;
+        get cellStyle(): StiCellStyle;
+        set cellStyle(value: StiCellStyle);
+        constructor(matrix: StiMatrix);
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -39989,7 +40336,7 @@ export namespace Stimulsoft.Report.Export {
         clone(): StiCellStyle;
         getHashCode(): number;
         equals(obj: any): boolean;
-        static getStyleFromCache(color: Color, textColor: Color, font: Font, horAlignment: StiTextHorAlignment, vertAlignment: StiVertAlignment, border: StiBorderSide, borderL: StiBorderSide, borderR: StiBorderSide, borderB: StiBorderSide, textOptions: StiTextOptions, wordWrap: boolean, format: string, internalStyleName: string, lineSpacing: number, hashStyles: Hashtable, styles: StiCellStyle[], fontsCache: Hashtable, cellStyle: StiCellStyle, simplyAdd: boolean, overflow: boolean, borderRadius: number): StiCellStyle;
+        static getStyleFromCache(color: Color, textColor: Color, font: Font, horAlignment: StiTextHorAlignment, vertAlignment: StiVertAlignment, border: StiBorderSide, borderL: StiBorderSide, borderR: StiBorderSide, borderB: StiBorderSide, textOptions: StiTextOptions, wordWrap: boolean, format: string, internalStyleName: string, lineSpacing: number, hashStyles: Hashtable, styles: StiCellStyle[], fontsCache: Hashtable, cellStyle: StiCellStyle, simplyAdd: boolean, overflow: boolean, borderRadius: number, allowHtmlTags: boolean): StiCellStyle;
         border: StiBorderSide;
         borderL: StiBorderSide;
         borderR: StiBorderSide;
@@ -40006,13 +40353,41 @@ export namespace Stimulsoft.Report.Export {
         overflow: boolean;
         borderRadius: number;
         lineSpacing: number;
+        allowHtmlTags: boolean;
         private _internalStyleName;
         get internalStyleName(): string;
         set internalStyleName(value: string);
         private _styleName;
         get styleName(): string;
         set styleName(value: string);
-        constructor(color: Color, textColor: Color, font: Font, horAlignment: StiTextHorAlignment, vertAlignment: StiVertAlignment, border: StiBorderSide, borderL: StiBorderSide, borderR: StiBorderSide, borderB: StiBorderSide, textOptions: StiTextOptions, wordWrap: boolean, format: string, lineSpacing: number, styleName?: string, overflow?: boolean, borderRadius?: number);
+        constructor(color: Color, textColor: Color, font: Font, horAlignment: StiTextHorAlignment, vertAlignment: StiVertAlignment, border: StiBorderSide, borderL: StiBorderSide, borderR: StiBorderSide, borderB: StiBorderSide, textOptions: StiTextOptions, wordWrap: boolean, format: string, lineSpacing: number, styleName?: string, overflow?: boolean, borderRadius?: number, allowHtmlTags?: boolean);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import StiTextOptions = Stimulsoft.Base.Drawing.StiTextOptions;
+    import StiVertAlignment = Stimulsoft.Base.Drawing.StiVertAlignment;
+    import StiTextHorAlignment = Stimulsoft.Base.Drawing.StiTextHorAlignment;
+    import Font = Stimulsoft.System.Drawing.Font;
+    import Color = Stimulsoft.System.Drawing.Color;
+    class StiCellStyle2 {
+        clone(): StiCellStyle2;
+        equals(style: StiCellStyle2): boolean;
+        absolutePosition: boolean;
+        color: Color;
+        font: Font;
+        horAlignment: StiTextHorAlignment;
+        vertAlignment: StiVertAlignment;
+        textOptions: StiTextOptions;
+        textColor: Color;
+        wordWrap: boolean;
+        format: string;
+        private _internalStyleName;
+        get internalStyleName(): string;
+        set internalStyleName(value: string);
+        private _styleName;
+        get styleName(): string;
+        set styleName(value: string);
+        constructor(color: Color, textColor: Color, font: Font, horAlignment: StiTextHorAlignment, vertAlignment: StiVertAlignment, textOptions: StiTextOptions, wordWrap: boolean, format: string, styleName?: string);
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -40233,7 +40608,8 @@ export namespace Stimulsoft.Report.Export {
         Trash = 9
     }
     class StiMatrix {
-        cells: StiCell[][];
+        cells2: StiCell[][];
+        cells: StiMatrixCellsCollection;
         cellsMap: StiCell[][];
         totalHeight: number;
         totalWidth: number;
@@ -40242,11 +40618,15 @@ export namespace Stimulsoft.Report.Export {
         coordY: List<number>;
         linePlacement: StiTableLineInfo[];
         parentBandName: string[];
-        bordersX: StiBorderSide[][];
-        bordersY: StiBorderSide[][];
+        bordersX2: StiBorderSide[][];
+        bordersX: StiMatrixBorderSidesXCollection;
+        bordersY2: StiBorderSide[][];
+        bordersY: StiMatrixBorderSidesYCollection;
         horizontalPageBreaks: number[];
-        cellStyles: StiCellStyle[][];
-        bookmarks: string[][];
+        cellStyles2: StiCellStyle[][];
+        cellStyles: StiMatrixCellStylesCollection;
+        bookmarks2: string[][];
+        bookmarks: StiMatrixBookmarksCollection;
         bookmarksTable: Hashtable;
         interactions: number[][][];
         private maxRowHeight;
@@ -40281,6 +40661,8 @@ export namespace Stimulsoft.Report.Export {
         private pointerToTag;
         private maxCoordY;
         private defaultLinePrimitiveWidth;
+        useCacheMode: boolean;
+        private cacheManager;
         private setBookmarkValue;
         private static sortForMatrix;
         private round;
@@ -40315,11 +40697,18 @@ export namespace Stimulsoft.Report.Export {
         checkStylesNames(): void;
         getRealImageData(cell: StiCell, baseImage: Image, list?: any[]): Image;
         private checkComponentPlacement;
+        static replaceComponentForExport(refComponent: {
+            ref: StiComponent;
+        }, replaceCheckboxes: boolean): void;
         private lastPage;
         private lastPageId;
         private lastComps;
+        getCellComponent(cell2: StiCell): StiComponent;
+        setCellComponent(cell2: StiCell, component: StiComponent, indexComponent: number): void;
         getBorderSideIndex(side: StiBorderSide): number;
+        private clearCellsMapArea;
         static GCCollect(): void;
+        allowModification(flag: boolean): void;
         clear(): void;
         constructor(pages: StiPagesCollection, checkForExcel: boolean, service: StiExportService, styles?: StiCellStyle[], dataMode?: StiDataExportMode, hasDividedPages?: boolean);
     }
@@ -40330,6 +40719,123 @@ export namespace Stimulsoft.Report.Export {
         dataArray: string[];
         readyName: boolean;
         readyType: boolean;
+        constructor(size: number);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    class StiMatrixCacheManager {
+        private matrixWidth;
+        private matrixHeight;
+        private segmentHeight;
+        private matrix;
+        private amountOfProcessedPagesForStartGCCollect;
+        private cachePath;
+        flagForceSaveSegment: boolean;
+        private _segments;
+        get segments(): StiMatrixCacheSegment[];
+        private _quickAccessSegments;
+        get quickAccessSegments(): number[];
+        amountOfQuickAccessSegments: number;
+        getMatrixSegment(index: number): StiMatrixCacheSegment;
+        getMatrixLineData(lineNumber: number): StiMatrixLineData;
+        writeSegment(segment: StiMatrixCacheSegment): object;
+        private writeMatrixLine;
+        private writeMatrixCell;
+        readSegment(string: string, segment: StiMatrixCacheSegment): void;
+        private readMatrixCell;
+        private readMatrixBorders;
+        private readMatrixBookmark;
+        private readMatrixCellStyles;
+        saveSegment(segment: StiMatrixCacheSegment): void;
+        loadSegment(segment: StiMatrixCacheSegment): void;
+        clear(): void;
+        constructor(matrix: StiMatrix, width: number, height: number, maxPageHeight: number);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import Size = Stimulsoft.System.Drawing.Size;
+    class StiMatrixBookmarksCollection {
+        private manager;
+        private matrix;
+        gett(row: number, column: number): string;
+        sett(row: number, column: number, value: string): void;
+        bookmarksTable: {
+            [key: string]: Size;
+        };
+        constructor(manager: StiMatrixCacheManager, matrix: StiMatrix);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import StiBorderSide = Stimulsoft.Base.Drawing.StiBorderSide;
+    class StiMatrixBorderSidesXCollection {
+        private manager;
+        private matrix;
+        gett(row: number, column: number): StiBorderSide;
+        sett(row: number, column: number, value: StiBorderSide): void;
+        constructor(manager: StiMatrixCacheManager, matrix: StiMatrix);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    import StiBorderSide = Stimulsoft.Base.Drawing.StiBorderSide;
+    class StiMatrixBorderSidesYCollection {
+        private manager;
+        private matrix;
+        gett(row: number, column: number): StiBorderSide;
+        sett(row: number, column: number, value: StiBorderSide): void;
+        constructor(manager: StiMatrixCacheManager, matrix: StiMatrix);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    class StiMatrixCache {
+        static createNewCache(): string;
+        static deleteCache(path: string): void;
+        static getCacheSegmentName(cache: string, cachePageGuid: string): string;
+        static saveSegment(path: string, segment: string): void;
+        static loadSegment(path: string): string;
+        private static cachedStrings;
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    class StiMatrixCacheSegment {
+        private segmentHeight;
+        private _cacheGuid;
+        get cacheGuid(): string;
+        set cacheGuid(value: string);
+        private _lines;
+        get lines(): StiMatrixLineData[];
+        set lines(value: StiMatrixLineData[]);
+        isSaved: boolean;
+        newCacheGuid(): void;
+        clear(): void;
+        constructor(height: number);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    class StiMatrixCellStylesCollection {
+        private manager;
+        private matrix;
+        gett(row: number, column: number): StiCellStyle;
+        sett(row: number, column: number, value: StiCellStyle): void;
+        constructor(manager: StiMatrixCacheManager, matrix: StiMatrix);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    class StiMatrixCellsCollection {
+        private manager;
+        private matrix;
+        gett(row: number, column: number): StiCell;
+        sett(row: number, column: number, value: StiCell): void;
+        constructor(manager: StiMatrixCacheManager, matrix: StiMatrix);
+    }
+}
+export namespace Stimulsoft.Report.Export {
+    class StiMatrixLineData {
+        cells: StiCell[];
+        cellsMap: StiCell[];
+        bordersX: number[];
+        bordersY: number[];
+        cellStyles: number[];
+        bookmarks: string[];
         constructor(size: number);
     }
 }
@@ -40935,12 +41441,6 @@ export namespace Stimulsoft.Base.Maps.Geoms {
     import List = Stimulsoft.System.Collections.List;
     class StiMapGeomCollection extends List<StiMapGeom> {
         getLastPoint(): Point;
-    }
-}
-export namespace Stimulsoft.Report.Maps {
-    class StiMapResourceFinder {
-        static get(resourceName: string): string;
-        static getLang(resourceName: string): string;
     }
 }
 export namespace Stimulsoft.Report.Maps {
@@ -44217,7 +44717,8 @@ export namespace Stimulsoft.Report.Chart {
         step: StiTimeDateStep;
         numberOfValues: number;
         interpolation: boolean;
-        constructor(step?: StiTimeDateStep, numberOfValues?: number, interpolation?: boolean);
+        aggregation: StiDateTimeStepAggregation;
+        constructor(step?: StiTimeDateStep, numberOfValues?: number, interpolation?: boolean, aggregation?: StiDateTimeStepAggregation);
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -52690,6 +53191,7 @@ export namespace Stimulsoft.Report.Chart {
     import StiContext = Stimulsoft.Base.Context.StiContext;
     import ICloneable = Stimulsoft.System.ICloneable;
     import SizeD = Stimulsoft.System.Drawing.Size;
+    import StiStringFormatGeom = Stimulsoft.Base.Context.StiStringFormatGeom;
     class StiAxisCoreXF3D implements ICloneable, IStiApplyStyle, IStiAxisCoreXF3D {
         implements(): any[];
         clone(): any;
@@ -52699,6 +53201,7 @@ export namespace Stimulsoft.Report.Chart {
         calculateStripPositions(topPosition: number, bottomPosition: number): void;
         render3D(context: StiContext, rect3D: StiRectangle3D, render: StiRender3D): StiCellGeom;
         getAxisTitleSize(context: StiContext): SizeD;
+        getStringFormatGeom(context: StiContext, wordWrap: boolean): StiStringFormatGeom;
         constructor(axis: IStiAxis3D);
     }
 }
@@ -52726,6 +53229,9 @@ export namespace Stimulsoft.Report.Chart {
         rotationMode: StiRotationMode;
         text: string;
         stripLine: StiStripLineXF;
+        angle: number;
+        width: number;
+        wordWrap: boolean;
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -53034,9 +53540,12 @@ export namespace Stimulsoft.Report.Chart {
         text: string;
         stripLine: StiStripLineXF;
         rotationMode: StiRotationMode;
+        angle: number;
+        width: number;
+        wordWrap: boolean;
         drawElements(context: StiContext, vertices: StiMatrix): void;
         measureCientRect(): Rectangle;
-        constructor(axis: IStiAxis3D, clientSize: SizeF, textPoint: StiPoint3D, text: string, stripLine: StiStripLineXF, rotationMode: StiRotationMode, render: StiRender3D);
+        constructor(axis: IStiAxis3D, clientSize: SizeF, textPoint: StiPoint3D, text: string, stripLine: StiStripLineXF, rotationMode: StiRotationMode, angle: number, width: number, wordWrap: boolean, render: StiRender3D);
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -53236,6 +53745,7 @@ export namespace Stimulsoft.Report.Chart {
         drawElements(context: StiContext, vertices: StiMatrix): void;
         protected drawLabelArea(context: StiContext, rect: Rectangle): void;
         protected drawLabelText(context: StiContext, rect: Rectangle): void;
+        private getFormatGeom;
         protected getLabelRect(context: StiContext): SizeF;
         constructor(seriesLabels: IStiSeriesLabels, series: IStiSeries, index: number, value: number, labelText: string, labelColor: Color, labelBorderColor: Color, seriesBrush: StiBrush, seriesLabelsBrush: StiBrush, seriesBorderColor: Color, font: StiFontGeom, point3D: StiPoint3D, render3D: StiRender3D);
     }
@@ -53466,9 +53976,12 @@ export namespace Stimulsoft.Report.Chart {
         color: Color;
         textBefore: string;
         textAfter: string;
+        angle: number;
+        width: number;
+        wordWrap: boolean;
         calculatedStep: number;
         formatService: StiFormatService;
-        constructor(format?: string, textBefore?: string, textAfter?: string, font?: Font, color?: Color, allowApplyStyle?: boolean);
+        constructor(format?: string, textBefore?: string, textAfter?: string, font?: Font, color?: Color, allowApplyStyle?: boolean, angle?: number, width?: number, wordWrap?: boolean);
     }
 }
 export namespace Stimulsoft.Report.Chart {
@@ -57290,1042 +57803,1042 @@ export namespace Stimulsoft.Reflection {
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAfghanistan {
-        static Afghanistan: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAfrica {
-        static Africa: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAlbania {
-        static Albania: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAlgeria {
-        static Algeria: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAndorra {
-        static Andorra: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAngola {
-        static Angola: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesArgentina {
-        static Argentina: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesArgentinaFD {
-        static ArgentinaFD: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesArmenia {
-        static Armenia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAsia {
-        static Asia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAustralia {
-        static Australia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAustria {
-        static Austria: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesAzerbaijan {
-        static Azerbaijan: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBelarus {
-        static Belarus: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBelgium {
-        static Belgium: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBenelux {
-        static Benelux: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBenin {
-        static Benin: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBolivia {
-        static Bolivia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBosniaAndHerzegovina {
-        static BosniaAndHerzegovina: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBotswana {
-        static Botswana: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBrazil {
-        static Brazil: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBulgaria {
-        static Bulgaria: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBurkinaFaso {
-        static BurkinaFaso: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesBurundi {
-        static Burundi: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesCameroon {
-        static Cameroon: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesCanada {
-        static Canada: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesCapeVerde {
-        static CapeVerde: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesCentralAfricanRepublic {
-        static CentralAfricanRepublic: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesChad {
-        static Chad: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesChile {
-        static Chile: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesChina {
-        static China: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesColombia {
-        static Colombia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesComoros {
-        static Comoros: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesCroatia {
-        static Croatia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesCyprus {
-        static Cyprus: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesCzechRepublic {
-        static CzechRepublic: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesDenmark {
-        static Denmark: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesDjibouti {
-        static Djibouti: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEU {
-        static EU: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEUWithUnitedKingdom {
-        static EUWithUnitedKingdom: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEcuador {
-        static Ecuador: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEgypt {
-        static Egypt: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEquatorialGuinea {
-        static EquatorialGuinea: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEritrea {
-        static Eritrea: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEstonia {
-        static Estonia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEthiopia {
-        static Ethiopia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEurope {
-        static Europe: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesEuropeWithRussia {
-        static EuropeWithRussia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesFalklandIslands {
-        static FalklandIslands: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesFinland {
-        static Finland: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesFrance {
-        static France: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesFrance18Regions {
-        static France18Regions: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesFranceDepartments {
-        static FranceDepartments: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGabon {
-        static Gabon: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGambia {
-        static Gambia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGeorgia {
-        static Georgia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGermany {
-        static Germany: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGhana {
-        static Ghana: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGreece {
-        static Greece: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGuinea {
-        static Guinea: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGuineaBissau {
-        static GuineaBissau: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesGuyana {
-        static Guyana: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesHungary {
-        static Hungary: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesIceland {
-        static Iceland: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesIndia {
-        static India: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesIndonesia {
-        static Indonesia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesIreland {
-        static Ireland: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesIsrael {
-        static Israel: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesItaly {
-        static Italy: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesIvoryCoast {
-        static IvoryCoast: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesJapan {
-        static Japan: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesJapan_JA {
-        static Japan_JA: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesKazakhstan {
-        static Kazakhstan: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesKenya {
-        static Kenya: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesLatvia {
-        static Latvia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesLesotho {
-        static Lesotho: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesLiberia {
-        static Liberia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesLibya {
-        static Libya: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesLiechtenstein {
-        static Liechtenstein: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesLithuania {
-        static Lithuania: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesLuxembourg {
-        static Luxembourg: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMacedonia {
-        static Macedonia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMadagascar {
-        static Madagascar: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMalawi {
-        static Malawi: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMalaysia {
-        static Malaysia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMali {
-        static Mali: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMalta {
-        static Malta: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMauritania {
-        static Mauritania: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMauritius {
-        static Mauritius: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMexico {
-        static Mexico: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMiddleEast {
-        static MiddleEast: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMoldova {
-        static Moldova: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMonaco {
-        static Monaco: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMontenegro {
-        static Montenegro: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMorocco {
-        static Morocco: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesMozambique {
-        static Mozambique: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesNamibia {
-        static Namibia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesNetherlands {
-        static Netherlands: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesNewZealand {
-        static NewZealand: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesNiger {
-        static Niger: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesNigeria {
-        static Nigeria: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesNorthAmerica {
-        static NorthAmerica: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesNorway {
-        static Norway: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesOceania {
-        static Oceania: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesOman {
-        static Oman: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesParaguay {
-        static Paraguay: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesPeru {
-        static Peru: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesPhilippines {
-        static Philippines: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesPoland {
-        static Poland: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesPortugal {
-        static Portugal: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesPuertoRico {
-        static PuertoRico: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesQatar {
-        static Qatar: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesRepublicOfTheCongo {
-        static RepublicOfTheCongo: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesRomania {
-        static Romania: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesRussia {
-        static Russia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesRwanda {
-        static Rwanda: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSanMarino {
-        static SanMarino: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSaoTomeAndPrincipe {
-        static SaoTomeAndPrincipe: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSaudiArabia {
-        static SaudiArabia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesScandinavia {
-        static Scandinavia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSenegal {
-        static Senegal: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSerbia {
-        static Serbia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSeychelles {
-        static Seychelles: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSierraLeone {
-        static SierraLeone: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSlovakia {
-        static Slovakia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSlovenia {
-        static Slovenia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSomalia {
-        static Somalia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSouthAfrica {
-        static SouthAfrica: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSouthAmerica {
-        static SouthAmerica: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSouthKorea {
-        static SouthKorea: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSouthSudan {
-        static SouthSudan: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSoutheastAsia {
-        static SoutheastAsia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSpain {
-        static Spain: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSudan {
-        static Sudan: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSuriname {
-        static Suriname: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSwaziland {
-        static Swaziland: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSweden {
-        static Sweden: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesSwitzerland {
-        static Switzerland: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesTaiwan {
-        static Taiwan: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesTanzania {
-        static Tanzania: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesThailand {
-        static Thailand: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesTogo {
-        static Togo: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesTunisia {
-        static Tunisia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesTurkey {
-        static Turkey: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesUK {
-        static UK: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesUKCountries {
-        static UKCountries: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesUSA {
-        static USA: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesUSAAndCanada {
-        static USAAndCanada: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesUSAAndPuertoRico {
-        static USAAndPuertoRico: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesUganda {
-        static Uganda: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesUkraine {
-        static Ukraine: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesUruguay {
-        static Uruguay: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesVatican {
-        static Vatican: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesVenezuela {
-        static Venezuela: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesVietnam {
-        static Vietnam: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesWorld {
-        static World: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesZambia {
-        static Zambia: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapResourcesZimbabwe {
-        static Zimbabwe: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsArgentinaFD_ES {
-        static ArgentinaFD_ES: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsArgentina_ES {
-        static Argentina_ES: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsAsia_HE {
-        static Asia_HE: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsAsia_JA {
-        static Asia_JA: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsAsia_KO {
-        static Asia_KO: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsAsia_RU {
-        static Asia_RU: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsAsia_ZH {
-        static Asia_ZH: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsBrazil_ES {
-        static Brazil_ES: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsCanada_FR {
-        static Canada_FR: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsChile_ES {
-        static Chile_ES: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsChina_ZH {
-        static China_ZH: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsCzechRepublic_CS {
-        static CzechRepublic_CS: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsFinland_FI {
-        static Finland_FI: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsFinland_SE {
-        static Finland_SE: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsFrance18Regions_FR {
-        static France18Regions_FR: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsFranceDepartments_FR {
-        static FranceDepartments_FR: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsFrance_FR {
-        static France_FR: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsGermany_DE {
-        static Germany_DE: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsIsrael_HE {
-        static Israel_HE: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsItaly_IT {
-        static Italy_IT: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsJapan_JA {
-        static Japan_JA: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsMexico_ES {
-        static Mexico_ES: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsNetherlands_FY {
-        static Netherlands_FY: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsNetherlands_NL {
-        static Netherlands_NL: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsNorway_NO {
-        static Norway_NO: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsPoland_PL {
-        static Poland_PL: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsRussia_RU {
-        static Russia_RU: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsSouthKorea_KO {
-        static SouthKorea_KO: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsSwitzerland_DE {
-        static Switzerland_DE: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsSwitzerland_FR {
-        static Switzerland_FR: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsSwitzerland_IT {
-        static Switzerland_IT: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsSwitzerland_RO {
-        static Switzerland_RO: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsUkraine_UK {
-        static Ukraine_UK: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_CS {
-        static World_CS: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_ES {
-        static World_ES: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_FI {
-        static World_FI: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_FR {
-        static World_FR: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_FY {
-        static World_FY: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_HE {
-        static World_HE: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_IT {
-        static World_IT: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_JA {
-        static World_JA: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_KO {
-        static World_KO: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_NL {
-        static World_NL: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_NO {
-        static World_NO: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_PL {
-        static World_PL: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_RO {
-        static World_RO: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_RU {
-        static World_RU: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_SE {
-        static World_SE: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_UK {
-        static World_UK: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_ZH {
-        static World_ZH: string;
+        static get(): {};
     }
 }
 export namespace Stimulsoft.Dashboard {
@@ -58930,6 +59443,10 @@ export namespace Stimulsoft.Dashboard.Components.Button {
         iconAlignment: StiIconAlignment;
         iconSet: StiButtonElementIconSet;
         iconBrush: StiBrush;
+        selectedValue: any;
+        selectedKey: string;
+        selectedLabel: string;
+        selectedIndex: number;
         checkedChangedEvent: StiEvent;
         invokeCheckedChanged(sender: any, e: any): void;
         constructor(rect?: Rectangle);
@@ -61513,6 +62030,10 @@ export namespace Stimulsoft.Dashboard.Components.ComboBox {
         showAllValue: boolean;
         showBlanks: boolean;
         selectionMode: StiItemSelectionMode;
+        selectedValue: any;
+        selectedKey: string;
+        selectedLabel: string;
+        selectedIndex: number;
         addKeyMeter2(cell: IStiAppDataCell): void;
         addKeyMeter(meter: IStiMeter): void;
         getKeyMeter(): IStiMeter;
@@ -61612,6 +62133,10 @@ export namespace Stimulsoft.Dashboard.Components.DatePicker {
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
         customStyleName: string;
+        selectedValue: any;
+        selectedKey: string;
+        selectedLabel: string;
+        selectedIndex: number;
         font: Font;
         foreColor: Color;
         fetchAllMeters(): List<IStiMeter>;
@@ -62223,6 +62748,7 @@ export namespace Stimulsoft.Dashboard.Components.Indicator {
     import StiFontSizeMode = Stimulsoft.Report.Dashboard.StiFontSizeMode;
     import StiPage = Stimulsoft.Report.Components.StiPage;
     import IStiIndicatorIconRange = Stimulsoft.Report.Dashboard.IStiIndicatorIconRange;
+    import StiIndicatorValueType = Stimulsoft.Report.Dashboard.StiIndicatorValueType;
     class StiIndicatorElement extends StiElement implements IStiTextFormat, IStiIndicatorElement, IStiCornerRadius, IStiSimpleShadow, IStiTitleElement, IStiFont, IStiForeColor, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider, IStiAllowSortByVariation, IStiShowBlanks {
         implements(): any[];
         clone(cloneProperties: boolean): any;
@@ -62304,6 +62830,7 @@ export namespace Stimulsoft.Dashboard.Components.Indicator {
         iconRanges: List<StiIndicatorIconRange>;
         indicatorConditions: List<StiIndicatorElementCondition>;
         crossFiltering: boolean;
+        valueType: StiIndicatorValueType;
         isSampleForStyles: boolean;
         getNestedPages(): List<StiPage>;
         constructor(rect?: Rectangle);
@@ -62445,6 +62972,10 @@ export namespace Stimulsoft.Dashboard.Components.ListBox {
         cornerRadius: StiCornerRadius;
         createNextMeter(cell: IStiAppDataCell): void;
         convertFrom(element: IStiElement): void;
+        selectedValue: any;
+        selectedKey: string;
+        selectedLabel: string;
+        selectedIndex: number;
         userFilters: List<StiDataFilterRule>;
         transformActions: List<StiDataActionRule>;
         transformFilters: List<StiDataFilterRule>;
@@ -62586,6 +63117,10 @@ export namespace Stimulsoft.Dashboard.Components.NumberBox {
         getMaxSize(): Size;
         setMaxSize(value: Size): void;
         helpUrl: string;
+        selectedValue: any;
+        selectedKey: string;
+        selectedLabel: string;
+        selectedIndex: number;
         decimalDigits: number;
         condition: StiNumberCondition;
         selectionMode: StiNumberSelectionMode;
@@ -62625,6 +63160,7 @@ export namespace Stimulsoft.Dashboard.Interactions {
     }
 }
 export namespace Stimulsoft.Dashboard.Components.OnlineMap {
+    import StiGeoMapProviderType = Stimulsoft.Report.Dashboard.StiGeoMapProviderType;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
     import IStiCornerRadius = Stimulsoft.Report.Components.IStiCornerRadius;
     import StiCornerRadius = Stimulsoft.Base.Drawing.StiCornerRadius;
@@ -62728,6 +63264,7 @@ export namespace Stimulsoft.Dashboard.Components.OnlineMap {
         iconColor: Color;
         customIcon: number[];
         crossFiltering: boolean;
+        provider: StiGeoMapProviderType;
         constructor(rect?: Rectangle);
     }
 }
@@ -63127,6 +63664,7 @@ export namespace Stimulsoft.Dashboard.Components.Progress {
     import IStiTextFormat = Stimulsoft.Report.Components.IStiTextFormat;
     import IStiGlobalizationProvider = Stimulsoft.Report.IStiGlobalizationProvider;
     import IStiProgressElementCondition = Stimulsoft.Report.Dashboard.IStiProgressElementCondition;
+    import StiProgressValueType = Stimulsoft.Report.Dashboard.StiProgressValueType;
     class StiProgressElement extends StiElement implements IStiTextFormat, IStiSimpleShadow, IStiCornerRadius, IStiProgressElement, IStiTitleElement, IStiFont, IStiForeColor, IStiElementLayout, IStiElementInteraction, IStiJsonReportObject, IStiGlobalizationProvider, IStiSeriesColors, IStiAllowSortByVariation, IStiShowBlanks {
         implements(): any[];
         clone(cloneProperties: boolean): any;
@@ -63196,6 +63734,7 @@ export namespace Stimulsoft.Dashboard.Components.Progress {
         series: StiSeriesProgressMeter;
         mode: StiProgressElementMode;
         progressConditions: List<StiProgressElementCondition>;
+        valueType: StiProgressValueType;
         isSampleForStyles: boolean;
         getNestedPages(): List<StiPage>;
         constructor(rect?: Rectangle);
@@ -63836,6 +64375,7 @@ export namespace Stimulsoft.Dashboard.Components.Text {
         helpUrl: string;
         sizeMode: StiTextSizeMode;
         measures: List<StiTextMeasureMeter>;
+        get isReportParserExpression(): boolean;
         getNestedPages(): List<StiPage>;
         getHtmlTextHelper(): IStiHtmlTextHelper;
         constructor(rect?: Rectangle);
@@ -63914,6 +64454,10 @@ export namespace Stimulsoft.Dashboard.Components.TreeView {
         showBlanks: boolean;
         selectionMode: StiItemSelectionMode;
         filterMode: StiItemFilterMode;
+        selectedValue: any;
+        selectedKey: string;
+        selectedLabel: string;
+        selectedIndex: number;
         getKeyMeter(cell: IStiAppDataCell): IStiMeter;
         getKeyMeterByIndex(index: number): IStiMeter;
         insertKeyMeter(index: number, meter: IStiMeter): void;
@@ -64005,6 +64549,10 @@ export namespace Stimulsoft.Dashboard.Components.TreeViewBox {
         showBlanks: boolean;
         selectionMode: StiItemSelectionMode;
         filterMode: StiItemFilterMode;
+        selectedValue: any;
+        selectedKey: string;
+        selectedLabel: string;
+        selectedIndex: number;
         getKeyMeter(cell: IStiAppDataCell): IStiMeter;
         getKeyMeterByIndex(index: number): IStiMeter;
         insertKeyMeter(index: number, meter: IStiMeter): void;
@@ -64159,6 +64707,14 @@ export namespace Stimulsoft.Dashboard.Helpers {
         static measure(g: Graphics, text: string, font: Font): Size;
         static measure2(g: Graphics, text: string, font: Font, width: number): Size;
         static measureFontSize(g: Graphics, text: string, rect: Rectangle, font: Font): number;
+    }
+}
+export namespace Stimulsoft.Dashboard.Helpers {
+    class StiBingMapHelper {
+        private static getContent;
+        static getScript(mapData: {
+            [key: string]: string;
+        }): string;
     }
 }
 export namespace Stimulsoft.Dashboard.Helpers {
@@ -64395,19 +64951,21 @@ export namespace Stimulsoft.Dashboard.Visuals.Indicator {
         private getConditionValue;
         private drawMultiMode;
         private drawMultiModePresent;
+        private calculateDeltaIconList;
         private drawMultiModeWithTarget;
         private getInteractionDataGeom;
         private getToolTip;
         private getHyperlink;
         private parseConstants;
         private getMaxValue;
-        getTargetValues(): List<number>;
+        getTargetValues(): number[];
         private drawTextIcon;
         private getFontGeom;
         measureFontSize(context: StiContext, rect: Rectangle, text: string, font: {
             ref: number;
         }): void;
         protected getElementSide(isVerticalOrientation: boolean, size: Size): number;
+        private getDisplayText;
         constructor(element: StiIndicatorElement, iterations: List<StiIndicatorIteration>);
     }
 }
@@ -64424,6 +64982,18 @@ export namespace Stimulsoft.Dashboard.Helpers {
         private getEmptyDataIterations;
         private getEmptyDataIndicatorElement;
         private static getDataTable;
+    }
+}
+export namespace Stimulsoft.Dashboard.Helpers {
+    import Size = Stimulsoft.System.Drawing.Size;
+    class StiOSMMapHelper {
+        private static getContent;
+        static getScript(mapData: {
+            [key: string]: string;
+        }): string;
+        static getImage(size: Size, map: {
+            mapImage: string;
+        }, userBingKey: string, pushPins?: string[]): Promise<string>;
     }
 }
 export namespace Stimulsoft.Dashboard.Helpers {
@@ -64951,6 +65521,7 @@ export namespace Stimulsoft.Dashboard.Visuals.Progress {
         protected minFontSize: number;
         iterations: List<StiProgressIteration>;
         element: StiProgressElement;
+        protected getDisplayText(iteration: StiProgressIteration, valuePercent: number): string;
         private getMaxValue;
         getTargetValues(): List<number>;
         getTextValues(): List<string>;
@@ -65989,6 +66560,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         private static distinct;
         private static isValueCanBeFiltered;
         private static getLevel;
+        private static setDefaultSelectionProps;
         static applyDefaultFiltersForFilterElements(report: StiReport): Promise<void>;
         static applyDefaultFiltersForFilterElements2(dashboard: StiPage): Promise<void>;
         private static applyDatePickerFiltersToVariable;
@@ -69555,6 +70127,7 @@ export namespace Stimulsoft.Designer {
     class StiToolbarOptions {
         private showLayoutButton;
         private showInsertButton;
+        private showReportButton;
         private showPageButton;
         visible: boolean;
         showPreviewButton: boolean;
@@ -69734,13 +70307,14 @@ export namespace Stimulsoft.Designer {
     }
 }
 export namespace Stimulsoft.Designer {
+    import StiPage = Stimulsoft.Report.Components.StiPage;
     import StiReport = Stimulsoft.Report.StiReport;
     class StiDesignReportHelper {
         private report;
         private currentCulture;
         getReportJsObject(): any;
         getPages(): any[];
-        getPage(pageIndex: number): any;
+        getPage(page: StiPage): any;
         private getComponents;
         private getComponent;
         private getReportInfo;
@@ -69937,6 +70511,12 @@ export namespace Stimulsoft.Designer {
         static actionCheck(designer: StiDesigner, report: StiReport, parameters: any, callbackResult: any): void;
         static checkExpression(report: StiReport, parameters: any, callbackResult: any): void;
         static parseExpressionText(report: StiReport, parameters: any, callbackResult: any): void;
+    }
+}
+export namespace Stimulsoft.Designer {
+    import StiReport = Stimulsoft.Report.StiReport;
+    class StiReportTreeHelper {
+        static moveReportTreeItem(report: StiReport, param: any, callbackResult: any): void;
     }
 }
 export namespace Stimulsoft.Designer {
