@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.3.2
-Build date: 2025.07.17
+Version: 2025.3.3
+Build date: 2025.07.28
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -2899,12 +2899,7 @@ export namespace Stimulsoft.System.Drawing {
         is(type: any): this is Color;
         is2(type: any): boolean;
         as(type: any): this;
-        getType(): typeof Color;
         over(other: Color): Color;
-    }
-    interface Color {
-        ss: Color;
-        stimulsoft: () => Color;
     }
 }
 export namespace Stimulsoft.System.Drawing {
@@ -28530,6 +28525,16 @@ export namespace Stimulsoft.Report.Components {
         constructor(rect?: RectangleD);
     }
 }
+export namespace Stimulsoft.Report.Components {
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
+    import RectangleD = Stimulsoft.System.Drawing.Rectangle;
+    class StiWebContent extends StiComponent {
+        meta(): StiMeta[];
+        embedCode: string;
+        url: string;
+        constructor(rect?: RectangleD);
+    }
+}
 export namespace Stimulsoft.Report.Components.Table {
     let IStiTableComponent: System.Interface<IStiTableComponent>;
     interface IStiTableComponent {
@@ -30209,6 +30214,10 @@ export namespace Stimulsoft.Report.Dashboard {
         addConstantLine(): any;
         removeConstantLine(index: number): any;
         moveConstantLine(fromIndex: number, toIndex: number): any;
+        fetchStrips(): List<IStiChartStrips>;
+        addStrip(): any;
+        removeStrip(index: number): any;
+        moveStrip(fromIndex: number, toIndex: number): any;
         addTrendLines(keyValueMeter: string, type: StiChartTrendLineType, lineColor: Color, lineStyle: StiPenStyle, lineWidth: number): any;
         fetchTrendLines(): List<IStiChartTrendLine>;
         clearTrendLines(): any;
@@ -30283,6 +30292,21 @@ export namespace Stimulsoft.Report.Dashboard {
     let ImplementsIStiChartLabels: any[];
     interface IStiChartLabels {
         position: StiChartLabelsPosition;
+    }
+}
+export namespace Stimulsoft.Report.Dashboard {
+    import Color = Stimulsoft.System.Drawing.Color;
+    import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
+    import StiStrips_StiOrientation = Stimulsoft.Report.Chart.StiStrips_StiOrientation;
+    let IStiChartStrips: System.Interface<IStiChartStrips>;
+    let ImplementsIStiChartStrips: any[];
+    interface IStiChartStrips {
+        text: string;
+        titleColor: Color;
+        stripBrush: StiBrush;
+        orientation: StiStrips_StiOrientation;
+        minValue: string;
+        maxValue: string;
     }
 }
 export namespace Stimulsoft.Report.Dashboard {
@@ -39154,7 +39178,8 @@ export namespace Stimulsoft.Report.Maps.Gis {
         lineSizes: any[];
         icon: StiFontIcons;
         iconColor: Color;
-        constructor(icon: StiFontIcons, iconColor: Color);
+        zoom: number;
+        constructor(icon: StiFontIcons, iconColor: Color, zoom: number);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
@@ -39163,6 +39188,7 @@ export namespace Stimulsoft.Report.Maps.Gis {
         private viewData;
         private points;
         private size;
+        private zoom;
         isComplete: boolean;
         constructor(data: StiGisMapData);
         runAndWait(): Promise<void>;
@@ -39181,7 +39207,7 @@ export namespace Stimulsoft.Report.Maps.Gis {
     class StiOnlineMapProvider {
         static getImage(size: Size, map: {
             mapImage: string;
-        }, userBingKey: string, pushPins?: Point[]): Promise<string>;
+        }, userBingKey: string, pushPins: Point[], onePointZoom: number): Promise<string>;
     }
 }
 export namespace Stimulsoft.Report.Painters {
@@ -39293,7 +39319,6 @@ export namespace Stimulsoft.Report.Maps {
     }
 }
 export namespace Stimulsoft.Report.Maps {
-    import Point = Stimulsoft.System.Drawing.Point;
     import Font = Stimulsoft.System.Drawing.Font;
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
@@ -39333,7 +39358,8 @@ export namespace Stimulsoft.Report.Maps {
         set businessObjectGuid(value: string);
         countData: number;
         userBingKey: string;
-        pushPins: Point[];
+        pushPins: string;
+        onePointZoom: number;
         first(): void;
         prior(): void;
         next(): void;
@@ -39635,6 +39661,7 @@ export namespace Stimulsoft.Report.Export {
         private static writeText;
         static getStyleString(font: Font, textColor: Color): string;
         private static writeImage;
+        static writeWebContent(writer: XmlTextWriter, svgData: StiSvgData): void;
         static writeBarCode(writer: XmlTextWriter, svgData: StiSvgData): void;
         static writeShape(writer: XmlTextWriter, svgData: StiSvgData, xmlIndentation: number, useClip: boolean, guids: Hashtable): void;
         static writeFillBrush(writer: XmlTextWriter, brush: Color | StiBrush, rect: RectangleD): string;
@@ -41292,6 +41319,8 @@ export namespace Stimulsoft.Report {
         static format(value: number, reportCulture?: string): string;
         static format2(value: number, outPostfix: any, reportCulture?: string): number;
         static format3(value: number, outPostfix: any, decimalDigits: any, totalNumberCapacity: number, reportCulture?: string): number;
+        static simpleAbbreviateNumber(number: number): string;
+        static getPostfixes(reportCulture?: string): string[];
     }
 }
 export namespace Stimulsoft.Report.Helpers {
@@ -46131,6 +46160,8 @@ export namespace Stimulsoft.Report.Chart {
         getDividerTopX(): number;
         getDividerY(): number;
         getDividerRightY(): number;
+        private getRightActualMin;
+        private getRightActualMax;
         valuesCount: number;
         get scrollDistanceX(): number;
         get scrollDistanceY(): number;
@@ -46146,6 +46177,8 @@ export namespace Stimulsoft.Report.Chart {
         blockScrollValueY: boolean;
         scrollValueX: number;
         scrollValueY: number;
+        rightActualMin: number;
+        rightActualMax: number;
         private _scrollDpiX;
         get scrollDpiX(): number;
         private _scrollDpiY;
@@ -61908,6 +61941,7 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
     import IStiGlobalizationProvider = Stimulsoft.Report.IStiGlobalizationProvider;
     import IStiDrillDownElement = Stimulsoft.Data.Engine.IStiDrillDownElement;
     import IStiChartConstantLines = Stimulsoft.Report.Dashboard.IStiChartConstantLines;
+    import IStiChartStrips = Stimulsoft.Report.Dashboard.IStiChartStrips;
     import IStiChartElementCondition = Stimulsoft.Report.Dashboard.IStiChartElementCondition;
     import StiPenStyle = Stimulsoft.Base.Drawing.StiPenStyle;
     import StiFontIcons = Stimulsoft.Report.Helpers.StiFontIcons;
@@ -62033,6 +62067,10 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
         addConstantLine(): void;
         removeConstantLine(index: number): void;
         moveConstantLine(fromIndex: number, toIndex: number): void;
+        fetchStrips(): List<IStiChartStrips>;
+        addStrip(): void;
+        removeStrip(index: number): void;
+        moveStrip(fromIndex: number, toIndex: number): void;
         addTrendLines(keyValueMeter: string, type: StiChartTrendLineType, lineColor: Color, lineStyle: StiPenStyle, lineWidth: number): void;
         fetchTrendLines(): List<IStiChartTrendLine>;
         clearTrendLines(): void;
@@ -62117,6 +62155,7 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
         private static getValueFormatDefault;
         trendLines: List<StiChartTrendLine>;
         constantLines: List<StiChartConstantLines>;
+        strips: List<StiChartStrips>;
         options3D: Sti3dOptions;
         chartConditions: List<StiChartElementCondition>;
         marker: StiChartMarker;
@@ -62281,6 +62320,36 @@ export namespace Stimulsoft.Dashboard.Components.Chart {
         width: number;
         element: StiChartElement;
         constructor(axisPosition?: StiChartLabelsPosition, piePosition?: StiChartLabelsPosition, doughnutPosition?: StiChartLabelsPosition, funnelPosition?: StiChartLabelsPosition, treemapPosition?: StiChartLabelsPosition, heatmapPosition?: StiChartLabelsPosition, radarPosition?: StiChartLabelsPosition, clusteredColumn3dPosition?: StiChartLabelsPosition, style?: StiChartLabelsStyle, font?: Font, foreColor?: Color, textBefore?: string, textAfter?: string, autoRotate?: boolean, width?: number, wordWrap?: boolean);
+    }
+}
+export namespace Stimulsoft.Dashboard.Components.Chart {
+    import StiMeta = Stimulsoft.Base.Meta.StiMeta;
+    import StiJsonSaveMode = Stimulsoft.Base.StiJsonSaveMode;
+    import StiJson = Stimulsoft.Base.StiJson;
+    import Color = Stimulsoft.System.Drawing.Color;
+    import StiBrush = Stimulsoft.Base.Drawing.StiBrush;
+    import ICloneable = Stimulsoft.System.ICloneable;
+    import XmlNode = Stimulsoft.System.Xml.XmlNode;
+    import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
+    import IStiChartStrips = Stimulsoft.Report.Dashboard.IStiChartStrips;
+    import StiStrips_StiOrientation = Stimulsoft.Report.Chart.StiStrips_StiOrientation;
+    class StiChartStrips implements ICloneable, IStiChartStrips, IStiJsonReportObject {
+        implements(): any[];
+        protected _hash: StiMeta[];
+        meta(): StiMeta[];
+        saveToJsonObject(mode: StiJsonSaveMode): StiJson;
+        loadFromJsonObject(j: StiJson): void;
+        loadFromXml(xn: XmlNode): void;
+        clone(): StiChartStrips;
+        text: string;
+        titleColor: Color;
+        stripBrush: StiBrush;
+        orientation: StiStrips_StiOrientation;
+        minValue: string;
+        maxValue: string;
+        static createFromJson(json: StiJson): StiChartStrips;
+        static createFromXml(xmlNode: XmlNode): StiChartStrips;
+        constructor(text?: string, minValue?: string, maxValue?: string, titleColor?: Color, stripBrush?: StiBrush, orientation?: StiStrips_StiOrientation);
     }
 }
 export namespace Stimulsoft.Dashboard.Components.Chart {
@@ -65746,6 +65815,7 @@ export namespace Stimulsoft.Dashboard.Render {
         private static renderSeriesConditions;
         private static getConditionResult;
         private static renderConstantLines;
+        private static renderStrips;
         protected static renderTrendLines(series: IStiSeries, element: StiChartElement, valueMeter: StiMeter): void;
         private static getTrendLine;
         private renderSeriesLabels;
@@ -67614,6 +67684,7 @@ export namespace Stimulsoft.Viewer {
         backgroundColor: Color;
         pageBorderColor: Color;
         allowSelectionCurrentPage: boolean;
+        allowLoadingFilterItemsOnScroll: boolean;
         rightToLeft: boolean;
         fullScreenMode: boolean;
         scrollbarsMode: boolean;
@@ -69927,6 +69998,11 @@ export namespace Stimulsoft.Designer.Dashboards {
         private addConstantLine;
         private removeConstantLine;
         private moveConstantLine;
+        static getStrips(chartElement: IStiChartElement): any[];
+        private static getStripsProperties;
+        private addStrip;
+        private removeStrip;
+        private moveStrip;
         constructor(chartElement: IStiChartElement);
     }
 }
