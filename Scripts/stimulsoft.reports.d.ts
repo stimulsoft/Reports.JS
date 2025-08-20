@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.3.3
-Build date: 2025.07.28
+Version: 2025.3.4
+Build date: 2025.08.20
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -647,7 +647,7 @@ export namespace Stimulsoft.ExternalLibrary.Fontkit {
             };
         };
     };
-    function create(buffer: number[] | ArrayBuffer): FontKitType;
+    function create(buffer: number[] | ArrayBuffer | Uint8Array): FontKitType;
 }
 export namespace Stimulsoft.System {
     class Guid {
@@ -3026,7 +3026,7 @@ export namespace Stimulsoft.System.Drawing {
         static addCustomFont(font: FontKitType, fontName?: string, binFont?: any, filePath?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontFile(filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontFileAsync(callback: () => void, filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
-        static addCustomFontBytes(data: ArrayBuffer, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
+        static addCustomFontBytes(data: ArrayBuffer | Uint8Array, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static getFontMimeType(data: any): string;
         static getCustomFontsCss(embeddedData?: boolean): string;
         static getCustomFontName(fontName: string, fontStyle: FontStyle): string;
@@ -16776,6 +16776,21 @@ export namespace Stimulsoft.Report.Dictionary {
         set key(value: Stimulsoft.System.DateTime);
         constructor();
     }
+    class StiDateTimeOffsetDialogInfoItem extends StiDialogInfoItem {
+        get key(): Stimulsoft.System.DateTimeOffset;
+        set key(value: Stimulsoft.System.DateTimeOffset);
+        constructor();
+    }
+    class StiDateOnlyDialogInfoItem extends StiDialogInfoItem {
+        get key(): Stimulsoft.System.DateOnly;
+        set key(value: Stimulsoft.System.DateOnly);
+        constructor();
+    }
+    class StiTimeOnlyDialogInfoItem extends StiDialogInfoItem {
+        get key(): Stimulsoft.System.TimeOnly;
+        set key(value: Stimulsoft.System.TimeOnly);
+        constructor();
+    }
     class StiTimeSpanDialogInfoItem extends StiDialogInfoItem {
         get key(): Stimulsoft.System.TimeSpan;
         set key(value: Stimulsoft.System.TimeSpan);
@@ -29498,11 +29513,11 @@ export namespace Stimulsoft.Report.Dashboard {
     }
     enum StiGeoMapProviderType {
         OpenStreetMap = 0,
-        Bing = 1,
-        OpenCycleMap = 2,
-        OpenCycleMapLandscape = 3,
-        OpenCycleMapTransport = 4,
-        Wikimapia = 5,
+        OpenCycleMap = 1,
+        OpenCycleMapLandscape = 2,
+        OpenCycleMapTransport = 3,
+        Wikimapia = 4,
+        Bing = 5,
         BingSatellite = 6,
         BingHybrid = 7,
         BingOS = 8,
@@ -36833,10 +36848,6 @@ export namespace Stimulsoft.Report.Dictionary {
         Totals = 6,
         Custom = 7
     }
-    enum StiFunctionScriptMode {
-        Blocks = 0,
-        Code = 1
-    }
     enum StiUserFunctionArgumentType {
         String = 0,
         Float = 1,
@@ -36874,11 +36885,11 @@ export namespace Stimulsoft.Report.Dictionary {
         customCategory: string;
         arguments: StiUserFunctionArgumentsCollection;
         returnType: StiUserFunctionArgumentType;
-        scriptMode: StiFunctionScriptMode;
         scriptCSharp: string;
         scriptVB: string;
         scriptJS: string;
         scriptBlockly: string;
+        set script(value: string);
         getFullScript(language: StiReportLanguageType): string;
         constructor(name?: string, category?: StiFunctionCategory, returnType?: StiUserFunctionArgumentType);
     }
@@ -39190,7 +39201,6 @@ export namespace Stimulsoft.Report.Maps.Gis {
         private size;
         private zoom;
         isComplete: boolean;
-        constructor(data: StiGisMapData);
         runAndWait(): Promise<void>;
         private initGeoCommands;
         private getRectOfAllGeoms;
@@ -39199,6 +39209,7 @@ export namespace Stimulsoft.Report.Maps.Gis {
         loadImages(): Promise<void>;
         loadImage(pos: StiGisPoint, zoom: number): Promise<void>;
         drawMap(): string;
+        constructor(data: StiGisMapData);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
@@ -41844,37 +41855,10 @@ export namespace Stimulsoft.Report.Gauge {
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
-    enum StiGeoMapProviderType {
-        OpenStreetMap = 0,
-        OpenCycleMap = 1,
-        OpenCycleMapLandscape = 2,
-        OpenCycleMapTransport = 3,
-        Wikimapia = 4,
-        Bing = 5,
-        BingSatellite = 6,
-        BingHybrid = 7,
-        BingOS = 8,
-        Google = 9,
-        GoogleSatellite = 10,
-        GoogleTerrain = 11,
-        GoogleChina = 12,
-        GoogleChinaSatellite = 13,
-        GoogleChinaTerrain = 14,
-        YandexMap = 15,
-        YandexSatelliteMap = 16,
-        Czech = 17,
-        CzechSatellite = 18,
-        CzechTurist = 19,
-        CzechTuristWinter = 20,
-        CzechGeographic = 21,
-        ArcGISStreetMapWorld2D = 22
-    }
-}
-export namespace Stimulsoft.Report.Maps.Gis {
     import Color = Stimulsoft.System.Drawing.Color;
     import StiFontIcons = Stimulsoft.Report.Helpers.StiFontIcons;
     class StiGisCore {
-        LevelsKeepInMemmory: number;
+        levelsKeepInMemmory: number;
         allowLocalCache: boolean;
         position: StiGisPointLatLng;
         positionPixel: StiGisPoint;
@@ -41946,10 +41930,10 @@ export namespace Stimulsoft.Report.Maps.Gis {
     class StiGisMapImage {
         data: Uint8Array;
         image: any;
-        constructor(data: Uint8Array);
         static fromBlob(blob: Blob): Promise<StiGisMapImage>;
         private static base64ArrayBuffer;
         close(): void;
+        constructor(data: Uint8Array);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
@@ -41957,25 +41941,23 @@ export namespace Stimulsoft.Report.Maps.Gis {
         private core;
         geoms: StiGisPointMapGeometry[];
         placemarks: StiGisPointMapGeometry[];
-        constructor(core: StiGisCore);
         clear(): void;
         forceUpdate(): void;
         draw(): string;
         getAllPoints(): StiGisPointLatLng[];
         close(): void;
+        constructor(core: StiGisCore);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     class StiGisPoint {
         private _x;
-        private _y;
-        set x(value: number);
         get x(): number;
-        set y(value: number);
+        set x(value: number);
+        private _y;
         get y(): number;
+        set y(value: number);
         clone(): StiGisPoint;
-        constructor(x?: number, y?: number);
-        static get empty(): StiGisPoint;
         isEmpty(): boolean;
         equals(obj: any): boolean;
         hashCode(): number;
@@ -41983,27 +41965,25 @@ export namespace Stimulsoft.Report.Maps.Gis {
         offset2(p: StiGisPoint): void;
         offsetNegative(p: StiGisPoint): void;
         toString(): string;
+        static get empty(): StiGisPoint;
+        constructor(x?: number, y?: number);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     class StiGisPointLatLng {
-        constructor(lat?: number, lng?: number);
-        static empty(): StiGisPointLatLng;
         lat: number;
         lng: number;
         equals(obj: any): boolean;
         toString(): string;
         clone(): StiGisPointLatLng;
         offset(lat: number, lng: number): void;
+        static empty(): StiGisPointLatLng;
+        constructor(lat?: number, lng?: number);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     import Point = Stimulsoft.System.Drawing.Point;
     class StiGisPointMapGeometry {
-        constructor(point: StiGisPointLatLng | {
-            lat: number;
-            lng: number;
-        });
         private point;
         private localPoint;
         private iconArea;
@@ -42014,33 +41994,37 @@ export namespace Stimulsoft.Report.Maps.Gis {
         draw(core: StiGisCore): string;
         updateLocalPosition(core: StiGisCore): void;
         getAllPoints(points: any): void;
+        constructor(point: StiGisPointLatLng | {
+            lat: number;
+            lng: number;
+        });
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     abstract class StiGisProjection {
         tileSize: number;
-        protected constructor();
-        protected static readonly HALF_PI: number;
-        protected static readonly TWO_PI: number;
-        protected static readonly EPSLoN: number;
-        protected static readonly MAX_VAL: number;
-        protected static readonly MAXLONG: number;
-        protected static readonly DBLLONG: number;
-        protected static readonly R2D: number;
-        protected static readonly D2R: number;
-        private readonly fromLatLngToPixelCache;
-        private readonly fromPixelToLatLngCache;
-        protected getTileValue(): number;
-        abstract fromLatLngToPixel(lat: number, lng: number, zoom: number): StiGisPoint;
-        abstract fromPixelToLatLng(x: number, y: number, zoom: number): StiGisPointLatLng;
+        static HALF_PI: number;
+        static TWO_PI: number;
+        static EPSLoN: number;
+        static MAX_VAL: number;
+        static MAXLONG: number;
+        static DBLLONG: number;
+        static R2D: number;
+        static D2R: number;
+        private fromLatLngToPixelCache;
+        private fromPixelToLatLngCache;
+        getTileValue(): number;
+        fromLatLngToPixel(lat: number, lng: number, zoom: number): StiGisPoint;
+        fromPixelToLatLng(x: number, y: number, zoom: number): StiGisPointLatLng;
         fromLatLngToPixel2(p: StiGisPointLatLng, zoom: number): StiGisPoint;
         fromPixelToLatLng2(p: StiGisPoint, zoom: number): StiGisPointLatLng;
         fromPixelToTileXY(p: StiGisPoint): StiGisPoint;
         getTileMatrixSizeXY(zoom: number): StiGisSize;
         getTileMatrixSizePixel(zoom: number): StiGisSize;
-        abstract getTileMatrixMinXY(zoom: number): StiGisSize;
-        abstract getTileMatrixMaxXY(zoom: number): StiGisSize;
-        protected static clip(n: number, minValue: number, maxValue: number): number;
+        getTileMatrixMinXY(zoom: number): StiGisSize;
+        getTileMatrixMaxXY(zoom: number): StiGisSize;
+        static clip(n: number, minValue: number, maxValue: number): number;
+        constructor();
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
@@ -42049,8 +42033,6 @@ export namespace Stimulsoft.Report.Maps.Gis {
         y: number;
         width: number;
         height: number;
-        constructor(x?: number, y?: number, width?: number, height?: number, location?: StiGisPoint, size?: StiGisSize);
-        static get empty(): StiGisRect;
         getLocation(): StiGisPoint;
         setLocation(value: StiGisPoint): void;
         getRightBottom(): StiGisPoint;
@@ -42073,6 +42055,8 @@ export namespace Stimulsoft.Report.Maps.Gis {
         inflate(width: number, height: number): void;
         offsetNegative(pos: StiGisPoint): void;
         offset(x: number, y: number): void;
+        static get empty(): StiGisRect;
+        constructor(x?: number, y?: number, width?: number, height?: number, location?: StiGisPoint, size?: StiGisSize);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
@@ -42081,8 +42065,6 @@ export namespace Stimulsoft.Report.Maps.Gis {
         lat: number;
         widthLng: number;
         heightLat: number;
-        constructor(lat?: number, lng?: number, widthLng?: number, heightLat?: number, location?: StiGisPointLatLng, size?: StiGisSizeLatLng);
-        static get empty(): StiGisRectLatLng;
         get locationTopLeft(): StiGisPointLatLng;
         set locationTopLeft(value: StiGisPointLatLng);
         get locationRightBottom(): StiGisPointLatLng;
@@ -42097,32 +42079,34 @@ export namespace Stimulsoft.Report.Maps.Gis {
         static opNotEquals(left: StiGisRectLatLng, right: StiGisRectLatLng): boolean;
         contains(lat: number, lng: number): boolean;
         contains2(pt: StiGisPointLatLng): boolean;
+        static get empty(): StiGisRectLatLng;
+        constructor(lat?: number, lng?: number, widthLng?: number, heightLat?: number, location?: StiGisPointLatLng, size?: StiGisSizeLatLng);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     class StiGisSize {
         width: number;
         height: number;
-        constructor(width?: number, height?: number);
-        static get empty(): StiGisSize;
         isEmpty(): boolean;
         equals(obj: StiGisSize): boolean;
         clone(): StiGisSize;
         toString(): string;
+        static get empty(): StiGisSize;
+        constructor(width?: number, height?: number);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     class StiGisSizeLatLng {
         widthLng: number;
         heightLat: number;
-        constructor(heightLat?: number, widthLng?: number);
-        static readonly empty: StiGisSizeLatLng;
         isEmpty(): boolean;
         static opEquals(sz1: StiGisSizeLatLng, sz2: StiGisSizeLatLng): boolean;
         static opNotEquals(sz1: StiGisSizeLatLng, sz2: StiGisSizeLatLng): boolean;
         static toStiGisPointLatLng(size: StiGisSizeLatLng): StiGisPointLatLng;
         equals(obj: any): boolean;
         toString(): string;
+        static get empty(): StiGisSizeLatLng;
+        constructor(heightLat?: number, widthLng?: number);
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
@@ -42131,19 +42115,18 @@ export namespace Stimulsoft.Report.Maps.Gis {
         image: StiGisMapImage;
         zoom: number;
         pos: StiGisPoint;
-        constructor(zoom?: number, pos?: StiGisPoint);
-        static empty(): StiGisTile;
         equals(obj: any): boolean;
         dispose(): void;
         static opEquals(m1: StiGisTile, m2: StiGisTile): boolean;
         static opNotEquals(m1: StiGisTile, m2: StiGisTile): boolean;
         clone(): StiGisTile;
+        constructor(zoom?: number, pos?: StiGisPoint);
+        static empty(): StiGisTile;
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     class StiGisTileMatrix {
         private layers;
-        constructor();
         protected finalize(): void;
         clearAllLevels(): void;
         clearLevelsBelove(zoom: number): void;
@@ -42153,15 +42136,16 @@ export namespace Stimulsoft.Report.Maps.Gis {
         set(t: StiGisTile): void;
         dispose(disposing: boolean): void;
         close(): void;
+        constructor();
     }
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     class StiMercatorGisProjection extends StiGisProjection {
         static instance(): StiMercatorGisProjection;
-        private static readonly MinLatitude;
-        private static readonly MaxLatitude;
-        private static readonly MinLongitude;
-        private static readonly MaxLongitude;
+        private static MinLatitude;
+        private static MaxLatitude;
+        private static MinLongitude;
+        private static MaxLongitude;
         getBounds(): StiGisRectLatLng;
         getAxis(): number;
         getFlattening(): number;
@@ -42174,8 +42158,8 @@ export namespace Stimulsoft.Report.Maps.Gis {
 }
 export namespace Stimulsoft.Report.Maps.Gis {
     class StiOpenStreetMapProvider {
-        private static readonly urlFormatEn;
-        static readonly ServerLetters = "abc";
+        private static urlFormatEn;
+        static ServerLetters: string;
         languageStr: string;
         area: StiGisRectLatLng | null;
         static timeoutMs: number;
@@ -42185,11 +42169,11 @@ export namespace Stimulsoft.Report.Maps.Gis {
         getMaxZoom(): number;
         getMinZoom(): number;
         getTileImageUsingHttp(urlStr: string): Promise<StiGisMapImage>;
-        protected static getServerNum(pos: StiGisPoint, max: number): number;
-        constructor();
+        static getServerNum(pos: StiGisPoint, max: number): number;
         getProjection(): StiMercatorGisProjection;
         getTileImage(pos: StiGisPoint, zoom: number): Promise<StiGisMapImage>;
         private makeTileImageUrl;
+        constructor();
     }
 }
 export namespace Stimulsoft.Report.Maps {
@@ -62852,6 +62836,7 @@ export namespace Stimulsoft.Dashboard.Interactions {
     import IStiJsonReportObject = Stimulsoft.Base.JsonReportObject.IStiJsonReportObject;
     import StiInteractionIdent = Stimulsoft.Report.Dashboard.StiInteractionIdent;
     import StiAvailableInteractionOnClick = Stimulsoft.Report.Dashboard.StiAvailableInteractionOnClick;
+    import StiInteractionOnClick = Stimulsoft.Report.Dashboard.StiInteractionOnClick;
     class StiGaugeDashboardInteraction extends StiDashboardInteraction implements IStiAllowUserSortingDashboardInteraction, IStiJsonReportObject, IStiInteractionLayout {
         implements(): any[];
         meta(): StiMeta[];
@@ -62861,6 +62846,7 @@ export namespace Stimulsoft.Dashboard.Interactions {
         availableOnDataManipulation: StiAvailableInteractionOnDataManipulation;
         allowUserSorting: boolean;
         allowUserDrillDown: boolean;
+        onClick: StiInteractionOnClick;
         showFullScreenButton: boolean;
         showSaveButton: boolean;
         showViewDataButton: boolean;
@@ -64449,6 +64435,7 @@ export namespace Stimulsoft.Dashboard.Interactions {
         ident: StiInteractionIdent;
         availableOnClick: StiAvailableInteractionOnClick;
         onClick: StiInteractionOnClick;
+        isDefault(): boolean;
         constructor(onHover?: StiInteractionOnHover, onClick?: StiInteractionOnClick, hyperlinkDestination?: StiInteractionOpenHyperlinkDestination, toolTip?: string, hyperlink?: string, drillDownPageKey?: string, drillDownParameters?: List<StiDashboardDrillDownParameter>);
     }
 }
@@ -67534,6 +67521,8 @@ export namespace Stimulsoft.Viewer {
         private static itemValueToString;
         private static isBindingVariable;
         private static containsBindingVariableValue;
+        private static isUsedDateTimeType;
+        private static isDateTime;
         private static getDateTimeObject;
         private static getTimeSpanStringValue;
         private static getBasicType;
@@ -67709,11 +67698,13 @@ export namespace Stimulsoft.Viewer {
         datePickerFirstDayOfWeek: StiFirstDayOfWeek;
         datePickerIncludeCurrentDayForRanges: boolean;
         allowTouchZoom: boolean;
+        allowScrollZoom: boolean;
         allowMobileMode: boolean;
         combineReportPages: boolean;
         htmlRenderMode: StiHtmlExportMode;
         theme: StiViewerTheme;
         iconSet: StiWebUIIconSet;
+        allowPropagationEvents: boolean;
     }
 }
 export namespace Stimulsoft.Viewer {
@@ -70538,6 +70529,7 @@ export namespace Stimulsoft.Designer {
         theme: StiDesignerTheme;
         iconSet: StiWebUIIconSet;
         addCustomAttribute: boolean;
+        allowPropagationEvents: boolean;
     }
 }
 export namespace Stimulsoft.Designer {
