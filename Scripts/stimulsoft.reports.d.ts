@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.3.4
-Build date: 2025.08.20
+Version: 2025.3.5
+Build date: 2025.09.04
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -14897,6 +14897,7 @@ export namespace Stimulsoft.Report.Dictionary {
         toString(): string;
         static getDataColumnFromColumnName(dictionary: StiDictionary, column: string, allowRelationName?: boolean): StiDataColumn;
         static getRelationName(dictionary: StiDictionary, dataSource: StiDataSource, relationName: string): string;
+        static getRelation(dictionary: StiDictionary, dataSource: StiDataSource, relationName: string): StiDataRelation;
         static getDataFromBusinessObject(dictionary: StiDictionary, column: string): any;
         static getBusinessObjectFromDataColumn(dictionary: StiDictionary, column: string): StiBusinessObject;
         static getDataFromDataColumn(dictionary: StiDictionary, column: string, useRelationName?: boolean): any;
@@ -19327,6 +19328,8 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         static check_operatorsList(): void;
         private static _keywordsList;
         static get keywordsList(): Hashtable;
+        private _variablesList;
+        get variablesList(): Hashtable;
         private lockUserFunctionsList;
         private _userFunctionsList;
         get userFunctionsList(): Hashtable;
@@ -21200,6 +21203,7 @@ export namespace Stimulsoft {
                 watermarkOnlyBehind: boolean;
                 imageFormat: Stimulsoft.Report.ImageFormat;
                 compatibilityModeValue: number;
+                specifyGrammarAndSpellCheckingAsClean: boolean;
             };
             OpenDocumentWriter: {
                 removeEmptySpaceAtBottom: boolean;
@@ -39239,7 +39243,7 @@ export namespace Stimulsoft.Report.Maps {
         private static globalMap;
         private static maps3D;
         static cache: {};
-        static addToCahe(map: StiMap, x: number, y: number, width: number, height: number): string;
+        static addToCahe(map: StiMap, x: number, y: number, width: number, height: number, wrappedSvg: string): string;
         static renderOnlineMap(str: string): Promise<string>;
         static isWorld(id: StiMapID): boolean;
         static isAfrica(id: StiMapID): boolean;
@@ -39330,6 +39334,7 @@ export namespace Stimulsoft.Report.Maps {
     }
 }
 export namespace Stimulsoft.Report.Maps {
+    import IStiExportImage = Stimulsoft.Report.Components.IStiExportImage;
     import Font = Stimulsoft.System.Drawing.Font;
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import StiMeta = Stimulsoft.Base.Meta.StiMeta;
@@ -39351,7 +39356,7 @@ export namespace Stimulsoft.Report.Maps {
     import IStiBusinessObject = Stimulsoft.Report.Components.IStiBusinessObject;
     import Image = Stimulsoft.System.Drawing.Image;
     import StiMapLabels = Stimulsoft.Report.Maps.StiMapLabels;
-    class StiMap extends StiComponent implements IStiExportImageExtended, IStiBorder, IStiBrush, IStiDataSource, IStiBusinessObject, IStiJsonReportObject {
+    class StiMap extends StiComponent implements IStiExportImageExtended, IStiBorder, IStiBrush, IStiDataSource, IStiBusinessObject, IStiExportImage, IStiJsonReportObject {
         implements(): any[];
         meta(): StiMeta[];
         clone(cloneProperties?: boolean): StiMap;
@@ -39465,8 +39470,8 @@ export namespace Stimulsoft.Report.Export {
     import XmlTextWriter = Stimulsoft.System.Xml.XmlTextWriter;
     import Image = Stimulsoft.System.Drawing.Image;
     class StiMapSvgHelper {
-        static getImage(svgData: StiSvgData, scale?: number): Image;
-        static drawMap(xmlsWriter: XmlTextWriter, map: StiMap, x: number, y: number, width: number, height: number, animated: boolean, dontConnectToData: boolean): void;
+        static getImage(svgData: StiSvgData, scale?: number, guid?: string): Image;
+        static drawMap(xmlsWriter: XmlTextWriter, map: StiMap, x: number, y: number, width: number, height: number, animated: boolean, dontConnectToData: boolean, wrapSize?: boolean): void;
         static render(map: StiMap, xmlsWriter: XmlTextWriter, animated: boolean, sScale: number, dontConnectToData: boolean): void;
         private static getValues;
         private static getKeysFromMapKeys;
@@ -69791,8 +69796,8 @@ export namespace Stimulsoft.Designer {
         static moveDictionaryItem(report: StiReport, param: any, callbackResult: any): void;
         static moveUserFunctionItem(report: StiReport, param: any, callbackResult: any): void;
         static moveConnectionDataToResource(report: StiReport, param: any, callbackResult: any): void;
-        static openDictionary(report: StiReport, param: any, callbackResult: any): void;
-        static mergeDictionary(report: StiReport, param: any, callbackResult: any): void;
+        static openDictionary(report: StiReport, param: any, callbackResult: any): Promise<void>;
+        static mergeDictionary(report: StiReport, param: any, callbackResult: any): Promise<void>;
         static embedAllDataToResources(report: StiReport, param: any, callbackResult: Hashtable): Promise<void>;
         static testODataConnection(report: StiReport, param: any, callbackResult: any): void;
         static duplicateDictionaryElement(report: StiReport, param: any, callbackResult: any): void;
