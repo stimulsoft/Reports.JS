@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.4.1
-Build date: 2025.10.06
+Version: 2025.4.2
+Build date: 2025.10.27
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -3132,6 +3132,7 @@ export namespace Stimulsoft.System.Drawing {
         static addCustomFontFile(filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontFileAsync(callback: () => void, filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontBytes(data: ArrayBuffer | Uint8Array, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
+        private static checkForTTC;
         static getFontMimeType(data: any): string;
         static getCustomFontsCss(embeddedData?: boolean): string;
         static getCustomFontName(fontName: string, fontStyle: FontStyle): string;
@@ -14502,7 +14503,8 @@ export namespace Stimulsoft.Report.Components {
         BeginningWith = 10,
         EndingWith = 11,
         IsNull = 12,
-        IsNotNull = 13
+        IsNotNull = 13,
+        EqualToVariableOrVariableIsNull = 14
     }
     enum StiFilterItem {
         Argument = 0,
@@ -67599,7 +67601,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         static format(element: IStiControlElement, value: any): string;
         static getConstants(value: string, cells: any): Hashtable;
         static parseDashboardDrillDownParameters(drillDownParameters: any[], report: StiReport): Promise<void>;
-        private static imageToBase64;
+        static imageToBase64(image: number[]): string;
         private static getTopN;
         private static getWebContentElementURL;
         static getClickEvent(element: any): string;
@@ -67642,6 +67644,7 @@ export namespace Stimulsoft.Viewer {
         private static getElementsPositions;
         private static correctElementLocations;
         static getDashboardPageAsync(report: StiReport, pageIndex: number, requestParams: any): StiPromise<KeyObjectType>;
+        private static getPageIcon;
         static getElementAttributesAsync(page: StiPage, element: IStiElement, renderSingleElement: boolean, requestParams: any, elementOldHeights: any, bands?: List<StiRangeBand>, totalFixedHeight?: number): Promise<KeyObjectType>;
         static getSingleElementContent(report: StiReport, requestParams: any): Promise<KeyObjectType>;
         static calculatePositionForEachBand(requestParams: any, elements: List<IStiElement>, page: StiPage, bands: {
