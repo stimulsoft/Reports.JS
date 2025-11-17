@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2025.4.2
-Build date: 2025.10.27
+Version: 2025.4.3
+Build date: 2025.11.14
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -3125,13 +3125,14 @@ export namespace Stimulsoft.System.Drawing {
         drawLine(pen: Pen, x1: number, y1: number, x2: number, y2: number): void;
         drawString(text: string, font: Font, brush: Brush, x: number, y: number): void;
         translateTransform(dx: number, dy: number): void;
+        static customFontAliases: Hashtable<string, string>;
         static customFonts: Hashtable<string, Hashtable<FontStyle, CustomFontType>>;
         static getCustomFont(fontName: string, fontStyle: FontStyle): any;
         static clearAutoLoadFonts(): void;
         static addCustomFont(font: FontKitType, fontName?: string, binFont?: any, filePath?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontFile(filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addCustomFontFileAsync(callback: () => void, filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
-        static addCustomFontBytes(data: ArrayBuffer | Uint8Array, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
+        static addCustomFontBytes(data: ArrayBuffer | Uint8Array, fontName?: string, fontStyle?: FontStyle, store?: boolean): string;
         private static checkForTTC;
         static getFontMimeType(data: any): string;
         static getCustomFontsCss(embeddedData?: boolean): string;
@@ -4604,7 +4605,7 @@ export namespace Stimulsoft.Base {
         static addFontFile(filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addOpentypeFontFileAsync(callback: () => void, filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
         static addFontFileAsync(callback: () => void, filePath: string, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
-        static addFontBytes(data: any, fontName?: string, fontStyle?: FontStyle, store?: boolean): void;
+        static addFontBytes(data: any, fontName?: string, fontStyle?: FontStyle, store?: boolean): string;
         static setOpentypeFontsFolder(folderPatch: string): void;
         static setFontsFolder(folderPatch: string): void;
         static registerFontConfigFile(filePath: string): void;
@@ -5058,7 +5059,8 @@ export namespace Stimulsoft.Base {
         SharePointCloudStorage = 31,
         DataWorldDataSource = 32,
         QuickBooksDataSource = 33,
-        Unspecified = 34
+        GraphQLDataSource = 34,
+        Unspecified = 35
     }
     enum StiConnectionOrder {
         MsSqlDataSource = 10,
@@ -6021,6 +6023,7 @@ export namespace Stimulsoft.Base {
 }
 export namespace Stimulsoft.Base {
     class StiTableQuery {
+        private isValidSqlIdentifier;
         private correctName;
         getName(schema: string, table: string): string;
         getSelectQuery(table: string): string;
@@ -6277,9 +6280,11 @@ export namespace Stimulsoft.Base {
 export namespace Stimulsoft.Base {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import DataTable = Stimulsoft.System.Data.DataTable;
+    import DataSet = Stimulsoft.System.Data.DataSet;
     class StiGraphQLConnector extends StiDbNoSqlDataConnector {
         getDataTable(collectionName: string, query: string, index?: number, count?: number): DataTable;
         getDataTable2(collectionName: string, variable: Hashtable<string, object>): DataTable;
+        getDataSet(variable: Hashtable<string, object>): DataSet;
         static get(connectionString: string): StiGraphQLConnector;
         connectionString: string;
         constructor(connectionString: string);
@@ -6354,13 +6359,14 @@ export namespace Stimulsoft.Base {
     }
 }
 export namespace Stimulsoft.Base {
+    import DataSet = Stimulsoft.System.Data.DataSet;
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import DataTable = Stimulsoft.System.Data.DataTable;
     class StiGraphQLHelper {
         private getDefaultWebClient;
         testConnection(): StiTestConnectionResult;
         getDataTable(collectionName: string, count: number): DataTable;
-        private getDataSet;
+        getDataSet(count?: number): DataSet;
         private getHeaders;
         private loadColumnsAndStringRowsFromPackedString;
         private loadColumnsAndStringRowsFromString;
@@ -10212,6 +10218,7 @@ export namespace Stimulsoft.Data.Parsers {
     import DataTable = Stimulsoft.System.Data.DataTable;
     import List = Stimulsoft.System.Collections.Generic.List;
     import IStiMeter = Stimulsoft.Base.Meters.IStiMeter;
+    import Dictionary = Stimulsoft.System.Collections.Dictionary;
     abstract class StiDataParser {
         protected runFunction(funcName: string, args: FunctionArgs): any;
         protected getVariableValue(name: string): any;
@@ -10231,6 +10238,7 @@ export namespace Stimulsoft.Data.Parsers {
         table: DataTable;
         meters: List<IStiMeter>;
         isGrandTotal: boolean;
+        grandRowsConditions: Dictionary<string, object>;
         private nameToIndex;
         private nameToValue;
         private nameToVariable;
@@ -10251,6 +10259,7 @@ export namespace Stimulsoft.Data.Parsers {
         private calculateMeasureExpression;
         private getMeasureColumn;
         private getExpression;
+        private passedCondition;
         private getDataRowValue;
         private grandRows;
         private currentRows;
@@ -19781,6 +19790,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         private static isValidName;
         private static getCorrectedAlias;
         private static replaceBackslash;
+        private static replaceQuotationMark;
         private scanNumber;
         private postProcessTokensList;
         protected createRuntimeConstantsHash(): void;
@@ -36105,6 +36115,7 @@ export namespace Stimulsoft.Report.Dictionary {
     import StiDataSchema = Stimulsoft.Base.StiDataSchema;
     import StiGraphQLConnector = Stimulsoft.Base.StiGraphQLConnector;
     import StiPromise = Stimulsoft.System.StiPromise;
+    import DataSet = Stimulsoft.System.Data.DataSet;
     class StiGraphQLAdapterService extends StiNoSqlAdapterService {
         get name(): string;
         createConnector(connectionString: string): StiGraphQLConnector;
@@ -36114,7 +36125,9 @@ export namespace Stimulsoft.Report.Dictionary {
         getParametersFromDataAsync(data: StiData, dataSource: StiDataSource, connectionString: string): StiPromise<StiDataParametersCollection>;
         connectDataSourceToDataAsync(dictionary: StiDictionary, dataSource: StiDataSource, loadData: boolean): StiPromise<void>;
         connectDataSourceToData(dictionary: StiDictionary, dataSource: StiDataSource, loadData: boolean): void;
+        getDataFromDataSource(dictionary: StiDictionary, dataSource: StiDataSource): StiData;
         private getVariableNames;
+        getDataSet(database: StiGraphQLDatabase, report: StiReport, loadData: boolean): DataSet;
         testConnectionAsync(report: StiReport, connectionString: string): StiPromise<string>;
         retrieveSchemaAsync(report: StiReport, dataSource: StiSqlSource, connectionString: string, queryString?: string): StiPromise<StiDataSchema>;
     }
@@ -36907,6 +36920,8 @@ export namespace Stimulsoft.Report.Dictionary {
 }
 export namespace Stimulsoft.Report.Dictionary {
     import Type = Stimulsoft.System.Type;
+    import DataSet = Stimulsoft.System.Data.DataSet;
+    import StiPromise = Stimulsoft.System.StiPromise;
     class StiGraphQLDatabase extends StiNoSqlDatabase {
         get serviceName(): string;
         createDataSource(nameInSource: string, name: string): StiNoSqlSource;
@@ -36915,6 +36930,9 @@ export namespace Stimulsoft.Report.Dictionary {
         getSampleConnectionString(): string;
         get connectionType(): StiConnectionType;
         getDatasourceType(): Type;
+        regData(dictionary: StiDictionary, loadData: boolean): void;
+        regDataAsync(dictionary: StiDictionary, loadData: boolean): StiPromise<void>;
+        protected regDataSetInDataStore(dictionary: StiDictionary, dataSet: DataSet): void;
         constructor(name?: string, alias?: string, connectionString?: string, promptUserNameAndpassword?: boolean, key?: string);
     }
 }
@@ -44101,6 +44119,7 @@ export namespace Stimulsoft.Report.Export {
         private convert;
         private convertToEMU;
         private compareExcellSheetNames;
+        private combineTitle;
         private prepareData;
         private writeContentTypes;
         private writeMainRels;
@@ -54973,7 +54992,7 @@ export namespace Stimulsoft.Report.Chart {
 export namespace Stimulsoft.Report.Chart {
     class StiWireframeSurfaceArea3D extends StiClusteredColumnArea3D implements IStiWireframeSurfaceArea3D {
         implements(): any[];
-        getGideBySide(): boolean;
+        getSideBySide(): boolean;
         setSideBySide(value: boolean): void;
         getDefaultSeriesType(): Stimulsoft.System.Type;
         getSeriesTypes(): Stimulsoft.System.Type[];
@@ -67322,6 +67341,7 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
     class StiTableElementExportTool extends StiElementExportTool {
         render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
         static renderCellsForViewer(element: IStiTableElement, tableElementGridPageNumbers: any, onlyCurrentPageData: boolean): Promise<any[]>;
+        private static fitToTable;
         private static renderCells;
         static processDataTableWithTopN(dataTable: StiDataTable): StiDataTable;
         private static processTopNElements;
