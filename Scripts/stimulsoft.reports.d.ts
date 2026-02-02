@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.1.2
-Build date: 2026.01.06
+Version: 2026.1.3
+Build date: 2026.01.29
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -848,6 +848,7 @@ export namespace Stimulsoft.System {
         static repeat(value: string, n: number): string;
         static fill(value: string, count: number): string;
         static format(str: string, ...values: any[]): string;
+        static concat(strA: string, strB: string): string;
         private static _formatRegexp;
         static format1(str: string, values: any[]): string;
         static parseFormatString(formatString: string, values: any[]): string;
@@ -5009,6 +5010,8 @@ export namespace Stimulsoft.Base.Dashboard {
         constructor(name: string, size: number, color: Color, isBold?: boolean);
     }
     export class StiElementConsts {
+        private static fontHeightCache;
+        static getFontHeight(font: Stimulsoft.System.Drawing.Font): number;
         static TitleFont: Font;
         static ForegroundColor: Color;
         static BackgroundColor: Color;
@@ -12223,6 +12226,10 @@ export namespace Stimulsoft.Data.Expressions.NCalc.Domain {
         visit2(expression: TernaryExpression): void;
         private static isReal;
         visit3(expression: BinaryExpression): void;
+        private addListToListOperation;
+        private addListToValueOperation;
+        private addValueToListOperation;
+        private addValueToValueOperation;
         visit4(expression: UnaryExpression): void;
         visit5(expression: ValueExpression): void;
         visit6(functionn: Functionn): void;
@@ -18535,6 +18542,7 @@ export namespace Stimulsoft.Report.Components {
         protected getImageFromUrl(): Image;
         protected getImageFromDataColumn(): Image;
         protected getImageFromIcon(): Image;
+        getImageFromImageData(): Image;
         getImageFromSource(): Image;
         getImageFromResource(resources: StiResourcesCollection): Image;
         private static propertyCanBreak;
@@ -18592,7 +18600,9 @@ export namespace Stimulsoft.Report.Components.Table {
         private loadJoinCellsFromXml;
         clone(cloneProperties: boolean): StiTableCellImage;
         get locked(): boolean;
+        set locked(value: boolean);
         get linked(): boolean;
+        set linked(value: boolean);
         setCanGrow(value: boolean): void;
         cellDockStyle: StiDockStyle;
         parentJoinCell: StiComponent;
@@ -19815,7 +19825,8 @@ export namespace Stimulsoft.Report.Engine {
         TimeSpanFromSeconds = 630,
         TimeSpanFromTicks = 631,
         NewType = 632,
-        ConvertToBase64String = 633,
+        ImageFromFile = 633,
+        ConvertToBase64String = 634,
         m_Substring = 1000,
         m_ToString = 1001,
         m_ToLower = 1002,
@@ -21801,6 +21812,8 @@ export namespace Stimulsoft {
             allowOpenDocumentWithEvent: boolean;
             allowOpenDocumentWithScriptEval: boolean;
             parametersNotAssignedString: string;
+            iconBackgroundColor: Color;
+            iconForegroundColor: Color;
         };
         Print: {
             customPaperSizes: PaperSizeCollection;
@@ -29362,7 +29375,9 @@ export namespace Stimulsoft.Report.Components.Table {
         private loadJoinCellsFromXml;
         clone(cloneProperties: boolean): StiTableCellCheckBox;
         get locked(): boolean;
+        set locked(value: boolean);
         get linked(): boolean;
+        set linked(value: boolean);
         get canShrink(): boolean;
         set canShrink(value: boolean);
         setCanGrow(value: boolean): void;
@@ -29409,7 +29424,9 @@ export namespace Stimulsoft.Report.Components.Table {
         private loadJoinCellsFromXml;
         clone(cloneProperties: boolean): StiTableCellRichText;
         get locked(): boolean;
+        set locked(value: boolean);
         get linked(): boolean;
+        set linked(value: boolean);
         setCanGrow(value: boolean): void;
         cellDockStyle: StiDockStyle;
         parentJoinCell: StiComponent;
@@ -30106,6 +30123,10 @@ export namespace Stimulsoft.Report.Dashboard {
         Range = 1,
         AutoRange = 2
     }
+    enum StiDateViewMode {
+        DatePicker = 1,
+        Slider = 2
+    }
     enum StiInitialDateRangeSelectionSource {
         Selection = 0,
         Variable = 1
@@ -30162,6 +30183,10 @@ export namespace Stimulsoft.Report.Dashboard {
     enum StiNumberSelectionMode {
         Single = 1,
         Range = 2
+    }
+    enum StiNumberViewMode {
+        NumberBox = 1,
+        Slider = 2
     }
     enum StiNumberMinMaxMode {
         Auto = 1,
@@ -31237,6 +31262,7 @@ export namespace Stimulsoft.Report.Dashboard {
         createNewValueMeter(): any;
         condition: StiDateCondition;
         selectionMode: StiDateSelectionMode;
+        viewMode: StiDateViewMode;
         initialRangeSelection: StiInitialDateRangeSelection;
         initialRangeSelectionSource: StiInitialDateRangeSelectionSource;
         fixedHeight: boolean;
@@ -31572,6 +31598,7 @@ export namespace Stimulsoft.Report.Dashboard {
         createNewValueMeter(): any;
         condition: StiNumberCondition;
         selectionMode: StiNumberSelectionMode;
+        viewMode: StiNumberViewMode;
         minMaxMode: StiNumberMinMaxMode;
         initialValue: string;
         initialToValue: string;
@@ -35780,6 +35807,7 @@ export namespace Stimulsoft.Report.Dictionary {
         isDateType(dataSource: StiDataSource): boolean;
         isTimeType(dataSource: StiDataSource): boolean;
         isDateTimeType(dataSource: StiDataSource): boolean;
+        isGuidType(dataSource: StiDataSource): boolean;
         constructor(name?: string, value?: string, type?: number, size?: number, key?: string);
     }
 }
@@ -38324,6 +38352,7 @@ export namespace Stimulsoft.Report.Engine {
         private static checkExpressionForVariables;
         static setVariableValue(report: StiReport, variable: StiVariable, variableValue: any): void;
         static setVariableLabel(report: StiReport, variable: StiVariable, label: string): void;
+        static setVariableLabel2(report: StiReport, variable: StiVariable, info: StiDialogInfo, newValue: object): void;
         static getVariableLabel(report: StiReport, variableName: string): string;
     }
 }
@@ -41137,6 +41166,11 @@ export namespace Stimulsoft.Report.Export {
     }
 }
 export namespace Stimulsoft.Report.Export {
+    export class StiBidiPartIndex {
+        start: number;
+        end: number;
+        isReversed: boolean;
+    }
     enum BidiClass {
         L = 0,
         LRE = 1,
@@ -41190,7 +41224,8 @@ export namespace Stimulsoft.Report.Export {
         static rightBracketsList: string;
         static charCode07: string;
         static convertString(input: string, rightToLeft: boolean, modePdf?: boolean, paddingWithSpaces?: boolean): string;
-        static logicalToVisual(input: string, rightToLeft: boolean, lineBreaks?: number[], parts?: string[]): string;
+        static getPartsIndexes(input: string, rightToLeft: boolean, parts: StiBidiPartIndex[]): string;
+        static logicalToVisual(input: string, rightToLeft: boolean, lineBreaks?: number[], parts?: StiBidiPartIndex[]): string;
         static convertArabicHebrew(inputSB: string, keepSize?: boolean): string;
         static classifyCharacters(text: string, refTypesList: {
             ref: number[];
@@ -41224,6 +41259,7 @@ export namespace Stimulsoft.Report.Export {
         static getMultiLineReordered(levels: number[], lineBreaks: number[]): number[];
         static computeReorderingIndexes(levels: number[]): number[];
         static getOrderedString(input: string, newIndexes: number[], levels: number[]): string;
+        static isBidiControlChar(ch: number): boolean;
         static isBracketTypeOpen(ch: string): boolean;
         static isBracketTypeClose(ch: string): boolean;
     }
@@ -42487,6 +42523,13 @@ export namespace Stimulsoft.Report.Helpers {
         static removeFromCache(element: IStiElement): void;
     }
 }
+export namespace Stimulsoft.Report.Helpers {
+    import Image = Stimulsoft.System.Drawing.Image;
+    class StiVariableImageProcessor {
+        static getImage(report: any, expression: string): Image;
+        static getVariableNameFromExpression(expression: string): string;
+    }
+}
 export namespace Stimulsoft.Report.Gauge {
     enum StiGaugeRangeMode {
         Percentage = 1,
@@ -42776,7 +42819,6 @@ export namespace Stimulsoft.Report.Maps.Gis {
         data: Uint8Array;
         image: any;
         static fromBlob(blob: Blob): Promise<StiGisMapImage>;
-        private static base64ArrayBuffer;
         close(): void;
         constructor(data: Uint8Array);
     }
@@ -60683,7 +60725,9 @@ export namespace Stimulsoft.Dashboard.Components {
         get backColor(): Color;
         set backColor(value: Color);
         margin: StiMargin;
-        padding: StiPadding;
+        private _padding;
+        get padding(): StiPadding;
+        set padding(value: StiPadding);
         altTitleVisible: boolean;
         altClientRectangle: RectangleD;
         altParentKey: string;
@@ -63679,6 +63723,8 @@ export namespace Stimulsoft.Dashboard.Components.DatePicker {
     import IStiGroupElement = Stimulsoft.Report.Dashboard.IStiGroupElement;
     import IStiFixedHeightElement = Stimulsoft.Report.Dashboard.IStiFixedHeightElement;
     import IStiDatePickerElement = Stimulsoft.Report.Dashboard.IStiDatePickerElement;
+    import StiDateViewMode = Stimulsoft.Report.Dashboard.StiDateViewMode;
+    import StiPadding = Stimulsoft.Report.Dashboard.StiPadding;
     class StiDatePickerElement extends StiElement implements IStiDatePickerElement, IStiCornerRadius, IStiSimpleShadow, IStiFixedHeightElement, IStiGroupElement, IStiJsonReportObject {
         implements(): any[];
         meta(): StiMeta[];
@@ -63692,6 +63738,8 @@ export namespace Stimulsoft.Dashboard.Components.DatePicker {
         inclusionMode: StiFilterInclusionMode;
         userFilters: List<StiDataFilterRule>;
         dataFilters: List<StiDataFilterRule>;
+        get padding(): StiPadding;
+        set padding(value: StiPadding);
         private _style;
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
@@ -63728,6 +63776,7 @@ export namespace Stimulsoft.Dashboard.Components.DatePicker {
         set fixedHeight(value: boolean);
         condition: StiDateCondition;
         selectionMode: StiDateSelectionMode;
+        viewMode: StiDateViewMode;
         valueMeter: StiValueDatePickerMeter;
         initialRangeSelection: StiInitialDateRangeSelection;
         initialRangeSelectionSource: StiInitialDateRangeSelectionSource;
@@ -64598,7 +64647,7 @@ export namespace Stimulsoft.Dashboard.Components.NumberBox {
     import StiNumberBoxElement = Stimulsoft.Dashboard.Components.NumberBox.StiNumberBoxElement;
     import DecimalRange = Stimulsoft.Report.DecimalRange;
     class StiNumberBoxHelper {
-        static getInitialValue(element: StiNumberBoxElement): any;
+        static getInitialValue(element: StiNumberBoxElement): Promise<any>;
         static getRangeInitialValue(element: StiNumberBoxElement): Promise<DecimalRange>;
         static getSingleInitialValue(element: StiNumberBoxElement): Promise<number>;
         static fetchDefaultUserFilters(numberBoxElement: StiNumberBoxElement): Promise<List<StiDataFilterRule>>;
@@ -64641,6 +64690,8 @@ export namespace Stimulsoft.Dashboard.Components.NumberBox {
     import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
     import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
     import Rectangle = Stimulsoft.System.Drawing.Rectangle;
+    import StiNumberViewMode = Stimulsoft.Report.Dashboard.StiNumberViewMode;
+    import StiPadding = Stimulsoft.Report.Dashboard.StiPadding;
     class StiNumberBoxElement extends StiElement implements IStiNumberBoxElement, IStiSimpleShadow, IStiCornerRadius, IStiFixedHeightElement, IStiGroupElement, IStiHorAlignment, IStiJsonReportObject {
         implements(): any[];
         meta(): StiMeta[];
@@ -64654,6 +64705,8 @@ export namespace Stimulsoft.Dashboard.Components.NumberBox {
         inclusionMode: StiFilterInclusionMode;
         userFilters: List<StiDataFilterRule>;
         dataFilters: List<StiDataFilterRule>;
+        get padding(): StiPadding;
+        set padding(value: StiPadding);
         private _style;
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
@@ -64690,6 +64743,7 @@ export namespace Stimulsoft.Dashboard.Components.NumberBox {
         decimalDigits: number;
         condition: StiNumberCondition;
         selectionMode: StiNumberSelectionMode;
+        viewMode: StiNumberViewMode;
         minMaxMode: StiNumberMinMaxMode;
         initialValue: string;
         initialToValue: string;
@@ -67728,6 +67782,8 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
     class StiDatePickerElementExportTool extends StiElementExportTool {
         private storedCulture;
         render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
+        private createContentForDatePickerViewMode;
+        private createContentForSliderViewMode;
         private getDateTimeString;
         private getRangeVariableString;
         private getAutoRangeColumnString;
@@ -67760,6 +67816,8 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
     import IStiElement = Stimulsoft.Report.Dashboard.IStiElement;
     class StiNumberBoxElementExportTool extends StiElementExportTool {
         render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
+        private createContentForNumberBoxViewMode;
+        private createContentForSliderViewMode;
         private paintItem;
         private paintSeparator;
         private paintNavButtons;
@@ -67834,6 +67892,7 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
     import StiTableElement = Stimulsoft.Dashboard.Components.Table.StiTableElement;
     import StiPanel = Stimulsoft.Report.Components.StiPanel;
     class StiTableElementExportTool extends StiElementExportTool {
+        private static defaultExportDataOnlyFont;
         render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
         static renderCellsForViewer(element: IStiTableElement, tableElementGridPageNumbers: any, onlyCurrentPageData: boolean): Promise<any[]>;
         private static fitToTable;
@@ -68305,6 +68364,8 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     class StiDatePickerElementViewHelper {
         private static storedCulture;
         private static dateTimeFormat;
+        private static calculateRangeFromInitial;
+        static getManualRangeValues(datePickerElement: IStiDatePickerElement): any;
         static getAutoRangeValues(datePickerElement: IStiDatePickerElement): Promise<any>;
         static getVariableRangeValues(datePickerElement: IStiDatePickerElement): Promise<{
             [key: string]: string;
@@ -68445,7 +68506,7 @@ export namespace Stimulsoft.Viewer {
         postOpen(fileName: string, content: string): any;
         postInteraction(params: any): any;
         postDesign(): any;
-        getReportParameters(action: string): any;
+        getReportParameters(action: string): Promise<any>;
         viewer: StiViewer;
         InitializeErrorMessageForm(): any;
         MessageFormForScriptEvalAccess(): any;
@@ -68761,6 +68822,12 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     }
 }
 export namespace Stimulsoft.Viewer.Helpers.Dashboards {
+    import StiFormatService = Stimulsoft.Report.Components.TextFormats.StiFormatService;
+    class StiDashboradElementTextFormatHelper {
+        static getTextFormatInfo(format: StiFormatService): any;
+    }
+}
+export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     import IStiImageElement = Stimulsoft.Report.Dashboard.IStiImageElement;
     import KeyObjectType = Stimulsoft.System.KeyObjectType;
     class StiImageElementViewHelper {
@@ -68796,6 +68863,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         static getInitialValue(element: IStiNumberBoxElement): any;
         static getRangeInitialValue(element: IStiNumberBoxElement): Promise<DecimalRange>;
         static getSingleInitialValue(element: IStiNumberBoxElement): Promise<number>;
+        static getSliderStep(numberBoxElement: IStiNumberBoxElement): number;
         static applyNumberBoxFiltersToVariable(numberBoxElement: IStiNumberBoxElement, filters: any[]): void;
         static getColumnPath(element: IStiNumberBoxElement): string;
         static isRange(element: IStiNumberBoxElement): boolean;
@@ -68831,7 +68899,6 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
     import IStiRangeSelectorElement = Stimulsoft.Report.Dashboard.IStiRangeSelectorElement;
     import DecimalRange = Stimulsoft.Report.DecimalRange;
     class StiRangeSelectorElementViewHelper {
-        static getTextFormatInfo(element: any): any;
         static getColumnPath(rangeSelectorElement: IStiRangeSelectorElement): string;
         static isArgumentDateTime(rangeSelectorElement: IStiRangeSelectorElement): boolean;
         static getSettings(rangeSelectorElement: IStiRangeSelectorElement): any;
@@ -70501,6 +70568,10 @@ export namespace Stimulsoft.Designer {
         Classic = 0,
         SingleLine = 1
     }
+    enum StiPropertiesPanelViewMode {
+        Pinned = 0,
+        Unpinned = 1
+    }
 }
 export namespace Stimulsoft.Designer.Dashboards {
     import StiReport = Stimulsoft.Report.StiReport;
@@ -71746,6 +71817,7 @@ export namespace Stimulsoft.Designer {
         iconSet: StiWebUIIconSet;
         addCustomAttribute: boolean;
         allowPropagationEvents: boolean;
+        propertiesPanelViewMode: StiPropertiesPanelViewMode;
     }
 }
 export namespace Stimulsoft.Designer {
@@ -72664,7 +72736,7 @@ export namespace Stimulsoft.Designer.Dashboards {
         private getRangeSelectorElementJSProperties;
         private getMeterHashItem;
         private getMetersHash;
-        executeJSCommand(parameters: any, callbackResult: any): Promise<void>;
+        executeJSCommand(parameters: any, callbackResult: any): void;
         private moveMeter;
         private createNewItem;
         private editField;
