@@ -31,7 +31,7 @@
         "React.js reporting tool"
     ],
     "dependencies": {
-        "@napi-rs/canvas": "^0.1.65",
+        "@napi-rs/canvas": "0.1.88",
         "@xmldom/xmldom": "^0.9.6",
         "canvg": "^4.0.2",
         "jimp-compact": "^0.16.1-2",
