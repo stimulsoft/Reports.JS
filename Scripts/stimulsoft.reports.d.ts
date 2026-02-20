@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.1.3
-Build date: 2026.01.29
+Version: 2026.1.4
+Build date: 2026.02.19
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -1229,6 +1229,7 @@ export namespace Stimulsoft.System {
         static tanh(d: number): number;
         static truncate(d: number): number;
         static trunc(d: number): number;
+        static normalizeFloat(v: number | null): number | null;
     }
 }
 export namespace Stimulsoft.System {
@@ -6174,7 +6175,6 @@ export namespace Stimulsoft.Base {
     class StiExcelHelper {
         static typeFromAllRows: boolean;
         static getDataSetFromExcelDocument(content: number[], firstRowIsHeader: boolean, maxDataRows?: number): DataSet;
-        private static getNumber;
         private static getType;
         private static getTypeCell;
         private static getTicksForTimeSpan;
@@ -19747,86 +19747,87 @@ export namespace Stimulsoft.Report.Engine {
         ToWordsRu = 552,
         ToWordsTr = 553,
         ToWordsUa = 554,
-        Trim = 555,
-        TryParseDateTime = 556,
-        TryParseDecimal = 557,
-        TryParseDouble = 558,
-        TryParseLong = 559,
-        Arabic = 560,
-        Persian = 561,
-        ToOrdinal = 562,
-        Left = 563,
-        Mid = 564,
-        Right = 565,
-        StrToDateTime = 566,
-        StrToNullableDateTime = 567,
-        Compare = 568,
-        IsNull = 569,
-        Next = 570,
-        NextIsNull = 571,
-        Previous = 572,
-        PreviousIsNull = 573,
-        VLookup = 574,
-        VLookupStr = 575,
-        GetCrossTabColumnValue = 576,
-        GetCrossTabRowValue = 577,
-        Coalesce = 578,
-        IIF = 579,
-        Choose = 580,
-        Eval = 581,
-        EvalDecimal = 582,
-        EvalDouble = 583,
-        EvalLong = 584,
-        Switch = 585,
-        Rand = 586,
-        ToString = 587,
-        Format = 588,
-        SystemConvertToBoolean = 589,
-        SystemConvertToByte = 590,
-        SystemConvertToChar = 591,
-        SystemConvertToDateTime = 592,
-        SystemConvertToDecimal = 593,
-        SystemConvertToDouble = 594,
-        SystemConvertToInt16 = 595,
-        SystemConvertToInt32 = 596,
-        SystemConvertToInt64 = 597,
-        SystemConvertToSByte = 598,
-        SystemConvertToSingle = 599,
-        SystemConvertToString = 600,
-        SystemConvertToUInt16 = 601,
-        SystemConvertToUInt32 = 602,
-        SystemConvertToUInt64 = 603,
-        MathRound = 604,
-        MathPow = 605,
-        AddAnchor = 606,
-        GetAnchorPageNumber = 607,
-        GetAnchorPageNumberThrough = 608,
-        ConvertRtf = 609,
-        GetLabel = 610,
-        GetParam = 611,
-        Parse_Int = 612,
-        Parse_Double = 613,
-        Parse_Decimal = 614,
-        Parse_DateTime = 615,
-        Parse_TimeSpan = 616,
-        ParseLong = 617,
-        ParseDouble = 618,
-        ParseDecimal = 619,
-        ParseDateTime = 620,
-        StringIsNullOrEmpty = 621,
-        StringIsNullOrWhiteSpace = 622,
-        EngineHelperJoinColumnContent = 623,
-        EngineHelperToQueryString = 624,
-        EngineHelperGetRealPageNumber = 625,
-        TimeSpanFromDays = 626,
-        TimeSpanFromHours = 627,
-        TimeSpanFromMilliseconds = 628,
-        TimeSpanFromMinutes = 629,
-        TimeSpanFromSeconds = 630,
-        TimeSpanFromTicks = 631,
-        NewType = 632,
-        ImageFromFile = 633,
-        ConvertToBase64String = 634,
+        ToWordsZh = 555,
+        Trim = 556,
+        TryParseDateTime = 557,
+        TryParseDecimal = 558,
+        TryParseDouble = 559,
+        TryParseLong = 560,
+        Arabic = 561,
+        Persian = 562,
+        ToOrdinal = 563,
+        Left = 564,
+        Mid = 565,
+        Right = 566,
+        StrToDateTime = 567,
+        StrToNullableDateTime = 568,
+        Compare = 569,
+        IsNull = 570,
+        Next = 571,
+        NextIsNull = 572,
+        Previous = 573,
+        PreviousIsNull = 574,
+        VLookup = 575,
+        VLookupStr = 576,
+        GetCrossTabColumnValue = 577,
+        GetCrossTabRowValue = 578,
+        Coalesce = 579,
+        IIF = 580,
+        Choose = 581,
+        Eval = 582,
+        EvalDecimal = 583,
+        EvalDouble = 584,
+        EvalLong = 585,
+        Switch = 586,
+        Rand = 587,
+        ToString = 588,
+        Format = 589,
+        SystemConvertToBoolean = 590,
+        SystemConvertToByte = 591,
+        SystemConvertToChar = 592,
+        SystemConvertToDateTime = 593,
+        SystemConvertToDecimal = 594,
+        SystemConvertToDouble = 595,
+        SystemConvertToInt16 = 596,
+        SystemConvertToInt32 = 597,
+        SystemConvertToInt64 = 598,
+        SystemConvertToSByte = 599,
+        SystemConvertToSingle = 600,
+        SystemConvertToString = 601,
+        SystemConvertToUInt16 = 602,
+        SystemConvertToUInt32 = 603,
+        SystemConvertToUInt64 = 604,
+        MathRound = 605,
+        MathPow = 606,
+        AddAnchor = 607,
+        GetAnchorPageNumber = 608,
+        GetAnchorPageNumberThrough = 609,
+        ConvertRtf = 610,
+        GetLabel = 611,
+        GetParam = 612,
+        Parse_Int = 613,
+        Parse_Double = 614,
+        Parse_Decimal = 615,
+        Parse_DateTime = 616,
+        Parse_TimeSpan = 617,
+        ParseLong = 618,
+        ParseDouble = 619,
+        ParseDecimal = 620,
+        ParseDateTime = 621,
+        StringIsNullOrEmpty = 622,
+        StringIsNullOrWhiteSpace = 623,
+        EngineHelperJoinColumnContent = 624,
+        EngineHelperToQueryString = 625,
+        EngineHelperGetRealPageNumber = 626,
+        TimeSpanFromDays = 627,
+        TimeSpanFromHours = 628,
+        TimeSpanFromMilliseconds = 629,
+        TimeSpanFromMinutes = 630,
+        TimeSpanFromSeconds = 631,
+        TimeSpanFromTicks = 632,
+        NewType = 633,
+        ImageFromFile = 634,
+        ConvertToBase64String = 635,
         m_Substring = 1000,
         m_ToString = 1001,
         m_ToLower = 1002,
@@ -37619,7 +37620,7 @@ export namespace Stimulsoft.Report.Dictionary {
         static abc(value: number | string): string;
         static arabic(value: number | string): string;
         static persian(value: number | string): string;
-        static toWords(value: number, upperCase?: boolean, femaleEs?: boolean): string;
+        static toWords(value: number, upperCase?: boolean): string;
         static dateToStr(value: DateTime, upperCase?: boolean): string;
         static toCurrencyWords(value: number, upperCase?: boolean, showCents?: boolean, dollars?: string, cents?: string): string;
         static toCurrencyWords2(value: number, upperCase?: boolean | string, showCents?: boolean | number | string, dollars?: string | boolean, cents?: string): string;
@@ -45267,6 +45268,7 @@ export namespace Stimulsoft.Report.Export {
         static renderText2(pp: StiPdfData, pageNumber?: number): void;
         static renderText3(pp: StiPdfData, pageNumber?: number): void;
         private static renderTextLine;
+        private static isTextContainStrongRTL;
     }
 }
 export namespace Stimulsoft.Report.Export {
@@ -68987,6 +68989,7 @@ export namespace Stimulsoft.Viewer {
         theme: StiViewerTheme;
         iconSet: StiWebUIIconSet;
         allowPropagationEvents: boolean;
+        dashboardFilterElementItemHeight: number;
     }
 }
 export namespace Stimulsoft.Viewer {
