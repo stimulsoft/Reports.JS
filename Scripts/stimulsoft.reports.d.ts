@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.1.4
-Build date: 2026.02.19
+Version: 2026.1.5
+Build date: 2026.03.10
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -8532,6 +8532,7 @@ export namespace Stimulsoft.Base.Licenses {
 export namespace Stimulsoft.Base.Licenses {
     class StiLicenseObject {
         encryptKey: string;
+        private ordered;
         loadFromString(str: string): void;
         saveToString(): string;
         loadFromBytes(bytes: number[]): void;
@@ -19772,62 +19773,63 @@ export namespace Stimulsoft.Report.Engine {
         GetCrossTabColumnValue = 577,
         GetCrossTabRowValue = 578,
         Coalesce = 579,
-        IIF = 580,
-        Choose = 581,
-        Eval = 582,
-        EvalDecimal = 583,
-        EvalDouble = 584,
-        EvalLong = 585,
-        Switch = 586,
-        Rand = 587,
-        ToString = 588,
-        Format = 589,
-        SystemConvertToBoolean = 590,
-        SystemConvertToByte = 591,
-        SystemConvertToChar = 592,
-        SystemConvertToDateTime = 593,
-        SystemConvertToDecimal = 594,
-        SystemConvertToDouble = 595,
-        SystemConvertToInt16 = 596,
-        SystemConvertToInt32 = 597,
-        SystemConvertToInt64 = 598,
-        SystemConvertToSByte = 599,
-        SystemConvertToSingle = 600,
-        SystemConvertToString = 601,
-        SystemConvertToUInt16 = 602,
-        SystemConvertToUInt32 = 603,
-        SystemConvertToUInt64 = 604,
-        MathRound = 605,
-        MathPow = 606,
-        AddAnchor = 607,
-        GetAnchorPageNumber = 608,
-        GetAnchorPageNumberThrough = 609,
-        ConvertRtf = 610,
-        GetLabel = 611,
-        GetParam = 612,
-        Parse_Int = 613,
-        Parse_Double = 614,
-        Parse_Decimal = 615,
-        Parse_DateTime = 616,
-        Parse_TimeSpan = 617,
-        ParseLong = 618,
-        ParseDouble = 619,
-        ParseDecimal = 620,
-        ParseDateTime = 621,
-        StringIsNullOrEmpty = 622,
-        StringIsNullOrWhiteSpace = 623,
-        EngineHelperJoinColumnContent = 624,
-        EngineHelperToQueryString = 625,
-        EngineHelperGetRealPageNumber = 626,
-        TimeSpanFromDays = 627,
-        TimeSpanFromHours = 628,
-        TimeSpanFromMilliseconds = 629,
-        TimeSpanFromMinutes = 630,
-        TimeSpanFromSeconds = 631,
-        TimeSpanFromTicks = 632,
-        NewType = 633,
-        ImageFromFile = 634,
-        ConvertToBase64String = 635,
+        CoalesceStr = 580,
+        IIF = 581,
+        Choose = 582,
+        Eval = 583,
+        EvalDecimal = 584,
+        EvalDouble = 585,
+        EvalLong = 586,
+        Switch = 587,
+        Rand = 588,
+        ToString = 589,
+        Format = 590,
+        SystemConvertToBoolean = 591,
+        SystemConvertToByte = 592,
+        SystemConvertToChar = 593,
+        SystemConvertToDateTime = 594,
+        SystemConvertToDecimal = 595,
+        SystemConvertToDouble = 596,
+        SystemConvertToInt16 = 597,
+        SystemConvertToInt32 = 598,
+        SystemConvertToInt64 = 599,
+        SystemConvertToSByte = 600,
+        SystemConvertToSingle = 601,
+        SystemConvertToString = 602,
+        SystemConvertToUInt16 = 603,
+        SystemConvertToUInt32 = 604,
+        SystemConvertToUInt64 = 605,
+        MathRound = 606,
+        MathPow = 607,
+        AddAnchor = 608,
+        GetAnchorPageNumber = 609,
+        GetAnchorPageNumberThrough = 610,
+        ConvertRtf = 611,
+        GetLabel = 612,
+        GetParam = 613,
+        Parse_Int = 614,
+        Parse_Double = 615,
+        Parse_Decimal = 616,
+        Parse_DateTime = 617,
+        Parse_TimeSpan = 618,
+        ParseLong = 619,
+        ParseDouble = 620,
+        ParseDecimal = 621,
+        ParseDateTime = 622,
+        StringIsNullOrEmpty = 623,
+        StringIsNullOrWhiteSpace = 624,
+        EngineHelperJoinColumnContent = 625,
+        EngineHelperToQueryString = 626,
+        EngineHelperGetRealPageNumber = 627,
+        TimeSpanFromDays = 628,
+        TimeSpanFromHours = 629,
+        TimeSpanFromMilliseconds = 630,
+        TimeSpanFromMinutes = 631,
+        TimeSpanFromSeconds = 632,
+        TimeSpanFromTicks = 633,
+        NewType = 634,
+        ImageFromFile = 635,
+        ConvertToBase64String = 636,
         m_Substring = 1000,
         m_ToString = 1001,
         m_ToLower = 1002,
@@ -21728,6 +21730,9 @@ export namespace Stimulsoft {
             Watermark: {
                 allowExpression: boolean;
             };
+            Maps: {
+                disabledMaps: any[];
+            };
             printIfDetailEmptyDefaultValue: boolean;
             baseReportType: typeof Report.StiReport;
             fullTrust: boolean;
@@ -22146,6 +22151,7 @@ export namespace Stimulsoft.Report.Dictionary {
         static getCrossTabColumnValue(sender: object): string;
         static getCrossTabRowValue(sender: object): string;
         static coalesce(...args: any[]): object;
+        static coalesceStr(...args: any[]): string;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -37597,6 +37603,12 @@ export namespace Stimulsoft.Report.Dictionary {
         private static isCreated;
         static create(): void;
         static rand(seed?: number): number;
+        static RuntimeType(): string;
+        static RuntimeVersion(): string;
+        static RuntimeIdentifier(): string;
+        static RuntimeName(): string;
+        private static getBrowserInfo;
+        static RuntimeOS(): string;
     }
 }
 export namespace Stimulsoft.Report.Dictionary {
@@ -40521,7 +40533,7 @@ export namespace Stimulsoft.Report.Export {
         private static correctFontSize;
         private static pdfCKT;
         static getLineStyleDash(penStyle: StiPenStyle, width: number): string;
-        static toUnits(numberr: number): string;
+        static toUnits(numberr: number, digitsLimit?: number): string;
         private static writeCoordinates;
         private static writeStrokeInfo;
         static writeFillInfo(writer: XmlTextWriter, color: Color): void;
@@ -60730,6 +60742,8 @@ export namespace Stimulsoft.Dashboard.Components {
         private _padding;
         get padding(): StiPadding;
         set padding(value: StiPadding);
+        protected getPadding(): StiPadding;
+        protected setPadding(value: StiPadding): void;
         altTitleVisible: boolean;
         altClientRectangle: RectangleD;
         altParentKey: string;
@@ -63740,8 +63754,8 @@ export namespace Stimulsoft.Dashboard.Components.DatePicker {
         inclusionMode: StiFilterInclusionMode;
         userFilters: List<StiDataFilterRule>;
         dataFilters: List<StiDataFilterRule>;
-        get padding(): StiPadding;
-        set padding(value: StiPadding);
+        getPadding(): StiPadding;
+        setPadding(value: StiPadding): void;
         private _style;
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
@@ -64707,8 +64721,8 @@ export namespace Stimulsoft.Dashboard.Components.NumberBox {
         inclusionMode: StiFilterInclusionMode;
         userFilters: List<StiDataFilterRule>;
         dataFilters: List<StiDataFilterRule>;
-        get padding(): StiPadding;
-        set padding(value: StiPadding);
+        getPadding(): StiPadding;
+        setPadding(value: StiPadding): void;
         private _style;
         get style(): StiElementStyleIdent;
         set style(value: StiElementStyleIdent);
@@ -72196,16 +72210,6 @@ export namespace Stimulsoft.Designer {
     }
 }
 export namespace Stimulsoft.Designer {
-    class StiGoogleAccountHelper {
-        private static tokenRequestURI;
-        private static clientID;
-        private static clientSecret;
-        private static redirectUrl;
-        static googleAuthorizationProcess(parameters: any, jsObject: any): void;
-        private static exchangeCodeAtToken;
-    }
-}
-export namespace Stimulsoft.Designer {
     import Hashtable = Stimulsoft.System.Collections.Hashtable;
     import StiComponentsCollection = Stimulsoft.Report.Components.StiComponentsCollection;
     import StiPage = Stimulsoft.Report.Components.StiPage;
@@ -72254,6 +72258,7 @@ export namespace Stimulsoft.Designer {
         static getMapLanguages(mapIdent: string): any[];
         static setMapProperties(report: StiReport, param: any, callbackResult: any): void;
         static updateMapData(report: StiReport, param: any, callbackResult: any): void;
+        static getDisabledMaps(): any;
         static getMapDataForJS(map: StiMap): any[];
         private static allowGroup;
         private static allowColor;
@@ -72283,8 +72288,6 @@ export namespace Stimulsoft.Designer {
 export namespace Stimulsoft.Designer {
     import StiReport = Stimulsoft.Report.StiReport;
     class StiQuickBooksHelper {
-        private static stimulsoftClientId;
-        private static stimulsoftClientSecret;
         private static oauth2Url;
         private static bearerUrl;
         private static responseType;
