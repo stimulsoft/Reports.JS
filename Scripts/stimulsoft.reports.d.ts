@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.1.5
-Build date: 2026.03.10
+Version: 2026.1.6
+Build date: 2026.03.13
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -8095,7 +8095,7 @@ export namespace Stimulsoft.Base.Drawing {
         static parseHtmlToStates(inputHtml: string, baseState: StiHtmlState, storeStack?: boolean): StiHtmlState[];
         private static getMarginSize;
         static prepareStateText(stateText: StringBuilder): StringBuilder;
-        static stateToHtml(state: StiHtmlState, state2: StiHtmlState, text: string, lineInfoIndent: number): string;
+        static stateToHtml(state: StiHtmlState, state2: StiHtmlState, text: string, lineInfoIndent: number, onlyState?: boolean): string;
         private static getIndentString;
         private static bulletBlack;
         private static bulletWhite;
@@ -8974,6 +8974,7 @@ export namespace Stimulsoft.Base.Meters {
     import IStiMeter = Stimulsoft.Base.Meters.IStiMeter;
     let IStiTextMeasureMeter: System.Interface<IStiTextMeasureMeter>;
     interface IStiTextMeasureMeter extends IStiMeter {
+        getUniqueName(): string;
     }
 }
 export namespace Stimulsoft.Base.Meters {
