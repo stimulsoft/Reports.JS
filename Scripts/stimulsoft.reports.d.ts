@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.2.1
-Build date: 2026.04.23
+Version: 2026.2.2
+Build date: 2026.04.28
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -21997,6 +21997,7 @@ export namespace Stimulsoft {
                 FitToOnePageWide: boolean;
                 ImageMoveAndSizeWithCells: boolean;
                 AllowNativeImageBorders: boolean;
+                RepeatRowsAtTop: boolean;
             };
             PowerPoint: {
                 AllowImageComparer: boolean;
@@ -44647,6 +44648,7 @@ export namespace Stimulsoft.Report.Export {
         private hyperlinkList;
         private minRowList;
         private maxRowList;
+        private titleList;
         private useOnePageHeaderAndFooter;
         private dataExportMode;
         private exportObjectFormatting;
@@ -60516,6 +60518,11 @@ export namespace Stimulsoft.Report.Maps {
 }
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsWorld_CS {
+        static get(): {};
+    }
+}
+export namespace Stimulsoft.Report.Maps {
+    class StiMapLangsWorld_DE {
         static get(): {};
     }
 }
