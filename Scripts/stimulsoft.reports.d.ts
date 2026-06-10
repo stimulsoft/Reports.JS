@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.2.3
-Build date: 2026.05.21
+Version: 2026.2.4
+Build date: 2026.06.08
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -2566,6 +2566,7 @@ export namespace Stimulsoft.System.Data {
         private findTable;
         private findColumns;
         writeXml(writeSchema?: boolean): string;
+        private correctNumberValue;
         private writeXsd;
         private getTypeFromStorageType;
         constructor(dataSetName?: string);
@@ -8600,7 +8601,6 @@ export namespace Stimulsoft.Base.Licenses {
 }
 export namespace Stimulsoft.Base.Licenses {
     class StiCryptHelper {
-        private static encryptionKey;
         static decrypt(str: string, password?: string): string;
         static encrypt(str: string, password?: string): string;
         static recrypt(str: string, oldPassword: string, newPassword: string): string;
@@ -8613,7 +8613,6 @@ export namespace Stimulsoft.Base.Licenses {
 }
 export namespace Stimulsoft.Base.Licenses {
     class StiLicenseObject {
-        encryptKey: string;
         private ordered;
         loadFromString(str: string): void;
         saveToString(): string;
@@ -8658,15 +8657,6 @@ export namespace Stimulsoft.Base {
         private static isValidUserName;
         static loadFromFile(file: string): void;
         static loadFromString(licenseKey: string): void;
-    }
-}
-export namespace Stimulsoft.Base.Licenses {
-    class StiLicenseActivationResponse extends StiLicenseObject {
-        encryptKey: string;
-        licenseKey: StiLicenseKey;
-        exception: string;
-        resultSuccess: boolean;
-        resultNotice: StiNotice;
     }
 }
 export namespace Stimulsoft.Base.Licenses {
@@ -31841,7 +31831,9 @@ export namespace Stimulsoft.Report.Dashboard {
         insertColumn(index: number, meter: IStiMeter): any;
         removeColumn(index: number): any;
         removeAllColumns(): any;
+        getColumnsCount(): number;
         createNewRow(): any;
+        getRowsCount(): number;
         getRow2(cell: IStiAppDataCell): IStiMeter;
         getRow(meter: IStiMeter): IStiMeter;
         getRowByIndex(index: number): IStiMeter;
@@ -38562,7 +38554,7 @@ export namespace Stimulsoft.Report.Engine {
     import StiVariable = Stimulsoft.Report.Dictionary.StiVariable;
     import StiDialogInfo = Stimulsoft.Report.Dictionary.StiDialogInfo;
     class StiVariableHelper {
-        private static reportToLabels;
+        static isVariableValueCalculateInReport(report: StiReport, variableName: string): boolean;
         static fillItemsOfVariables(compiledReport: StiReport, modeItems?: boolean): boolean;
         static fillItemsOfVariable(variable: StiVariable, compiledReport: StiReport, REFmodified: {
             ref: boolean;
@@ -39782,6 +39774,7 @@ export namespace Stimulsoft.Base.Context {
 export namespace Stimulsoft.Base.Context {
     class StiCardInteractionData extends StiInteractionData {
         valueText: string;
+        cardCells: string;
     }
 }
 export namespace Stimulsoft.Report.Painters {
@@ -40773,7 +40766,7 @@ export namespace Stimulsoft.Report.Export {
         static writeWebContent(writer: XmlTextWriter, svgData: StiSvgData): void;
         static writeBarCode(writer: XmlTextWriter, svgData: StiSvgData): void;
         static writeShape(writer: XmlTextWriter, svgData: StiSvgData, xmlIndentation: number, useClip: boolean, guids: Hashtable): void;
-        static writeFillBrush(writer: XmlTextWriter, brush: Color | StiBrush, rect: RectangleD): string;
+        static writeFillBrush(writer: XmlTextWriter, brush: Color | StiBrush, rect: RectangleD, writeTransparent?: boolean): string;
         private static writeBrush;
         private static writeRoundedRectanglePrimitive;
         private static getRectWithCornersString;
@@ -44753,6 +44746,7 @@ export namespace Stimulsoft.Report.Export {
         private writeWorkbook;
         private writeSheetRels;
         private writeSheet;
+        convertNetDateTimeFormatToExcel(format: string): string;
         static regexCheckInteger1: RegExp;
         static regexCheckFloat1: RegExp;
         private checkForNumber;
@@ -65434,6 +65428,8 @@ export namespace Stimulsoft.Dashboard.Components.PivotTable {
         getFormatObjects(): any[];
         getNestedPages(): StiPage[];
         getPushCommands(expression: string): string[];
+        getColumnsCount(): number;
+        getRowsCount(): number;
         constructor(rect?: Rectangle);
     }
 }
@@ -66850,6 +66846,7 @@ export namespace Stimulsoft.Dashboard.Visuals.Cards {
         private getHyperlink;
         private getInteraction;
         private getConstants;
+        private getCardCellsJson;
         constructor(element: StiCardsElement, dataTable: StiDataTable);
     }
 }
@@ -67194,7 +67191,7 @@ export namespace Stimulsoft.Dashboard.Helpers {
     class StiTitleMeasureHelper {
         static measureTitle(title: IStiTitle): Size;
         static measureTitle2(title: IStiTitle, titleText: string): Size;
-        static measureTitle3(g: Graphics, rect: Rectangle, title: IStiTitle, titleText: string): Size;
+        static measureTitle3(g: Graphics, rect: Rectangle, title: IStiTitle, titleText: string, maxHeight?: number): Size;
         static measureTitle4(g: Graphics, rect: Rectangle, font: Font, titleText: string): Size;
     }
 }
@@ -67504,6 +67501,7 @@ export namespace Stimulsoft.Dashboard.Render {
     import StiChartElement = Stimulsoft.Dashboard.Components.Chart.StiChartElement;
     class StiScatterChartElementBuilder extends StiChartElementBuilder {
         protected renderElements(element: StiChartElement, chart: IStiChart, dataTable: StiDataTable): Promise<void>;
+        private static sortPointsByArgument;
         protected renderSeries(element: StiChartElement, value: StiMeter, seriesKey: string, chart: IStiChart): IStiSeries;
         protected getValueMeters(table: StiDataTable): StiMeter[];
         protected getArgumentMeters(table: StiDataTable): StiMeter[];
@@ -67861,7 +67859,7 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
     import StiPanel = Stimulsoft.Report.Components.StiPanel;
     class StiElementExportTool extends StiExportTool {
         render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
-        protected renderContent(element: IStiElement, destination: StiPanel, rect: Rectangle): Promise<void>;
+        protected renderContent(element: IStiElement, destination: StiPanel, rect: Rectangle, scale?: number): Promise<void>;
         private drawElement;
         protected draw(element: IStiElement, rect: Rectangle): Promise<Image>;
         protected paintContent(g: Graphics, rect: Rectangle, element: IStiElement): Promise<void>;
@@ -68217,7 +68215,14 @@ export namespace Stimulsoft.Dashboard.Export.Tools {
     class StiTableElementExportTool extends StiElementExportTool {
         private static defaultExportDataOnlyFont;
         render(element: IStiElement, destination: StiPanel, rect: Rectangle, settings: StiDashboardExportSettings): Promise<void>;
-        static renderCellsForViewer(element: IStiTableElement, tableElementGridPageNumbers: any, onlyCurrentPageData: boolean): Promise<any[]>;
+        static renderCellsForViewer(element: IStiTableElement, tableWidth: number, tableElementGridPageNumbers: any, onlyCurrentPageData: boolean): Promise<any[]>;
+        private static createCellForViewer;
+        private static createGraphicCellForViewer;
+        private static addSparklineCellProperties;
+        private static addTextCellProperties;
+        private static addTextFontStyle;
+        private static addRawCellValue;
+        private static addConditionIconCellProperties;
         private static fitToTable;
         private static renderCells;
         static processDataTableWithTopN(dataTable: StiDataTable): StiDataTable;
@@ -68728,6 +68733,7 @@ export namespace Stimulsoft.Viewer.Helpers.Dashboards {
         private static getFilterLabel;
         static changeTableElementSelectColumns(report: StiReport, requestParams: any): Promise<KeyObjectType>;
         static getDataForTableElementPage(report: StiReport, requestParams: any): Promise<KeyObjectType>;
+        private static getScaledTableWidth;
     }
 }
 export namespace Stimulsoft.Viewer.Helpers.Dashboards {
