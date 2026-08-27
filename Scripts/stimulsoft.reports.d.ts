@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.3.2
-Build date: 2026.08.11
+Version: 2026.3.3
+Build date: 2026.08.25
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -1757,6 +1757,9 @@ export namespace Stimulsoft.ExternalLibrary.fflate {
     function deflateSync(data: Uint8Array, opts?: {
         level: number;
     }): Uint8Array;
+    function zlibSync(data: Uint8Array, opts?: {
+        level: number;
+    }): Uint8Array;
 }
 
 export namespace Stimulsoft.System.Collections {
@@ -3259,8 +3262,6 @@ export namespace Stimulsoft.System.Drawing {
         private static checkForTTC;
         static getFontMimeType(data: any): string;
         static getCustomFontsCss(embeddedData?: boolean): string;
-        static getCustomFontName(fontName: string, fontStyle: FontStyle): string;
-        static allowStyle(fontName: string, fontStyle: FontStyle): boolean;
         private static measureDiv;
         private static measureHash;
         static measureString(text: string, font: Font, width?: number, useCache?: boolean, multiple?: number, angle?: number, replaceTags?: boolean): Size;
@@ -3492,6 +3493,274 @@ export namespace Stimulsoft.System.Drawing {
         color: Color;
         constructor(color: Color);
     }
+}
+
+export namespace Stimulsoft.System.IO {
+    class MemoryStream {
+        private static memStreamMaxLength;
+        private _origin;
+        private _buffer;
+        private _position;
+        get position(): number;
+        set position(value: number);
+        get length(): number;
+        get canSeek(): boolean;
+        get canWrite(): boolean;
+        setLength(length: number): void;
+        toArray(): number[];
+        toString(): string;
+        writeTo(stream: MemoryStream): void;
+        writeByte(byte: number): void;
+        write(array: number[] | Uint8Array, offset?: number, length?: number): void;
+        writeBytes(array: Uint8Array, offset?: number, length?: number): void;
+        writeLine1(inputString?: string, ...values: any[]): void;
+        writeLine(inputString?: string): void;
+        writeString(inputString: string, newLine?: boolean): void;
+        read(array: number[], offset?: number, length?: number): number;
+        seek(offset: number, origin: SeekOrigin): number;
+        flush(): void;
+        close(): void;
+        copyTo(stream: MemoryStream): void;
+        constructor(array?: number[] | Uint8Array);
+    }
+}
+
+export namespace Stimulsoft.System.Text {
+    class StringBuilder {
+        private isNew;
+        private partArray;
+        private appendSingle;
+        appendThese(items: any[]): StringBuilder;
+        append(...items: any[]): StringBuilder;
+        appendCount(item: any, count?: number): StringBuilder;
+        appendLine(...items: any[]): StringBuilder;
+        appendLines(items: any[]): StringBuilder;
+        appendFormat(str: string, ...values: any[]): StringBuilder;
+        insert(index: number, value: string, count?: number): StringBuilder;
+        remove(startIndex: number, length: number): StringBuilder;
+        get isEmpty(): boolean;
+        get length(): number;
+        set length(value: number);
+        private latest;
+        toString(): string;
+        join(delimiter: string): string;
+        clear(): void;
+        dispose(): void;
+        charAt(index: number): string;
+        charCodeAt(index: number): number;
+        setByIndex(index: number, value: string): void;
+        replace(searchValue: string, replaceValue: string): StringBuilder;
+        constructor(value?: string);
+    }
+}
+
+export namespace Stimulsoft.System.Drawing.FontReader {
+    import FontStyle = Stimulsoft.System.Drawing.FontStyle;
+    import Hashtable = Stimulsoft.System.Collections.Hashtable;
+    import DateTime = Stimulsoft.System.DateTime;
+    import Dictionary = Stimulsoft.System.Collections.Dictionary;
+    class t_Table {
+        tag: number;
+        tagString: string;
+        checksum: number;
+        offset: number;
+        length: number;
+    }
+    class t_Head {
+        majorVersion: number;
+        minorVersion: number;
+        fontRevision: number;
+        checksumAdjustment: number;
+        magicNumber: number;
+        flags: number;
+        unitsPerEm: number;
+        created: DateTime;
+        modified: DateTime;
+        yMin: number;
+        xMin: number;
+        xMax: number;
+        yMax: number;
+        macStyle: number;
+        lowestRecPPEM: number;
+        fontDirectionHint: number;
+        indexToLocFormat: number;
+        glyphDataFormat: number;
+    }
+    class t_NameRecord {
+        platformID: number;
+        encodingID: number;
+        languageID: number;
+        nameID: number;
+        length: number;
+        offset: number;
+        string: string;
+    }
+    class t_LangTagRecord {
+        length: number;
+        offset: number;
+    }
+    class t_Name {
+        format: number;
+        count: number;
+        stringOffset: number;
+        nameRecord: t_NameRecord[];
+        langTagCount: number;
+        langTagRecord: t_LangTagRecord[];
+        fontNames: Hashtable;
+    }
+    class t_EncodingRecord {
+        platformID: number;
+        encodingID: number;
+        offset: number;
+    }
+    class t_Cmap {
+        version: number;
+        numTables: number;
+        encodingRecords: t_EncodingRecord[];
+        glyphIndexMap: number[];
+    }
+    class t_Maxp {
+        version: number;
+        numGlyphs: number;
+        maxPoints: number;
+        maxContours: number;
+        maxCompositePoints: number;
+        maxCompositeContours: number;
+        maxZones: number;
+        maxTwilightPoints: number;
+        maxStorage: number;
+        maxFunctionDefs: number;
+        maxInstructionDefs: number;
+        maxStackElements: number;
+        maxSizeOfInstructions: number;
+        maxComponentElements: number;
+        maxComponentDepth: number;
+    }
+    class t_Hhea {
+        version: number;
+        ascent: number;
+        descent: number;
+        lineGap: number;
+        advanceWidthMax: number;
+        minLeftSideBearing: number;
+        minRightSideBearing: number;
+        xMaxExtent: number;
+        caretSlopeRise: number;
+        caretSlopeRun: number;
+        caretOffset: number;
+        metricDataFormat: number;
+        numOfLongHorMetrics: number;
+    }
+    class t_LongHorMetric {
+        advanceWidth: number;
+        leftSideBearing: number;
+    }
+    class t_Hmtx {
+        hMetrics: t_LongHorMetric[];
+        leftSideBearing: number[];
+    }
+    class t_OS2 {
+        version: number;
+        xAvgCharWidth: number;
+        usWeightClass: number;
+        usWidthClass: number;
+        fsType: number;
+        ySubscriptXSize: number;
+        ySubscriptYSize: number;
+        ySubscriptXOffset: number;
+        ySubscriptYOffset: number;
+        ySuperscriptXSize: number;
+        ySuperscriptYSize: number;
+        ySuperscriptXOffset: number;
+        ySuperscriptYOffset: number;
+        yStrikeoutSize: number;
+        yStrikeoutPosition: number;
+        sFamilyClass: number;
+        panose: number[];
+        ulUnicodeRange1: number;
+        ulUnicodeRange2: number;
+        ulUnicodeRange3: number;
+        ulUnicodeRange4: number;
+        achVendID: number[];
+        fsSelection: number;
+        usFirstCharIndex: number;
+        usLastCharIndex: number;
+        sTypoAscender: number;
+        sTypoDescender: number;
+        sTypoLineGap: number;
+        usWinAscent: number;
+        usWinDescent: number;
+        ulCodePageRange1: number;
+        ulCodePageRange2: number;
+        sxHeight: number;
+        sCapHeight: number;
+        usDefaultChar: number;
+        usBreakChar: number;
+        usMaxContext: number;
+        usLowerOpticalPointSize: number;
+        usUpperOpticalPointSize: number;
+    }
+    export class TtfInfo {
+        headerOffset: number;
+        sFntVersion: number;
+        numTables: number;
+        tables: Dictionary<string, t_Table>;
+        head: t_Head;
+        name: t_Name;
+        maxp: t_Maxp;
+        hhea: t_Hhea;
+        hmtx: t_Hmtx;
+        cmap: t_Cmap;
+        os2: t_OS2;
+        fontReader: StiFontReader;
+        getCmapDictionary(): number[];
+        getFamilyName(): string;
+        getStyle(): FontStyle;
+    }
+    export class StiFontReader {
+        private readHeadTable;
+        private readNameTable;
+        private readMaxpTable;
+        private readHheaTable;
+        private readHmtxTable;
+        private parseFormat4;
+        private parseFormat12;
+        readCmapTable(): t_Cmap;
+        getCmapDictionary(font: TtfInfo): number[];
+        private getCmapTable;
+        private readLocaTable;
+        private readGlyfTable;
+        private readOS2Table;
+        private readUint8;
+        private readUint16;
+        private readUint32;
+        private readInt16;
+        private readInt32;
+        private readFWord;
+        private readUFWord;
+        private readOffset16;
+        private readOffset32;
+        private readF2Dot14;
+        private readFixed;
+        private readString;
+        private readStringUtf16;
+        private readDate;
+        private setPosition;
+        private getUInt16;
+        private getUInt32;
+        private position;
+        ttf: TtfInfo;
+        data: Uint8Array;
+        readFont(position?: number): TtfInfo;
+        scanFontFile(fontName: string, fontStyle: FontStyle): TtfInfo;
+        scanFontFile2(): TtfInfo[];
+        static scanFontFile(data: Uint8Array, fontName: string, fontStyle: FontStyle): TtfInfo;
+        static scanFontFile2(data: Uint8Array): TtfInfo[];
+        static extractFontFromTtc(fontData: Uint8Array, fontName: string, fontStyle: FontStyle): Uint8Array;
+        static isTtcFont(data: Uint8Array): boolean;
+        constructor(data: Uint8Array);
+    }
+    export {};
 }
 
 export namespace Stimulsoft.System.Drawing {
@@ -3952,36 +4221,6 @@ export namespace Stimulsoft.System.IO {
 }
 
 export namespace Stimulsoft.System.IO {
-    class MemoryStream {
-        private static memStreamMaxLength;
-        private _origin;
-        private _buffer;
-        private _position;
-        get position(): number;
-        set position(value: number);
-        get length(): number;
-        get canSeek(): boolean;
-        get canWrite(): boolean;
-        setLength(length: number): void;
-        toArray(): number[];
-        toString(): string;
-        writeTo(stream: MemoryStream): void;
-        writeByte(byte: number): void;
-        write(array: number[] | Uint8Array, offset?: number, length?: number): void;
-        writeBytes(array: Uint8Array, offset?: number, length?: number): void;
-        writeLine1(inputString?: string, ...values: any[]): void;
-        writeLine(inputString?: string): void;
-        writeString(inputString: string, newLine?: boolean): void;
-        read(array: number[], offset?: number, length?: number): number;
-        seek(offset: number, origin: SeekOrigin): number;
-        flush(): void;
-        close(): void;
-        copyTo(stream: MemoryStream): void;
-        constructor(array?: number[] | Uint8Array);
-    }
-}
-
-export namespace Stimulsoft.System.IO {
     class Path {
         static combine(path1: string, path2: string): string;
         static getFileNameWithoutExtension(path: string): string;
@@ -4048,35 +4287,6 @@ export namespace Stimulsoft.System.Text {
         private static fromUnicodeToCodePage;
         private static fillCodepage;
         constructor(name: string, codepage: number, webName?: string);
-    }
-}
-
-export namespace Stimulsoft.System.Text {
-    class StringBuilder {
-        private isNew;
-        private partArray;
-        private appendSingle;
-        appendThese(items: any[]): StringBuilder;
-        append(...items: any[]): StringBuilder;
-        appendCount(item: any, count?: number): StringBuilder;
-        appendLine(...items: any[]): StringBuilder;
-        appendLines(items: any[]): StringBuilder;
-        appendFormat(str: string, ...values: any[]): StringBuilder;
-        insert(index: number, value: string, count?: number): StringBuilder;
-        remove(startIndex: number, length: number): StringBuilder;
-        get isEmpty(): boolean;
-        get length(): number;
-        set length(value: number);
-        private latest;
-        toString(): string;
-        join(delimiter: string): string;
-        clear(): void;
-        dispose(): void;
-        charAt(index: number): string;
-        charCodeAt(index: number): number;
-        setByIndex(index: number, value: string): void;
-        replace(searchValue: string, replaceValue: string): StringBuilder;
-        constructor(value?: string);
     }
 }
 
@@ -6744,8 +6954,8 @@ export namespace Stimulsoft.Base {
         private removeUnsupportedColumns;
         private correctRefColumns;
         getSampleConnectionString(): string;
-        static Get(connectionString?: string): StiQuickBooksConnector;
-        constructor(connectionString?: string);
+        static Get(connectionString?: string, clientId?: string, clientSecret?: string): StiQuickBooksConnector;
+        constructor(connectionString?: string, clientId?: string, clientSecret?: string);
     }
 }
 
@@ -7993,213 +8203,6 @@ export namespace Stimulsoft.Base.Drawing {
     }
 }
 
-export namespace Stimulsoft.Base.Drawing.FontReader {
-    import FontStyle = Stimulsoft.System.Drawing.FontStyle;
-    import Hashtable = Stimulsoft.System.Collections.Hashtable;
-    import DateTime = Stimulsoft.System.DateTime;
-    import Dictionary = Stimulsoft.System.Collections.Dictionary;
-    class t_Table {
-        tag: number;
-        tagString: string;
-        checksum: number;
-        offset: number;
-        length: number;
-    }
-    class t_Head {
-        majorVersion: number;
-        minorVersion: number;
-        fontRevision: number;
-        checksumAdjustment: number;
-        magicNumber: number;
-        flags: number;
-        unitsPerEm: number;
-        created: DateTime;
-        modified: DateTime;
-        yMin: number;
-        xMin: number;
-        xMax: number;
-        yMax: number;
-        macStyle: number;
-        lowestRecPPEM: number;
-        fontDirectionHint: number;
-        indexToLocFormat: number;
-        glyphDataFormat: number;
-    }
-    class t_NameRecord {
-        platformID: number;
-        encodingID: number;
-        languageID: number;
-        nameID: number;
-        length: number;
-        offset: number;
-        string: string;
-    }
-    class t_LangTagRecord {
-        length: number;
-        offset: number;
-    }
-    class t_Name {
-        format: number;
-        count: number;
-        stringOffset: number;
-        nameRecord: t_NameRecord[];
-        langTagCount: number;
-        langTagRecord: t_LangTagRecord[];
-        fontNames: Hashtable;
-    }
-    class t_EncodingRecord {
-        platformID: number;
-        encodingID: number;
-        offset: number;
-    }
-    class t_Cmap {
-        version: number;
-        numTables: number;
-        encodingRecords: t_EncodingRecord[];
-        glyphIndexMap: number[];
-    }
-    class t_Maxp {
-        version: number;
-        numGlyphs: number;
-        maxPoints: number;
-        maxContours: number;
-        maxCompositePoints: number;
-        maxCompositeContours: number;
-        maxZones: number;
-        maxTwilightPoints: number;
-        maxStorage: number;
-        maxFunctionDefs: number;
-        maxInstructionDefs: number;
-        maxStackElements: number;
-        maxSizeOfInstructions: number;
-        maxComponentElements: number;
-        maxComponentDepth: number;
-    }
-    class t_Hhea {
-        version: number;
-        ascent: number;
-        descent: number;
-        lineGap: number;
-        advanceWidthMax: number;
-        minLeftSideBearing: number;
-        minRightSideBearing: number;
-        xMaxExtent: number;
-        caretSlopeRise: number;
-        caretSlopeRun: number;
-        caretOffset: number;
-        metricDataFormat: number;
-        numOfLongHorMetrics: number;
-    }
-    class t_LongHorMetric {
-        advanceWidth: number;
-        leftSideBearing: number;
-    }
-    class t_Hmtx {
-        hMetrics: t_LongHorMetric[];
-        leftSideBearing: number[];
-    }
-    class t_OS2 {
-        version: number;
-        xAvgCharWidth: number;
-        usWeightClass: number;
-        usWidthClass: number;
-        fsType: number;
-        ySubscriptXSize: number;
-        ySubscriptYSize: number;
-        ySubscriptXOffset: number;
-        ySubscriptYOffset: number;
-        ySuperscriptXSize: number;
-        ySuperscriptYSize: number;
-        ySuperscriptXOffset: number;
-        ySuperscriptYOffset: number;
-        yStrikeoutSize: number;
-        yStrikeoutPosition: number;
-        sFamilyClass: number;
-        panose: number[];
-        ulUnicodeRange1: number;
-        ulUnicodeRange2: number;
-        ulUnicodeRange3: number;
-        ulUnicodeRange4: number;
-        achVendID: number[];
-        fsSelection: number;
-        usFirstCharIndex: number;
-        usLastCharIndex: number;
-        sTypoAscender: number;
-        sTypoDescender: number;
-        sTypoLineGap: number;
-        usWinAscent: number;
-        usWinDescent: number;
-        ulCodePageRange1: number;
-        ulCodePageRange2: number;
-        sxHeight: number;
-        sCapHeight: number;
-        usDefaultChar: number;
-        usBreakChar: number;
-        usMaxContext: number;
-        usLowerOpticalPointSize: number;
-        usUpperOpticalPointSize: number;
-    }
-    export class TtfInfo {
-        headerOffset: number;
-        sFntVersion: number;
-        numTables: number;
-        tables: Dictionary<string, t_Table>;
-        head: t_Head;
-        name: t_Name;
-        maxp: t_Maxp;
-        hhea: t_Hhea;
-        hmtx: t_Hmtx;
-        cmap: t_Cmap;
-        os2: t_OS2;
-        fontReader: StiFontReader;
-        getCmapDictionary(): number[];
-        getFamilyName(): string;
-        getStyle(): FontStyle;
-    }
-    export class StiFontReader {
-        private readHeadTable;
-        private readNameTable;
-        private readMaxpTable;
-        private readHheaTable;
-        private readHmtxTable;
-        private parseFormat4;
-        private parseFormat12;
-        readCmapTable(): t_Cmap;
-        getCmapDictionary(font: TtfInfo): number[];
-        private getCmapTable;
-        private readLocaTable;
-        private readGlyfTable;
-        private readOS2Table;
-        private readUint8;
-        private readUint16;
-        private readUint32;
-        private readInt16;
-        private readInt32;
-        private readFWord;
-        private readUFWord;
-        private readOffset16;
-        private readOffset32;
-        private readF2Dot14;
-        private readFixed;
-        private readString;
-        private readStringUtf16;
-        private readDate;
-        private setPosition;
-        private getUInt16;
-        private getUInt32;
-        private position;
-        ttf: TtfInfo;
-        data: Uint8Array;
-        readFont(position?: number): TtfInfo;
-        scanFontFile(fontName: string, fontStyle: FontStyle): TtfInfo;
-        scanFontFile2(): TtfInfo[];
-        static scanFontFile(data: Uint8Array, fontName: string, fontStyle: FontStyle): TtfInfo;
-        static scanFontFile2(data: Uint8Array): TtfInfo[];
-        constructor(data: Uint8Array);
-    }
-    export {};
-}
-
 export namespace Stimulsoft.Base.Drawing {
     import Font = Stimulsoft.System.Drawing.Font;
     import FontStyle = Stimulsoft.System.Drawing.FontStyle;
@@ -8964,7 +8967,9 @@ export namespace Stimulsoft.Base.Licenses {
         CloudApps = 34,
         Avalonia = 35,
         Python = 36,
-        DbsPython = 37
+        DbsPython = 37,
+        Go = 38,
+        DbsGo = 39
     }
     enum StiTrialPhase {
         Silent = 0,
@@ -22877,8 +22882,17 @@ export namespace Stimulsoft {
             allowUsePaperSizesFromPrinterSettings: boolean;
         };
         Dictionary: {
+            DataWorld: {
+                clientId: string;
+                clientSecret: string;
+            };
             Databases: {
+                showDataWorldDatabase: boolean;
                 showQuickBooksDatabase: boolean;
+            };
+            QuickBooks: {
+                clientId: string;
+                clientSecret: string;
             };
             BusinessObjects: {
                 allowUseDataColumn: boolean;
@@ -42142,7 +42156,7 @@ export namespace Stimulsoft.Report.Export {
     import StiResourceType = Stimulsoft.Report.Dictionary.StiResourceType;
     class StiReportResourceHelper {
         static isFontResourceType(resourceType: StiResourceType): boolean;
-        static getBase64DataFromFontResourceContent(resourceType: StiResourceType, content: number[] | string): string;
+        static getBase64DataFromFontResourceContent(resourceType: StiResourceType, content: number[] | string | Uint8Array): string;
     }
 }
 
@@ -42152,6 +42166,7 @@ export namespace Stimulsoft.Report.Export {
         private knownBinFonts;
         constructor(report: StiReport, ...rest: ConstructorParameters<typeof XmlTextWriter>);
         get fontStylesText(): string;
+        private static getCustomFontFaces;
         writeEmbeddedFontsDefinitions(): void;
         writeAttributeString(localName: string, value: string): void;
     }
@@ -42995,8 +43010,6 @@ export namespace Stimulsoft.Report.Export {
         static writeTextInCells(writer: XmlTextWriter, svgData: StiSvgData): void;
         static renderIcon(image: StiImage, zoom: number, baseWidth: number, baseHeight: number): string;
         private static renderIconInternal;
-        private static getFontFormatByExtension;
-        private static knownBinFonts;
     }
 }
 
@@ -44390,7 +44403,7 @@ export namespace Stimulsoft.Report.Extensions {
     import DataColumn = Stimulsoft.System.Data.DataColumn;
     import Type = Stimulsoft.System.Type;
     class DataColumnExt {
-        static tryConvertColumnType(column: DataColumn, newType: Type): boolean;
+        static tryConvertColumnType(column: DataColumn, newType: Type, convertNulls: boolean): boolean;
     }
 }
 
@@ -77271,7 +77284,7 @@ export namespace Stimulsoft.Designer {
     import StiResourceType = Stimulsoft.Report.Dictionary.StiResourceType;
     class StiFontResourceHelper {
         static addFontToReport(report: StiReport, resource: StiResource, resourceItem: any): void;
-        static getBase64DataForCssFromResourceContent(resourceType: StiResourceType, content: number[]): string;
+        static getBase64DataForCssFromResourceContent(resourceType: StiResourceType, content: number[] | Uint8Array): string;
         private static getFontFamily;
     }
 }
