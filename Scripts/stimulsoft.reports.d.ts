@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.4.1
-Build date: 2026.10.01
+Version: 2026.4.2
+Build date: 2026.10.20
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -8550,6 +8550,7 @@ export namespace Stimulsoft.Base.Drawing {
         private static convertStringToTag;
         static parseHtmlToStates(inputHtml: string, baseState: StiHtmlState, storeStack?: boolean): StiHtmlState[];
         private static getMarginSize;
+        static getPlainTextFromHtmlTags(input: string): string;
         static prepareStateText(stateText: StringBuilder): StringBuilder;
         static stateToHtml(state: StiHtmlState, state2: StiHtmlState, text: string, lineInfoIndent: number, onlyState?: boolean): string;
         private static getIndentString;
@@ -10411,6 +10412,8 @@ export namespace Stimulsoft.Data.Helpers {
         static newExpression(expression: string): Stimulsoft.Data.Expressions.NCalc.Expression;
         static prepareExpression(expression: string): string;
         static escapeExpression(expression: string): string;
+        private static hideLiterals;
+        private static isPlainName;
         static removeRelations(expression: string, dataSources: IStiAppDataSource[]): string;
         static replaceFunction(expression: string, newFunction: string): string;
         static removeFunction(expression: string): string;
@@ -21281,6 +21284,7 @@ export namespace Stimulsoft.Report.Engine.StiParser {
         private getDataRelationByName;
         private getDataColumnByName;
         private preProcessNamespaces;
+        private static hasProperty;
         protected makeTokensList(): void;
     }
 }
@@ -34937,21 +34941,30 @@ export namespace Stimulsoft.Report.Dashboard.Helpers {
     class StiElementExpressionValidator {
         private static readonly runtimeArgumentPrefix;
         private static readonly runtimeCardName;
+        private static readonly runtimeRowName;
         private static readonly parserErrorPrefix;
+        private static readonly variableLabelSuffix;
         private static readonly runtimeNames;
         static getMeterError(meter: IStiMeter, dictionary: IStiAppDictionary): string;
         static getSyntaxError(expression: string): string;
         static getUnknownNameError(expression: string, dictionary: IStiAppDictionary): string;
         static isUnknownName(name: string, dictionary: IStiAppDictionary): boolean;
+        private static isVariableLabel;
         private static getColumnNames;
         static getUnknownNameMessage(name: string): string;
         static getReportExpressionError(value: string, component: StiComponent): string;
+        static getInteractionErrors(interaction: IStiDashboardInteraction, component: StiComponent): {
+            key: string;
+            value: string;
+        }[];
         static getToolTipError(interaction: IStiDashboardInteraction, component: StiComponent): string;
         static getHyperlinkError(interaction: IStiDashboardInteraction, component: StiComponent): string;
         static getParameterError(interaction: IStiDashboardInteraction, parameter: IStiDashboardDrillDownParameter, component: StiComponent): string;
+        private static addInteractionError;
         static getTemplateExpressionError(text: string, component: StiComponent): string;
         private static getInsertionError;
         private static getInsertions;
+        private static getToolTipText;
         private static getSegments;
         private static addSegment;
         private static getUnknownFunctionMessage;
@@ -35009,6 +35022,9 @@ export namespace Stimulsoft.Report.Dashboard.Helpers {
         dataTable: StiDataTable;
         columnKey: string;
         rect: RectangleD;
+        columnIndex: number;
+        rowIndex: number;
+        value: any;
     }
 }
 
@@ -43172,7 +43188,9 @@ export namespace Stimulsoft.Report.Maps {
         data: string;
         data3D: string;
         englishName: string;
+        alternativeNames: string[];
         iSOCode: string;
+        formerISOCode: string;
         rect: Rectangle;
         setMaxWidth: boolean;
         skipText: boolean;
@@ -45574,6 +45592,7 @@ export namespace Stimulsoft.Report.Helpers {
     import IStiReport = Stimulsoft.Base.IStiReport;
     import IStiMapKeyHelper = Stimulsoft.Base.Map.IStiMapKeyHelper;
     class StiMapKeyHelper implements IStiMapKeyHelper {
+        private static cacheSimplifyLoose;
         getMapIdents(key: string): string[];
         private static getMapIdents2;
         getNameFromIsoAlpha2(alpha2: string, mapId: string, lang: string, report?: StiReport): string;
@@ -45585,6 +45604,9 @@ export namespace Stimulsoft.Report.Helpers {
         getMapKeysFromNames(values: any[], mapId: string, lang: string, report?: StiReport): string[];
         getMapKeyFromName(name: string, mapId: string, lang: string, report?: StiReport): string;
         static simplify(key: string): string;
+        static simplifyLoose(key: string): string;
+        private static simplifyText;
+        private static getBaseLetters;
     }
 }
 
@@ -45679,6 +45701,10 @@ export namespace Stimulsoft.Report.Maps {
         static loadResource(report: StiReport, resourceName: string, lang: string): StiMapSvgContainer;
         private static parseResourceName;
         static getGeomsObject(report: StiReport, resourceName: string, lang: string): StiMapGeomsContainer;
+        static getLanguageKeys(resourceName: string, lang: string): {
+            Key: string;
+            Text: string;
+        }[];
         private static createGeom;
         static parsePath(text: string): StiMapGeom[];
     }
@@ -45687,8 +45713,16 @@ export namespace Stimulsoft.Report.Maps {
 export namespace Stimulsoft.Report.Helpers {
     import StiMapSvg = Stimulsoft.Report.Maps.StiMapSvg;
     class StiMapResourceHelper {
+        private static VoivodeshipSuffix;
+        private static languageNames;
+        private static looseLanguageNames;
         static getSvgBlockFromIsoAlpha2(alpha2: string, mapId: string, lang: string, report?: StiReport): StiMapSvg;
         static getSvgBlockFromName(name: string, mapId: string, lang: string, report?: StiReport): StiMapSvg;
+        private static getSvgBlockFromAlternativeNames;
+        private static getSvgBlockFromLanguages;
+        private static getLanguageNames;
+        private static addLanguageNames;
+        private static addName;
         static getIsoAlpha2FromName(name: string, mapId: string, lang: string, report?: StiReport): string;
         static getIsoAlpha3FromName(name: string, mapId: string, lang: string, report?: StiReport): string;
         private static getResource;
@@ -49010,6 +49044,7 @@ export namespace Stimulsoft.Report.Export {
         private renderTextTree;
         private renderText;
         private normalizeText;
+        private isWhiteSpacePreserved;
         private measureText;
         private normalizeFontFamily;
         private resolveTextBaselineOffset;
@@ -49091,6 +49126,9 @@ export namespace Stimulsoft.Report.Export {
         private static CreateStrokePen;
         private AddTextGeoms;
         private CollectTextGeomsRecursive;
+        private GetTextFlowStart;
+        private RenderTextContent;
+        private GetTextState;
         private RenderTextElement;
         private AddImageGeoms;
         private CollectImageGeomsRecursive;
@@ -49240,7 +49278,7 @@ export namespace Stimulsoft.Report.Export {
         private static ParseSvgLength;
         private static ParseSvgFontSize;
         private static ParseSvgLengthWithFontSize;
-        private static NormalizeFontFamily;
+        private static ReplaceTypographicSpaces;
         private static ResolveTextBaselineOffset;
         private IsTextLikeType;
         private GetCachedSvgTextBaseType;
@@ -49381,7 +49419,8 @@ export namespace Stimulsoft.Report.Chart {
         private static createValuesWeightsTopN;
         private static getNextDate;
         private static getKey;
-        private static sortArray;
+        private static sortArgumentKeys;
+        private static compareArguments;
         private static findIndex;
         private static getValueForDate;
         private static getTotalTimeSpans;
@@ -60715,8 +60754,12 @@ export namespace Stimulsoft.Report.Markdown.Rendering {
     class StiImageCache {
         private static sizes;
         private static pending;
+        private static dataUris;
+        static getDataUri(source: string): string;
         static getSize(source: string): Size;
         static prefetchAsync(source: string): Promise<Size>;
+        private static loadSizeFromElementAsync;
+        private static loadSizeFromBytesAsync;
         private static resolveSize;
     }
 }
@@ -65869,6 +65912,12 @@ export namespace Stimulsoft.Report.Maps {
 
 export namespace Stimulsoft.Report.Maps {
     class StiMapLangsCzechRepublic_CS {
+        static get(): {};
+    }
+}
+
+export namespace Stimulsoft.Report.Maps {
+    class StiMapLangsDenmark_DA {
         static get(): {};
     }
 }
@@ -71902,6 +71951,7 @@ export namespace Stimulsoft.Dashboard.Components.Table {
     import IStiTitleElement = Stimulsoft.Report.Dashboard.IStiTitleElement;
     import IStiTableElement = Stimulsoft.Report.Dashboard.IStiTableElement;
     import IStiTableElementCondition = Stimulsoft.Report.Dashboard.IStiTableElementCondition;
+    import EventArgs = Stimulsoft.System.EventArgs;
     class StiTableElement extends StiElement implements IStiTableElement, IStiSimpleShadow, IStiCornerRadius, IStiTitleElement, IStiElementLayout, IStiJsonReportObject, IStiGlobalizationProvider, IStiElementInteraction, IStiSkipOwnFilter {
         implements(): any[];
         clone(cloneProperties: boolean): any;
@@ -71958,6 +72008,7 @@ export namespace Stimulsoft.Dashboard.Components.Table {
         get toolboxPosition(): number;
         get localizedName(): string;
         helpUrl: string;
+        invokeClick(sender: any, e: EventArgs): void;
         columns: StiTableColumn[];
         sizeMode: StiTableSizeMode;
         rowsPerPage: number;
@@ -74769,7 +74820,7 @@ export namespace Stimulsoft.Viewer {
         openNewWindow(url: any, name?: any, specs?: any): any;
         removeAllEvents(): any;
         stopAllTimers(): any;
-        sortPropsInDrillDownParameters(obj: any): any;
+        stringifyDrillDownParameters(obj: any): any;
         InitializeBookmarksPanel(): any;
         createPostParameters(data: any, asObject: boolean): any;
         dashboardProcessTimeout: number;
@@ -76288,6 +76339,13 @@ export namespace Stimulsoft.Report.Check {
         get message(): string;
         set message(value: string);
         processCheck(report: StiReport, obj: any): any;
+        private checkMeters;
+        private checkDataFilters;
+        private checkConditions;
+        private checkInteractions;
+        private checkInteraction;
+        private createCheck;
+        private getReportExpressionError;
     }
 }
 
