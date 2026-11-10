@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.4.2
-Build date: 2026.10.20
+Version: 2026.4.3
+Build date: 2026.11.08
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -23019,6 +23019,9 @@ export namespace Stimulsoft {
             readonly styles: Stimulsoft.Report.Styles.StiStylesCollection;
         };
         Engine: {
+            Blockly: {
+                allowUsingSecurityMode: boolean;
+            };
             ReportCache: {
                 amountOfQuickAccessPages: number;
                 limitForStartUsingCache: number;
@@ -43669,6 +43672,7 @@ export namespace Stimulsoft.Report.Export {
         currentPassNumber: number;
         maximumPassNumber: number;
         get exportFormat(): StiExportFormat;
+        get exportMode(): StiHtmlExportMode;
         exportTo(report: StiReport, stream: MemoryStream, settings: StiHtmlExportSettings): void;
         exportToAsync(onExport: (error?: string) => void, report: StiReport, stream: MemoryStream, settings: StiHtmlExportSettings): void;
         private exportSettings;
@@ -64809,6 +64813,17 @@ export namespace Stimulsoft.Blockly {
         parseMutation(mutationNode: XmlNode, block: IronBlock): void;
         static addStandardBlocks(parser: Parser, report: StiReport): Parser;
         addUserFunctionBlocks(userFunction: StiUserFunction): Parser;
+    }
+}
+
+export namespace Stimulsoft.Blockly {
+    class StiBlocklySecurity {
+        private static readonly blockedMembers;
+        private static readonly typeNames;
+        static blockMember(target: any, memberName?: string | number): void;
+        static blockRuntimeMember(memberName: string | number): void;
+        private static getObjectName;
+        private static blockPath;
     }
 }
 
