@@ -1,6 +1,6 @@
 ## Stimulsoft Third-Party Software Notices
 
-**Last Updated: 2026-10-09**
+**Last Updated: 2026-11-17**
 
 This document contains licensing information relating to the use of third-party software with or within the Stimulsoft software (Stimulsoft is a trademark of CloudReports sp. z o.o.). Any terms, conditions, or restrictions on third-party software included within the Stimulsoft software that are not included within the original third-party software licenses are offered and imposed by Stimulsoft alone. The authors, licensors, and distributors of the third-party software disclaim all express or implied conditions, representations, and warranties relating to the third-party software and any liability arising from use and distribution of the third-party software.
 
@@ -233,25 +233,6 @@ A "contributor" is any person that distributes its contribution under this licen
 (D) If you distribute any portion of the software in source code form, you may do so only under this license by including a complete copy of this license with your distribution. If you distribute any portion of the software in compiled or object code form, you may only do so under a license that complies with this license.
 
 (E) The software is licensed "as-is." You bear the risk of using it. The contributors give no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the contributors exclude the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
-
----
-
-### SvgMath
-Library for converting MathML expressions to SVG.
-
-**Platforms:** .NET
-
-https://github.com/acivux/SvgMath
-
-**The MIT License (MIT)**
-Copyright (c) 2005 by Nikolai Grigoriev
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: 
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
-IN THE SOFTWARE.
 
 ---
 

@@ -1,7 +1,7 @@
 /*
 Stimulsoft.Reports.JS
-Version: 2026.4.3
-Build date: 2026.11.08
+Version: 2026.4.4
+Build date: 2026.11.25
 License: https://www.stimulsoft.com/en/licensing/reports
 */
 export namespace Stimulsoft.System {
@@ -44934,6 +44934,7 @@ export namespace Stimulsoft.Report.Export {
         getMatrixLineData(lineNumber: number): StiMatrixLineData;
         writeSegment(segment: StiMatrixCacheSegment): object;
         private writeMatrixLine;
+        private writeMatrixValues;
         private writeMatrixCell;
         readSegment(string: string, segment: StiMatrixCacheSegment): void;
         private readMatrixCell;
@@ -48567,6 +48568,7 @@ export namespace Stimulsoft.Report.Export {
         fonts: PdfFontInfo[];
         unicodeMapsList: number[][];
         glyphMapsList: number[][];
+        glyphTextMapsList: Map<number, string>[];
         standardPdfFonts: boolean;
         fontList: pfontInfo[];
         private fontsInfoStore;
